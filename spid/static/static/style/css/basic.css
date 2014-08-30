@@ -1,0 +1,10 @@
+#contenido {display:none;}
+#simplemodal-overlay {background-color:#000;}
+
+/* Container */
+#simplemodal-container {height:50px; width:400px; color:#bbb; background:white; border:1px solid #414; padding:12px;}
+#simplemodal-container .simplemodal-data {padding:8px;}
+#simplemodal-container code {background:#141414; border-left:1px solid #65B43D; color:#fff; display:block; font-size:12px; margin-bottom:12px; padding:4px 6px 6px;}
+#simplemodal-container a {color:#fff;}
+#simplemodal-container a.modalCloseImg {background:url(../imagenes/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
+#simplemodal-container h3 {color:#84b8d9;}

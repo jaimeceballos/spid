@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+  {% load static %}
+  <meta charset='utf-8'>
+  <title>Sistema Policial de Informacion Delictual</title>
+ <link rel='stylesheet' href='{% get_static_prefix %}css/spid/underground.css'>
+ <link rel="shortcut icon" href="{% get_static_prefix %}imagenes/spid/icono.ico" type="image/x-icon">
+ {% include "inicial.html"%}
+</head>
+<body oncontextmenu="return false">
+  <div id="main3">
+   <div id="content">
+        {% block sidebar %}
+		  
+	         	{% endblock %}
+                    
+   </div>	
+ </div>
+
+</body>
+</html>
+ext/javascript" src="{% get_static_prefix %}js/spid/jquerym.js"></script>
+     <script type="text/javascript" charset="utf-8">
+     $(document).ready(function() {
+     $('#ureg').change(function(event){
+        var toLoad;
+
+        var estado= $('#estado').val();
+       
+        var valor = $('#ureg').val();
+        var options;
+  
+        if (estado!=''){
+         toLoad= '../depes/'+valor+'/';
+        }else{
+         toLoad= 'depes/'+valor+'/';
+        }
+       
+        $.get(toLoad, function(data){
+         options = '<option value="">Seleccione Dependencia</option>';
+       
+         for (var i = 0; i < data.length; i++){
+          options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+         }
+   
+         $('#dependencias').html(options);
+         $("#dependencias option:first").attr('selected', 'selected');
+       }, "json");
+     
+      });
+   });
+     $(document).ajaxStart(function(){
+    $('#spinner').show();
+}).ajaxStop(function(){
+    $('#spinner').hide();
+});
+    </script>
+</head>
+<body>
+  <div id="main3">
+   <div id="content">
+        {% block sidebar %}
+		  
+	         	{% endblock %}
+                    
+   </div>	
+ </div>
+
+</body>
+</html>
