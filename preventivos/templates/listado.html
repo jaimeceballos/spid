@@ -1,0 +1,27 @@
+{% extends "administrar.html" %}
+
+{% block main %}
+<h1>{{ titulo }}</h1>
+<table class="item-list">
+<thead>
+	<tr>
+		{% block table_heading %}
+		{% endblock %}
+		<th>Acciones</th>
+	</tr>
+</thead>
+<tbody>
+	{% for item in object_list %}
+	<tr class="{% cycle '' 'altrow' %}">
+		{% block item_iteration_row %}
+		  	<!-- Put your code here -->
+	  	{% endblock %}
+		<td>
+			<a class="edit" href="/administrar{{ item.get_absolute_url }}/editar/">Editar</a>
+			<a class="delete" href="/administrar{{ item.get_absolute_url }}/eliminar/">Eliminar</a>
+		</td>  	
+	</tr>
+  	{% endfor %}
+</tbody>
+</table>
+{% endblock %} 

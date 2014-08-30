@@ -1,0 +1,284 @@
+
+<html>
+{%load static%}
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Informacion Delictual -- SPID </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+h1.salto{
+PAGE-BREAK-AFTER: always
+}
+body {
+  background-color:#fff;
+}
+@page {  
+  margin: 1.5cm;  
+  margin-bottom: 1cm;  
+  @frame footer {  
+    -pdf-frame-content: footerContent;  
+    -pdf-frame-content: footerContent2;  
+    bottom: 2.5cm;  
+    margin-left: 1cm;  
+    margin-right: 1cm;  
+    height: 2cm;  
+  }  
+  
+}   
+#rot
+{
+  
+    color: rgba(0, 0, 0, 0.1);
+    -webkit-transform: rotate(314deg);
+    -moz-transform: rotate(314deg);
+    -o-transform: rotate(314deg);
+    writing-mode: bt-rl;
+    margin-left:10%;
+    vertical-align: middle;
+
+    width:800px;
+    font-size:48px;
+}
+strong{
+  font-size:11px;
+    font-family: "DroidSansMono";
+}
+#B2 {
+  width:700px;
+  margin-left:auto;
+  margin-right:auto;
+  border:2px inset #07fbe7;
+}
+h1 {
+  color:black;
+  font-size: 18px;
+  text-align:center;
+  position: relative;
+  margin-left: 0px;
+  padding: -5px;
+}
+h2 {
+  color:#03c4b4;
+  padding-left:20px;
+  margin-top:50px;
+  margin-bottom:50px;
+}
+h4 {
+ color:black;
+  font-size: 12px;
+  margin-left:25%;
+  position: relative;
+  padding: -5px;
+}
+img {
+  float:left;
+  vertical-align: top;
+  width:8%;
+  padding:5px;
+}
+p {
+  font-size:11px;
+  padding:3px;
+  padding-top: 0px;
+  color:black;
+
+  text-align:justify;
+  line-height: -2px;
+  font-family: "DroidSansMono";
+}
+div{
+  font-size:12px;
+  padding:3px;
+  padding-top: 0px;
+  color:black;
+  align: center;
+  text-align:justify;
+  line-height: 15px;
+  font-family: "DroidSansMono";
+}
+ul {
+  list-style:none;
+  color:#6a030f;
+  font-size:12px;
+  line-height: 5px;
+  font-weight:bold;
+  
+}
+
+ul#L1 {
+  list-style:none;
+  color:#6a030f;
+  font-size:12px;
+  font-weight:bold;
+  
+}
+ul#L2 {
+  color:#c1051b;
+  font-weight:normal;
+}
+
+table {
+  width:auto;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  background-color:#fff;
+}
+p#P {
+  border:2px outset #f1ae0d;
+  width:60%;
+  margin-left:auto;
+  margin-right:auto;
+  color:#f1ae0d;
+  font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+table {
+  border-collapse: collapse;
+  border: 0px solid #fff; 
+  width: 100%; 
+
+}
+tr { background: #fff; }
+tr.altrow { background: #F9F9F9;  }
+th, td {
+  text-align: left;  
+  font-size: 12px;   
+  border-width: 0px;
+    border-style: solid;
+}
+p#P a {
+  text-decoration:none;
+  color:#ac7b04;
+}
+p#P a:hover {
+  text-decoration:underline;
+}
+
+
+</style>
+<script type="text/javascript">
+   function imprimir(){
+    
+     document.getElementById('boton').style.visibility="hidden";
+     window.print();
+  
+}
+</script>
+</head>
+<body >
+ <center>
+ <input type="button" value="Imprimir Ampliacion" id="boton" style="height:22px;text-transform:uppercase;"  onclick="imprimir()"/>  </center><br>  {%include "header.html"%}<br><br><hr>
+ 
+
+  <p > <strong >DATOS DEL PREVENTIVO </strong></p>  <hr>
+    <p> <strong>Unidad Regional / Dependencia : {{unireg}} / {{depe}} -- Ciudad de : {{ciudad}}</strong></p>
+    <p> <strong>Preventivo Nro : </strong>{{nro}}/{{anio}}&nbsp;&nbsp;
+    <strong>Fecha de Denuncia : </strong>{{fecha_denuncia|date:"d/m/Y" }}&nbsp;&nbsp;
+    <strong>Fecha de Carga:</strong> {{fecha_carga|date:"d/m/Y"}}&nbsp;&nbsp;
+    {%if fecha_cierre%}
+      <strong>Fecha de Cierre:</strong> {{fecha_cierre|date:"d/m/Y"}}
+    {%endif%}</p>
+
+    <p>   
+     <strong>Caratula Policial :</strong> {{caratula}}  
+     <p>   
+     <strong>Actuante :</strong> {{actuante}}&nbsp;&nbsp;
+     <strong>Preventor :</strong> {{preventor}}
+      </p>
+   <!--
+    <p><strong> Autoridades Informada </strong></p> 
+
+     {% for y in autoridades %}
+        <ul>
+           <li>
+               {{y}}
+           </li>
+        </ul>      
+     {% endfor%}        
+ -->
+ <BR>
+  <hr>
+ 
+  <p > <strong >DATOS DE LA AMPLIACION </strong></p>  <hr>
+  <p><strong> Titulo : </strong>{{amplia.titulo.upper}} </p>               
+  <p><strong> Fecha de Carga : </strong>{{amplia.fecha|date:"d/m/Y"}} </p>  
+  <p><strong> Autoridades a Informar </strong></p> 
+     {% for y in autoridada %}
+        <ul>
+           <li>
+               {{y}}
+           </li>
+        </ul>      
+     {% endfor%}        
+ <br><hr>
+  <p><strong> Texto Ampliatorio : </strong> <strong>{%autoescape off%}{{amplia.descripcion}} {%endautoescape%}</strong></p>  
+
+ <hr>
+   <h1 class='salto'> </h1><br>  
+   {%include "header.html"%}<hr>
+     {%if datosper%}
+ 
+  
+
+
+
+    <p > <strong >Personas Involucradas </strong></p>  <hr>
+   <strong>{%autoescape off%}{{datosper}}{%endautoescape%}</strong>
+      <!--
+            {% for involu in involus%}
+                <ul>
+                   <li>
+                       * {{involu.roles}}: 
+                         <ul>
+                          <li>
+                            <p>
+                          
+                              Apellidos y Nombres :{{involu}} &nbsp;&nbsp;
+                              Documento Tipo y Nro :{{involu.persona.tipo_doc}} {{involu.persona.nro_doc}}</p>
+                              <p>
+                              Nacido el :{{involu.persona.fecha_nac|date:"d/m/Y"}}, en {{involu.persona.ciudad_nac}}
+                            &nbsp;&nbsp; Ocupacion :{{involu.persona.ocupacion}}&nbsp;&nbsp; Reside en : {{involu.persona.ciudad_res}}</p>
+                         </li>
+                        </ul> 
+
+                   </li>
+               </ul> 
+            {%endfor%}      
+          -->
+
+{%else%}  
+
+
+  <strong>No Existen Personas Involucradas</strong>
+{%endif%}
+
+
+<hr>
+
+ {%if tieneelementos%}
+<!--  <h1 class='salto'> </h1><br>  
+
+{%include "header.html"%}<hr>-->
+<br><hr>
+   <p><strong > Caracterísitcas de los Elementos(Denunciados, utilizados y/o secuestrados en el lugar del Hecho </strong>
+   </p><hr>
+  <strong>{%autoescape off%} {{elementos}}{%endautoescape%}</strong>
+{%else%}  
+
+  <strong>No Existen Elementos</strong>
+{%endif%}
+  <p><br><br><br><br><br></p>
+
+<p style="padding: 0px; margin: 0px; height: 10.6mm; overflow: hidden;">
+<span style="font-size: 96pt; page-break-inside: avoid;"></span>
+<div>
+   {%include "footer.html"%}</div>
+  
+    
+  
+  </div>
+
+
+</body>
+</html>
+

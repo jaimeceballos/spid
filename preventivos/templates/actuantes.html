@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+{% block main %}
+
+ <form id="form" action="." method="post">{% csrf_token %} 
+   <h1>Formulario de ABM de Actuantes y Preventores Autorizados</h1>
+
+
+    {% if errors %}
+            
+              {% for error in errors %} 
+               <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}  
+    <br>
+    
+    <hr>
+   
+    <div id="demo">
+   
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+
+            <tr class="gradeC">
+               <th>Identificador</th>
+               <th>Tipo Documento</th>
+               <th>Nro de Dni</th>
+               <th>Apellido/s y Nombres </th>
+            </tr>
+     
+        </thead>
+         
+             <tbody>
+              {% for people in pers %}
+                
+                  <tr  class="gradeC"> 
+                    <td width="13%"><a href='/preventivos/actuantes/{{ people.id }}/'>{{ people.id }}</a></td>
+                    <td width="17%">{{ people.tipo_doc}}</td>
+                    <td width="12%">{{ people.nro_doc}}</td>
+                    <td width="70%">{{ people.apellidos}}, {{people.nombres}}</td>
+                    </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+           </table>
+       </div>
+      <br>
+      <br>
+       <hr>
+      <h1>Datos de la Persona </h1>
+      <p>
+      <input type="hidden" name="persona_id" id="persona_id" id="id" value="{{idact}}"/>
+      <strong for="documento" name="documento" >Nro. DNI :</strong>
+      <input type="text" name="documento"  id="documento" value="{{dni}}" 
+      readonly="readonly" autocomplete="off"/>&nbsp;&nbsp;
+      <strong for="apeynombres" >Apellido y Nombres :
+      <input type="text" name="apeynombres" id="apeynombres" size="30" value="{{apeynom}}"
+      readonly="readonly" autocomplete="off"/>&nbsp;&nbsp; <a href="/preventivos/actuantes/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar seleccion"></a><a onclick="" href="/preventivos/persona/"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/addpersonas.png" title="Agregar Personas"></a>
+      </strong>
+      </p>
+      <p>
+     {%if dnis %}
+
+      <strong for="jerarquia_id"> Jerarquia :</strong>
+      <select name="jerarquia_id" id="jerarquia_id" class="combox" ><option name="jerarquia_id">Seleccione Jerarquia</option>
+      <option {{form.jerarquia_id}}</option>
+      </select>
+     
+   
+       <strong for="unidadreg_id">Unidad Reg. :</strong>
+      <select name="unidadreg_id" id="ureg" style="width:200px;" >
+      <option name="unidadreg_id">Seleccione Unidad Regional</option>
+      <option {{form.unidadreg_id}}</option>
+      </select> 
+       <strong for="dependencia_id">Dependencias :</strong>
+      <select name="dependencia_id" id="depe" style="width:200px;">
+      
+          <option name="dependencia_id" id="depe" {{form.dependencia_id}}</option>
+     
+      </select>
+      {%else%}
+       <strong for="jerarquia_id"> Jerarquia :</strong>
+       <select name="jerarquia_id" id="jerarquia_id" class="combox" disabled="disabled">
+        <option name="jerarquia_id">Seleccione Jerarquia</option>
+       <option {{form.jerarquia_id}}</option>
+       </select>
+      
+   
+       <strong for="unidadreg_id">Unidad Reg. :</strong>
+         <select name="unidadreg_id" id="ureg" style="width:200px;" disabled="disabled">
+      <option name="unidadreg_id">Seleccione Unidad Regional</option>
+      <option {{form.unidadreg_id}}</option>
+      </select> 
+      <strong for="dependencia_id">Dependencias :</strong>
+      <select name="dependencia_id" id="depe" style="width:200px;" disabled="disabled">
+      <option name="dependencia_id">Seleccione Dependencia Policial</option>
+      <option {{form.dependencia_id}}</option>
+      </select> 
+     {%endif%}</p>
+     <br>
+      
+       <label for = "funcion" name="funcion" id = "funcion" class = "multicolumnas"  checked="checked">Funcion :
+        {{ form.funcion }}  </label> <br>
+    <div align="center">
+   
+    {% if botonsi %}
+       <hr><br>
+     <input class="btn btn-success" type="submit" value= "Grabar" id="grabar" name="grabar" title="Permite guardar los datos">
+  
+    {%else%}
+       {% if datos %}
+          <hr><br>
+         <input class="btn btn-success" type="submit" value= "Actualizar" id="modifica" name="modifica" title="Actualiza los datos ingresados">
+       {%endif%}  
+    {%endif%}
+
+  </div>
+
+   
+     
+     
+      <br>
+      <hr>
+      <h1>LISTADO GENERAL DE ACTUANTES Y PREVENTORES AUTORIZADOS </h1>
+      <!--div id="demo"-->
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="examples" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th >Persona-ID</th>
+               <th >Nro. de Dni</th>
+               <th >Apellido/s y Nombres</th>
+               <th >Funcion</th>
+               <th >Jerarquia</th>
+               <th >Dependencia</th>
+            </tr>
+        </thead>
+      
+             <tbody>
+                 {% for listas in lista %}
+                  <tr  class="gradeC"> 
+                    <td width="5%">{{ listas.persona_id.id }}</td>
+                    <td width="14%">{{ listas.documento}}</td>
+                    <td width="30%">{{ listas.apeynombres}}</td>
+                    {% if listas.funcion == 1 %}
+                      <td width="6%">ACTUANTE</td>
+                    {%else%}
+                      {% if listas.funcion == 2 %}
+                           <td width="6%">PREVENTOR</td>
+                      {%else%}
+                           <td width="6%">ACT/PREV</td>
+                      {%endif%}
+                    {%endif%} 
+                    <td width="20%">{{ listas.jerarquia_id}}</td>
+                    <td width="30%">{{ listas.dependencia_id}}</td>
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+       <!--/div-->
+ </form>
+{% endblock %}
+<!--
+{% block contenido %}
+
+<form id="form" action="/preventivos/newpersona/" method="post">{% csrf_token %} 
+ 
+<table class="table">
+<tr>
+<td>    
+ <table class="tables">
+  <tr>
+    <td>
+        <strong>Apellidos:</strong>
+    </td>    
+  </tr> 
+  <tr>
+    <td>   
+        <strong>Nombres:</strong>
+    </td>    
+  </tr>    
+   <tr>
+    <td>       
+        <strong>Tipo Doc.:</strong>
+ 
+    </td>    
+  </tr>
+  <tr>
+    <td>  
+        <strong>Nro. Doc.:</strong>
+    </td>
+  </tr>
+  <tr>
+    <td>      
+        <strong>Fecha Nac.:</strong>
+    </td>
+  </tr>
+  <tr>
+    <td> 
+        <strong>Sexo:</strong>
+    </td>
+  </tr> 
+  <tr>
+    <td> 
+         <strong>Pais de Nac.:</strong>
+    </td>
+  </tr>     
+  <tr>
+    <td> 
+         <strong>Ciudad de Nac.:</strong>
+    </td>
+  </tr>     
+  <tr>
+    <td>        
+          <strong>Ocupacion:</strong> 
+    </td>
+  </tr> 
+  <tr>
+    <td> 
+         <strong>Pais de Res.:</strong>
+    </td>
+  </tr>     
+  <tr>
+    <td> 
+         <strong>Ciudad de Res.:</strong>
+    </td>
+  </tr>         
+  <tr>
+    <td> 
+           <strong>Cuit:</strong>
+    </td>
+  </tr>       
+  <tr>
+    <td>           
+             <strong>Celular:</strong>
+    </td>
+  </tr>
+</table>
+</td>
+<td>
+<table class="table">
+ <tr>
+ <td>         
+    <input type="text" name="apellidos" id="apellidos" value="{{personas.apellidos}}" 
+    autocomplete="off"/>
+  </td>
+  </tr>
+ <tr>
+ <td>  
+ <input type="text" name="nombres" id="nombres" value="{{personas.nombres}}" 
+ autocomplete="off"/>
+ 
+</td>
+</tr>
+<tr>
+<td>
+  <select name="tipo_doc" id="tipo_doc" class="comboxs"  tabindex="-1">
+  <option {{formp.tipo_doc}}</option>
+  </select> 
+ </td>
+  </tr>
+<tr>
+ <td>          
+  <input type="text" name ="nro_doc" id ="nro_doc" value="{{personas.nro_doc}}"
+   autocomplete="off"/>
+</td>
+  </tr>
+<tr>
+ <td> 
+  <input type="text" name="fecha_nac" id="fecha_nac" value="{{personas.fecha_nac|date:"d/m/Y"}}" placeholder="dd/mm/aaaa" /> 
+  <img src="{{STATIC_URL}}imagenes/preventivos/calendario.png" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador"> 
+  <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_nac", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "lanzador" // el id del botón que lanzará el calendario 
+        }); 
+  </script> 
+</td>
+  </tr>
+<tr>
+ <td> 
+    <select name="sexo_id" id="sexo_id" class="comboxs"><option{{formp.sexo_id}}</option></select>
+</td>
+  </tr>
+<tr>
+ <td> 
+  <select name="pais_nac" id="pais" class="comboxs" tabindex="-1"><option {{formp.pais_nac}}</option></select>
+</td>
+  </tr>
+<tr>
+ <td>   
+      {% if not form.ciudad_nac %}
+          <select name="ciudad_nac" id="ciudades" class="comboxs" tabindex="-1">
+          <option name="ciudades"></option>
+          <option {{ciudad}}</option></select> 
+      {% else %}
+          <select name="ciudad_nac" id="ciudades" class="comboxs" tabindex="-1">
+          <option name="ciudades"></option>
+           <option {{formp.ciudad_nac}}</option> </select>
+      {% endif %}
+</td>
+  </tr>
+<tr>
+ <td> 
+      <select name="ocupacion" id="ocupacion" class="comboxs">
+          <option{{formp.ocupacion}}</option>
+       </select>
+ </td>
+  </tr>
+
+<tr>
+ <td> 
+      <select name="pais_res" id="pais_res" class="comboxs" tabindex="-1"><option {{formp.pais_nac}}</option></select>
+  </tr>
+<tr>
+ <td> 
+      {% if not form.nro_doc %}
+        <select name="ciudad_res" id="ciudades_r" class="comboxs" tabindex="-1">
+         <option name="ciudades_r"></option>
+         <option {{ciudad}}</option></select>
+      {% else %}
+        <select name="ciudad_res" id="ciudades_r" class="comboxs" tabindex="-1">
+          <option name="ciudades_r"></option>
+           <option {{formp.ciudad_res}}</option> </select>
+
+      {% endif %}
+</td>
+  </tr>
+<tr>
+ <td>   
+       <input type="text" name="cuit" id="cuit" placeholder="Ej: 20345678904" value="{{personas.cuit}}">
+</td>
+  </tr>
+<tr>
+ <td> 
+     <input type="text" name="celular" id="celular" placeholder="Cod. Area+Numero" value="{{personas.celular}}">
+ </td>
+  </tr>
+</table>
+</td>
+</tr>
+</table>    
+
+
+  <br>
+  <p align="center">
+    <input class="new-aqua" type="submit" value= "Grabar" name="grabar" title="Grabar el registro actual" ></p>
+  <br>
+
+ </form> 
+{% endblock %}-->

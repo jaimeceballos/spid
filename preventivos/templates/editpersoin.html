@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+ 
+<h1>Preventivo creado con fecha: {{fecha_carga|date:"d/m/y"}} por: {{user.last_name}}, {{user.first_name}} -- {{user.username}}</h1>
+
+<form action="" role="form" method="post">{% csrf_token %}
+
+  {% if formp.errors or formr.errors %}
+            
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                     {% if formp.errors %}
+                     <h1>Errores en los datos de la persona</h1>
+                  <p style="color: red;" > {{ formp.errors.as_text}}.- &nbsp;&nbsp;</p>
+                  {% endif %}
+                  {% if formr.errors %}
+                     <h1>Errores en los datos de la Persona Involucrada</h1>
+                  <p style="color: red;" > {{ formr.errors.as_text}}.- &nbsp;&nbsp;</p>
+                  {% endif %}
+                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </div>
+              
+             
+    {% endif %}
+
+
+
+     <input type="hidden" id="ids" name="ids" value="{{idhec}}"/>
+     <input type="hidden" id="idp" name="idp" value="{{idprev}}"/>
+   <input type="hidden" id="idper" name="idper" value="{{idper}}"/>
+ 
+<p>
+     Unidad Regional / Dependencia : <strong style="font-weight:bold">{{unidadreg}} / {{dependencia}}</strong></p>
+ <p>
+     Preventivo  Nro. :
+     <input type="text" name="nro" id="id_nro" value="{{nro}}/{{anio}}" readonly="readonly"/> 
+ 
+     Fecha de Denuncia :
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" readonly="readonly" value="{{fecha_denuncia|date:"d/m/Y"}}"/>
+  </p>
+  
+  <p>   
+  	 Caratula Policial :
+     <input type="text" name="caratula"  
+     id="caratula" size="70px" readonly="readonly" value="{{caratula}}"/>
+  </p>
+
+ 
+    <p>   
+     Actuante : <input type="text" name="actuante"  id="actuante" size="25" readonly="readonly" value="{{actuante}}"/>
+     Preventor : <input type="text" name="preventor"  id="preventor" size="30" readonly="readonly" value="{{preventor}}"/>
+      </p>
+  <p>
+     Autoridades a Informar :
+     {% for y in autoridades %}
+        <ul>
+           <li>
+              <input type="text" name="autoridades" id="autoridades" size="70px" readonly="readonly" value="{{y}}"/>
+           </li>
+        </ul>      
+     {% endfor%}        
+   </p>
+
+     
+        <p>
+        Motivo :<strong> {{motivo}}</strong> 
+        &nbsp;&nbsp;Fecha y Hora Inicio : <strong>{{fecha_desde|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong>
+        &nbsp;&nbsp;Fecha y Hora Final : <strong>{{fecha_hasta|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong> </p>
+      <p>
+       Hecho :&nbsp;<strong>{{descripcion|safe}}</strong></p>
+      <p>
+       Delito/s Cometido/s :
+               {% for y in delito %}
+                <ul>
+                   <li>
+                      <strong>{{y}}</strong>
+                   </li>
+                </ul>      
+     {% endfor%}        
+       </p>
+       
+      <br>
+
+  <hr>
+  <h6>Personas Involucradas</h6>
+   <table class="table">
+       {%for involus in datosinvo%}
+       
+        <tr>
+           <td>
+                              <strong style="display: inline-block; vertical-align: middle; line-height: 2px; "> 
+                                 {{involus.persona}} -- {{involus.roles}} &nbsp;&nbsp;</strong>
+    
+           
+            
+            <button type="submit" name="ver" id="ver" class="verdata"
+              value="{{involus.id}}" onclick=(this.value) title="Permite Ver mas Datos de la Persona Involucrada"/></button>
+
+        {%if not fecha_autorizacion%} 
+            <button type="submit" name="dele" id="dele" class="borrarde"
+              value="{{involus.id}}" onclick=(this.value) title="Permite borrar un involucrado"/></button>
+         {%endif%}
+     {%if involus.ampliacion.fecha%}
+                                     &nbsp;&nbsp; 
+                                     <strong style="letter-spacing:1.1px;">- Modificado por Ampliacion en fecha : {{involus.ampliacion.fecha|date:"d/m/Y"}} -- {{ involus.ampliacion.titulo}}</strong>
+            
+                                 {%endif%}
+           </td>   
+        </tr>   
+       {%endfor%}
+       
+  </table> 
+
+       
+         <div align="right">
+              <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
+                <label title="Permite Agregar otra Persona Involucrada" >Involucrados</label></a>
+       
+              <a href="{% url 'selectPrev' idprev %}" class="btn btn-success"><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Volver</label></a> 
+  
+      
+        <a href="{% url 'reportes' idprev %}" target="_blank" ><input type="button" class="botonprint"
+            title="Imprimir Preventivo"/></input></a></div>
+      
+  {%if 'si' in mostrar%}
+                   <h6>Datos de la Persona</h6>
+            <p>
+        <strong>Apellido/s :</strong><input type="text" id="apellidos" name="apellidos" readonly="readonly"
+        {{formp.apellidos}}  
+        <strong>Nombres :</strong><input type="text" id="nombres" name="nombres" readonly="readonly" {{formp.nombres}}
+      </p>
+      <p>
+        <strong>Tipo Doc :&nbsp;&nbsp;</strong>
+        <select select class="combodni" id="tipo_doc" name="tipo_doc" readonly="readonly" disabled="disabled">
+       <option {{formp.tipo_doc}}</option>
+       </select>
+    <strong>Nro :</strong><input type="text" id="nro_doc" name="nro_doc" size="8" readonly="readonly" {{formp.nro_doc}}
+         <strong>Sexo : </strong>
+       <select name="sexo_id" id="sexo_id" class="comboxs" disabled="disabled"><option{{formp.sexo_id}}</option></select>
+        <strong>Estado Civil :</strong>
+       <select name="estado_civil" id="estado_civil" class="comboxs" disabled="disabled"><option{{formp.estado_civil}}</option></select>
+  </p>
+    <p>
+        <strong>Pais de Nac. :</strong><select class="comboxs" id="pais_nac" name="pais_nac" disabled="disabled">
+       <option {{formp.pais_nac}}</option></select>&nbsp;
+        <strong>Ciudad de Nac. :</strong><select style="width: 160px;" id="ciudad_nac" name="ciudad_nac" disabled="disabled" >
+       <option {{formp.ciudad_nac}}</option></select>&nbsp;&nbsp;&nbsp;&nbsp;
+         <strong>Fecha Nac :&nbsp;&nbsp;</strong><input type="text" id="fecha_nac" name="fecha_nac" size="8" disabled="disabled"
+        {{formp.fecha_nac}}  
+    
+  </p>
+   <p>
+     <strong>Pais de Res. :</strong>
+      <select name="pais_res" id="pais_res" class="comboxs" tabindex="-1" disabled="disabled"><option {{formp.pais_res}}</select>&nbsp;
+       <strong>Ciudad de Res. :</strong>
+        <select name="ciudad_res" id="ciudades_r" style="width: 160px;" tabindex="-1" disabled="disabled">
+         <option name="ciudades_r"></option>
+       <option {{formp.ciudad_res}}</option></select>
+       &nbsp;&nbsp;&nbsp;&nbsp;<strong>Ocupacion :</strong>&nbsp;&nbsp;&nbsp;<select class="comboxs" id="ocupacion" name="ocupacion" disabled="disabled">
+       <option {{formp.ocupacion}}</option></select>
+  </p>
+  <p>
+       <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias" readonly="readonly" {{formp.alias}}
+  </p>
+   <p>
+ 
+
+   <strong>Hijo de :<strong>
+    <input type="text" id="padre_apellidos" name="padre_apellidos" size="30" autocomplete="off" readonly="readonly" {{formpa.padre_apellidos}}
+
+    <input type="text" id="padre_nombres" name="padre_nombres" size="40"    autocomplete="off" readonly="readonly"  {{formpa.padre_nombres}}
+   </p>
+   <p>
+     <strong>y de :<strong> &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="madre_apellidos" name="madre_apellidos" size="30"  autocomplete="off" readonly="readonly" 
+         {{formpa.madre_apellidos}}
+    <input type="text" id="madre_nombres" name="madre_nombres" size="40" autocomplete="off" readonly="readonly" 
+     {{formpa.madre_nombres}}
+ 
+   </p>
+
+ <br>
+ <div id="domicilio">
+<hr>
+       <h6>Domicilio</h6>
+        <p>
+      <strong>Barrio:</strong>
+      <select name="barrio_codigo" id="barrio_codigo" style="width: 180px;" disabled="disabled">
+          
+            <option {{dom.barrio_codigo}}</option>
+        </select> 
+ 
+         <strong>Calle:</strong>
+        <select name ="calle" id ="calles" style="width: 180px;" disabled="disabled">   
+          <option{{dom.calle}}</option> 
+        </select>
+       <strong>Altura: </strong>
+       <input type="text" name="altura" id="altura" size="2" value="{{domicilios.altura}}" 
+        autocomplete="off" readonly="readonly"/> 
+       <strong id="basic-modal3">Interseccion:</strong>
+        <select name ="entre" id ="entre"  style="width: 180px;" disabled="disabled">   
+
+          <option{{dom.entre}}</option>
+        </select>
+        <!--
+        <strong for="modi" name="modi" id="basic-modal3">
+         
+          <input type="image" class="basic" name="basic"  title="Modificar Domicilios"
+           style="margin-left: auto; margin-bottom: -9px;  border: 0px;"
+          src="{{STATIC_URL}}imagenes/preventivos/write.png"  width="25px" height="23px" /></strong>
+        -->
+   
+  </p>
+     <p><strong>Fecha desde:</strong>
+     <input type="text" size="15" name="fecha_desde" id="fecha_desde" value="{{domicilios.fecha_desde|date:"d/m/Y"}}" placeholder="dd/mm/aaaa" autocomplete="off" disabled="disabled"/> 
+      
+       <strong>Fecha Actualizacion: </strong>
+       <input type="text" size="15" name="fecha_actualizacion" id="fecha_actualizacion" value="{{domicilios.fecha_actualizacion|date:"d/m/Y"}}" placeholder="dd/mm/aaaa" autocomplete="off" disabled="disabled"/> 
+    
+    </p>
+</div>
+
+  <br>
+  <hr>
+    <h6>Rol que cumple la Persona en el Hecho </h6>
+  
+  <p>
+    <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p>
+  <strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
+        
+        </blockquote>
+        
+  </div>
+      <strong style="color:red;margin-left:7px"> * </strong> <strong>Rol:</strong>
+        <select name="roles" id="roles" class="combolist"  size="1">
+           <!-- {%for sele in roles%}
+
+              <option  selected="selected" name="roles" id="roles" value="{{sele.id}}">{{sele.descripcion}}</option>
+                <option name="roles" {{formr.roles}}</option>
+            {%endfor%}  -->
+           <option name="roles" {{formr.roles}}</option>
+
+        </select> &nbsp;&nbsp;&nbsp;&nbsp;
+     <strong> Es Menor :</strong>  
+        <select class="combodni" id="menor" name="menor" >
+            <option name="menor"{{formr.menor}}</option>
+         </select> 
+    </p>     
+     <div id="detenidos" style="display:none;">
+        <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
+       <option {{formr.detenido}}</option>
+       </select>
+         <strong>Fecha y Hora Ingreso :</strong>
+        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+        {{formr.fechahoradetencion}} 
+        <input class="botoncalendar" button id="fecha_hasta1" ></button>
+        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
+        <!-- script que define y configura el calendario--> 
+        <script type="text/javascript" charset="utf-8">
+        
+         var cal = Calendar1.setup({onSelect: function(cal) {
+         cal.hide() },showTime: 12,});
+         cal.manageFields('fecha_hasta1','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
+
+       </script>&nbsp;
+
+       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
+       <option {{formr.infraganti}}</option>
+       </select>
+       </div> 
+
+    {%if estadetenido%}
+      <p>
+     <div id="detenidos">
+      <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
+       <option {{formr.detenido}}</option>
+       </select>
+     
+   
+      
+        <strong>Fecha y Hora Ingreso :</strong>
+        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+        {{formr.fechahoradetencion}} 
+        <input class="botoncalendar" button id="fecha" ></button>
+        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
+        <!-- script que define y configura el calendario--> 
+        <script type="text/javascript" charset="utf-8">
+        
+         var cal = Calendar1.setup({onSelect: function(cal) {
+         cal.hide() },showTime: 12,});
+         cal.manageFields('fecha','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
+
+       </script>&nbsp;
+
+       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
+       <option {{formr.infraganti}}</option>
+       </select></div></p>
+     
+    
+{%else%}
+      <p>
+   
+   
+   
+      <strong >Persona Juridica :</strong>
+      
+         <select class="combodni" id="juridcia" name="juridica">
+          <option name="juridica"{{formr.juridica}}</option></select>
+
+      <strong >Descripcion :</strong>
+      <input type="text" id="razon_social" name="razon_social"  size="45" {{formr.razon_social}}
+
+       </p> 
+
+      
+      
+    {%endif%}
+
+
+ 
+  
+     <br>
+  <br><hr>
+    <div align="right">
+       
+             {%if not fecha_autorizacion%}
+             <a href="." name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+     <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>{%else%}
+           <strong style="color:red;">Fue enviado y Autorizado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
+    
+   
+        
+
+
+     </div>
+     
+    
+     
+
+           {%endif%}
+      
+  
+
+ </form>
+{% endblock %}
+{%block modificar%}
+<form id="form" action="." method="post">{% csrf_token %} 
+
+   <h1>Actualizar Domicilios</h1>
+   {% if errors %}
+            
+              {% for error in errors %}
+                 
+                  <p style="color: red;" > {{ error }} &nbsp;&nbsp;
+                      
+                       </p>
+                       
+               {% endfor %}
+             
+    {% endif %}  
+    <hr>
+    <br>
+    <p>
+      <input type="hidden" id="ids" name="ids" value="{{idhec}}"/>
+     <input type="hidden" id="idp" name="idp" value="{{idprev}}"/>
+   <input type="hidden" id="idper" name="idper" value="{{idper}}"/>
+      <strong>Reside:</strong>
+        <select name="ciudad_res" id="ciudades_r" class="comboxs1" tabindex="-1">
+         <option name="ciudades_r"></option>
+       <option {{formp.ciudad_res}}</option></select>&nbsp;&nbsp;(--Ciudad de Residencia--)</p>
+        <p>
+      <strong>Barrio:</strong>
+      <select name="barrio_codigo" id="barrio_codigo" style="width: 200px;" >
+          
+            <option {{dom.barrio_codigo}}</option>
+        </select> 
+     </p>
+     <p>
+         <strong>Calle:</strong>
+        <select name ="calle" id ="calle" style="width: 200px;" >   
+          <option{{dom.calle}}</option> 
+        </select>&nbsp;&nbsp;
+    
+       <strong>Altura: </strong>
+       <input type="text" name="altura" id="altura" size="2" value="{{domicilios.altura}}" autocomplete="off"/></p>
+       <p>
+       <strong id="basic-modal3">Calle:</strong>
+        <select name ="entre" id ="entre" style="width: 200px;">   
+
+          <option{{dom.entre}}</option>
+        </select>&nbsp;&nbsp;(--Interseccion--)
+      
+  </p>
+  <p><strong>Tipo :</strong>
+      <select name="tipos_domicilio" id="tipos_domicilio" class="combolist">
+            <option {{dom.tipos_domicilio}}</option>
+        </select> &nbsp;&nbsp;(--Tipo de Casa--)
+ </p>
+ <p>
+         <strong>Zona:</strong>
+        <select name ="ref_zona" id ="ref_zona" class="combolist">   
+          <option{{dom.ref_zona}}</option>
+         </select> &nbsp;&nbsp;&nbsp; <input class="btn btn-success" type="submit" value= "Guardar" name="grabadomi" 
+        title="Actualizacion de Domicilio" >
+    </p>
+ </form>   
+{%endblock%}

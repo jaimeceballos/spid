@@ -1,0 +1,818 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+ <script>
+  function abrirModal(){
+    window.showModalDialog("../../../addbarrios/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+  }
+   function abrirModalc(){
+    window.showModalDialog("../../../addcalles/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+  }
+  function abrirModalcr(){
+    window.showModalDialog("../../../addciudades/","","dialogWidth:500px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+  }
+</script>
+<h1>Preventivo creado con fecha: {{fecha_carga|date:"d/m/y"}} por: {{user.last_name}}, {{user.first_name}} -- {{user.username}}</h1>
+
+<form action="" role="form" method="post" onsubmit="return validaPersonaInv()">{% csrf_token %}
+ 
+  {% if formp.errors or formr.errors or dom.errors or errors %}
+            
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                     {% if formp.errors %}
+                     <h1>Errores en los datos de la persona</h1>
+                  <p style="color: red;" > {{ formp.errors.as_text}}.- &nbsp;&nbsp;</p>
+                  {% endif %}
+                  {% if dom.errors %}
+                     <h1>Errores en los datos del Domicilio de la Persona</h1>
+                  <p style="color: red;" > {{ dom.errors.as_text}}.- &nbsp;&nbsp;</p>
+                  {% endif %}
+                  {% if formr.errors %}
+                     <h1>Errores en los datos de la Persona Involucrada</h1>
+                  <p style="color: red;" > {{ formr.errors.as_text}}.- &nbsp;&nbsp;</p>
+                  {% endif %}
+                  {% for error in errors %}
+                           <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                   {%endfor%}
+                                          <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </div>
+              
+             
+    {% endif %}
+
+    
+
+       <input type="hidden" id="ids" name="ids" value="{{idhec}}"/>
+     <input type="hidden" id="idp" name="idp" value="{{idprev}}"/>
+  
+    <input type="hidden" id="idciu" name="idciu"/>
+    <input type="hidden" id="dependencia" name="dependencia" value="{{preventivo.dependencia.id}}"/>
+    <input type="hidden" id="unidad" name="unidad" value="{{preventivo.dependencia.unidades_regionales.id}}"/>
+    <input type="hidden" id="tpersona" name="tpersona" value="{{datosinvo.count}}"/> 
+  <p>
+     Unidad Regional / Dependencia : <strong style="font-weight:bold">{{unidadreg}} / {{dependencia}}</strong></p>
+ <p>
+     Preventivo  Nro. :
+     <input type="text" name="nro" id="id_nro" value="{{nro}}/{{anio}}" readonly="readonly"/> 
+ 
+     Fecha de Denuncia :
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" readonly="readonly" value="{{fecha_denuncia|date:"d/m/Y"}}"/>
+  </p>
+  
+  <p>   
+     Caratula Policial :
+     <input type="text" name="caratula"  
+     id="caratula" size="70px" readonly="readonly" value="{{caratula}}"/>
+  </p>
+
+  <p>   
+     Actuante : <input type="text" name="actuante"  id="actuante" size="25" readonly="readonly" value="{{actuante}}"/>
+     Preventor : <input type="text" name="preventor"  id="preventor" size="30" readonly="readonly" value="{{preventor}}"/>
+      </p>
+  <p>
+     Autoridades a Informar :
+     {% for y in autoridades %}
+        <ul>
+           <li>
+              <input type="text" name="autoridades" id="autoridades" size="70px" readonly="readonly" value="{{y}}"/>
+           </li>
+        </ul>      
+     {% endfor%}        
+   </p>
+
+   <h1>Descripcion del Hecho Ocurrido</h1>  
+        <p>
+        Motivo :<strong> {{motivo}}</strong> 
+        &nbsp;&nbsp;Fecha y Hora Inicio : <strong>{{fecha_desde|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong>
+        &nbsp;&nbsp;Fecha y Hora Final : <strong>{{fecha_hasta|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong> </p>
+      <p>
+       Hecho :&nbsp;<strong>{{descripcion|safe}}</strong></p>
+      <p>
+       Delito/s Cometido/s :
+               {% for y in delito %}
+                <ul>
+                   <li>
+                      <strong>{{y}}</strong>
+                   </li>
+                </ul>      
+     {% endfor%}        
+       </p>
+
+     
+      {%if "0" in mostrar or "es" in mostrar%}
+     
+         <hr>
+        <h6>Registro de Personas</h6>
+         <div id="informacion"><blockquote style="font-size:11px;font-family: Arial;">
+        <p><strong style="color:green;">
+        <i> Para realizar una busqueda de Personas, puede ingresar cualquier de estos datos:
+          Nro de Documento, Apellido o Nombres</i>
+      </strong></p>
+        
+        </blockquote>
+        
+      </div>
+        <p>
+          <strong>Búsqueda de Personas<strong>
+          <input type="text" id="texto" name="texto" size="30" value="" placeholder="Nro de Dni | Apellido | Nombres" autocomplete="off">
+            <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+          <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de personas"/>
+
+          <a href="/preventivos/persona/{{idhec}}/0/" ><button class="btn btn-success" id="nuevo" name="nuevo" value="Nuevo"
+            title="Permite Agregar una Persona que no registra en Base"/>Nuevo</button></a>
+              
+        
+      <br><br>
+
+      {%endif%}
+
+      {%if "es" in mostrar %}
+        <div id="demo">
+            <table cellpadding="0" cellspacing="0" border="0" style="font-size: 10px;" class="display" id="example" width="100%">
+              <!--id="example"-->
+    
+           <thead>
+       
+            <tr class="gradeC">
+               <th>Tipo y Nro Doc</th>
+               <th>Apellido/s y Nombres </th>
+               <th> Fecha de Nac.</th>
+               <th>Profesion/Ocupacion</th>
+            </tr>
+     
+           </thead>
+         
+             <tbody>
+             
+              {% for existe in todos %}
+                  {%for people in existe %}
+                  <tr  class="gradeC"> 
+                    <td width="17%"><a href="{% url 'persinvol' idhec people.id  %}">{{people.tipo_doc.descripcion}}&nbsp/&nbsp{{ people.nro_doc}}</a></td>
+                    <td width="50%">{{ people.apellidos}}, {{people.nombres}}</td>
+                    <td width="15%">{{ people.fecha_nac|date:"d/m/Y"}}</td>
+                    <td width="25%">{{ people.ocupacion.descripcion}}</td>
+                    </a>
+                    </td>
+                  </tr>
+                  {%endfor%}
+                {% endfor %}
+            </tbody>
+           </table>
+         </div>
+        {%endif%}
+      <br>
+ {%if "si" in mostrar or "no" in mostrar%}
+    <h6>Rol que cumple la Persona en el Hecho </h6>
+    {% if formp.tipo_doc.value == 'NO POSEE' %}
+        {{formp.tipo_doc}}
+    {% endif %}
+    {% if 'NO POSEE' in noposee %}
+    <div style="width:98%;position:relative;left:5px;">
+        <p style="color: #000;background-color: #ed9c28;border-color: #d58512;border-radius:3px;font-size:20px;font-style:oblique;font-variant:small-caps;font-weight:bold;" align="center">La persona Seleccionada, esta registrada sin un DNI real.<br>Recuerde que mientras la persona este registrada de esta manera, no se vera reflejada en las estadisticas.</p>
+        
+        </div>
+  
+  {% endif %}
+
+    <p>
+       <strong style="color:red;"> * </strong><strong>Rol:</strong>
+        <select name="roles" id="roles" class="combolist"  size="1">
+           <!-- {%for sele in roles%}
+
+              <option  selected="selected" name="roles" id="roles" value="{{sele.id}}">{{sele.descripcion}}</option>
+                <option name="roles" {{formr.roles}}</option>
+            {%endfor%}  -->
+           <option name="roles" {{formr.roles}} </option>
+
+        </select> &nbsp;&nbsp;&nbsp;&nbsp;
+    
+    </p>     
+      <div id="detenidos" style="display:none;">
+        <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
+       <option {{formr.detenido}}</option>
+       </select>
+         <strong>Fecha y Hora Ingreso :</strong>
+        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+        {{formr.fechahoradetencion}} 
+        <input class="botoncalendar" button id="fecha_hasta1" ></button>
+        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
+        <!-- script que define y configura el calendario--> 
+        <script type="text/javascript" charset="utf-8">
+        
+         var cal = Calendar1.setup({onSelect: function(cal) {
+         cal.hide() },showTime: 12,});
+         cal.manageFields('fecha_hasta1','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
+
+       </script>&nbsp;
+
+       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
+       <option {{formr.infraganti}}</option>
+       </select>
+       </div> 
+  
+   
+
+  <p>
+   
+   <div id="razon">
+    
+      <strong >Persona Juridica :</strong>
+      
+         <select class="combodni" id="juridcia" name="juridica">
+          <option name="juridica"{{formr.juridica}}</option></select>
+
+      <strong >Descripcion :</strong><input type="text" id="razon_social" name="razon_social"
+       size="45" value="{{rol.razon_social}}" autocomplete="off">
+     </div>
+  </p>
+  
+   
+  {%endif%}
+
+      {%if "si" in mostrar%}
+       <hr>
+       <h6>Datos de la Persona</h6>
+       <div id="informacion">
+          <blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p>
+            <strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
+          </blockquote>
+        
+       </div>
+            <p>
+        <strong style="color:red;"> * </strong><strong>Apellido/s :</strong><input type="text" id="apellidos" name="apellidos" readonly="readonly" 
+        style="margin-left:18px" {{formp.apellidos}}  
+        <strong style="color:red;"> * </strong><strong>Nombres :</strong><input type="text" id="nombres" name="nombres" readonly="readonly" {{formp.nombres}}
+      </p>
+      <p>
+        <strong style="color:red;"> * </strong><strong>Tipo Doc :&nbsp;&nbsp;</strong><select class="combodni" id="tipo_doc" name="tipo_doc"  style="margin-left:18px">
+       <option {{formp.tipo_doc}}</option>
+       </select>
+   <strong  style="margin-left:89px"> <strong style="color:red;"> * </strong>Nro :</strong><input type="text" id="nro_doc" name="nro_doc" size="8" readonly="readonly" {{formp.nro_doc}}
+         <strong style="color:red;"> * </strong><strong>Sexo : </strong>
+       <select name="sexo_id" id="sexo_id" class="comboxs" readonly="readonly"><option{{formp.sexo_id}}</option></select>
+        &nbsp;<strong style="color:red;"> * </strong><strong>Estado Civil :</strong>
+       <select name="estado_civil" id="estado_civil" class="comboxs"><option value="{{formo.estado_civil.id}}" {{formp.estado_civil}}</option></select>
+  </p>
+    <p>
+        <strong style="color:red;"> * </strong><strong>Pais de Nac. :</strong><select class="comboxs" id="pais_nac" name="pais_nac" readonly="readonly" >
+       <option {{formp.pais_nac}}</option></select>&nbsp;
+        <strong style="color:red;margin-left:7px"> * </strong> <strong>Ciudad de Nac. :</strong><select style="width:158px;" id="ciudad_nac" name="ciudad_nac" readonly="readonly" >
+       <option {{formp.ciudad_nac}}</option></select>
+        <strong style="color:red;margin-left:87px"> * </strong> <strong>Fecha Nac :</strong><input type="text" id="fecha_nac" name="fecha_nac" size="8" readonly="readonly" style="margin-left:10px" {{formp.fecha_nac}}
+    
+  </p>
+   <p>
+     <strong style="color:red;"> * </strong>  <strong>Pais de Res. :</strong>
+      <select name="pais_res" id="pais_res" class="comboxs" tabindex="-1"><option {{formp.pais_nac}}</option></select>&nbsp;
+        <strong style="color:red;margin-left:4px;"> * </strong><strong >Ciudad de Res. :</strong>
+        <select name="ciudad_res" id="ciudades_r" style="width: 160px;" tabindex="-1">
+         <option name="ciudades_r"></option>
+       <option {{formp.ciudad_res}}</option></select>
+            <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Ciudad de Residencia"></a>
+        <!-- id="basic-modalcr" <a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Ciudad de Residencia"></a></strong>-->
+       <strong style="color:red;margin-left:60px;"> * </strong><strong>Ocupacion :</strong>&nbsp;&nbsp;&nbsp;<select class="comboxs" id="ocupacion" name="ocupacion" >
+       <option {{formp.ocupacion}}</option></select>
+  </p>
+  <p>
+       <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias" {{formp.alias}}
+  </p>
+   <h6>Datos de los Padres</h6>
+     <p>
+  <strong>Hijo de :<strong>
+    <input type="text" id="padre_apellidos" name="padre_apellidos" size="30" placeholder="Apellido Paterno" autocomplete="off"
+     {{formpa.padre_apellidos}}
+
+    <input type="text" id="padre_nombres" name="padre_nombres" size="40"    placeholder="Nombres del padre" autocomplete="off" 
+     {{formpa.padre_nombres}}
+   </p>
+   <p>
+     <strong>y de :<strong> &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="madre_apellidos" name="madre_apellidos" size="30"  placeholder="Apellido Materno" autocomplete="off"
+         {{formpa.madre_apellidos}}
+    <input type="text" id="madre_nombres" name="madre_nombres" size="40" placeholder="Nombres de la madre" autocomplete="off"
+     {{formpa.madre_nombres}}
+ 
+   </p>
+   
+ <br>
+ <div id="domicilio">
+<hr>
+       <h6>Domicilio</h6>
+        <p>
+       <strong for="barrio_codigo" name="barrio_codigo" > Barrios :</strong>
+      <select name="barrio_codigo" id="barrio_codigo" style="width: 180px;" >
+          
+            <option {{dom.barrio_codigo}}</option>
+
+        </select> 
+         <a onclick="abrirModal();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Barrios"></a>
+         <!--  <a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Barrios">
+    </a> id="basic-modal2"-->
+         
+   
+ 
+         <strong for="calle" name="calle"> Calles :</strong>
+         <select name ="calle" id ="calles" style="width: 180px;">   
+          <option{{dom.calle}}</option>
+        </select>
+        <a onclick="abrirModalc();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Calles"></a>
+    <!--<a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" 
+    width="18px" title="Agregar Calles">
+    </a></strong></strong>  id="basic-modal" -->
+       <strong>Altura: </strong>
+       <input type="text" name="altura" id="altura" size="2"  onkeypress="return isNumberKey1(event)" 
+        autocomplete="off" {{dom.altura}}
+       <strong id="basic-modal3">Interseccion:</strong>
+        <select name ="entre" id ="entre" style="width: 180px;">   
+
+          <option{{dom.entre}}</option>
+        </select>
+        <p><strong>Lote:</strong>
+        <input type="text" name="lote" id="lote" size="4" value="{{domicilios.lote}}" autocomplete="off" 
+        onkeypress="return isNumberKeyc(event,this)"/> 
+       <strong>Sector: </strong>
+       <input type="text" name="sector" id="sector" size="4" value="{{domicilios.sector}}" autocomplete="off" /> 
+       <strong>Manzana: </strong>
+       <input type="text" name="manzana" id="manzana" size="4" value="{{domicilios.manzana}}" autocomplete="off" 
+       onkeypress="return isNumberKeyc(event,this)"/> 
+       <strong>Piso:</strong>
+      <input type="text" name="piso" id="piso" size="4" value="{{domicilios.piso}}"
+       onkeypress="return isNumberKeyc(event,this)" autocomplete="off" /> 
+      <strong>Dto.:</strong>
+      <input type="text" name="departamento" size="4" id="departamento" value="{{domicilios.departamento}}" autocomplete="off"/> 
+    </p>
+        <!--
+        <strong for="modi" name="modi" id="basic-modal3">
+         
+          <input type="image" class="basic" name="basic"  title="Modificar Domicilios"
+           style="margin-left: auto; margin-bottom: -9px;  border: 0px;"
+          src="{{STATIC_URL}}imagenes/preventivos/write.png"  width="25px" height="23px" /></strong>
+        -->
+   
+  </p>
+   <p><strong>Fecha desde:</strong>
+     <input type="text" size="15" name="fecha_desde" id="fecha_desde" value="{{domicilios.fecha_desde|date:"d/m/Y"}}" placeholder="dd/mm/aaaa" autocomplete="off" /> 
+       <input class="botoncalendar" button id="fdesde" title="Fecha Inicial"></button>
+    
+      <!-- script que define y configura el calendario--> 
+      <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_desde", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "fdesde" // el id del botón que lanzará el calendario 
+        }); 
+      </script> 
+ 
+    
+       <strong>Fecha Actualizacion: </strong>
+       <input type="text" size="15" name="fecha_actualizacion" id="fecha_actualizacion" value="{{domicilios.fecha_actualizacion|date:"d/m/Y"}}" placeholder="dd/mm/aaaa" autocomplete="off"/> 
+        <input class="botoncalendar" button id="factualizacion" title="Fecha Actualizada"></button>
+      <!-- script que define y configura el calendario--> 
+      <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_actualizacion", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "factualizacion" // el id del botón que lanzará el calendario 
+        }); 
+      </script> 
+    </p>
+  
+</div>
+
+  <br>
+  <hr>
+  {%else%}
+      {%if "no" in mostrar%}
+
+        <hr>
+          <h6>Datos de la Persona</h6>
+          <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p>
+  <strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
+        
+        </blockquote>
+        
+  </div>
+            <p>
+
+        <strong style="color:red;"> * </strong><strong>Apellido/s :</strong><input type="text" id="apellidos" name="apellidos" autocomplete="off"
+        style="margin-left:18px" {{formp.apellidos}}  
+ 
+        <strong style="color:red;"> * </strong><strong for="nombres">Nombres :</strong><input type="text" id="nombres" name="nombres" autocomplete="off" {{formp.nombres}}
+      </p>
+      <p>
+      <strong style="color:red;"> * </strong><strong>Tipo Doc :&nbsp;&nbsp;</strong>
+      <select class="combodni" id="tipo_doc" name="tipo_doc" style="margin-left:18px" >
+       <option {{formp.tipo_doc}}</option>
+       </select>
+    <strong style="color:red;margin-left:87px"> * </strong><strong>Nro :</strong><input type="text" id="nro_doc" name="nro_doc" size="8" max_lenght ="8" autocomplete="off"
+    onkeypress="return isNumberKey(event,this)"  title="Nro de DNI sin puntos y hasta 8 digitos"  {{formp.nro_doc}}
+       <strong style="color:red;"> * </strong>  <strong>Sexo :</strong>
+       <select name="sexo_id" id="sexo_id" class="comboxs"><option{{formp.sexo_id}}</option></select>
+         &nbsp;<strong style="color:red;"> * </strong><strong>Estado Civil : </strong>
+       <select name="estado_civil" id="estado_civil" class="comboxs"><option value="{{formo.estado_civil.id}}" {{formp.estado_civil}}</option></select>
+  </p>
+    <p>
+         <strong style="color:red;"> * </strong> 
+         <strong>Pais de Nac. :</strong><select class="comboxs" id="pais" name="pais_nac"  >
+        <option name="pais"></option>
+       <option {{formp.pais_nac}}</option></select>&nbsp;
+         <strong style="color:red;margin-left:7px"> * </strong> 
+         <strong >Ciudad de Nac. :</strong><select style="width:159px;margin-left:1px" id="ciudades" name="ciudad_nac">
+       <option {{formp.ciudad_nac}}</option></select>
+        <strong style="color:red;margin-left:87px"> * </strong> <strong>Fecha Nac :</strong>
+         <input type="text" name="fecha_nac" id="fecha_nac"  size="10"
+         style="margin-left:10px" placeholder="dd/mm/aaaa" {{formp.fecha_nac}} 
+      <input class="botoncalendar" button id="fnac" title="Fecha de Nacimiento"></button>
+      <!-- script que define y configura el calendario--> 
+      <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_nac", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "fnac" // el id del botón que lanzará el calendario 
+        }); 
+      </script> 
+    
+  </p>
+   <p>
+        <strong style="color:red;"> * </strong><strong>Pais de Res. :</strong>
+      <select name="pais_res" id="pais_res" class="comboxs" tabindex="-1"><option {{formp.pais_nac}}</option></select>
+  
+      <strong style="color:red;margin-left:5px"> * </strong> <strong>Ciudad de Res. :</strong>
+        <select name="ciudad_res" id="ciudades_r" style="width: 160px;" tabindex="-1">
+         <option name="ciudades_r"></option>
+       <option {{formp.ciudad_res}}</option></select>
+        <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Ciudad de Residencia"></a>
+       <!-- <a onclick="." href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Ciudad de Residencia"></a></strong> id="basic-modalcr"-->&nbsp;
+ <strong style="color:red;margin-left:57px"> * </strong> <strong>Ocupacion :</strong>&nbsp;<select class="comboxs" id="ocupacion" name="ocupacion" 
+ style="margin-left:10px">
+       <option {{formp.ocupacion}}</option></select>&nbsp;&nbsp;</p>
+         <p>
+       <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias" size="20" {{formp.alias}}
+       
+  </p>
+  <h6>Datos de los Padres</h6>
+     <p>
+  <strong>Hijo de :<strong>
+    <input type="text" id="padre_apellidos" name="padre_apellidos" size="30" placeholder="Apellido Paterno" autocomplete="off" {{formpa.padre_apellidos}}
+
+    <input type="text" id="padre_nombres" name="padre_nombres" size="40"    placeholder="Nombres del padre" autocomplete="off"  {{formpa.padre_nombres}}
+   </p>
+   <p>
+     <strong>y de :<strong> &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="madre_apellidos" name="madre_apellidos" size="30" placeholder="Apellido Materno" autocomplete="off"
+         {{formpa.madre_apellidos}}
+    <input type="text" id="madre_nombres" name="madre_nombres" size="40" placeholder="Nombres de la madre" autocomplete="off"
+     {{formpa.madre_nombres}}
+ 
+   </p>
+  
+       <br><hr><div id="domicilio">
+       <h6>Domicilio</h6>
+        <p>
+      <strong for="barrio_codigo" name="barrio_codigo" > Barrios :</strong>
+      <select name="barrio_codigo" id="barrio_codigo" style="width: 180px;height:22px;" >
+          
+            <option {{dom.barrio_codigo}}</option>
+        </select> 
+            <a onclick="abrirModal();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Barrios"></a>
+        <!--  <a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Barrios">
+    </a>id="basic-modal2"-->
+         
+   
+ 
+         <strong for="calle" name="calle" id="basic-modal"> Calles :</strong>
+         <select name ="calle" id ="calles" style="width: 180px;">   
+          <option{{dom.calle}}</option>
+        </select>
+          <a onclick="abrirModalc();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Calles"></a>
+     
+    <!--<a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" 
+    width="18px" title="Agregar Calles">
+    </a></strong></strong>-->
+         
+        
+   
+       <strong>Altura: </strong>
+       <input type="text" name="altura" id="altura" size="2" 
+       onkeypress="return isNumberKey1(event)" autocomplete="off" {{dom.altura}}
+       <strong>Interseccion:</strong>
+        <select name ="entre" id ="entre" style="width: 180px;">   
+
+          <option{{dom.entre}}</option>
+        </select>
+   
+     
+  </p>
+  <p><strong>Lote:</strong>
+        <input type="text" name="lote" id="lote" size="4" autocomplete="off" 
+        onkeypress="return isNumberKeyc(event,this)" {{dom.lote}}
+       <strong>Sector: </strong>
+       <input type="text" name="sector" id="sector" size="4"  autocomplete="off" {{dom.sector}}
+       <strong>Manzana: </strong>
+       <input type="text" name="manzana" id="manzana" size="4"  autocomplete="off" 
+       onkeypress="return isNumberKeyc(event,this)" {{dom.sector}}
+       <strong>Piso:</strong>
+      <input type="text" name="piso" id="piso" size="4" 
+       onkeypress="return isNumberKeyc(event,this)" autocomplete="off" {{dom.piso}}
+      <strong>Dto.:</strong>
+      <input type="text" name="departamento" size="4" id="departamento"  autocomplete="off" {{dom.departamento}} 
+    </p>
+   <p><strong>Fecha desde:</strong>
+     <input type="text" size="15" name="fecha_desde" id="fecha_desde" value="{{domicilios.fecha_desde|date:"d/m/Y"}}" placeholder="dd/mm/aaaa" autocomplete="off" /> 
+       <input class="botoncalendar" button id="fdesde" title="Fecha Inicial"></button>
+    
+      <!-- script que define y configura el calendario--> 
+      <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_desde", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "fdesde" // el id del botón que lanzará el calendario 
+        }); 
+      </script> 
+ 
+       
+       <strong>Fecha Actualizacion: </strong>
+       <input type="text" size="15" name="fecha_actualizacion" id="fecha_actualizacion" value="{{domicilios.fecha_actualizacion|date:"d/m/Y"}}" placeholder="dd/mm/aaaa" autocomplete="off"/> 
+        <input class="botoncalendar" button id="factualizacion" title="Fecha Actualizada"></button>
+      <!-- script que define y configura el calendario--> 
+      <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_actualizacion", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "factualizacion" // el id del botón que lanzará el calendario 
+        }); 
+      </script> 
+    </p>
+  <br><hr></div>
+  {%endif%}
+
+ {%endif%}
+
+  {%if "si" in mostrar or "no" in mostrar%}
+   
+    <br>
+     <div align="right">
+           <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+  
+        <input class="btn btn-success" type="submit" value="Guardar" id="grabar" name="grabar"
+         title="Permite guardar personas involucradas" onclick="documentVerify()" />
+       </div>
+     
+
+     
+  {%endif%}
+
+  
+
+  {%if datosinvo %}
+  <hr>
+  <h6>Personas Involucradas</h6>
+   <table class="table">
+       {%for involus in datosinvo%}
+       
+        <tr>
+           <td>
+             <button type="submit" name="dele" id="dele" class="borrarde"
+              value="{{involus.id}}" onclick=(this.value) title="Permite borrar un involucrado"/></button>
+        
+                              <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">  
+                                [ {{involus.persona}} -- {{involus.roles}} ]&nbsp;&nbsp;</strong>
+                                 {%if involus.ampliacion.fecha%}
+                                   &nbsp;&nbsp; 
+                                   <strong style="letter-spacing:1.1px;">- Modificado por Ampliacion en fecha : {{involus.ampliacion.fecha|date:"d/m/Y"}} -- {{ involus.ampliacion.titulo}}</strong>
+            
+                                 {%endif%}
+          
+         
+            
+    
+           </td>   
+        </tr>   
+       {%endfor%}
+       
+  </table> 
+ 
+ 
+  <div align="right">
+       <a href="{% url 'selectPrev' idprev %}" class="btn btn-success"><label style="font-size:11px;text-align:center;">Volver</label></a> 
+    {% if tienelugar %}
+      <a class="btn1 btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Ver Lugar </label></a>
+   {% else %}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+        <a class="btn1 btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Lugar </label></a>
+      {% endif %}
+    {%endif%}
+    </div>
+ {%else%}
+ <hr><br>
+    <div align="right">
+       <a href="{% url 'selectPrev' idprev %}" class="btn btn-success"><label style="font-size:11px;text-align:center;">Volver</label></a> 
+    
+   
+    </div>
+ {%endif%}
+  <!--
+   <div align="right">
+   {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+        <a class="btn1 btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Cargar Lugar </label></a>
+      {% endif %}
+    </div>
+  -->
+
+ </form>
+{% endblock %}
+{% block contenido %}
+<form action="." method="post">{% csrf_token %} 
+
+   <h1>Formulario de ABM de Calles según la Ciudad</h1>
+    {% if errors %}
+            
+              {% for error in errors %}
+                 
+                  <p style="color: red;" > {{ error }} &nbsp;&nbsp;
+                      
+                       </p>
+                       
+               {% endfor %}
+             
+    {% endif %}  
+    
+   <br>
+   
+    <p>
+      
+     <strong> Ciudad  :</strong>
+        <select name="ciudad" id="ciudad" class="combodoc"  tabindex="0" title="Seleccione la Ciudad en la cual se agregara la calle ingresada">
+         {% for depe in formciu %}
+
+           <option name="ciudad"  id="ciudad" value={{depe.id}}>{{depe.descripcion}}</option>
+         {%endfor%} 
+         </select>
+
+    </p>  
+    <br>
+
+     <p><strong> Descripcion:</strong>
+      <input type="text" name="descripcion" id="descripcion" value="{{calles.descripcion}}" autocomplete="off"/>
+     <input class="btn btn-success" type="submit" value= "Grabar" name="grabac" title="Grabar calles" >
+  
+    </p>
+</form>
+{%endblock%}
+{% block contenidos %}
+<form id="form" action="." method="post">{% csrf_token %} 
+
+   <h1>Formulario de ABM de Barrios  segun la Ciudad</h1>
+  {% if errors %}
+            
+              {% for error in errors %}
+                 
+                  <p style="color: red;" > {{ error }} &nbsp;&nbsp;
+                      
+                       </p>
+                       
+               {% endfor %}
+             
+    {% endif %}  
+   <br>
+    <p>
+      
+     <strong for="ciudad" name="ciudad" > Ciudad  :</strong>
+
+    
+        <select name="ciudad" id="ciudad" class="combodoc"  tabindex="-1" title="Seleccione la ciudad en la cual se agregara el barrio ingresado">
+        {% for depe in formciu %}
+
+           <option name="ciudad" value="{{depe.id}}">{{depe.descripcion}}</option>
+         {%endfor%} 
+         </select>
+ 
+    </p>  <br>
+     <input type="hidden" name="idc" id="idc" value="{{barrios.id}}" autocomplete="off"/>
+   
+    <p><strong> Descripcion:</strong>
+      <input type="text" name="descripcion" id="descripcion" value="{{barrios.descripcion}}" autocomplete="off"/>
+           <input class="btn btn-success" type="submit" value= "Grabar" name="grabab" title="Grabar barrios" >
+ 
+    </p>
+   
+  </form>
+{%endblock%}    
+{%block modificar%}
+<form id="form" action="." method="post">{% csrf_token %} 
+
+   <h1>Actualizar Domicilios</h1>
+   {% if errors %}
+            
+              {% for error in errors %}
+                 
+                  <p style="color: red;" > {{ error }} &nbsp;&nbsp;
+                      
+                       </p>
+                       
+               {% endfor %}
+             
+    {% endif %}  
+    <hr>
+    <br>
+    <p>
+      <strong>Reside:</strong>
+        <select name="ciudad_res" id="ciudades_r" class="comboxs1" tabindex="-1">
+         <option name="ciudades_r"></option>
+       <option {{formp.ciudad_res}}</option></select>&nbsp;&nbsp;(--Ciudad de Residencia--)</p>
+        <p>
+      <strong>Barrio:</strong>
+      <select name="barrio_codigo" id="barrio_codigo" class="comboxs1" >
+          
+            <option {{dom.barrio_codigo}}</option>
+        </select> 
+     </p>
+     <p>
+         <strong>Calle:</strong>
+        <select name ="calle" id ="calle" class="combolist">   
+          <option{{dom.calle}}</option> 
+        </select>&nbsp;&nbsp;
+    
+       <strong>Altura: </strong>
+       <input type="text" name="altura" id="altura" size="2"  onkeypress="return isNumberKey1(event)" 
+       value="{{domicilios.altura}}" autocomplete="off"/></p>
+       <p>
+       <strong id="basic-modal3">Calle:</strong>
+        <select name ="entre" id ="entre" class="combolist">   
+
+          <option{{dom.entre}}</option>
+        </select>&nbsp;&nbsp;(--Interseccion--)
+      
+  </p>
+  <p><strong>Tipo :</strong>
+      <select name="tipos_domicilio" id="tipos_domicilio" class="combolist">
+            <option {{dom.tipos_domicilio}}</option>
+        </select> &nbsp;&nbsp;(--Tipo de Casa--)
+ </p>
+ <p>
+         <strong>Zona:</strong>
+        <select name ="ref_zona" id ="ref_zona" class="combolist">   
+          <option{{dom.ref_zona}}</option>
+         </select> &nbsp;&nbsp;&nbsp; <input class="btn btn-success" type="submit" value= "Guardar" name="grabadomi" 
+        title="Actualizacion de Domicilio" >
+    </p>
+ </form>   
+{%endblock%}
+{%block ciudadres%}
+<form  action="" role="form"  method="post">{% csrf_token %} 
+
+   <h1>Formulario de ABM de Ciudades/Localidades</h1>
+   {% if errors %}
+            
+              {% for error in errors %}
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}  
+    <br>
+ 
+    <p><strong for="pais" name="pais"> Seleccione Pais  :
+     <select name="pais" id="pais" class="combolist"  size="1"/>
+      <option name="pais">Seleccione Pais </option>&nbsp;
+       <option {{formpr.pais}}</option>
+     </select></strong></p>
+    
+      
+     <input type="hidden" name="ids" id="ids" value="{{ciudad.id}}" autocomplete="off"/>
+    
+     <p><label for="descripcion" name="descripcion">Ciudad Residencia : 
+    <input type="text" name="descripcion" id="descripcion" value="{{ciudad.descripcion}}" autocomplete="off"/>
+    <a href="/preventivos/ciudades/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>   
+    
+     {% if ciudad in lista %}
+      <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">
+     <input class="btn btn-success" type="submit" value= "Borrar" name="borrar" title="Elimina ciudad">
+
+    {%else%}
+     <input class="btn btn-success" type="submit" value= "Grabar" name="grabarciu" title="Grabar ciudad" >
+    {%endif%}</label></p>
+    
+  <!--input type="text" name="pais" id="pais" value="{{ciudades.pais}}" disabled="disabled"/-->
+    </label>
+    </p>  
+   
+    </form> 
+      
+{%endblock%}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block main %}
+
+ <form id="form" action="." method="post">{% csrf_token %} 
+   <h1>Formulario de ABM de Tipos de Viviendas</h1>
+
+
+    {% if errors %}
+            
+              {% for error in errors %}
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}  
+    <label>Tipos de Viviendas :
+     <input type="text" name="descripcion" id="descripcion" size="30" value="{{hogar}}" autocomplete="off"/>
+     
+<a href="/preventivos/hogares/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+    
+    {% if hogar in lista %}
+     <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">
+     <input class="btn btn-success" type="submit" value= "Borrar" name="borrar" title="Elimina el tipo de Hogar / Casa">
+
+    {%else%}
+     <input class="btn btn-success" type="submit" value= "Grabar" name="grabar" title="Grabar el Tipo de Hogar / Casa" >
+    {%endif%}
+  </label> 
+    
+
+    <br>
+      <br>
+      <h1>LISTADO GENERAL DE TIPOS DE VIVIENDAS </h1>
+      <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th >Items</th>
+               <th>Tipos de Lugares referentes al Hecho Delictivo</th>
+            </tr>
+        </thead>
+      
+             <tbody>
+                 {% for listas in lista %}
+                  <tr  class="gradeC"> 
+                    <td width="13%"><a href='/preventivos/hogares/{{ listas.id }}/'>{{ listas.id }}</a></td>
+                    <td width="30%">{{ listas.descripcion}}</td>
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+       </div>
+ </form>
+{% endblock %}

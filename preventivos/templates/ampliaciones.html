@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block main %}
+
+ <form id="form" action="." method="post" autocomplete="OFF">{% csrf_token %} 
+   <h1>Ampliaciones referidas al preventivo {{preventivo.nro}}/{{preventivo.anio}} {{preventivo.dependencia.descripcion}} - {{preventivo.dependencia.unidades_regionales.descripcion}}</h1>
+
+   <p><strong style="text-transform:uppercase;font-size:15px">Datos Generales del preventivo:</strong></p>
+   <div style="color: #3a87ad;background-color: #d9edf7;border-color: #bce8f1;border-radius:5px;"><p>
+   <strong style="color: #3a87ad;">Preventor:</strong> {{preventivo.preventor}}</p>
+   <p><strong style="color: #3a87ad;">Actuante:</strong> {{preventivo.actuante}}</p>
+   <p><strong style="color: #3a87ad;">Caratula:</strong> {{preventivo.caratula}}</p>
+   {% if preventivo.fecha_cierre %}
+      <p style="color: #b94a48;"><strong style="color: #b94a48;">Preventivo cerrado en fecha:</strong> {{preventivo.fecha_cierre}}</p>
+
+   {% endif %}
+  </div>
+   <hr>
+  <h1>Datos de la Ampliacion</h1>
+   <p><strong >Titulo: &nbsp; </strong> <input style="border:1px solid black;" {{ampliacion.titulo}}
+   <p><strong>Autoridades informadas y/o a Informar:</strong>{{ampliacion.autoridades}}</p>
+   <table>
+    <tr style="vertical-align:bottom">
+      <td >
+        <strong>Texto Ampliatorio</strong>{{ampliacion.descripcion}} 
+      </td>
+      <td> 
+        <span style="margin-right:20px;"> {%if not id%}
+   <input class="new-aqua" type="submit" name="grabar" id="grabar" value="Grabar" />
+   {%else%}
+   <p align="right">
+    <a href="{% url 'ampliacion' preventivo.id %}" ><input type="button" value="LIMPIAR" class="new-aqua"></a>
+&nbsp;&nbsp;
+         <a href="{% url 'reporampli' preventivo.id id%}" target="_blank" ><input type="button" class="botonprint"
+            title="Imprimir Ampliación" rel="tooltip"/></input></a> </p>
+   {%endif%}</span></td>
+ </tr>
+</table>
+   {% if not preventivo.fecha_cierre %}
+   <p><strong>Cierre de preventivo: </strong>{{ampliacion.cierre_causa}}</p>
+   {% endif %}
+    {%if not ampliacion.fecha_autorizacion%}
+         {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and id%}
+         {% if finaliza and not ampliacion.fecha_autorizacion%}
+        <p align="right">
+          <a class="btn btn-success"  href="{% url 'finalizar' preventivo.id id %}" >
+            <label  title="Permite Finalizar con la edición de la Ampliacion para que despues la misma sea informada a las Autoridades"
+          style="text-align:center;" rel='tooltip'> 
+          Fin Edición </label></a>
+          <a class="btn btn-success"  href="{% url 'amplia_pers' preventivo.id id %}" ><label  title="Permite Agregar/modificar datos de personas por medio de Ampliaciones" 
+          style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> (+) Personas </label></a>
+
+          <a class="btn btn-success"  href="{% url 'amplia_ele' preventivo.id id %}" ><label  title="Permite Agregar Elementos según sean Denunciados/Utilizados/Secuestrados/Utilizados y Secuestrados por medio de Ampliaciones"
+          style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> (+)Elementos </label></a>{%endif%}
+      {% endif %}<!--  FIN COMPROBACION DEPENDENCIA -->
+   {%endif%}
+
+
+ 
+        
+   <br>
+   <h1>Listado de ampliaciones generadas</h1>
+   <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th >Fecha</th>
+               <th>Titulo</th>
+                <th>Fecha Autorizacion</th>
+                <th style="text-align:center">Ver</th>
+                 {%if tienepersonas%}
+                    <th style="text-align:center">Personas</th>
+                {%endif%}
+                {%if tieneelemento%}
+                    <th style="text-align:center">Elementos</th>
+                {%endif%}
+                {%if not finaliza and not ampliacion.fecha_autorizacion%}
+                    <th style="text-align:center">Informar</th>
+                {%else%}
+                  {%if not ampliacion.fecha_autorizacion%}
+                    <th style="text-align:center">Informar</th>
+                 {%else%}
+                      <th style="text-align:center"></th>
+            
+                 {%endif%}
+                {%endif%}
+             </tr>
+        </thead>
+            <tbody>
+                
+         
+                 {%for a in ampliaciones %}
+                  <tr  class="gradeC"> 
+                   <td width="10%">{{a.fecha|date:"d/m/y"}}</td>
+                   <td width="50%">{{a.titulo}}</td>
+                   <td width="25%">{{a.fecha_autorizacion}}</td>
+                  <td width="12%"><center><a href="{% url 'ver_ampliacion' preventivo.id a.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite ver Datos de la Ampliacion" rel="tooltip" /></a></center></td>
+                  {%if tienepersonas%}
+             
+                     
+                    <td width="12%"><center>
+                        <button type="button" name="verper" id="verper" class="verdata"
+                         title="Permite ver todos las Personas involucradas a la Ampliacion" rel="tooltip"/></button>
+
+                     </center></td>
+                   {%endif%}
+                  {%if tieneelemento%}
+             
+                     
+                    <td width="12%"><center>
+                        <button type="button" name="vere" id="vere" class="verdata"
+                         title="Permite ver todos los Elementos pertenecientes a la Ampliacion" rel="tooltip"/></button>
+
+                     </center></td>
+                   {%endif%}
+                   
+                   {%if a.fin_edicion and not a.fecha_autorizacion%}
+                   <td width="12%"><center>
+                    <a href="{% url 'enviar' preventivo.id a.id %}"><input type="button" name="enviar" id="enviar"  class="botonenviar"  
+                      title="Permite informar por email a todas las Autoridades" rel="tooltip"/></input></a>
+                    </center></td>
+                   {%else%}
+                      {%if  a.fecha_autorizacion%}
+                   <td width="12%"><center>
+                   <img src="{{STATIC_URL}}imagenes/preventivos/forget.png" style="border:0" title="Ampliacion informada/envida por email" rel="tooltip" />
+                    </center></td>
+                   {%else%}
+                         <td width="12%"><center>
+                  
+                    </center></td>
+                   {%endif%}
+                  {%endif%}
+                 </tr>
+                 {% endfor %}
+                
+            </tbody>
+    </table>
+  </div>
+   <div id="verpers" style="display:none;">
+  <br><br>
+  <hr>
+  <div align="right"><strong style="font-family: Arial; font-weight: bold; color: #333; width:auto;font-size:12px;" >
+  Listado de Personas involucradas  </strong><input type="button" class="borrarde" id="cancelarp" name="cancelarp" 
+            title="Cerrar cuadro de personas" ></a></div>
+   
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+         <thead>
+            <tr class="gradeC">
+               <th >Items</th>
+               <th>Documento</th>
+               <th>Apellido</th>
+               <th>Nombre</th>
+               <th>Rol involucrados</th>
+            </tr>
+        </thead>
+      
+             <tbody>
+                 {% for listas in personas %}
+
+                  <tr  class="gradeC"> 
+                    <td width="13%"><a href='/preventivos/persona/ver/{{ listas.persona_id }}/' target="_blank">{{ listas.persona_id }}</a></td>
+                    <td width="25%">{{ listas.persona.tipo_doc}}&nbsp{{listas.persona.nro_doc}}</td>
+                    <td width="20%">{{ listas.persona.apellidos }}</td>
+                    <td width="30%">{{ listas.persona.nombres }}</td>
+                    <td width="20%">{{listas.roles.descripcion}}</td>
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+         
+  
+           </table>
+  
+  </div>
+  <div id="verele" style="display:none;">
+  <br><br>
+  <hr>
+  <div align="right"><strong style="font-family: Arial; font-weight: bold; color: #333; width:auto;font-size:12px;" >
+  Listado de elementos  </strong><input type="button" class="borrarde" id="cancelar" name="cancelar" 
+            title="Cerrar cuadro de elementos" ></a></div>
+   
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+             
+            
+               <th>Tipo</th>
+               <th>Rubro</th>
+               <th>Categoria</th>
+               <th>Cantidad</th>
+              
+            </tr>
+        </thead>
+      
+
+             <tbody>
+                 {% for elemento in veriele %}
+
+                  <tr  class="gradeC"> 
+                   
+                    <td width="25%">{{ elemento.tipo.descripcion}}</td>
+                    <td width="30%">{{ elemento.rubro.descripcion }}</td>
+                    <td width="30%">{{ elemento.categoria.descripcion }}</td>
+                    <td width="30%">{{ elemento.cantidad }}  {{ elemento.unidadmed }}</td>
+
+        
+                      </td>          
+           
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+  </div>
+  
+</form>
+{% endblock %}-->

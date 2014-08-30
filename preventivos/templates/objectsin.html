@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+ 
+<h1>Consulta de Elementos Involucrados en Hechos Ocurridos</h1>
+
+<form action="" role="form" method="post">{% csrf_token %}
+ 
+  {% if errors %}
+            
+              {% for error in errors %} 
+               <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;</p>
+                  <p>
+                  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}  
+      <br>
+
+       <input type="hidden" id="idcate" name="idcate" value="{{texto}}"/>
+       <section style="margin: 0px;">
+          <fieldset style="background: white ;border-radius: 5px; padding: 10px; min-height:10px;">
+                <legend><b> Búsqueda de Elementos Involucrados </b> </legend>
+                    <div style="margin-left:16px;">
+                       <select name="categorias" id="categorias" style="width:250px" >
+                    <option  name="categorias" id="categorias" {{form.categoria}} </option>
+                    
+                </select> 
+                      <a href="/preventivos/objectsin/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+                      <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de elementos involucrados en Hechos"/>
+
+                    </div>
+          </fieldset>                     
+        
+      <br><br>
+   {%if "es" in mostrar %}
+        <h6> Elementos Involucrados encontrados </h6>
+        <div id="demo">
+            <table cellpadding="0" cellspacing="0" border="0" style="font-size: 10px;" class="display" id="example" width="100%">
+              <!--id="example"-->
+    
+           <thead>
+       
+            <tr class="gradeC">
+                <th>Ver Datos Relacionados</th>
+               <th>Elemento </th>
+                <th>Estado/Tipo </th>
+                 <th>Rubro </th>
+               <th> Cantidad</th>
+               <th>Unidad Medida</th>
+               <th>Descripcion</th>
+               
+               
+            </tr>
+     
+           </thead>
+         
+             <tbody>
+          
+              {% for regis in todos %}
+                  {%for obj in regis %}
+                   <tr  class="gradeC">
+                     <td width="10%"><button type="submit" id="vermas"  name="vermas" class="vermas"
+              value="{{obj.hechos_id}}" onclick=(this.value) title="Permite ver el Hecho en el cual esta Involucrado"/></button></a></td>
+                 
+                    <td width="15%">{{obj.categoria.descripcion}}</td>
+                    <td width="15%">{{obj.tipo.descripcion}}</td>
+                        <td width="15%">{{ obj.rubro.descripcion}}</td>
+                    <td width="5%">{{ obj.cantidad}}</td>
+                    <td width="10%">{{ obj.unidadmed.descripcion}}</td>
+                    <td width="50%">{% autoescape on %}{{obj.descripcion}}{% endautoescape %}</td>
+                
+                   
+                  </tr>
+                  {%endfor%}
+                {% endfor %}
+            </tbody>
+           </table>
+         </div>
+   
+      <br>
+   {%endif%}
+
+    
+
+   <br>
+            {%if 'si' in filtro%}
+           <hr>
+           <h6>Datos del Hecho</h6>
+          
+              <p>
+             
+      
+              
+           
+                 {%for eles in alldata%}
+                       {%for elesi in eles%}
+                         <p>
+                            <strong>Descripcion del Hecho</strong></p>
+                            <p>{% autoescape off %}{{ elesi.descripcion }}{% endautoescape %}</p><hr>
+                          <p>
+                            <strong>Fecha y Hora de Inicio</strong>
+                           {{ elesi.fecha_desde|date:"d/m/Y P"}}&nbsp;&nbsp;
+                            <strong>Fecha y Hora de Final</strong>
+                             {{ elesi.fecha_hasta|date:"d/m/Y P"}}&nbsp;&nbsp;{%if elesi.fecha_esclarecido%}
+                              <strong>Fecha Esclarecido</strong>
+                               {{ elesi.fecha_esclarecido|date:"d/m/Y"}}{%else%}<strong style="color:red;">No fue esclarecio el Hecho</strong>{%endif%}<hr>
+                                <p><strong>Preventivo Nro/Año:</strong>&nbsp;&nbsp;<strong style="font-size:14px;">{{ elesi.preventivo.nro}}/{{elesi.preventivo.anio}}</strong></p>
+                                <p><strong>Fecha Denuncia :</strong>&nbsp;&nbsp;{{ elesi.preventivo.fecha_denuncia|date:"d/m/Y"}} --- 
+                                  <strong>Realizada en :</strong>
+                                  &nbsp;&nbsp;{{ elesi.preventivo.dependencia.descripcion}}---{{elesi.preventivo.dependencia.unidades_regionales.descripcion}}</p>
+                                
+                          {%endfor%}
+                      
+                  {%endfor%}
+                   
+            {%endif%}
+      <br>
+         {%if "es" in mostrarsi %}
+        <h6> Elementos Involucrados en el mismo Hecho</h6>
+        <div id="demo">
+            <table cellpadding="0" cellspacing="0" border="0" style="font-size: 10px;" class="display" id="example" width="100%">
+              <!--id="example"-->
+    
+           <thead>
+       
+            <tr class="gradeC">
+                <th>Ver</th>
+               <th>Elemento </th>
+                <th>Estado/Tipo </th>
+                 <th>Rubro </th>
+               <th> Cantidad</th>
+               <th>Unidad Medida</th>
+               <th>Descripcion</th>
+               <th>Ref: Ampliacion</th>
+           
+            </tr>
+     
+           </thead>
+         
+             <tbody>
+          
+              {% for regis in todos %}
+                  {%for obj in regis %}
+                   <tr  class="gradeC">
+                     <td width="5%"><button type="submit" id="vermas"  name="vermas" class="vermas"
+              value="{{obj.hechos_id}}" onclick=(this.value) title="Permite ver el Hecho en el cual esta Involucrado"/></button></td>
+                 
+                    <td width="12%">{{obj.categoria.descripcion}}</td>
+                    <td width="15%">{{obj.tipo.descripcion}}</td>
+                        <td width="12%">{{ obj.rubro.descripcion}}</td>
+                    <td width="5%">{{ obj.cantidad}}</td>
+                    <td width="8%">{{ obj.unidadmed.descripcion}}</td>
+                    <td width="55%" style="font-size:11px;font-weight: bold;">{% autoescape on %}{{obj.descripcion}}{% endautoescape %}</td>
+               <td width="30%" style="font-size:11px;"> 
+              
+                     {%if obj.ampliacion.fecha%}
+                        <strong>Refiere a:</strong>
+                        {{obj.ampliacion.titulo}}  {{obj.ampliacion.fecha|date:"d/m/y"}}
+                      {%else%}
+                         <strong>---</strong>
+                     {%endif%}
+                </td>
+                   
+                  </tr>
+                  {%endfor%}
+                {% endfor %}
+               
+            </tbody>
+           </table>
+         </div>
+   
+      <br>
+     {%endif%}
+    </form> 
+      
+{%endblock%}

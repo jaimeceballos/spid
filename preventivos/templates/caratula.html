@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block main %}
+
+<form id="form" action="." method="post">{% csrf_token %} 
+
+
+   <h1>Formulario de Alta de Preventivo  -  Paso {{ wizard.steps.step1 }} de {{ wizard.steps.count }}</h1>
+   <br>
+    <table>
+      {{ wizard.management_form }}
+      {% if wizard.form.forms %}
+          {{ wizard.form.management_form }}
+          {% for form in wizard.form.forms %}
+              {{ form }}
+          {% endfor %}
+      {% else %}
+         <p>
+            <strong>Fecha denuncia:</strong>
+            <input id="id_caratula-fecha_denuncia" name="caratula-fecha_denuncia" type="text" placeholder="dd/mm/aaaa"/>
+            <img src="{{STATIC_URL}}imagenes/preventivos/calendario.png" width="16" height="16" border="0" title="Fecha Inicial" id="lanzador"> 
+            <!-- script que define y configura el calendario -->
+            <script type="text/javascript"> 
+              Calendar.setup({ 
+                inputField : "id_caratula-fecha_denuncia", // id del campo de texto 
+                ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+                button : "lanzador" // el id del botón que lanzará el calendario 
+              }); 
+            </script> 
+          </p>
+          <p>
+            <strong>Caratula:</strong>
+            <input id="id_caratula-caratula" maxlength="150" name="caratula-caratula" type="text" />
+          </p>
+          
+      {% endif %}
+    </table>
+    
+    <br>
+    <p>
+      {% if wizard.steps.prev %}
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">Primer paso</button>
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Paso anterior</button>
+    {% endif %}
+      <input type="submit" value="Siguiente"/></p>
+     
+    </form> 
+      
+{% endblock %}
+{% block footer%}
+<div class="blue align.left">{% if user.is_authenticated %}
+            {%if user.is_staff or not user.is_staff%}Usuario &nbsp;{% endif %} {{ state }} : &nbsp;&nbsp;&nbsp;&nbsp;{{ user.username }}&nbsp;&nbsp; {{destino}}
+            {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;<a class="blue align-right"><strong>Policia de Chubut - Div. Sistemas Informaticos - &copy; 2013</strong> &nbsp;&nbsp;</a>  </div> 
+ {% endblock %}   

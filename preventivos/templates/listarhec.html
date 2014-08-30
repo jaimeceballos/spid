@@ -1,0 +1,59 @@
+{%if 'no' in total%}
+ 
+  
+ <h1>RESULTADO DE LA BUSQUEDA </h1>
+     <p style="font-size: 16px;">
+            Hechos Ocurridos que fueron Informados :
+            <span > {{sonauti}} </span>
+              <button type="submit" name="ver" id="ver" class="verdata"
+              value="1" onclick="submit" title="Permite Ver mas Datos de los Hechos ocurridos"/></button>
+        <p style="font-size: 16px;">
+            Hechos Ocurridos que NO fueron informados :
+            <span >{{nosonauti}}</span>
+             <button type="submit" name="ver" id="ver" class="verdata"
+              value="2" onclick="submit" title="Permite Ver mas Datos de los Hechos ocurridos"/></button></p>
+  <br>
+  <input type="hidden" id="sonauti" name="sonauti" value="{{sonauti}}"/>
+  <input type="hidden" id="nosonauti" name="nosonauti" value="{{nosonauti}}"/>
+  <input type="hidden" id="tipodelito" name="tipodelito" value="{{tipodelito}}"/>
+  <input type="hidden" id="delito" name="delito" value="{{delito}}"/>
+  {%if 'si' in auti%}      
+     <h1>LISTADO GENERAL DE PREVENTIVOS </h1>
+ <div> Realice una Búsqueda mas detallada con el resultado que se encontró con la búsqueda anterior</div>
+  <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th>Preventivo Nro/Año</th>
+               
+               <th>URE / Dependencia</th>
+                <th >Fecha de carga del Hecho </th>
+                <th>Motivo/Tipo</th>
+               <th>Fecha Inicial</th> <th>Fecha Final</th>
+             </tr>
+        </thead>
+            <tbody>
+        
+                {% for existen in todos %}
+                 {%for datos in existen %}
+                  <tr  class="gradeC"> 
+                      <td width="10%"><a href='{% url 'selectPrev' datos.preventivo_id %}'>
+                   {{ datos.preventivo.nro }} / {{ datos.preventivo.anio}}</a></td>
+              
+                  
+                      <td width="35%">{{datos.preventivo.dependencia.unidades_regionales.descripcion}} / {{datos.preventivo.dependencia.descripcion}}</td>
+                       <td width="15%">{{datos.fecha_carga| date:"d/m/Y"}}</td>
+                   <td width="22%">{{datos.motivo.descripcion}}</td>
+                   <td width="10%">{{ datos.fecha_desde | date:"d/m/Y P"}}</td>
+                   <td width="10%">{{ datos.fecha_hasta | date:"d/m/Y P"}}</td>
+         
+                   </a>
+                  </td>
+                 </tr>
+                 {% endfor %}
+                {%endfor%}
+            </tbody>
+    </table>
+  </div>
+  {%endif%}
+{%endif%}

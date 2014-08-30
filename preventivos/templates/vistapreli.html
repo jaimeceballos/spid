@@ -1,0 +1,126 @@
+{% extends "mapas.html" %}
+
+
+{% block main %}
+ 
+<h1>Preventivo creado con fecha: {{fecha_carga|date:"d/m/y"}} por: {{user.last_name}}, {{user.first_name}} -- {{user.username}}</h1>
+
+<form action="" role="form" method="post">{% csrf_token %}
+
+  {% if formp.errors or formr.errors %}
+            
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                     {% if formp.errors %}
+                     <h1>Errores en los datos de la persona</h1>
+                  <p style="color: red;" > {{ formp.errors.as_text}}.- &nbsp;&nbsp;</p>
+                  {% endif %}
+                  {% if formr.errors %}
+                     <h1>Errores en los datos de la Persona Involucrada</h1>
+                  <p style="color: red;" > {{ formr.errors.as_text}}.- &nbsp;&nbsp;</p>
+                  {% endif %}
+                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </div>
+              
+             
+    {% endif %}
+
+
+
+     <input type="hidden" id="ids" name="ids" value="{{idhec}}"/>
+     <input type="hidden" id="idp" name="idp" value="{{idprev}}"/>
+   <input type="hidden" id="idper" name="idper" value="{{idper}}"/>
+ 
+
+ <p>
+     Preventivo  Nro. :
+     <input type="text" name="nro" id="id_nro" value="{{nro}}/{{anio}}" readonly="readonly"/> 
+ 
+     Fecha de Denuncia :
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" readonly="readonly" value="{{fecha_denuncia|date:"d/m/Y"}}"/>
+  </p>
+  
+  <p>   
+  	 Caratula Policial :
+     <input type="text" name="caratula"  
+     id="caratula" size="70px" readonly="readonly" value="{{caratula}}"/>
+  </p>
+
+ 
+   <p>   
+  	 Actuante : <input type="text" name="actuante"  id="actuante" readonly="readonly" value="{{actuante}}"/>
+     Preventor : <input type="text" name="preventor"  id="preventor" readonly="readonly" value="{{preventor}}"/>
+  	  </p>
+  <p>
+     Autoridades a Informar :
+     {% for y in autoridades %}
+        <ul>
+           <li>
+              <input type="text" name="autoridades" id="autoridades" size="70px" readonly="readonly" value="{{y}}"/>
+           </li>
+        </ul>      
+     {% endfor%}        
+   </p>
+
+     
+        <p>
+        Motivo :<strong> {{motivo}}</strong> 
+        &nbsp;&nbsp;Fecha y Hora Inicio : <strong>{{fecha_desde|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong>
+        &nbsp;&nbsp;Fecha y Hora Final : <strong>{{fecha_hasta|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong> </p>
+      <p>
+       Hecho :&nbsp;<strong>{{descripcion|safe}}</strong></p>
+      <p>
+       Delito/s Cometido/s :
+               {% for y in delito %}
+                <ul>
+                   <li>
+                      <strong>{{y}}</strong>
+                   </li>
+                </ul>      
+     {% endfor%}        
+       </p>
+       
+      <br>
+
+  <hr>
+  <h6>Personas Involucradas</h6>
+   <table class="table">
+       {%for involus in datosinvo%}
+       
+        <tr>
+           <td>
+                              <strong style="display: inline-block; vertical-align: middle; line-height: 2px; "> 
+                                 {{involus.persona}} -- {{involus.roles}} &nbsp;&nbsp;</strong>
+    
+           
+            
+            <button type="submit" name="ver" id="ver" class="verdata"
+              value="{{involus.id}}" onclick=(this.value) title="Permite Ver mas Datos de la Persona Involucrada"/></button>
+
+         
+            <button type="submit" name="dele" id="dele" class="borrarde"
+              value="{{involus.id}}" onclick=(this.value) title="Permite borrar un involucrado"/></button>
+         
+    
+           </td>   
+        </tr>   
+       {%endfor%}
+  </table> 
+
+
+   <div align="right">
+       <table class="table">
+        <tr><td>
+           <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
+        <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">
+         (+) Personas Inv.</label></a></td><td>
+         <div align="right">
+      <a href="{% url 'selectPrev' idprev %}" class="btn btn-success"><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Volver</label></a> 
+    </div>
+</td>
+<td><td>
+        <a href="{% url 'reportes' idprev %}" target="_blank" ><input type="button" class="botonprint"
+            title="Imprimir Preventivo"/></input></a></td></tr></table></div>
+ 
+ </form>
+{% endblock %}

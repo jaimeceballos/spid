@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+ 
+<h1>Consulta de Personas Involucradas en Hechos Ocurridos</h1>
+
+<form action="" role="form" method="post">{% csrf_token %}
+ 
+  {% if errors %}
+            
+              {% for error in errors %} 
+               <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;</p>
+                  <p>
+                  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}  
+       <br>
+       <section style="margin: 0px;">
+          <fieldset style="background: white;border-radius: 5px; padding: 5px; min-height:20px;">
+                <legend><b> Búsqueda de Personas </b> </legend>
+                    <div style="margin-left:16px;">
+                      <input type="text" id="texto" name="texto" size="60" value="" style="font-color:black; border: 1px solid black;" placeholder="Nro de Dni | Apellido | Nombres" autocomplete="off">
+                      <a href="/preventivos/peoplein/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+                      <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de personas involucradas en Hechos"/>
+
+                    </div>
+          </fieldset>                     
+        
+      <br><br>
+
+   {%if "es" in mostrar %}
+        <div id="demo">
+            <table cellpadding="0" cellspacing="0" border="0" style="font-size: 10px;" class="display" id="example" width="100%">
+              <!--id="example"-->
+    
+           <thead>
+       
+            <tr class="gradeC">
+               <th>Tipo y Nro Doc</th>
+               <th>Apellido/s y Nombres </th>
+               <th> Fecha de Nac.</th>
+               <th>Profesion/Ocupacion</th>
+            </tr>
+     
+           </thead>
+         
+             <tbody>
+             
+              {% for existe in todos %}
+                  {%for people in existe %}
+                  <tr  class="gradeC"> 
+                    <td width="17%"><a href="{% url 'verpersin' people.id  %}">{{people.tipo_doc.descripcion}}&nbsp/&nbsp{{ people.nro_doc}}</a></td>
+                    <td width="50%">{{ people.apellidos}}, {{people.nombres}}</td>
+                    <td width="15%">{{ people.fecha_nac|date:"d/m/Y"}}</td>
+                    <td width="25%">{{ people.ocupacion.descripcion}}</td>
+                    </a>
+                    </td>
+                  </tr>
+                  {%endfor%}
+                {% endfor %}
+            </tbody>
+           </table>
+         </div>
+   
+      <br>
+     {%endif%}
+     {%if '1' in mostrar%}
+     <hr>
+       <h6>Datos de la Persona</h6>
+            <p>
+        <strong>Apellido/s :</strong><input type="text" id="apellidos" name="apellidos" readonly="readonly"
+        {{dataper.apellidos}}  
+        <strong>Nombres :</strong><input type="text" id="nombres" name="nombres" readonly="readonly" {{dataper.nombres}}
+   
+        <strong>Tipo Doc :&nbsp;&nbsp;</strong><select class="combochico" id="tipo_doc" name="tipo_doc" disabled="disabled" >
+       <option {{dataper.tipo_doc}}</option>
+       </select>
+    <strong>Nro :</strong><input type="text" id="nro_doc" name="nro_doc" size="8" readonly="readonly" {{dataper.nro_doc}}
+        </p>
+         <p>
+           <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias" {{dataper.alias}}
+             <strong>Ocupacion :</strong>&nbsp;&nbsp;&nbsp;<select class="comboxs" id="ocupacion" name="ocupacion"  disabled="disabled">
+       <option {{dataper.ocupacion}}</option></select>
+      
+  </p>
+   
+  </p>
+   <hr>
+    <h6>Informacion segun el Rol de la Persona Involucrada</h6>
+  
+      <table cellpadding="0" cellspacing="0" border="0" style="font-size: 10px;" class="display" id="example" width="100%">
+              <!--id="example"-->
+    
+           <thead>
+       
+            <tr class="gradeC">
+               <th></th>
+              
+              <th>Roles</th></strong>
+               
+                    <th>Esta o Fue Detenido</th>
+                      <th>Infraganti?</th>
+                        <th>Fecha Detencion</th>
+                          <th>Fecha Libertad</th>
+            </tr>
+     
+           </thead>
+         
+             <tbody>
+             
+              {%for eles in todosdata%}
+                  {%for gente in eles %}
+
+                  <tr  class="gradeC"> 
+                    <td width="2%">   <button type="submit" id="vermas"  name="vermas" class="vermas"
+              value="{{gente.hechos_id}}" onclick=(this.value) title="Permite ver el Hecho en el cual esta Involucrado"/></button>
+             
+               </td>
+
+
+                    <td>{{ gente.roles.descripcion}}</td>
+                                  
+                     <td>{{ gente.detenido}}</td>
+                      <td>{{ gente.infraganti}}</td>
+                       <td>{{ gente.fechahoradetencion|date:"d/m/Y P"}}</td>
+                        <td>{{ gente.fechahoralibertad}}</td>
+                     
+                   
+                   
+                  </tr>
+                
+                  {%endfor%}
+                {% endfor %}
+                
+                    
+            </tbody>
+           </table>
+          <br><br>
+            {%if 'si' in filtro%}
+           <hr>
+           <h6>Mas Informacion del Hecho</h6>
+          
+              <p>
+             
+      
+             
+           
+                 {%for eles in alldata%}
+                       {%for elesi in eles%}
+                         <p>
+                       
+                            {%for rela in persinv%}
+                              {%for rel in rela%}
+                             
+                                   <strong>Rol : </strong> {{rel.roles.descripcion}}</p>
+                     {{rel.hecho.refdelito.descripcion}}
+                            {%endfor%}
+                            {%endfor%}<hr>
+                                   <p>
+                            <strong>Descripcion del Hecho :</strong></p>
+                            <p>{% autoescape off %}{{ elesi.descripcion }}{% endautoescape %}</p><hr>
+                            <p> <strong><u>Delitos cometidos :</u></strong>
+     <table class="table">
+       {% for cometieron in delitos %}
+       
+        <tr>
+          <td>
+          
+             <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">&nbsp;{{cometieron.refdelito.tipo_delito.descripcion}} &nbsp;:&nbsp; {{cometieron.refdelito.descripcion}} &nbsp;&nbsp;</strong>
+          </td>
+              
+        </tr>   
+       {%endfor%}
+      </table> </p><hr>
+                          <p>
+                            <strong>Fecha y Hora de Inicio :</strong>
+                           {{ elesi.fecha_desde|date:"d/m/Y P"}}&nbsp;&nbsp;
+                            <strong>Fecha y Hora de Final :</strong>
+                             {{ elesi.fecha_hasta|date:"d/m/Y P"}}&nbsp;&nbsp;{%if elesi.fecha_esclarecido%}
+                              <strong>Fecha Esclarecido :</strong>
+                               {{ elesi.fecha_esclarecido|date:"d/m/Y"}}{%else%}<strong style="color:red;">No fue esclarecio el Hecho</strong>{%endif%}
+                               
+                               <hr>
+                                <p><strong>Preventivo Nro/Año:</strong>&nbsp;&nbsp;<strong style="font-size:14px;">{{ elesi.preventivo.nro}}/{{elesi.preventivo.anio}}</strong></p>
+                                <p><strong>Fecha Denuncia :</strong>&nbsp;&nbsp;{{ elesi.preventivo.fecha_denuncia|date:"d/m/Y"}} --- 
+                                  <strong>Realizada en :</strong>
+                                  &nbsp;&nbsp;{{ elesi.preventivo.dependencia.descripcion}}---{{elesi.preventivo.dependencia.unidades_regionales.descripcion}}</p>
+                                
+                          {%endfor%}
+                      
+                  {%endfor%}
+            {%endif%}
+     {%endif%}
+    </form> 
+      
+{%endblock%}
+{% block contenido%}
+<form id="form" action="." method="post">{% csrf_token %} 
+  
+    sffd
+ </form>
+{% endblock %} 
+                     
+                         
+ 

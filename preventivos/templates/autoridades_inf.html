@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block main %}
+
+<form id="form" action="." method="post">{% csrf_token %} 
+
+
+   <h1>Formulario de Alta de Preventivo  -  Paso {{ wizard.steps.step1 }} de {{ wizard.steps.count }}</h1>
+   <br>
+    <table>
+      {{ wizard.management_form }}
+      {% if wizard.form.forms %}
+          {{ wizard.form.management_form }}
+          {% for form in wizard.form.forms %}
+              {{ form }}
+          {% endfor %}
+      {% else %}
+          <input id="id_preventivo_wizard-current_step" name="preventivo_wizard-current_step" type="hidden" value="autoridades_inf" />
+          <h2>Seleccione las autoridades que seran informadas:</h2>
+          {{wizard.form.as_p}}
+          
+          
+      {% endif %}
+    </table>
+    
+    <br>
+    <p>
+      {% if wizard.steps.prev %}
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">Primer paso</button>
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Paso anterior</button>
+    {% endif %}
+      <input type="submit" value="Siguiente"/></p>
+     
+    </form> 
+      
+{% endblock %}
+{% block footer%}
+<div class="blue align.left">{% if user.is_authenticated %}
+            {%if user.is_staff or not user.is_staff%}Usuario &nbsp;{% endif %} {{ state }} : &nbsp;&nbsp;&nbsp;&nbsp;{{ user.username }}&nbsp;&nbsp; {{destino}}
+            {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;<a class="blue align-right"><strong>Policia de Chubut - Div. Sistemas Informaticos - &copy; 2013</strong> &nbsp;&nbsp;</a>  </div> 
+ {% endblock %}   

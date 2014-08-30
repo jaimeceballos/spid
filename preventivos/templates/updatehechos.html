@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+ 
+<h1>Preventivo creado con fecha: {{fecha_carga|date:"d/m/y"}} por: {{user.last_name}}, {{user.first_name}} -- {{user.username}}</h1>
+
+<form action="" role="form" method="post">{% csrf_token %}
+ {% if errors %}
+            
+            {% for error in errors %}       
+               <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">
+                       </p>
+                       <input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </div>
+              {% endfor %}
+             
+    {% endif %}  
+
+<hr>
+ <p>
+     Unidad Regional / Dependencia : <strong style="font-weight:bold">{{unidadreg}} / {{dependencia}}</strong></p>
+<p>
+     Preventivo  Nro. :
+     <input type="text" name="nro" id="id_nro" value="{{nro}}/{{anio}}" readonly="readonly"/> 
+    
+     Fecha de Denuncia :
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/Y"}}" readonly="readonly"/>
+  </p>
+  
+  <p>   
+     Caratula Policial :
+     <input type="text" name="caratula"  id="caratula" size="70px" value="{{caratula}}" readonly="readonly"/>
+  </p>
+
+ 
+   <p>   
+     Actuante : <input type="text" name="actuante"  id="actuante" value="{{actuante}}" readonly="readonly"/>
+     Preventor : <input type="text" name="preventor"  id="preventor" value="{{preventor}}" readonly="readonly" />
+      </p>
+  <p>
+     Autoridades a Informar :
+     {% for y in autoridades %}
+        <ul>
+           <li>
+              <input type="text" name="autoridades" id="autoridades" size="70px" value="{{y}}" readonly="readonly"/>
+           </li>
+        </ul>      
+     {% endfor%}        
+   </p>
+ 
+<hr>
+
+<h6>Hecho Delictual</h6>
+  <input type="hidden" id="id" name="id" value="{{idhec}}"/>
+     <input type="hidden" id="idp" name="idp" value="{{idprev}}"/>
+  <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p><strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
+        
+        </blockquote>
+        
+  </div>
+ <p>   
+ 
+        <strong style="color:red;"> * </strong> <strong>Motivo del Hecho :&nbsp;</strong>
+        <select id="motivo" name="motivo" class="combolist">
+        <option name="motivo">Seleccione Motivo</option>
+        <option {{ form.motivo }}  </option>
+        </select><strong style="color:red;">{{form.motivo.errors}}</strong>
+
+  </p>
+  <p>
+       <div id="datetimepicker" class="input-append date"><strong style="color:red;margin-left:4px;"> * </strong><strong>Fecha y Hora Inicio:</strong>
+      <input type="text" id="fecha_desde" name="fecha_desde" readonly="readonly" 
+       {{form.fecha_desde}}
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span> </div></p>
+      <p>
+      <div id="datetimepicker1" class="input-append date">
+      <strong style="color:red;margin-left:4px;"> * </strong><strong >Fecha y Hora Final :</strong>
+      <input type="text" id="fecha_hasta" name="fecha_hasta" readonly="readonly" 
+       {{form.fecha_hasta}}
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+<script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script>
+<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script></div></p>
+<!--
+  <p>
+    
+       <strong>Fecha y Hora Inicio:</strong>
+       <input type="text" size="20" id="fecha_desde" name="fecha_desde"   readonly="readonly" 
+       {{form.fecha_desde}}
+        <input class="botoncalendar" button id="fecha_desde1" ></button>
+       <strong style="color:red;">{{form.fecha_desde.errors}}</strong> 
+  
+        <strong>Fecha y Hora Final :</strong>
+        <input type="text" size="20" name="fecha_hasta" id="fecha_hasta" readonly="readonly" 
+        {{form.fecha_hasta}} 
+        <input class="botoncalendar" button id="fecha_hasta1" ></button>
+        <strong style="color:red;">{{form.fecha_hasta.errors}}</strong> -->
+       <!-- script que define y configura el calendario--> 
+     <!--  <script type="text/javascript" charset="utf-8">
+        
+       var cal = Calendar1.setup({onSelect: function(cal) {
+         cal.hide() },showTime: 12,});
+         cal.manageFields('fecha_desde1','fecha_desde', "%d/%m/%Y %k:%M:%S");
+         cal.manageFields('fecha_hasta1','fecha_hasta', "%d/%m/%Y %k:%M:%S");
+
+      </script>
+       
+
+  </p>  -->
+  <hr>
+
+ 
+    <h6>Delito/s ocuridos en el Hecho</h6>
+
+ <br>
+  <p>  
+        <strong style="color:red;"> * </strong><strong> Tipos de Delitos :</strong>
+        <select id="tipodelito" name="tipodelito" class="combox">
+        <option {{ftiposdelitos.tipo_delito}}  </option>
+        </select>     
+  
+           
+    
+        <select id="delito" name="delito" class="combox">
+        <option {{ftiposdelitos.descripcion}}  </option>
+        </select>  
+
+    
+        <select id="modos" name="modos" class="combox">
+        <option {{modos.descripcion}}  </option>
+        </select> 
+
+  
+       <input class="btn btn-success" type="submit" value="Agregar" id="continua" name="continua"
+        title="Permite agregar mas delitos cometidos en el Hechos"/>
+  
+   {%if not delito %}
+     <strong style="color:red;">{{form.delito.errors}}</strong> 
+   {%endif%} 
+    
+  </p>
+  <br>
+    <hr>
+  
+   
+
+     <h6>Delitos cometidos</h6>
+     <table class="table">
+       {% for cometieron in delito %}
+       
+        <tr>
+          <td>
+            <button type="submit" name="borrar" id="borrar" class="borrarde"
+              value="{{cometieron.id}}" onclick=(this.value) title="Permite borrar un delito"/></button>
+              <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">  [  {{cometieron}} ]&nbsp;&nbsp;</strong>
+          </td>
+              
+        </tr>   
+       {%endfor%}
+      </table> 
+     
+     <p>
+      <h6>Breve Descripcion </h6>
+        <textarea type="text" style="width: 100%;" id="descripcion" name="descripcion"> {{descripcion}} </textarea>
+     </p>
+      <hr>
+       <br>
+     <div align="right">
+    
+          {%if not fecha_autorizacion%}
+     <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>{%else%}
+          <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
+    
+    <a class="btn1 btn-success"  href="{% url 'persinvol' idhec 0%}"> <label title="Permite Agregar otra Persona Involucrada" >
+         Involucrados</label></a>
+  
+ 
+      <a href="{% url 'selectPrev' idprev %}" class="btn1 btn-success"><label style="font-size:11px;text-align:center;">Volver</label></a> 
+   
+
+     <a href="{% url 'reportes' idprev %}" target="_blank" ><input type="button" class="botonprint"
+            title="Imprimir Preventivo"/></input></a>
+
+     </div>
+     
+  
+
+ </form>
+{% endblock %}
