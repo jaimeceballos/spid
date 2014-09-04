@@ -1,0 +1,301 @@
+.fleft {float:left}
+.fright {float:right}
+.fclear {clear:both}
+.inner_copy, .inner_copy a {border:0;float:right;background:#fff;color:#f00;width:50%;line-height:10px;font-size:10px;margin:-220% 0 0 0;overflow:hidden;padding:0}
+body {background:#fff url(../../imagenes/spid/divider.png)repeat; font:normal normal "DroidSansMono";color:#666}
+#main3 {width:50%;margin:0 auto;overflow:hidden;float:middle center;margin-top:10%;margin-left:40%;}
+h1, h2, h3 {color:black;}
+h2,h3 {font-family: "DroidSansMono";}
+h2,h3,p {font-size:9px;}
+p {font-size:12px; color:black;}
+h6 {float:center;text-align:center;font-size:10px;font-weight:normal;color:black}
+h5 {float:center;text-align:center;font-size:12px;font-family: "DroidSansMono";color:blue}
+/* Boxed Style */
+.boxed {margin-bottom:20px}
+.boxed .title {height:15px;padding:6px 0 0 10px;background:#6FBE6E url(/imagenes/img05.gif) repeat-x;font-size:10px;color:#000}
+.boxed .content {padding:10px 10px 10px 10px;background:url(/imagenes/img06.gif) repeat-x}
+
+/* Header */
+#header {width:98%;height:150px;margin:0 auto}
+#logo {width:auto;height:auto;margin:0 auto}
+#logo h1 {float:center;letter-spacing:-2px;font-size:22px;font-weight:normal}
+#logo1 {width:auto;height:100%;margin:0 auto}
+#logo1 h12 {float:center;letter-spacing:-2px;font-size:36px;font-weight:bold}
+#logo h4 {float:center;letter-spacing:-2px;font-size:10px;}
+#logo h1 a {}
+#logo h2 {float:center;font-size:10px;font-weight:normal}
+#logo h2 a {}
+#logo a {text-decoration:none;text-transform:lowercase;font-style:italic;color:#479AC6}
+/* Content */
+#content {width:34.1%}
+#extra {}
+/* Content > Main */
+
+#main {float:center;width:32%}
+#main a {}
+/* Content > Main > Welcome */
+
+
+#sidebar {float:center;width:32%}
+#sidebar a {}
+/* Content > Sidebar > Login */
+
+#login {}
+#login form {}
+#login fieldset {border:none}
+#login legend {display:none}
+#login label {font-size:11px;font-weight:bold}
+#login input {margin-bottom:5px}
+input[type=text].ame{width:120px;padding:2px;font-family:"DroidSansMono";font-size:12px;color:black}
+input[type=password].ame{width:120px;padding:2px;font-family:"DroidSansMono";font-size:12px;color:black}
+
+#inputtext1, #inputtext2, #username, #user, #password, #apeynom, #usuario, #dni, #propositouso, #email, #apellidos, #nombres {width:180px;padding:2px;font-family:"DroidSansMono";color:blue}
+#apeynom, #username, #usuario, #dni, #propositouso, #email {width:200px;padding:2px;font-family:"DroidSansMono";color:#666}
+#inputsubmit1 {}
+/* Content > Sidebar > Updates*/
+
+input[type=submit].new-aqua {
+display: inline-block;
+  padding: 1px 12px;
+  margin-bottom: 4px;
+  font: 11px DroidSansMono;
+  font-weight: normal;
+  line-height: 1;
+  height: 20px;    
+  width: 80px;
+  vertical-align: middle;
+  cursor: pointer;
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+  background: #cee; 
+  border: 2px solid #ccc; 
+  border-radius: 5px;
+  white-space: nowrap;
+  font: 11px DroidSansMono,lighter;
+  color: #000; 
+  text-shadow: rgba(10, 10, 10, 0.5) 1px 2px 2px;
+  text-align: center; 
+  vertical-align: middle; 
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden;
+  box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -moz-box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -webkit-box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  background: #cee; 
+  border: 2px solid #ccc; 
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+  font: 11px DroidSansMono,lighter;
+  color: #000; 
+}
+
+input[type=submit].new-aqua1 {
+ width: 80px;
+  height: 21px;			
+  background: #cde; 
+  border: 2px solid #ccc; 
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+  font: 600 10px/1 DroidSansMono; 
+  color: #000; 
+  text-shadow: rgba(10, 10, 10, 0.5) 1px 2px 2px;
+  text-align: center; 
+  vertical-align: middle; 
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  margin-left:25%;
+  overflow: hidden;
+  border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px;
+  box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -moz-box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -webkit-box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+}
+
+input[type=button].new-aqua {
+ width: 80px;
+  height: 22px;			
+  background: #cde; 
+  position:relative;
+  border: 2px solid #ccc; 
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+  font: 600 10px/1 DroidSansMono; 
+  color: #000; 
+  text-shadow: rgba(10, 10, 10, 0.5) 1px 2px 2px;
+  text-align: center; 
+  vertical-align: middle; 
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden;
+  border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px;
+  box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -moz-box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -webkit-box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+}
+input[type=submit].new-aqua:hover {
+  color: #ffffff;
+  background-color: gray;
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+ 
+}
+.new-aqua1:hover {
+  text-shadow: rgb(255, 255, 255) 0px 0px 5px;
+}
+.combodoc {
+	width: 158px; /* With the padding included, the width is 190 pixels: the actual width of the image. */
+	height: 20px;
+	color: black;
+  margin-top: -18px;
+	margin-left: 6px;
+	font: 10px \93DroidSansMono,lighter;
+	background: #E6E6E6 ;
+	border: 1px solid black;
+	overflow:auto;
+	border-radius: 5px;
+		
+}
+.combolist {
+	width: 250px; /* With the padding included, the width is 190 pixels: the actual width of the image. */
+	height: 23px;
+	color: black;
+	margin-left: 5px;
+	font: 10px \93Trebuchet MS\94, Arial, lighter;
+	background: #E6E6E6 ;
+	border: 1px solid black;
+	overflow:auto;
+	border-radius: 5px;		
+}
+.combopeq {
+	width: 160px; /* With the padding included, the width is 190 pixels: the actual width of the image. */
+	height: 19px;
+	color: black;
+	margin-left: -5px;
+  font: 10px DroidSansMono,lighter;
+	background: white ;
+	border: 1px solid black;
+	overflow:auto;
+	border-radius: 5px;
+}
+.comboper {
+	width: 103px; /* With the padding included, the width is 190 pixels: the actual width of the image. */
+	height: 17px;
+	color: black;
+	margin-left: 5px;
+	font: 10px \93Trebuchet MS\94, Arial, lighter;
+	background: silver ;
+	border: 1px solid black;
+	overflow:auto;
+	border-radius: 5px;
+}
+.lefttitle
+{
+	font:10px DroidSansMono;
+	text-decoration: none;
+	color:#ffffff;
+	padding-left:10px;
+  text-align: left;
+	background-image:url('../../imagenes/spid/cabmenu.jpg');
+	height:23px;
+        border-bottom:0px solid;
+       }
+.righttitle
+{
+	font:10px DroidSansMono;
+	text-decoration: none;
+	color:#ffffff;
+	padding-left:5px;
+	background-image:url('right-title.jpg');
+	background-repeat:no-repeat;
+	width:153px;
+	height:38px;
+}
+.box_middle
+{     
+      border-top:0px solid;
+      border-left:1px solid #d4f4d4;
+      border-right:1px solid #d4f4d4;
+      border-bottom:0px solid;
+      width:20%;
+
+}
+.box_middle table
+{
+	font: 10px DroidSansMono;
+       border-top:0px solid #d4d4d4;
+       border-left:1px solid #d4d4d4;
+    
+}
+.box_foot
+{
+	margin:8px auto;
+	width:100%;
+  border-top:0px solid;
+background:url('../../imagenes/spid/foot.jpg') bottom no-repeat;
+}
+
+input, label {font:11px/11px DroidSansMono; padding:0;margin-left: 5px; border-radius: 2px;}
+label.opt {font-weight:normal;border-radius: 2px;}
+input, button {outline:none; resize:none;border-radius: 2px;}
+.botones {outline:none; resize:none;border-radius: 2px;}
+
+.menu{
+    padding:0;
+    list-style:none;
+    width:620px;
+    font-size:18px;
+    background:#c1c1c1;
+    border: 1px solid rgba(0,0,0,0.8);
+}
+ 
+.menu li a{
+    display: block;
+    border-bottom: 1px solid rgba(0,0,0, 0.2);
+    border-top: 1px solid rgba(255,255,255, 0.2);
+    background:#3e3f44;
+    text-decoration:none;
+    color:#FFF;
+    text-shadow: 1px 0px 1px rgba(0,0,0,0.2);
+    filter: dropshadow(color=#000, offx=1, offy=0);
+    padding:10px;
+    padding-left:20px;
+}
+ 
+.menu li ul li a{
+    font-size:14px;
+    color:#47689d;
+    text-shadow: 1px 0px 1px rgba(255,255,255,0.5);
+    
+}
+ 
+.menu li a:hover{
+    background:#4a6ba2;
+    -moz-transition: background 0.3s ease-in;
+    -webkit-transition: background 0.3s ease-in;
+    -o-transition: background 0.3s ease-in;
+}
+ 
+.menu ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+    height:0;
+    overflow: hidden;
+    transition:1s;
+    -moz-transition:1s;
+    -webkit-transition:1s;
+}
+ 
+.menu li:hover ul{
+    height:120px;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+ 
+.menu ul li a{
+    background:#fafafa;
+}
+ 
+.menu ul li a:hover {
+    background: none repeat scroll 0 0 #ccc;
+    color: #fff;
+    -moz-transition: color 0.4s ease;
+    -webkit-transition: color 0.4s ease;
+    -o-transition: color 0.4s ease;
+}

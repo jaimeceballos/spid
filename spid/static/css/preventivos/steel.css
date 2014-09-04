@@ -1,0 +1,64 @@
+.DynarchCalendar1-focused {
+  background-color: #fff;
+}
+
+.DynarchCalendar1-topBar {
+  background-color: gray;
+}
+
+.DynarchCalendar1-bottomBar {
+  background-color: gray;
+  border: hidden;
+  height: auto;
+}
+
+.DynarchCalendar1-hover-title,
+.DynarchCalendar1-hover-navBtn,
+.DynarchCalendar1-hover-bottomBar-today,
+.DynarchCalendar1-menu table td div.DynarchCalendar1-hover-navBtn {
+  background: green;
+  color: white;
+  border: hidden;
+}
+.DynarchCalendar1-hover-title div,
+.DynarchCalendar1-hover-navBtn div { background-color: transparent; }
+
+.DynarchCalendar1-pressed-title,
+.DynarchCalendar1-pressed-navBtn,
+.DynarchCalendar1-pressed-bottomBar-today,
+.DynarchCalendar1-menu table td div.DynarchCalendar1-pressed-navBtn {
+  background: #445;
+  border: hidden;
+}
+.DynarchCalendar1-pressed-title div,
+.DynarchCalendar1-pressed-navBtn div { background-color: transparent; }
+
+.DynarchCalendar1-hover-week,
+.DynarchCalendar1-focused .DynarchCalendar1-hover-week {
+  background: #ddd;
+}
+
+.DynarchCalendar1 {
+}
+
+
+
+
+
+
+
+.DynarchCalendar1-day-selected {
+  background-color: #1864fc;
+  color: #fff !important;
+  background-position: 0 50%;
+  background-repeat: repeat-x;
+}
+
+.DynarchCalendar1-day-today.DynarchCalendar1-day-selected {
+  background-color: #1864fc;
+  color: #fff !important;
+}
+
+.DynarchCalendar1-focused .DynarchCalendar1-body {
+
+}
