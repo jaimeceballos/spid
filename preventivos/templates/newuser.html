@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% block main %}
+
+<form id="form" action="" method="post">{% csrf_token %} 
+
+   <h1>Formulario de ABM de Usuarios</h1>
+   
+   {% if errors %}
+            
+               {% for error in errors %}
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}   
+<br> 
+<input type="hidden" name="iduser" id="iduser" value="{{usuarios.username}}"/>
+<p>
+<strong for="username">Usuario  :&nbsp;</strong>
+ {% if usuarios in lista %}
+  <input type="text" name="username" id="username" value="{{dni}}" autocomplete="off" onKeypress="format(this)" title="Nro de DNI sin puntos" readonly="readonly" class="required">
+ {%else%}
+  <input type="text" name="username" id="username" value="{{dni|add:0}}" autocomplete="off" onKeypress="format(this)" title="Nro de DNI sin puntos" class="required">
+ {%endif%} 
+   <a href="/preventivos/user/" id="cancelar" name="cancelar"><input type="button" class="botonreset"
+            title="Limpiar seleccion"/></input></a>
+
+ <a href="."><input class="botonsearch"  type="submit" value= "BUSCAR" name="buscar" id="personas" title="Permite buscar el dni de una Persona" ></a>
+ <a href="/preventivos/persona/"><input type="button" class="botonimagen"
+            title="Agregar Personas al Padron General Policial"/></input></a>
+            
+<a href="." id="seekper" name="seekper" ><input type="button" class="botonseekper" 
+            title="Buscar Personas en el Padron General Policial"/></input></a>
+
+
+</p>
+ {%if listap %}
+ <hr>
+   
+    <!--div id="demo" class="display" id="example"-->
+   
+    <table cellpadding="0" cellspacing="0" border="0" class="display" width="100%">
+        <thead>
+
+            <tr class="gradeC">
+               <th>Tipo Documento</th>
+               <th>Nro de Dni</th>
+               <th>Apellido/s y Nombres </th>
+            </tr>
+     
+        </thead>
+         
+             <tbody>
+              {% for people in listap %}
+                
+                  <tr  class="gradeC"> 
+                    <td width="17%">{{ people.tipo_doc}}</td>
+                    <td width="12%">{{ people.nro_doc}}</td>
+                    <td width="70%">{{ people.apellidos}}, {{people.nombres}}</td>
+                    </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+           </table>
+       <!--/div-->
+       <hr>
+      <br>
+     
+       
+       {%endif%}
+<p>
+<strong for="first_name">Apellido :</strong>
+<input type="text" name="last_name" id="first_name" value="{{apellidos}}" readonly="readonly" />
+ <strong for="first_name"> Nombres :</strong>
+  <input type="text" name="first_name" id="last_name" value="{{nombres}}"  readonly="readonly"/>
+{% if usuarios in lista %}
+   <strong for="email">E-mail : </strong><input type="text" name="email" id="email" style="box-shadow: 1px 1px 1px 1px red; " value="{{usuarios.email}}" placeholder="Ej. Policia@gmail.com" class="required" autocomplete="off"/>
+{%if reenvio%}
+      &nbsp; 
+     <input  class="btn btn-success" type="submit" name = "reenviar" id = "reenviar" value="Reenviar Usuario" title="Permite Reenviar Usuario y Contraseña de acceso al Sistema"
+     style="width:70px;" onclick="{% url 'modiuser' dni %}"/>
+
+ {%endif%}
+   {%else%}
+     <strong for="email">E-mail : &nbsp; &nbsp;</strong><input type="text" name="email" id="email" autocomplete="off"  value="{{usuarios.email}}" placeholder="Ej. Policia@gmail.com" class="required" />
+   {%endif%}
+ </p> 
+ <hr>
+  <div id="buscarper" >
+<blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;">
+  
+     <div align="right">
+                <input type="button" id="cerrarinfo" value="[ X ]" title="Cerrar Ventana" 
+                style="font-size:11px;cursor:pointer;background:transparent;border:0" align="right" />
+         </div>
+        <h2>Padron General de Personas</h2>
+      
+     <!-- <div id="demo">-->
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="examples" width="100%">
+        <thead>
+            <tr>
+               
+               <th>Documento</th>
+               <th>Apellido</th>
+               <th>Nombre</th>
+            </tr>
+        </thead>
+      
+             <tbody>
+                 {% for listap in listaper %}
+                  <tr> 
+                    
+                    <td width="25%">{{ listap.tipo_doc}} / {{listap.nro_doc}}</td>
+                    <td width="30%">{{ listap.apellidos }}</td>
+                    <td width="30%">{{ listap.nombres }}</td>
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+      <!-- </div>-->
+       
+</blockquote>
+<br><hr>
+       </div>
+ 
+ {%if ocupacion %}
+ <br>
+<p>
+   <strong style="text-decoration: underline;" for="user_permission">Asignar Destino Actual: 
+ </strong> 
+
+ </p>
+ <p>
+
+ <strong for="ureg">Unidad Regional :</strong>
+                                    <select name="ureg" id="ureg"  style="width:220px;" size="1"/>
+                                    <option name="ureg">Seleccione Unidad Regional</option>
+                                    <option {{form.ureg}}</option>
+                                    </select>
+                                     <strong for="depe">Dependencias:</strong>
+                                    <select name="depe" id="depe"  style="width:220px;"  size="1"/>
+                                      <option name="depe" {{form.depe}}</option>
+                                   
+
+                                        
+                                
+                                        </select></p><br>
+                                    <hr>
+   
+  {%endif%}
+
+  <!--
+  <p>
+      <div id="informacion"><blockquote style="font-size:11px;font-family: Georgia, "DroidSansMono", serif;"><h3><legend>   <img id="alert" src="{{STATIC_URL}}imagenes/preventivos/alert.png" style="border:0px solid #C0C0C0;"/>&nbsp;&nbsp;<p>Especifique los permisos para el grupo de usuarios a crear.</p>
+        <dd><p>Para Asignar y/o reasignar uno o mas, mantener presionada la tecla "Control"(Ctrl).</p></add>
+        <dd><p>Para revocar uno o mas, mantener presionada la tecla "Control"(Ctrl) sobre el permiso anteriormente asignado.-</p></dd></strong></p>
+        <div align="right">
+
+ 
+        <input type="button" id="cerrarinfo" value="x" style="font-size:11px;cursor:pointer;background:transparent;border:0" align="right" />
+        </div>
+        </blockquote>
+        
+  </div>
+     </p>
+
+  <p>                                 
+     <strong for="user_permission">Asignar Permisos de usuarios: </strong>  
+
+
+  <select id="user_permissions" name="user_permissions" multiple="multiple" lastindex="-1" class="combolista">
+  <option {{formnew.user_permissions}}</opcion>
+  </select>   
+
+  </p>
+     -->
+     
+     <p>
+       <div id="informacion2" ><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><h3><legend><u>Por favor leer esta       información</u></legend></h3><p><strong><i>No Asignar ni redestinar lugar de trabajo para los usuarios con roles de administrador y/o visitas.-</i></strong></p></blockquote>
+       </div>
+
+       <strong for="groups" id="basic-modal">Asignar Grupo de Usuarios:  
+       <select id="groups" name="groups" multiple="multiple" lastindex="-1" class="combolistas">
+         <option {{formnew.groups}}</opcion>
+        </select>  
+         <a onclick="" href="." class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" title="Agregar Grupos de Usuarios">
+         </a></strong> 
+ 
+        
+  </p>
+    
+
+
+ 
+
+   <br>
+  {% if usuarios in lista %}
+  
+
+<label  class = "multicolumnas" readonly="readonly">Usuario Activo?
+        {{ formnew.is_active }}  </label>
+
+       <label  class = "multicolumnas" readonly="readonly">Usuario Administrador?
+        {{ formnew.is_staff }}  </label>
+    
+      <hr>
+
+<br>
+  <p align="right"> 
+
+     <input  class="btn btn-success" type="submit" name = "modifica" id = "modifica" value="Actualizar" onclick="{% url 'modiuser' dni %}"/>
+ </p>
+   
+     {%else%}<label  class = "multicolumnas" readonly="readonly">Usuario Activo?
+        {{ formnew.is_active }}  </label>
+
+       <label  class = "multicolumnas" readonly="readonly">Usuario Administrador?
+        {{ formnew.is_staff }}  </label>
+      <hr>
+     <p align="right">  
+ <input type="submit" class="btn btn-success" id="new" name="new" value="Nuevo"
+ title="Crea un nuevo usuario" ></p>
+    {%endif%}
+
+ <br>
+
+
+      <hr>
+   <h1>Listado General de Usuarios Existentes</h1>
+      <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th width="10px">Usuario</th>
+               <th width="30px">Apellidos</th>
+               <th width="30px">Nombres</th>
+               <th width="20px">E-mail</th>
+               <th width="10px">Ultimo ingreso</th>
+            </tr>
+        </thead>
+           
+             <tbody>
+                 {% for listas in lista %}
+                  <tr  class="gradeC"> 
+                    <td width="5%"><a href='/preventivos/user/{{ listas.username }}/'>{{ listas.username }}</a></td>
+                    <td width="20%">{{ listas.last_name}}</td>
+                      <td width="20%">{{ listas.first_name}}</td>
+                          <td width="20%">{{ listas.email}}</td>
+                            <td width="20%">{{ listas.last_login}}</td>
+                 
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+       </div>
+ </form>
+ 
+{% endblock %}
+{% block contenido %}
+
+ <form id="form" action="." method="post">{% csrf_token %} 
+  
+     {% if errors %}
+            
+              {% for error in errors %}
+                  <p style="color: red;"> Importante : {{ error }}</p>
+               {% endfor %}
+             
+    {% endif %}  
+      <div style="color: black"><label>Grupo de Usuarios :
+    <input type="textarea" name="name" id="name" value="{{grupos}}" autocomplete="off"/>
+    <input class="new-aqua" type="submit" value= "Grabar" name="grabarg" id="grabarg" title="Grabar Grupo de Usuarios" >
+    </label> </div>  
+ </form>
+{% endblock %}

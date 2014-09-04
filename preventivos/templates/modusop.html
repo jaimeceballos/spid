@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block main %}
+
+ <form id="form" action="." method="post">{% csrf_token %} 
+   <h1>Formulario de ABM de Modus Operandi</h1>
+   {% if errors %}
+            
+              {% for error in errors %}
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}  
+    <p><label for="descripcion" name="descripcion">Modus Operandi / Produccion: 
+    <input type="text" name="descripcion" id="descripcion" size="30" value="{{modos.descripcion}}" autocomplete="off"/>
+    <a href="/preventivos/modus/" name="cancelar">
+      <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>   
+    
+     {% if modos in lista %}
+      <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">
+     <input class="btn btn-success" type="submit" value= "Borrar" name="borrar" title="Elimina modus">
+
+    {%else%}
+     <input class="btn btn-success" type="submit" value= "Grabar" name="grabar" title="Grabar modus" >
+    {%endif%}</label></p>
+    <p>
+         
+    <strong> Seleccione Delitos :</strong>
+    <select name="delito" id="delito" class="comboxl" style="width: 230px; margin-left:40px;" tabindex="-1">
+      <option name="delito">Seleccione Delito</option>
+      <option selected="selected"{{modos.refdelito}}</option>
+      <option {{formp.delito}}</option>
+    </select>
+     
+   
+    </label>
+    </p>  
+    <br>
+      <br>
+       <h1>listado general de Modus Operandi</h1>
+      <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th >Items</th>
+               <th>Modos / Modus-Operandi</th>
+               <th>Delitos</th>
+            </tr>
+        </thead>
+      
+             <tbody>
+             
+                 {% for listas in lista %}
+                  <tr  class="gradeC"> 
+                    <td width="13%"><a href='/preventivos/modus/{{ listas.id }}/'>{{ listas.id }}</a></td>
+                    <td width="30%">{{ listas.descripcion}}</td>
+                     <td width="30%">{{ listas.delito}}</td>
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+       </div>
+
+</form> 
+{% endblock %}
+{% block contenido %}
+
+ <form id="form" action="/preventivos/newpais/" method="post">{% csrf_token %} 
+  
+     {% if errors %}
+            
+              {% for error in errors %}
+                  <p style="color: red;"> Datos inválidos : {{ error }}</p>
+               {% endfor %}
+             
+    {% endif %}  
+      <div style="color: black"><label>Ingrese Pais :
+    <input type="textarea" name="descripcion" id="descripcion" value="{{ciudades}}" autocomplete="off"/>
+    <input class="new-aqua" type="submit" value= "Grabar" name="grabar" title="Grabar el Pais" >
+    </label> </div>  
+ </form>
+{% endblock %}

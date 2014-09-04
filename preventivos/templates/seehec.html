@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block main %}
+
+ <form id="form" action="." method="post">{% csrf_token %} 
+   <h1>Formulario de Busqueda de Hechos Ocurridos</h1>
+
+
+    {% if errors %}
+            
+              {% for error in errors %} 
+               <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}  
+    <br>
+      <section style="margin: 0px;">
+          <fieldset style="background: white;border-radius: 5px; padding: 5px; min-height:40px;">
+                <legend><b> Búscar en Hechos ocurridos </b> </legend>
+                    <div style="margin-left:18px;">
+                       <strong> Ref. Hechos : </strong>
+                       <input type="text" id="hechos" name="hechos"  size="40" autocomplete="off" value="{{hechos}}"
+                       placeholder="Escriba algun dato que haga referencia a un Hecho" required=''/>
+
+                      <a href="/preventivos/seehechos/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+                      <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda en Hechos ocurridos"/>
+
+                    </div>
+          </fieldset>     
+    </section>
+   <br>
+   <br>
+   {% include "./listarhec.html"%}
+
+
+
+ </form> 
+{% endblock %}-->

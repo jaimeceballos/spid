@@ -1,0 +1,16 @@
+{% load static %}
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+<link href="{{STATIC_URL}}css/preventivos/default.css" rel="stylesheet" type="text/css" />
+<title>ERROR DE SISTEMA SPID</title>	
+{% block error %}
+   <div align="center">
+    <h4>ACCESO DENEGADO</h4>
+    <h4>UD. NO TIENE LOS PERMISOS SUFICIENTES PARA ACCEDER A LO SOLICITADO.</h4>
+    <p>Comuniquese con el Administrador. <a href="mailto:divsistemasjp@policia.chubut.gov.ar?Subject=No tiene privilegios" target="_top">
+    Enviar un Mail</a>
+    </p>
+    <p>
+     <input class="new-aqua" type="submit" onclick="window.history.back();" value="Volver"/></p>
+ </div>
+{%endblock%}

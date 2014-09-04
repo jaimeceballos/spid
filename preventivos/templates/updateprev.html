@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block main %}
+<form action="" role="form" method="post">{% csrf_token %}
+
+
+
+    
+      <h1>Modificar Preventivo - Nro : <input type = "text" size="2" readonly style="margin-bottom:3px;text-align:right;border:0px solid;background-color:transparent;" {{form.nro}}/<input type = "text" size="3" readonly style="margin-bottom:3px;text-align:left;border:0px solid;background-color:transparent;"{{form.anio}} &nbsp;&nbsp; de {{unireg}} / {{depe}}</h1>
+      {% if form.errors %}
+            
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ form.errors.as_ul }}.- &nbsp;&nbsp;
+                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+              
+             
+    {% endif %}  
+ 
+  <p>
+     Fecha de Denuncia :
+     <input type="text" name="fecha_denuncia" size="12" id="fecha_denuncia" {{form.fecha_denuncia}}
+     <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha de Denuncia">
+       <!-- script que define y configura el calendario--> 
+      <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_denuncia", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "lanzador" // el id del botón que lanzará el calendario 
+        }); 
+      </script> 
+      
+
+  </p>
+  <p>   
+  	 Caratula Policial : <input type="text" style="text-transform: uppercase;" name="caratula"  id="caratula" size="100px" {{form.caratula}} 
+  </p>
+   <p>   
+  	 Actuante : <select class="combox" name="actuante"  id="actuante" >
+  	 <option {{form.actuante}}</option>
+  	 </select>
+  	 Preventor : <select class="combox" name="preventor"  id="preventor" >
+  	 <option {{form.preventor}}</option>
+
+  	 </select>
+  </p>
+  <p>
+     <strong class="multi6">Autoridades a Informar :</strong>
+   {{form.autoridades}}
+     
+   </p>
+
+</table>
+
+<br>
+
+
+      <div align="right">
+      {%if 'policia' in state or 'investigaciones' in state%}
+       {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES'%} 
+         <input  class="new-aqua" type="submit" name = "button" id = "button" value="Modificar" 
+         title="Permite modificar solamente los datos cabeceras del preventivos" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"/>
+       {%endif%}
+       {%if fecha_autorizacion and depe == user.get_profile.depe  or  fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES'%} 
+        <a href="{% url 'ampliacion' idprev %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_editp.png" style="border:0" title="Permite generar radios ampliatorios." /></a>
+       {%endif%}
+      {%endif%}
+
+
+        <a href="{% url 'reportes' idprev %}" target="_blank" ><input type="button" class="botonprint"
+            title="Imprimir Preventivo"/></input></a></div>
+
+<hr>
+
+
+{% if tieneHecho %}
+
+  <p>
+      <h1>Breve Descripcion del Hecho : {{hechodeli}} </h1>
+        <textarea type="text" style="width: 100%;" id="descripcion" name="descripcion"> {{descripcion}} </textarea>
+     </p>
+      <p align="right">
+   <a class="btn btn-success"  href="{% url 'updatehechos' idprev %}">
+    <label title="Permite Ver mas detalles del Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">
+      Ver Hecho</label></a></p><hr>
+   <p>
+   {%if tienePersonas%}
+   {%if datosinvo %}
+ 
+  <h1>Personas Involucradas</h1>
+   <table class="table">
+       {%for involus in datosinvo%}
+       
+        <tr>
+           <td>
+             <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">  
+             [ {{involus.persona}} -- {{involus.roles}} ]&nbsp;&nbsp;</strong>
+             {%if involus.ampliacion.fecha%}
+                 &nbsp;&nbsp; 
+                 <strong style="letter-spacing:1.1px;">- Modificado por Ampliacion en fecha : {{involus.ampliacion.fecha|date:"d/m/Y"}} -- {{ involus.ampliacion.titulo}}</strong>
+            
+             {%endif%}
+           </td>   
+        </tr>   
+       {%endfor%}
+       
+  </table> 
+  {%endif%}
+    <p align="right">
+       <a class="btn btn-success"  href="{% url 'persinvoluc' idhec idper%}">
+        <label title="Permite Ver mas detalles de las personas involucradas en el Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Personas</label></a></p><hr>
+   {%else%}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+    <p align="right">
+           <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
+        <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
+</p>
+
+
+      {% endif %}
+   {%endif%}   
+   </p>
+   {% if tienelugar %}
+     <h1>Ubicación del Lugar del Hecho</h1>
+      <label> {{lugarhecho}}</label>
+      <p align="right">
+      <a class="btn btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" >
+        <label title="Permite Ver mas detalle del Lugar del Hecho" 
+        style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Ver Lugar </label></a></p><hr>
+      
+   {% else %}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+      <p align="right">
+        <a class="btn btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label  title="Permite Indicar la Ubicación del Hecho y caracteristicas del lugar"
+          style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Lugar </label></a></p>
+      {% endif %}
+
+    {% endif %}
+ 
+    {% if tieneelemento %}
+      <h1>Listado de elementos</h1> 
+
+    <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th>Tipo</th>
+               <th>Rubro</th>
+               <th>Categoria</th>
+               <th>Cantidad</th>
+               <th>Fecha de Ampliacion</th>
+              </tr>
+        </thead>
+      
+             <tbody>
+                 {% for elemento in lista %}
+                  <tr  class="gradeC"> 
+                    <td width="25%">{{ elemento.tipo}}</td>
+                    <td width="30%">{{ elemento.rubro }}</td>
+                    <td width="30%">{{ elemento.categoria }}</td>
+                    <td width="30%">{{ elemento.cantidad }}  {{ elemento.unidadmed }}</td>
+                    {%if elemento.ampliacion%}
+                            <td width="30%">{{ elemento.ampliacion.fecha|date:"d/m/Y"}}</td>
+                    {%else%}
+                       <td width="30%">---</td>
+                    {%endif%}        
+           
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+       </div><br>
+      <p align="right">
+      <a class="btn btn-success"  href="{% url 'elementos' idhec %}" >
+        <label title="Permite Ver mas detalle de los Elementos pertenecientes al Hecho" style="font-size:10px;text-align:center;"> Ver elementos </label></a></p><hr>
+      
+    {% else %}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+          <p align="right">
+        <a class="btn btn-success"  href="{% url 'elementos' idhec %}" ><label  title="Permite Agregar Elementos según sean Denunciados/Utilizados/Secuestrados/Utilizados y Secuestrados en el Hecho"
+          style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Elementos </label></a></p>
+      {% endif %}<!--  FIN COMPROBACION DEPENDENCIA -->
+
+    {% endif %}<!--  FIN COMPROBACION TIENE ELEMENTO -->
+     
+    {%if tienelugar%}
+    {%if state == "jefes" and  not fecha_autorizacion%}
+        <a class="btn1 btn-success"  href="{% url 'informa' idhec idprev %}" >
+           <label title="Permite Informar el Preventivo a las Autoridades correspondientes" 
+          style="font-size:14px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Informar</label></a>
+       {%else%}  
+        {%if not fecha_autorizacion%} 
+       <p align="center">
+
+     <a  type="button" href="{% url 'informa' idhec idprev %}"  class="new-aqua">
+      <label   title="Permite Informar el Preventivo a las Autoridades correspondientes" 
+      style="font-size:14px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Informar </label></a></p>
+      {%else%}
+          {%if preventivo.fecha_cierre%} 
+            <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+            <strong style="color:red;margin-left:20px;">Prev. / Causa cerrada el : {{preventivo.fecha_cierre|date:"d/m/y"}}</strong>
+          {%else%}
+             <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+          {%endif%}
+        
+           {%if not preventivo.fecha_cierre%} 
+             <p align="center">
+               <a  type="button" href="{% url 'ampliacion' idprev %}"  class="new-aquas">
+               <label   title="Permite realizar el Cierre del Preventivo mediante una Ampliación" 
+                style="margin-left:-8px;margin-top:3px;font-size:10px;text-align:center;">CERRAR CAUSA
+              </label>
+              </a>
+            </p>
+          {%endif%}
+          {%endif%}
+      {%endif%}  
+    <br>{%endif%}
+{% else %}
+    {% if depe == user.get_profile.depe or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+      <p align="right">
+      <a class="btn btn-success"  href="{% url 'newhecho' idprev %}" ><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Hecho</label></a>
+      </p>
+   {% endif %}
+{% endif %}
+
+
+
+<!--
+<div align="right">
+{% if tieneHecho %}
+  <input  class="new-aqua" type="submit" name = "button" id = "button" value="Modificar"/>
+
+   <a class="btn btn-success"  href="{% url 'updatehechos' idprev %}"><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Hecho</label></a>
+ 
+       <a class="btn btn-success"  href="{% url 'persinvoluc' idhec idper%}">
+        <label style="font-size:10px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Personas Inv.</label></a>
+         <!-- {%if tienePersonas %}-->
+   <!--{%endif%}  -->
+<!--{% else %}
+   <input  class="new-aqua" type="submit" name = "button" id = "button" value="Modificar"/>
+
+   {% if user.get_profile.depe == depe %}
+      <a class="btn btn-success"  href="{% url 'newhecho' idprev %}"><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Cargar Hecho</label></a>
+   {%endif%} 
+
+{% endif %}
+</div>-->
+</form>
+{% endblock %}

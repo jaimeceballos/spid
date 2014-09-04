@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+{% block main %}
+
+   <form action="/preventivos/automotores/" method="post">{% csrf_token %} 
+
+   <h1>Informe Estadisticos Generales</h1>
+ 
+     
+    
+       
+        <input type="hidden" id="latv" name="latv" value="{{preventivo.ciudad.lat}}" />
+        <input type="hidden" id="longiv" name="longiv" value="{{preventivo.ciudad.longi}}" /> 
+        <input type="hidden" id="cdav" name="cdav" value="{{preventivo.ciudad.descripcion}}" />
+        <br>
+ 
+        <section style="margin: 10px;">
+          <fieldset style="border-radius: 5px; padding: 5px; min-height:30px; ">
+            <legend><b> Informe Estadisiticos por : </b> 
+                   
+            </legend>
+            <br>
+
+             <strong style="margin-left:10px;margin-bottom:6px" >Meses :</strong>
+                    <select name = "mes" id="mes" style="width:90px;margin-bottom:6px">
+                     {%for key,value in meses.items%} 
+                       <option name="mes" value="{{key}}">{{value.upper}} </option>
+                     {%endfor%}
+                   </select>
+                    <strong style="margin-left:10px;margin-bottom:6px" >Años :</strong>
+                    <select name = "anios" id="anios" style="width:90px;margin-bottom:6px">
+                     {%for key,value in anios.items%} 
+                       <option name="anios" >{{value}} </option>
+                     {%endfor%}
+                   </select>
+            <strong style="margin-left:20px;">ESTADO PROVINCIAL</strong>
+            <input type="checkbox" id = "provi" name="provi" style="margin-left:3px;margin-bottom:6px"/>
+            <strong style="margin-left:15px;">DEPENDENCIAS POLICIALES</strong>
+            <input type="checkbox" id = "depes"  style="margin-left:3px;margin-bottom:6px" name="depes" />
+            <strong style="margin-left:35px;">CIUDADES</strong>
+            <input type="checkbox" id = "ciu" name="ciu"  style="margin-left:3px;margin-bottom:6px"/>
+           
+           </fieldset>
+         
+          <br>
+           
+         
+        <div id="combodepe" style="display:none;">
+        <p>
+         <strong >UNIDADES REGIONALES :</strong>
+            <select name = "ureg" id="ureg" style="width:250px;">
+              <option name="ureg" {{form.ureg}}</option>
+            </select>
+        
+             
+          <strong style="margin-left: 20px;"> DEPENDENCIAS : </strong>
+            <select name = "depe" id="depe"  style="width:250px;" >
+              <option name="depe" {{form.depe}}</option>
+            </select> 
+               <input class="new-aqua" type="submit" id="ver" name="ver" 
+            style="margin-left:30px;font-family:'Arial'; font-size:12px;" value="Visualizar"/></p><br>
+      </div>
+      <div id="combociu" style="display:none;">
+        <p>
+         <strong>CIUDADES :</strong>
+            <select name = "ciudades" id="ciudades" style="width:250px;">
+              <option name="ciudades" {{form.ciudades}} </option>
+            </select> 
+             <input class="new-aqua" type="submit" id="ver" name="ver" 
+            style="margin-left:30px;font-family:'Arial'; font-size:12px;" value="Visualizar"/></p> <br>
+           
+      </div>
+     
+       
+     <div id="vista" style="display:none;">
+          <p>
+          <input class="new-aqua" type="submit" id="ver" name="ver" 
+            style="margin-left:40%;font-family:'Arial'; font-size:12px;" value="Visualizar"/></p><br>
+        </div>
+
+     
+    
+      
+       <input type="hidden" id="ciu" name="ciu" value="{{ciudad}}"/>
+       <input type="hidden" id="ure" name="ure" value="{{ureg}}"/>
+       <input type="hidden" id="dep" name="dep" value="{{depes}}"/>
+       <input type="hidden" id="mesi" name="mesi" value="{{fechadesde}}"/>
+       <input type="hidden" id="aniosi" name="aniosi" value="{{fechahasta}}"/>
+  
+       <h1 style="width:100%;margin-left:0px;">
+        Informe para Estadisticas Policiales en {{lugar}} - MES / AÑO : {{fechadesde}} / {{fechahasta}}
+      </h1>
+      {%if rangose%}
+         <h1 style="width:100%">{%for ist in rangose%}
+              Elementos {{ist}} {%endfor%}</h1>
+         <div >
+ 
+       <table cellpadding="0" cellspacing="0" border="0" id="miTabla"  width="100%">
+        
+           <thead>
+       
+             <tr  style="font-size:12px;">
+       
+               <th>VEHICULOS</th>
+   
+                {%for data,valor in dictde.items%}
+                        {%if data in 'robos'%}
+                            <th > ROBOS </th>
+                        {%else%}
+                            {%if data in 'homicidios'%}
+                               <th > HOMICIDIOS </th>  
+                            {%else%}
+                               {%if data in 'hurtos'%}
+                                  <th > HURTOS </th>
+                               {%else%}
+                                  <th > OTROS</th>
+                               {%endif%}
+                            {%endif%}
+                        {%endif%}
+                {%endfor%}
+             </tr>
+          </thead> 
+          <tbody>
+   
+                {%for key in delitos.keys %}
+                
+                  <tr> 
+                      <td width="20%"> <p> <span>{%autoescape off%}{{key}}{%endautoescape%}</span></p></td>
+                      {%for data,valor in dictse.items%}
+                        {%if data in 'robos'%}
+                          <td width="25%">
+                            <strong style="margin-left:80px;font-size:14px;">{{valor}}</strong>
+                          </td>
+                        {%else%}  
+                             {%if data in 'homicidios'%}
+                                <td width="25%">
+                                  <strong style="margin-left:80px;font-size:14px;">{{valor}}</strong>
+                                </td>
+                             {%else%}                                        
+                                {%if data in 'hurtos'%}
+                                   <td width="25%">
+                                    <strong style="margin-left:80px;font-size:14px;">{{valor}}</strong>
+                                  </td>
+                                {%else%}  
+                                    
+                                       {%if data in 'otros'%}
+                                          <td width="25%">
+                                            <strong style="margin-left:80px;font-size:14px;">{{valor}}</strong>
+                                          </td>
+                                       {%endif%}
+                             
+                                {%endif%}    
+                             {%endif%}   
+                        {%endif%}   
+                
+                      {%endfor%}                      
+                 </tr>
+               {%endfor%}
+            </tbody>
+      
+          </table>
+      
+
+       </div>
+       
+       {%if matriz %}
+    <p align="right">
+      <input class="botonexpo" type="submit" value="Exportar" id="expo" name="expo" title="Permite exportar datos a Excel"/></p> <br>
+      {%endif%}
+       {%else%}
+         <br>
+         <h1 style="background:black;color:red;width:100%"> No se registran datos de Elementos SECUESTRADOS</h1><br>
+        {%endif%}
+
+  {%if rangod%}
+ <div >
+       <h1 style="width:100%">{%for ist in rangod%}
+               Elementos {{ist}} {%endfor%}</h1>
+       <table cellpadding="0" cellspacing="0" border="0" id="miTabla"  width="100%">
+
+           <thead>
+       
+             <tr  style="font-size:12px;">
+       
+               <th>VEHICULOS</th>
+                {%for data,valor in dictde.items%}
+                        {%if data in 'robos'%}
+                            <th > ROBOS </th>
+                        {%else%}
+                            {%if data in 'homicidios'%}
+                               <th > HOMICIDIOS </th>  
+                            {%else%}
+                               {%if data in 'hurtos'%}
+                                  <th > HURTOS </th>
+                               {%else%}
+                                  <th > OTROS</th>
+                               {%endif%}
+                            {%endif%}
+                        {%endif%}
+                {%endfor%}
+             </tr>
+          </thead> 
+          <tbody>
+   
+                {%for key in delitos.keys %}
+                
+                  <tr> 
+                      <td width="20%"> <p> <span>{%autoescape off%}{{key}}{%endautoescape%}</span></p></td>
+                      {%for data,valor in dictde.items%}
+                        {%if data in 'robos'%}
+                          <td width="25%">
+                            <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                          </td>
+                        {%else%}  
+                             {%if data in 'homicidios'%}
+                                <td width="25%">
+                                  <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                </td>
+                             {%else%}                                        
+                                {%if data in 'hurtos'%}
+                                   <td width="25%">
+                                    <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                  </td>
+                                {%else%}  
+
+                                       {%if data in 'otros'%}
+                                          <td width="25%">
+                                            <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                          </td>
+                                       {%endif%}
+                          
+                                {%endif%}    
+                             {%endif%}   
+                        {%endif%}   
+    
+                    {%endfor%}                            
+                 </tr>
+               {%endfor%}
+            </tbody>
+      
+          </table>
+      
+
+       </div>
+ {%if matriz %}
+    <p align="right">
+      <input class="botonexpo" type="submit" value="Exportar" id="expo" name="expo" title="Permite exportar datos a Excel"/></p> <br>
+      {%endif%}
+   {%else%}
+        <br>
+         <h1 style="background:black;color:red;width:100%"> No se registran datos de Elementos DENUNCIADOS</h1><br>
+        {%endif%}   
+   {%if rangou%}
+ <div >
+       <h1 style="width:100%">{%for ist in rangou%}
+               Elementos {{ist}} {%endfor%}</h1>
+       <table cellpadding="0" cellspacing="0" border="0" id="miTabla"  width="100%">
+
+           <thead>
+       
+             <tr  style="font-size:12px;">
+       
+               <th>VEHICULOS</th>
+                {%for data,valor in dictut.items%}
+                        {%if data in 'robos'%}
+                            <th > ROBOS </th>
+                        {%else%}
+                            {%if data in 'homicidios'%}
+                               <th > HOMICIDIOS </th>  
+                            {%else%}
+                               {%if data in 'hurtos'%}
+                                  <th > HURTOS </th>
+                               {%else%}
+                                  <th > OTROS</th>
+                               {%endif%}
+                            {%endif%}
+                        {%endif%}
+                {%endfor%}
+             </tr>
+          </thead> 
+          <tbody>
+   
+                {%for key in delitos.keys %}
+                
+                  <tr> 
+                      <td width="20%"> <p> <span>{%autoescape off%}{{key}}{%endautoescape%}</span></p></td>
+                      {%for data,valor in dictut.items%}
+                        {%if data in 'robos'%}
+                          <td width="25%">
+                            <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                          </td>
+                        {%else%}  
+                             {%if data in 'homicidios'%}
+                                <td width="25%">
+                                  <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                </td>
+                             {%else%}                                        
+                                {%if data in 'hurtos'%}
+                                   <td width="25%">
+                                    <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                  </td>
+                                {%else%}  
+
+                                       {%if data in 'otros'%}
+                                          <td width="25%">
+                                            <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                          </td>
+                                       {%endif%}
+                          
+                                {%endif%}    
+                             {%endif%}   
+                        {%endif%}   
+    
+                    {%endfor%}                            
+                 </tr>
+               {%endfor%}
+            </tbody>
+      
+          </table>
+      
+
+       </div>
+ {%if matriz %}
+    <p align="right">
+      <input class="botonexpo" type="submit" value="Exportar" id="expo" name="expo" title="Permite exportar datos a Excel"/></p> <br>
+      {%endif%}
+   {%else%}
+        <br>
+         <h1 style="background:black;color:red;width:100%"> No se registran datos de Elementos UTILIZADOS</h1><br>
+        {%endif%}   
+   {%if rangoot%}
+ <div >
+       <h1 style="width:100%">{%for ist in rangoot%}
+               Elementos {{ist}} {%endfor%}</h1>
+       <table cellpadding="0" cellspacing="0" border="0" id="miTabla"  width="100%">
+
+           <thead>
+       
+             <tr  style="font-size:12px;">
+       
+               <th>VEHICULOS</th>
+                {%for data,valor in dictot.items%}
+                        {%if data in 'robos'%}
+                            <th > ROBOS </th>
+                        {%else%}
+                            {%if data in 'homicidios'%}
+                               <th > HOMICIDIOS </th>  
+                            {%else%}
+                               {%if data in 'hurtos'%}
+                                  <th > HURTOS </th>
+                               {%else%}
+                                  <th > OTROS</th>
+                               {%endif%}
+                            {%endif%}
+                        {%endif%}
+                {%endfor%}
+             </tr>
+          </thead> 
+          <tbody>
+   
+                {%for key in delitos.keys %}
+                
+                  <tr> 
+                      <td width="20%"> <p> <span>{%autoescape off%}{{key}}{%endautoescape%}</span></p></td>
+                      {%for data,valor in dictot.items%}
+                        {%if data in 'robos'%}
+                          <td width="25%">
+                            <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                          </td>
+                        {%else%}  
+                             {%if data in 'homicidios'%}
+                                <td width="25%">
+                                  <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                </td>
+                             {%else%}                                        
+                                {%if data in 'hurtos'%}
+                                   <td width="25%">
+                                    <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                  </td>
+                                {%else%}  
+
+                                       {%if data in 'otros'%}
+                                          <td width="25%">
+                                            <strong style="margin-left:40px;font-size:14px;">{{valor}}</strong>
+                                          </td>
+                                       {%endif%}
+                          
+                                {%endif%}    
+                             {%endif%}   
+                        {%endif%}   
+    
+                    {%endfor%}                            
+                 </tr>
+               {%endfor%}
+            </tbody>
+      
+          </table>
+      
+
+       </div>
+ {%if matriz %}
+    <p align="right">
+      <input class="botonexpo" type="submit" value="Exportar" id="expo" name="expo" title="Permite exportar datos a Excel"/></p> <br>
+      {%endif%}
+   {%else%}
+        <br>
+         <h1 style="background:black;color:red;width:100%"> No se registran datos de Elementos UTILIZADOS y/o SECUESTRADOS</h1><br>
+        {%endif%}   
+      </form>
+{% endblock %}

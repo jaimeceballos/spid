@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block main %}
+<form id="form" action="." method="post">{% csrf_token %} 
+
+   <h1>Formulario de ABM de Dependencias Policiales</h1>
+
+   {% if errors %}
+            
+               {% for error in errors %}
+                    <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+               {% endfor %}
+             
+    {% endif %}  
+
+    <p><label for="descripcion" name="descripcion"> Descripcion:
+      <input type="text" name="descripcion" id="descripcion" placeholder="Ej: CRIA. PRIMERA - TW" value="{{depes.descripcion}}" autocomplete="off"/>
+      <a href="/preventivos/dependencias/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+      {% if depes in lista %}
+          <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">
+          <input class="btn btn-success" type="submit" value= "Borrar" name="borrar" title="Eliminar dependencia">
+        {%else%}
+          <input class="btn btn-success" type="submit" value= "Grabar" name="grabar" title="Grabar dependencia" >
+        {%endif%}
+      </label> 
+    </p>
+    <p>
+      
+     <label for="ciudad" name="ciudad" > Ciudad  :
+        <select name="ciudad" id="ciudad"  style="width: 160px; margin-left:26px;"  tabindex="-1">
+            <option {{form.ciudad}}</option>
+        </select>
+      </label>
+    </p>  
+    <p>
+      
+     <label for="unidades_regionales" name="unidad" > Unidad  :
+        <select name="unidades_regionales" id="unidades_regionales" class="combodoc"  style="margin-left:26px;" tabindex="-1">
+            <option {{form.unidades_regionales}}</option>
+        </select>
+      </label>
+    </p>
+    <br>
+      <br>
+      <h1>LISTADO GENERAL DE DEPENDENCIAS POLICIALES </h1>
+      <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th >Items</th>
+               <th>Dependencias</th>
+               <th>Unidad Regional</th>
+               <th>Ciudad</th>
+            </tr>
+        </thead>
+      
+             <tbody>
+                 {% for listas in lista %}
+                  <tr  class="gradeC"> 
+                    <td width="13%"><a href='/preventivos/dependencias/{{ listas.id }}/'>{{ listas.id }}</a></td>
+                    <td width="25%">{{ listas.descripcion}}</td>
+                    <td width="30%">{{ listas.unidades_regionales}}</td>
+                    <td width="30%">{{ listas.ciudad}}</td>
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+       </div>
+     
+    </form> 
+      
+{% endblock %}

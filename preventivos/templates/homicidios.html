@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% block main %}
+
+   <form action="." method="post">{% csrf_token %} 
+
+   <h1>Informe Estadisticos Generales</h1>
+ 
+     
+    
+       
+        <input type="hidden" id="latv" name="latv" value="{{preventivo.ciudad.lat}}" />
+        <input type="hidden" id="longiv" name="longiv" value="{{preventivo.ciudad.longi}}" /> 
+        <input type="hidden" id="cdav" name="cdav" value="{{preventivo.ciudad.descripcion}}" />
+        <br>
+ 
+        <section style="margin: 10px;">
+          <fieldset style="border-radius: 5px; padding: 5px; min-height:30px; ">
+            <legend><b> Informe Estadisiticos por : </b> 
+                   
+            </legend>
+            <br>
+
+             <strong style="margin-left:10px;margin-bottom:6px" >Meses :</strong>
+                    <select name = "mes" id="mes" style="width:90px;margin-bottom:6px">
+                     {%for key,value in meses.items%} 
+                       <option name="mes" value="{{key}}">{{value.upper}} </option>
+                     {%endfor%}
+                   </select>
+                    <strong style="margin-left:10px;margin-bottom:6px" >Años :</strong>
+                    <select name = "anios" id="anios" style="width:90px;margin-bottom:6px">
+                     {%for key,value in anios.items%} 
+                       <option name="anios" >{{value}} </option>
+                     {%endfor%}
+                   </select>
+            <strong style="margin-left:20px;">ESTADO PROVINCIAL</strong>
+            <input type="checkbox" id = "provi" name="provi" style="margin-left:3px;margin-bottom:6px"/>
+            <strong style="margin-left:15px;">DEPENDENCIAS POLICIALES</strong>
+            <input type="checkbox" id = "depes"  style="margin-left:3px;margin-bottom:6px" name="depes" />
+            <strong style="margin-left:35px;">CIUDADES</strong>
+            <input type="checkbox" id = "ciu" name="ciu"  style="margin-left:3px;margin-bottom:6px"/>
+           
+           </fieldset>
+         
+          <br>
+           
+         
+        <div id="combodepe" style="display:none;">
+        <p>
+         <strong >UNIDADES REGIONALES :</strong>
+            <select name = "ureg" id="ureg" style="width:250px;">
+              <option name="ureg" {{form.ureg}}</option>
+            </select>
+        
+             
+          <strong style="margin-left: 20px;"> DEPENDENCIAS : </strong>
+            <select name = "depe" id="depe"  style="width:250px;" >
+              <option name="depe" {{form.depe}}</option>
+            </select> 
+               <input class="new-aqua" type="submit" id="ver" name="ver" 
+            style="margin-left:30px;font-family:'Arial'; font-size:12px;" value="Visualizar"/></p><br>
+      </div>
+      <div id="combociu" style="display:none;">
+        <p>
+         <strong>CIUDADES :</strong>
+            <select name = "ciudades" id="ciudades" style="width:250px;">
+              <option name="ciudades" {{form.ciudades}} </option>
+            </select> 
+             <input class="new-aqua" type="submit" id="ver" name="ver" 
+            style="margin-left:30px;font-family:'Arial'; font-size:12px;" value="Visualizar"/></p> <br>
+           
+      </div>
+     
+       
+     <div id="vista" style="display:none;">
+          <p>
+          <input class="new-aqua" type="submit" id="ver" name="ver" 
+            style="margin-left:40%;font-family:'Arial'; font-size:12px;" value="Visualizar"/></p><br>
+        </div>
+
+     
+      {%if canhec %}
+      
+       <input type="hidden" id="ciu" name="ciu" value="{{ciudad}}"/>
+       <input type="hidden" id="ure" name="ure" value="{{ureg}}"/>
+       <input type="hidden" id="dep" name="dep" value="{{depes}}"/>
+       <input type="hidden" id="mesi" name="mesi" value="{{fechadesde}}"/>
+       <input type="hidden" id="aniosi" name="aniosi" value="{{fechahasta}}"/>
+  
+       <h1 style="width:100%;margin-left:0px;">
+        Informe para Estadisticas Policiales en {{lugar}} - MES / AÑO : {{fechadesde}} / {{fechahasta}}
+      </h1>
+       <h1 style="width:100%;margin-left:0%;">
+      
+       CUADRO RESUMEN DE HOMICIDIOS 
+      </h1>
+       <p style="width:100%;margin-left:0px;font-size:14px;"><b><u>
+       Cantidad Total de Hechos, de Victimas y de Imputados</u></b>
+      </p>
+         <div >
+ 
+       <table cellpadding="0" cellspacing="0" border="0" id="miTabla"  width="100%">
+         {%if dictot%}
+        
+           <thead>
+       
+             <tr  style="font-size:12px;">
+       
+               <th> DELITOS </th>
+               <th > TOTAL DE HECHOS </th>
+               <th >TOTAL DE VICTIMAS </th>  
+               <th >TOTAL DE IMPUTADOS </th>
+           
+             </tr>
+          </thead> 
+          <tbody>
+   
+                
+                
+                    {%for key in dictot.keys %}
+                
+                  <tr> 
+                   
+                     
+                                      <td width="20%"> <p> <span>{%autoescape off%}{{key}}{%endautoescape%}</span></p></td>
+                                        
+                   
+                   
+                                      <td width="25%">
+                                                             
+                                                              
+                                                          
+                                                                {%for data,valor in dictch.items%}
+                                                                   
+                                                                     <strong style="margin-left:60px;font-size:14px;">{{valor}}</strong></td>
+                                                                   
+                                                                
+                                                                {%endfor%}
+                                      <td width="25%" >
+                                                             
+                                                              
+                                                          
+                                                                {%for data,valor in dictvic.items%}
+                                                                  
+                                                                     <strong  style="margin-left:60px;font-size:14px;">{{valor}}</strong></td>
+                                                            
+                                                                {%endfor%}
+                                      <td width="25%">
+                                                             
+                                                              
+                                                          
+                                                                {%for data,valor in dictimp.items%}
+                                                                
+                                                                     <strong style="margin-left:60px;font-size:14px;">{{valor}}</strong></td>
+                                                                {%endfor%}
+                                
+                 </tr>
+             {%endfor%}
+            </tbody>
+          {%endif%}
+          </table>
+      
+
+       </div>
+       <div >
+        <table cellpadding="0" cellspacing="0" border="0"  width="100%">
+          <tr>
+            <td>
+       <table cellpadding="0" cellspacing="0" border="0" id="miTabla"  >
+         {%if dictlt%}
+         <p style="width:100%;margin-left:0px;"><b><u>
+           Distribución de frecuencias de Homicidios por Tipo de lugar de ocurrencia </b></u>
+         </p>
+           <thead>
+       
+             <tr  style="font-size:12px;">
+       
+               <th> TIPO DE LUGAR </th>
+               <th > TOTAL DE HECHOS </th>
+                
+             </tr>
+          </thead> 
+          <tbody>
+   
+                
+                
+                    {%for key,value in dictlt.items %}
+                
+                  <tr> 
+                   
+                     
+                                      <td width="10%"> <p> <span>{%autoescape off%}{{key}}{%endautoescape%}</span></p></td>
+                                        
+                   
+                   
+                                      <td width="15%">
+                                                             
+                                                  <p> <strong style="margin-left:10px;font-size:14px;">
+                                                    {%autoescape off%}{{value}}{%endautoescape%}</strong></p></td>            
+                                                          
+                                       
+                                
+                 </tr>
+             {%endfor%}
+            </tbody>
+          {%endif%}
+          </table>
+         </td>
+      
+            <td>
+       <table cellpadding="0" cellspacing="0" border="0" id="miTabla" >
+         {%if dictar%}
+         <p style="width:100%;margin-left:0px;"><b><u>
+           Distribución de frecuencias de Homicidios por Clase de armas</b></u>
+         </p>
+           <thead>
+       
+             <tr  style="font-size:12px;">
+       
+               <th> CLASE DE ARMAS </th>
+               <th > TOTAL DE HECHOS </th>
+                
+             </tr>
+          </thead> 
+          <tbody>
+   
+                
+                
+                    {%for key,value in dictar.items %}
+                
+                  <tr> 
+                   
+                     
+                                      <td width="10%"> <p> <span>{%autoescape off%}{{key}}{%endautoescape%}</span></p></td>
+                                        
+                   
+                   
+                                      <td width="15%">
+                                                             
+                                                  <p> <strong style="margin-left:10px;font-size:14px;">
+                                                    {%autoescape off%}{{value}}{%endautoescape%}</strong></p></td>            
+                                                          
+                                       
+                                
+                 </tr>
+             {%endfor%}
+            </tbody>
+          {%endif%}
+          </table>
+        </td>
+         <td>
+       <table cellpadding="0" cellspacing="0" border="0" >
+        <tr>
+          <td>
+         {%if matriz %}    
+      <input class="botonexpo" type="submit" value="Exportar" id="expo" name="expo" title="Permite exportar datos a Excel"/>
+      {%endif%}
+    </td></tr></table>
+   
+        </td>
+        
+      </tr>
+      </table>
+        </div>
+       {%else%}
+         <h1> No se registran datos estadisticos para el Mes y Año seleccionado</h1>
+        {%endif%}
+      </form>
+{% endblock %}
