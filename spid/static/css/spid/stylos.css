@@ -1,0 +1,413 @@
+/*RESET CSS*/
+
+/* v1.0 | 20080212 */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+input{border: 1px solid black;height: 25px;}
+body {
+	line-height: 1;
+	margin: 0; padding: 0;
+	color: #333; 
+       	background: url(../../imagenes/spid/bg1.gif) repeat-x;	
+}
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/*FIN DE LOS RESETS*/
+
+/*Estilos generales*/
+#hgroup{
+	margin: 0; padding: 0;
+	font: 70%/24px 'DroidSansMono';
+	color: #333; 
+      	background: url(../../imagenes/spid/g1.gif) repeat-x;		
+}
+
+#hgroup h1{
+        font-size: 28px;
+	text-align: center;
+line-height: 3em;
+	font-family: 'DroidSansMono';
+}
+
+header hgroup h1 {
+	font-size: 2em;
+	text-align: center;
+	font-family: 'DroidSansMono';
+}
+
+header hgroup h2 {
+	font-size: 1em;
+	font-family: 'DroidSansMono';
+	text-align: center;
+	color:#777;
+}
+
+#footer { 
+	clear: both; 	
+	border-top: 1px solid #f2f2f2;
+	background: #FFF url(../../imagenes/spid/table.gif) repeat-x;
+	padding: 2px 0 10px 0; 
+	text-align: right;  
+	line-height: 1.5em;	
+	font-size: 11px;
+}
+#footer a { 
+	text-decoration: none; 
+	font-weight: bold;		
+}
+/*Fin estilos generales*/
+
+#contenedor {
+	width: 700px;
+	margin:auto;
+}
+
+/*Estilos formulario*/
+#textoContacto {
+	width: 400px;
+	position: relative;
+}
+
+#textoContacto h3 {
+	font-size: 18px;
+        font-family: 'DroidSansMono';    
+	font-weight: 100;
+	-webkit-transform: rotate(-90deg); 
+	-moz-transform: rotate(-90deg);
+	
+	color:red;
+	
+	position: absolute;
+	top: 200px;
+	left: -80px;
+}
+#formulario {
+    width:850px;
+    margin:auto;
+
+    font-family: 'DroidSansMono';
+    font-size: .8em;
+    
+    padding:15px;
+     padding-top: 60px;
+    padding-bottom: 50px;
+    padding-left:90px;
+    position: relative;
+ 
+}
+#formulario label{
+	display: block;
+	float:left;
+	width:155px;
+    font-weight:bold;
+    font-size:12px;
+    
+    padding-top:5px;
+    
+    position: relative;
+}
+logo2 {
+	position: absolute;
+	top: 3px; left: 100%;
+	font: bold 22px "DroidSansMono";
+	margin: 0; padding: 0;
+	letter-spacing: -1px;
+	color: #000;
+}
+label.error { 
+	width:175px;
+	margin-top:-30px;
+	margin-left:100%;
+	color:#ff0000;
+	
+	float: left;
+	
+	font-size:11px;
+}
+
+#formulario input{
+	display: block;
+	float:left;
+	width:250px;
+	margin-bottom: 7px;
+}
+
+#formulario textarea{
+	display: block;
+	float:left;
+	width:405px;
+	height: 200px;
+	margin-bottom: 5px;
+	resize: none;
+}
+
+#formulario .botonAcceder{
+  margin-left:45%;
+  position: absolute;
+  width: 90px;
+  height: 20px;	
+  display: inline-block;
+  padding: 1px 12px;
+  margin-bottom: 4px;
+  font-weight: normal;
+  line-height: 1;
+  height: 20px;    
+  width: 80px;
+  vertical-align: middle;
+  cursor: pointer;
+  background: #cee; 
+  border: 2px solid #ccc; 
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+  border-radius: 5px;
+  white-space: nowrap;
+  text-shadow: rgba(10, 10, 10, 0.5) 1px 2px 2px;
+  text-align: center; 
+  vertical-align: middle; 
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden;
+  box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -moz-box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -webkit-box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  font: 11px DroidSansMono,lighter;
+  color: #000; 		
+ }
+#formulario .botonprint{
+  margin-left:60%;
+  position: absolute;
+  width: 90px;
+  height: 20px;	
+  display: inline-block;
+  padding: 1px 12px;
+  margin-bottom: 4px;
+  font-weight: normal;
+  line-height: 1;
+  height: 20px;    
+  width: 80px;
+  vertical-align: middle;
+  cursor: pointer;
+  background: #cee; 
+  border: 2px solid #ccc; 
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+  border-radius: 5px;
+  white-space: nowrap;
+  text-shadow: rgba(10, 10, 10, 0.5) 1px 2px 2px;
+  text-align: center; 
+  vertical-align: middle; 
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden;
+  box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -moz-box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -webkit-box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  font: 11px DroidSansMono,lighter;
+  color: #000; 		
+ }
+#formulario .botonprint .botonAcceder:hover{
+	color: #ffffff;
+  background-color: gray;
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+}
+
+#formulario #aster {
+	color:#ff0000;
+}
+
+#textoContacto {
+	color:#535353;
+}
+
+.thanks{
+	color:red;
+	text-align:center;
+	height:220px;
+	
+	margin-top: 100px;
+	font-size:1em;
+}
+
+input[type=submit].new-aqua {
+  width: 20px;
+  height: 20px;			
+  background: #cde; 
+  border: 2px solid #ccc; 
+  border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
+  font: 600 10px/1 DroidSansMono; 
+  color: #000; 
+  text-shadow: rgba(10, 10, 10, 0.5) 1px 2px 2px;
+  text-align: center; 
+  vertical-align: middle; 
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden;
+  border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px;
+  box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -moz-box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  -webkit-box-shadow: 0 10px 16px rgba(66, 140, 240, 0.5), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+}
+.new-aqua:hover {
+  text-shadow: rgb(255, 255, 255) 0px 0px 5px;
+}
+
+
+.formulario{
+  border: 1px solid #CED5D7;
+  border-radius: 6px;
+  padding: 45px 45px 20px;
+  margin-top: 50px;
+  background-color: white;
+  box-shadow: 0px 5px 10px #B5C1C5, 0 0 0 10px #EEF5F7 inset;
+}
+.formulario label{
+  display: block; 
+  font-weight: bold;
+}
+.formulario div{
+  margin-bottom: 15px;
+}
+.formulario input[type='text'], .formulario textarea{
+  padding: 7px 6px;
+  width: 294px;
+  height: 30px;
+  border: 1px solid #CED5D7;
+  resize: none;
+  box-shadow:0 0 0 3px #EEF5F7;
+  margin: 5px 0;
+}
+.formulario input[type='text']:focus, .formulario textarea:focus{
+  outline: none;
+  box-shadow:0 0 0 3px #dde9ec;
+}
+.formulario input[type='text'].invalido, .formulario textarea.invalido{
+  box-shadow:0 0 0 3px #FFC9C9;
+}
+.formulario input[type='submit']{
+  border: 1px solid #CED5D7;
+  box-shadow:0 0 0 3px #EEF5F7;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  text-shadow: 1px 1px 0px white;
+  
+  background: #e4f1f6; 
+  background: -moz-linear-gradient(top, #e4f1f6 0%, #cfe6ef 100%);
+  background: -webkit-linear-gradient(top, #e4f1f6 0%,#cfe6ef 100%); 
+}
+.formulario input[type='submit']:hover{
+  background: #edfcff; 
+  background: -moz-linear-gradient(top, #edfcff 0%, #cfe6ef 100%);
+  background: -webkit-linear-gradient(top, #edfcff 0%,#cfe6ef 100%); 
+}
+.formulario input[type='submit']:active{
+  background: #cfe6ef; 
+  background: -moz-linear-gradient(top, #cfe6ef 0%, #edfcff 100%);
+  background: -webkit-linear-gradient(top, #cfe6ef 0%,#edfcff 100%);
+}
+.error{
+    background-color: #BC1010;
+    border-radius: 4px 4px 4px 4px;
+    color: white;
+    font-weight: bold;
+    margin-left: 16px;
+    margin-top: 6px;
+    padding: 6px 12px;
+    position: absolute;
+}
+.error:before{
+    border-color: transparent #BC1010 transparent transparent;
+    border-style: solid;
+    border-width: 6px 8px;
+    content: "";
+    display: list-item;
+    height: 0;
+    left: -16px;
+    position: absolute;
+    top: 8px;
+    width: 0;
+}
+.result_fail{
+    background: none repeat scroll 0 0 #BC1010;
+    border-radius: 20px 20px 20px 20px;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+}
+.result_ok{
+    background: none repeat scroll 0 0 #1EA700;
+    border-radius: 20px 20px 20px 20px;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
