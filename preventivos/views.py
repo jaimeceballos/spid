@@ -1180,7 +1180,11 @@ def usuarios(request, iduser):
                            user.is_active=True
                         else:
                            user.is_active=False
-                        if user.is_staff:
+                        if user.is_staff or bandad:
+                          if str(grupos)!='administrador':
+                            user.is_staff=False
+                            user.is_superuser=False
+                          else:  
                            user.is_staff=True
                            user.is_superuser=True
                            if roles!='':
