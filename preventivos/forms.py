@@ -432,7 +432,8 @@ class SearchPreveForm(forms.Form):
     anio=forms.IntegerField(required=False)
     fecha_carga=forms.DateField(required=False)
     caratula=forms.CharField(required=False)
-    unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.filter(Q(descripcion__startswith="OPERA") | Q(descripcion__startswith="UNIDAD")))
+    unidades_regionales=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.all())
+    #unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.filter(Q(descripcion__startswith="OPERA") | Q(descripcion__startswith="UNIDAD")))
     dependencias = forms.Select()
     
     

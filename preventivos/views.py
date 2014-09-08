@@ -7023,7 +7023,7 @@ def seemaps(request):
                           
                                
                                reglugar=Lugar.objects.get(id=datalugar)
-                               prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia)}
+                               prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia.encode("utf8"))}
                                preven.append(prevs)
                                haydatos=True
                                i=i+1   
@@ -7084,7 +7084,7 @@ def seemaps(request):
                                """
                                
                                reglugar=Lugar.objects.get(id=datalugar)
-                               prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia)}
+                               prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia.encode("utf8"))}
 
                                preven.append(prevs)
                                haydatos=True
@@ -7158,7 +7158,7 @@ def seemaps(request):
                                           
                                   
                                                                         
-                                          prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia)}
+                                          prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia.encode("utf8"))}
                                           preven.append(prevs)
                                           #preven.append(str(desde['nro'])+','+str(desde['anio'])+','+str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y'))+','+str(reglugar.latitud)+','+str(reglugar.longitud))
                                           haydatos=True
@@ -7219,9 +7219,12 @@ def seemaps(request):
                                           prevs=[]"""
                                           
                                           
-                               
-                                         
-                                          prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):injusticia}
+                                          
+                                          #delis=injusticia.encode(encoding='ISO-8859-1',errors='strict')
+                                          #print delis
+                                          prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia.encode('ISO-8859-1'))}
+                                          #ver=_decode_dict(prevs)
+                                          #print ver
                                           preven.append(prevs)
                                            #preven.append(str(desde['nro'])+','+str(desde['anio'])+','+str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y'))+','+str(reglugar.latitud)+','+str(reglugar.longitud))
                                           haydatos=True
@@ -7234,10 +7237,25 @@ def seemaps(request):
           #print preventivo, depes,ureg  
           """values={'today':today,'ref':ref,'refdelitosdes':refdelitosdes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,}
           return render_to_response('./vermapa.html', values, context_instance=RequestContext(request)) """
-
+ 
   values={'buscar':buscar,'buscarciu':buscarciu,'ayerfue':ayerfue,'hoyes':hoyes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,'depes':depes,'ureg':ureg,'refdelitosdes':refdelitosdes,}
   return render_to_response('./mapsanality.html',values,context_instance=RequestContext(request)) 
 
+"""def _decode_dict(data):
+    rv = {}
+    for key, value in data.iteritems():
+        if isinstance(key, unicode):
+            key = key.encode('ISO-8859-1')
+        if isinstance(value, unicode):
+            value = value.encode('ISO-8859-1')
+        elif isinstance(value, list):
+            value = _decode_list(value)
+        elif isinstance(value, dict):
+            value = _decode_dict(value)
+        print value.encode(encoding='ISO-8859-1',errors='strict')
+        rv[key] = value
+      
+    return rv"""
 
 #definicion para ver personas involuvradas en hechos
 @login_required   
