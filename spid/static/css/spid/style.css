@@ -1,0 +1,483 @@
+html, body {border: 0; margin: 0; padding: 0; }
+
+
+#layerPreview {
+	
+   position:absolute;z-index:1;display:none;top:0px;left:0px;width:100%;height:100%;background-color:#eee;
+   opacity: 0.8;-moz-opacity: 0.8;filter: alpha(opacity=80);-khtml-opacity: 0.8;
+  
+   
+     }
+     
+  #layerPreviewContent{
+   position:absolute;z-index:1;display:none;background-color:#fff;left:50%;
+   width:735px;
+   background: #f1f2f3;
+    margin-left:-280px;
+   margin-top:-40px;
+   height:20px;
+   
+   
+   padding:0px;border:0px solid;
+  }
+#layerPreviewver {
+   position:absolute;z-index:1;display:none;top:0px;left:0px;width:100%;height:100%;background-color:#fff;
+   opacity: 0.8;-moz-opacity: 0.8;filter: alpha(opacity=80);-khtml-opacity: 0.8;
+   }
+ #layerPreviewContentver{
+   position:absolute;z-index:1;display:none;background-color:#fff;left:50%;
+   width:700px;
+   background: #fff;
+   margin-left:-200px;
+   margin-top:-100px;
+   height:300px;
+   padding:1px;border:0px solid;
+  }
+
+@font-face {
+    font-family: 'CandaraRegular';
+    src: url('WebRoot/../../fonts/candara-webfont.eot');
+    src: url('WebRoot/../../fonts/candara-webfont.eot?#iefix') format('embedded-opentype'),
+         url('WebRoot/../../fonts/candara-webfont.woff') format('woff'),
+         url('WebRoot/../../fonts/candara-webfont.ttf') format('truetype'),
+         url('WebRoot/../../fonts/candara-webfont.svg#CandaraRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+#box{
+	background:url(WebRoot/../../imagenes/shape.png) no-repeat center;
+	margin:80px auto 0 auto;
+	width:280px;
+	height:280px;
+}
+.elements{
+	width:222px;
+	margin:0 auto;
+	padding:15px 0;
+}
+.avatar{
+	background:url(WebRoot/../../imagenes/avatar.gif) no-repeat center;
+	height:65px;
+	margin-bottom:15px;
+}
+.username{
+	background:url(WebRoot/../../imagenes/usermamefield.gif) no-repeat top;
+	width:222px;
+	height:33px;
+	border:0;
+	outline:0;
+	text-align:center;
+	color:#999999;
+	margin-bottom:10px;
+}
+.username:focus{
+	background:url(WebRoot/../../imagenes/usermamefield.gif) no-repeat bottom;
+	color:#333333;
+	border:0;
+	outline:0;
+	text-align:center;
+	color:#999999;
+	margin-bottom:10px;
+}
+.password{
+	background:url(WebRoot/../../imagenes/passwordfield.gif) no-repeat top;
+	width:222px;
+	height:32px;
+	text-align:center;
+	border:0;
+	outline:0;
+	text-align:center;
+	color:#999999;
+	margin-bottom:10px;
+}
+.password:focus{
+	background:url(WebRoot/../../imagenes/passwordfield.gif) no-repeat bottom;
+	color:#333333;
+	border:0;
+	outline:0;
+	text-align:center;
+	color:#999999;
+	margin-bottom:10px;
+}
+.forget{
+	font-size:12px;
+	margin-bottom:20px;
+}
+.forget a{
+	color:#999999;
+	text-decoration:none;
+}
+.checkbox {
+    display: block;
+    width: 40px;
+    height: 15px;
+    overflow: hidden;
+    border-radius: 5px;
+	float:left;
+	margin:5px 0 0 0;5
+}	
+input[type=checkbox] {
+    display: none;
+}
+input[type=checkbox] + label {
+    text-indent: -9999px;
+    display: block;
+    width: 40px;
+    height: 15px;
+    line-height: 5px;
+    background: transparent url(WebRoot/../../imagenes/checkboxfield.png) no-repeat;
+    -webkit-transition: background-position 0.3s ease-in-out;
+    -moz-transition: background-position 0.3s ease-in-out;
+}
+input[type=checkbox]:checked + label {
+    -webkit-transition: background-position 0.3s ease-in-out;
+    -moz-transition: background-position 0.3s ease-in-out;
+    background-position:-26px;
+}
+.remember{
+	font-size:12px;
+	color:#999999;
+	margin:5px;
+	float:left;
+}
+.clr{
+	clear:both;
+}
+.submit{
+	float:center;
+	background:#cccccc;
+	width:70px;
+	height:23px;
+	border-radius:12px;
+	border-bottom:2px solid #bcbcbc;
+	cursor:pointer;
+	color:black;
+}
+.submit:hover{
+	text-shadow:0 1px rgba(0,0,0,0.1);
+}
+.submit:active{
+	text-shadow:0 -1px rgba(0,0,0,0.2);
+}
+.signup{
+	text-align:center;
+	font-size:10px;
+	color:#999;
+	margin:5px 0 0 0;
+}
+.signup a{
+	color:#72985a;
+	text-decoration:none;
+}
+
+a {
+	color: #3E82FF;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #00CCFF;
+}
+
+a img {
+  border: none;/*remove border for linked images*/
+}
+
+h1 {
+	font-size: 0.8em;
+	height: 12px;
+	padding-top: 2;
+	color: black;
+}
+
+
+h2{
+	font-size: 1.2em;
+	height: 15px;
+	padding-top: 8cms;
+	color: black;
+}
+.highlight {background-color:rgb(120,240,0); ;border-bottom:green 1px solid;border-top:green 1px solid;padding: 10px 10px; color: black;}
+
+/***** Main Layout ****/
+#container {
+  	width: 80%;
+  	height: 100%;
+  	text-align: center;/* IE fix to center the page */
+  	position: relative;
+  	top: 12;
+}
+
+#content {
+  	width: 75%;
+   	text-align: center;
+	padding: 275px;
+	position:relative;
+}
+
+ul, ul ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+
+#wrapper {	
+	width: auto;
+	margin:  auto;
+	font-size: 0.7325em;
+	border :0.2em outset;
+	border-color: blue;
+}
+.menu {
+	width: auto;
+	height: auto;
+	margin:auto;
+	-webkit-box-shadow: 0px 1px 3px 0px rgba(0,0,0,.73), 0px 0px 18px 0px rgba(0,0,0,.13);
+	-moz-box-shadow: 0px 1px 3px 0px rgba(0,0,0,.73), 0px 0px 18px 0px rgba(0,0,0,.13);
+	box-shadow: 0px 1px 3px 0px rgba(0,0,0,.73), 0px 0px 18px 0px rgba(0,0,0,.13);
+}
+.menu > li > a {
+	background-color: #616975;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(114, 122, 134)),to(rgb(80, 88, 100)));
+	background-image: -webkit-linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
+	background-image: -moz-linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
+	background-image: -o-linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
+	background-image: -ms-linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
+	background-image: linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#727a86', EndColorStr='#505864');
+	border-bottom: 1px solid #33373d;
+	-webkit-box-shadow: inset 0px 1px 0px 0px #878e98;
+	-moz-box-shadow: inset 0px 1px 0px 0px #878e98;
+	box-shadow: inset 0px 1px 0px 0px #878e98;
+	width: 100%;
+	height: 2.75em;
+	line-height: 2.75em;
+	text-indent: 2.75em;
+	display: block;
+	position: relative;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 600;
+	color: #fff;
+	text-shadow: 0px 1px 0px rgba(0,0,0,.5);
+}
+
+.menu ul li a {
+	background: #fff;
+	border-bottom: 1px solid #efeff0;
+	width: 100%;
+	height: 2.75em;
+	line-height: 2.75em;
+	text-indent: 2.75em;
+	display: block;
+	position: relative;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 0.923em;
+	font-weight: 400;
+	color: #878d95;
+}
+.menu ul li:last-child a {
+	border-bottom: 1px solid #33373d;
+}
+.menu > li > a:hover, .menu > li > a.active {
+	background-color: #35afe3;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(69, 199, 235)),to(rgb(38, 152, 219)));
+	background-image: -webkit-linear-gradient(top, rgb(69, 199, 235), rgb(38, 152, 219));
+	background-image: -moz-linear-gradient(top, rgb(69, 199, 235), rgb(38, 152, 219));
+	background-image: -o-linear-gradient(top, rgb(69, 199, 235), rgb(38, 152, 219));
+	background-image: -ms-linear-gradient(top, rgb(69, 199, 235), rgb(38, 152, 219));
+	background-image: linear-gradient(top, rgb(69, 199, 235), rgb(38, 152, 219));
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#45c7eb', EndColorStr='#2698db');
+	border-bottom: 1px solid #103c56;
+	-webkit-box-shadow: inset 0px 1px 0px 0px #6ad2ef;
+	-moz-box-shadow: inset 0px 1px 0px 0px #6ad2ef;
+	box-shadow: inset 0px 1px 0px 0px #6ad2ef;
+}
+.menu > li > a.active {
+	border-bottom: 1px solid #1a638f;
+}
+.menu > li > a:before {
+	
+	background: -webkit-gradient(linear, left top, left bottom, from(rgb(69, 100, 235)),to(rgb(38, 152, 219)));
+	background-repeat: no-repeat;
+	font-size: 8px;
+	height: 0.2em;
+  	width: 0.2em;
+	position: absolute;
+  	left: 0;
+	top: 0%;
+	margin: -.2em 0 0 0;
+}
+.item1 > a:before {
+	background-position: 0 0;
+}
+.item2 > a:before {
+	background-position: -10px 0;
+}
+.item3 > a:before {
+	background-position: 0 -10px;
+}
+.item4 > a:before {
+	background-position: -10px -10px;
+}
+.item5 > a:before {
+	background-position: -20px 0;
+}
+.item6 > a:before {
+	background-position: 0 -20px ;
+}
+.item7 > a:before {
+	background-position: -20px -20px;
+}
+.item8 > a:before {
+	background-position: -30px 0;
+}
+.item9 > a:before {
+	background-position: 0 -30px;
+}
+.item10 > a:before {
+	background-position: -30px -30px;
+}
+.item11 > a:before {
+	background-position: -40px 0;
+}
+.item12 > a:before {
+	background-position: 0 -40px;
+}
+.item13 > a:before {
+	background-position: -40px -40px;
+}
+.menu > li > a span {
+	font-size: 0.357em; 
+	display: inline-block;
+	position: absolute;
+	right: 0;
+	top: 0; 
+	background: #48515c;
+	line-height: 0.2em;
+	height: 0.2em;
+	padding: .1em .2em;
+	margin: -.2em 0 0 0; 
+	color: #fff;
+	text-indent: 0;
+	text-align: left;
+	-webkit-border-radius: .569em;
+	-moz-border-radius: .569em;
+	border-radius: .569em;
+	-webkit-box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, .26), 0px 1px 0px 0px rgba(255, 255, 255, .15);
+	-moz-box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, .26), 0px 1px 0px 0px rgba(255, 255, 255, .15);
+	box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, .26), 0px 1px 0px 0px rgba(255, 255, 255, .15);
+	text-shadow: 0px 1px 0px rgba(0,0,0,.5);
+	font-weight: 400;
+}
+.menu > li > a:hover span, .menu > li a.active span {
+	background: red;
+}
+.menu > li > ul li a:before{
+	content: url(WebRoot/../../imagenes/sele.jpg);
+	font-size: 10px;
+	color: black;
+	position: relative;
+	width: 0.2em;
+	height: 0.2em;
+	top: 4;
+	left: -0.5em;
+}
+
+.menu > li > ul li:hover a,
+.menu > li > ul li:hover a span,
+.menu > li > ul li:hover a:before {
+	color: navy;
+}
+
+
+.menu ul > li > a span {
+	font-size: 0.657em; 
+	display: inline-block;
+	position: absolute;
+	width: 100%;
+	right: 0.2em;
+	top: 0%; 
+	background: #fff;
+	border: 1px solid #d0d0d3;
+	line-height: 0.1em;
+	height: 0.2em;
+	padding: .2em .4em;
+	margin: -.4em 0 0 0; 
+	color: #878d95;
+	text-indent: 0;
+	text-align: left;
+	-webkit-border-radius: .569em;
+	-moz-border-radius: 569em;
+	border-radius: 569em;
+	text-shadow: 0px 0px 0px rgba(255,255,255,.01));
+}
+
+#tablewrapper {width:960px; margin:0 auto}
+#tableheader {height:20px}
+.search {float:left; padding:6px; border:1px solid #c6d5e1; background:#fff}
+#tableheader select {float:left; font-size:10px; width:150px; padding:2px 4px 4px}
+#tableheader input {float:left; font-size:10px; width:225px; padding:2px 4px 4px; margin-left:4px}
+.details {float:right; padding-top:12px}
+.details div {float:left; margin-left:15px; font-size:12px}
+.tinytable {width:959px; border-left:1px solid #c6d5e1; border-top:1px solid #c6d5e1; border-bottom:none; border-radius:5px}
+.tinytable th {background:black; text-align:left;  border-radius:5px;border:1px solid #fff; border-right:none}
+.tinytable th h3 {font-size:10px; padding:6px 8px 8px;color:white}
+.tinytable td {padding:4px 6px 6px; border-bottom:1px solid #c6d5e1; border-right:1px solid #c6d5e1; border-radius:5px;valign:top;
+text-align: center;  bgcolor:#e8e8e8; font-size:11px;}
+.tinytable .head h3 {background:url(WebRoot/../../imagenes/sort.gif) 7px center no-repeat; cursor:pointer; padding-left:18px}
+.tinytable .desc, .sortable .asc {background:url(WebRoot/../../imagenes/header-selected-bg.gif)}
+.tinytable .desc h3 {background:url(WebRoot/../../imagenes/desc.gif) 7px center no-repeat; cursor:pointer; padding-left:18px}
+.tinytable .asc h3 {background:url(WebRoot/../../imagenes/asc.gif) 7px  center no-repeat; cursor:pointer; padding-left:18px}
+.tinytable .head:hover, .tinytable .desc:hover, .tinytable .asc:hover {color:#fff}
+.tinytable .evenrow td {background:#fff}
+.tinytable .oddrow td {background:white}
+.tinytable td.evenselected {background:#ecf2f6}
+.tinytable td.oddselected {background:#dce6ee}
+.tinytable tfoot {background:#000; font-weight:bold}
+.tinytable tfoot td {padding:6px 8px 8px}
+#tablefooter {height:10px; margin-top:20px}
+#tablenav {float:left}
+#tablenav img {cursor:pointer}
+#tablenav div {float:left; margin-right:15px}
+#tablelocation {float:right; font-size:12px}
+#tablelocation select {margin-right:3px}
+#tablelocation div {float:left; margin-left:15px}
+.page {margin-top:2px; font-style:italic}
+#selectedrow td {background:#c6d5e1}
+
+#tablewrapper1 {width:960x}
+.search1 {float:left; padding:6px; border:1px solid #c6d5e1; background:#fff}
+#tableheader1 select {float:left; font-size:10px; width:150px; padding:2px 4px 4px}
+#tableheader1 input {float:left; font-size:10px; width:225px; padding:2px 4px 4px; margin-left:4px}
+.details1 {float:right; padding-top:12px}
+.details1 div {float:left; margin-left:15px; font-size:12px}
+.tinytable1 {width:959px; border-left:1px solid #c6d5e1; border-top:1px solid #c6d5e1; border-bottom:none; border-radius:5px}
+.tinytable1 th {background:black; text-align:left;  border-radius:5px;border:1px solid #fff; border-right:none}
+.tinytable1 th h3 {font-size:10px; padding:6px 8px 8px;color:white}
+.tinytable1 td {padding:4px 6px 6px; border-bottom:1px solid #c6d5e1; border-right:1px solid #c6d5e1; border-radius:5px;valign:top;
+text-align: center;  bgcolor:#e8e8e8; font-size:11px;}
+.tinytable1 .head h3 {background:url(WebRoot/../../imagenes/sort.gif) 7px center no-repeat; cursor:pointer; padding-left:18px}
+.tinytable1 .desc, .sortable .asc {background:url(WebRoot/../../imagenes/header-selected-bg.gif)}
+.tinytable1 .desc h3 {background:url(WebRoot/../../imagenes/desc.gif) 7px center no-repeat; cursor:pointer; padding-left:18px}
+.tinytable1 .asc h3 {background:url(WebRoot/../../imagenes/asc.gif) 7px  center no-repeat; cursor:pointer; padding-left:18px}
+.tinytable1 .head:hover, .tinytable .desc:hover, .tinytable .asc:hover {color:#fff}
+.tinytable1 .evenrow td {background:#fff}
+.tinytable1 .oddrow td {background:white}
+.tinytable1 td.evenselected {background:#ecf2f6}
+.tinytable1 td.oddselected {background:#dce6ee}
+.tinytable1 tfoot {background:#000; font-weight:bold}
+.tinytable1 tfoot td {padding:6px 8px 8px}
+#tablefooter1 {height:10px; margin-top:20px}
+#tablenav1 {float:left}
+#tablenav1 img {cursor:pointer}
+#tablenav1 div {float:left; margin-right:15px}
+#tablelocation1 {float:right; font-size:12px}
+#tablelocation1 select {margin-right:3px}
+#tablelocation1 div {float:left; margin-left:15px}
+.page1 {margin-top:2px; font-style:italic}
+#selectedrow1 td {background:#c6d5e1}
+

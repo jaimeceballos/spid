@@ -908,9 +908,11 @@ def new_user(request):
                    
                     user=formnew.save()
                     roles=''
+                    bandad=False
                     for grupos in formnew.cleaned_data['groups']:
+                        if str(grupos)=='administrador':
+                              bandad=True
                         user.groups.add(grupos)
-
                         roles=roles+str(grupos)+'/'
                       #user.has_perm(formnew.cleaned_data['user_permissions'])
                       #user.user_groups.add(grupo)
@@ -920,13 +922,22 @@ def new_user(request):
                       #user.groups_permissions.add(permi.id)
                    
                     user.is_active=True
-                    if is_staff:
-                       user.is_staff=True
-                       user.is_superuser=True
-                       if roles!='':
-                          roles=roles+' Administrador'
-                       else:
-                          roles="Administrador"
+                    if is_staff or bandad:
+                       if str(grupos)!='administrador':
+                           user.is_staff=False
+                           user.is_superuser=False
+                       else:  
+                           user.is_staff=True
+                           user.is_superuser=True
+                           if roles!='':
+                              roles=roles+" Administrador"
+                           else:
+                              roles="Administrador"
+
+                    else:
+                        user.is_staff=False
+                        user.is_superuser=False
+                    
                     user.set_password(password)
 
                     user.save()
