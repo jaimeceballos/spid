@@ -87,41 +87,40 @@
     <label title="Permite Ver mas detalles del Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">
       Ver Hecho</label></a></p><hr>
    <p>
+
    {%if tienePersonas%}
-   {%if datosinvo %}
+    {%if datosinvo %}
  
-  <h1>Personas Involucradas</h1>
-   <table class="table">
-       {%for involus in datosinvo%}
-       
-        <tr>
-           <td>
-             <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">  
-             [ {{involus.persona}} -- {{involus.roles}} ]&nbsp;&nbsp;</strong>
-             {%if involus.ampliacion.fecha%}
-                 &nbsp;&nbsp; 
-                 <strong style="letter-spacing:1.1px;">- Modificado por Ampliacion en fecha : {{involus.ampliacion.fecha|date:"d/m/Y"}} -- {{ involus.ampliacion.titulo}}</strong>
-            
-             {%endif%}
-           </td>   
-        </tr>   
-       {%endfor%}
-       
-  </table> 
-  {%endif%}
+    <h1>Personas Involucradas</h1>
+     <table class="table">
+         {%for involus in datosinvo%}
+         
+          <tr>
+             <td>
+               <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">  
+               [ {{involus.persona}} -- {{involus.roles}} ]&nbsp;&nbsp;</strong>
+               {%if involus.ampliacion.fecha%}
+                   &nbsp;&nbsp; 
+                   <strong style="letter-spacing:1.1px;">- Modificado por Ampliacion en fecha : {{involus.ampliacion.fecha|date:"d/m/Y"}} -- {{ involus.ampliacion.titulo}}</strong>
+              
+               {%endif%}
+             </td>   
+          </tr>   
+         {%endfor%}
+         
+     </table> 
+   {%endif%}
     <p align="right">
        <a class="btn btn-success"  href="{% url 'persinvoluc' idhec idper%}">
         <label title="Permite Ver mas detalles de las personas involucradas en el Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Personas</label></a></p><hr>
-   {%else%}
+  {%else%}
       {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
-    <p align="right">
+        <p align="right">
            <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
-        <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
-</p>
-
-
+           <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
+        </p>
       {% endif %}
-   {%endif%}   
+  {%endif%}   
    </p>
    {% if tienelugar %}
      <h1>Ubicación del Lugar del Hecho</h1>

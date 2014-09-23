@@ -5352,8 +5352,9 @@ def selectPrev(request,prev):
       tienelugar = True
 
     if  Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.values('id')).involu.all():
+     
         datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.values('id')).involu.all()
-        
+     
         tienePersonas= True
  
 
@@ -6164,7 +6165,18 @@ def lugar_hecho(request,idhecho,idprev):
   depes=Dependencias.objects.get(id=depe)
   lugarhecho=''
   numero=''
+  notienePer=False
   errors=[]
+  if  Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all():
+        
+        datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.values('id')).involu.all()
+     
+        notienePer= True
+  if not notienePer:
+      state= request.session.get('state')
+      destino= request.session.get('destino')
+      return render(request,'./errorsinper.html',{'state':state, 'destino': destino})
+
   if len(Hechos.objects.get(id=idhecho).lugar_hecho.all()) == 0 :
     
     form = LugarForm()
@@ -6176,6 +6188,8 @@ def lugar_hecho(request,idhecho,idprev):
   else:
     idlugar = Hechos.objects.get(id=idhecho).lugar_hecho.all()[0]
     lugar=Hechos.objects.get(id=idhecho).lugar_hecho.all()[0]
+
+   
 
     form = LugarForm(instance=lugar)
     if request.POST.get('grabar') == 'Modificar':
@@ -6299,7 +6313,7 @@ def lugar_hecho(request,idhecho,idprev):
       'idhecho':idhecho,
       'idprev':idprev,
       'preventivo':preventivo,
-      'lugar':lugar,
+      'lugar':lugar,'notienePer':notienePer,
       'ciudad': preventivo.dependencia.ciudad_id,
 
 
@@ -6623,7 +6637,18 @@ def elementos(request,idhecho):
   tieneob=False
   idele=''
   errors = []
+  notienePer=False
  
+  if  Hechos.objects.get(id=Preventivos.objects.get(id=hecho.preventivo_id).hecho.values('id')).involu.all():
+        
+        datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.values('id')).involu.all()
+     
+        notienePer= True
+  if not notienePer:
+      state= request.session.get('state')
+      destino= request.session.get('destino')
+      return render(request,'./errorsinper.html',{'state':state, 'destino': destino})
+
   if request.POST.get('dele'):
       elementosin=Elementos.objects.filter(id=request.POST.get('dele'))
      
