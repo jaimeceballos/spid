@@ -148,15 +148,47 @@ class preventivos(SessionWizardView):
    
     
     def get_form(self, step=None, data=None, files=None):
+         
         form = super(preventivos, self).get_form(step, data, files)
+        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-PM':
+            depe = self.request.user.get_profile().ureg
+            ureg= UnidadesRegionales.objects.filter(descripcion__contains='MADRYN')
+
+        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-TW':
+            depe = self.request.user.get_profile().ureg
+              
+            ureg= UnidadesRegionales.objects.filter(descripcion__contains='TRELEW')     
+
+        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-ESQ':
+            depe = self.request.user.get_profile().ureg
+              
+            ureg= UnidadesRegionales.objects.filter(descripcion__contains='ESQUEL')  
+
+        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-CR':
+            depe = self.request.user.get_profile().ureg
+              
+            ureg= UnidadesRegionales.objects.filter(descripcion__contains='COMODORO RIVADAVIA')  
+
+        if  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
+            depe = self.request.user.get_profile().ureg
+              
+            ureg= UnidadesRegionales.objects.filter(descripcion__contains='OPERACIONES')  
+
+        if depe is None:
+           form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
+          
+        depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+        form.fields['unidad'].queryset = ureg
+        form.fields['dependencia'].queryset = depes
+         
         if step is None:
            step=self.steps.current 
-
+        
         ### realizar el paso en caso de que el usuario sea de investigaciones
         #depe=self.request.user.get_profile().depe
         if step == "actores":
               #print self.get_cleaned_data_for_step('nro')['dependencia']
-              if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES':
+              if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
                 depe = self.get_cleaned_data_for_step('nro')['dependencia']
                 if depe is None:
                    form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
@@ -179,7 +211,7 @@ class preventivos(SessionWizardView):
               else:
                 depe=self.request.user.get_profile().depe
     
-              if depe!="Jefatura" and self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
+              if depe!="Jefatura" and self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion != 'CENTRAL RADIO':
 
 
                 id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
@@ -200,7 +232,7 @@ class preventivos(SessionWizardView):
                   
 
         if step == 'autoridades':
-             if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES':
+             if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
                 id_ciudad = Dependencias.objects.get(id=self.get_cleaned_data_for_step('nro')['dependencia'].id).ciudad_id
              else:
                 id_ciudad=self.request.user.get_profile().depe.ciudad.id
@@ -210,7 +242,7 @@ class preventivos(SessionWizardView):
               
         
         if step=='confirmation':
-           if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES':
+           if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES'  or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
                 depe = self.get_cleaned_data_for_step('nro')['dependencia']
            else:
                depe=self.request.user.get_profile().depe
@@ -245,7 +277,7 @@ class preventivos(SessionWizardView):
         actuante= form.cleaned_data['actuante']
         preventor=  form.cleaned_data['preventor']
         autoridades=form.cleaned_data['autoridades']
-        if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES':
+        if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
           depe = self.get_cleaned_data_for_step('nro')['dependencia'].id
         else:
           depe=self.request.user.get_profile().depe.id
@@ -396,7 +428,7 @@ def obtener_datosfirst(request,idprev):
   return render_to_response('./templateidp.html',info,context_instance=RequestContext(request))
 """
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones",'radio'])
 def obtener_datosfirst(request,idprev):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -923,10 +955,10 @@ def new_user(request):
                    
                     user.is_active=True
                     if is_staff or bandad:
-                       if str(grupos)!='administrador':
-                           user.is_staff=False
-                           user.is_superuser=False
-                       else:  
+                       #if str(grupos)!='administrador':
+                       #    user.is_staff=False
+                       #    user.is_superuser=False
+                       #else:  
                            user.is_staff=True
                            user.is_superuser=True
                            if roles!='':
@@ -1198,10 +1230,10 @@ def usuarios(request, iduser):
                            user.is_active=False
                       
                         if user.is_staff or bandad:
-                          if str(grupos)!='administrador':
-                            user.is_staff=False
-                            user.is_superuser=False
-                          else:  
+                          #if str(grupos)!='administrador':
+                          #  user.is_staff=False
+                          #  user.is_superuser=False
+                          #else:  
                            user.is_staff=True
                            user.is_superuser=True
                            if roles!='':
@@ -1763,7 +1795,7 @@ def obtener_departa(request,prvi):
         return HttpResponse(data, mimetype='application/json')
 
 @login_required
-@group_required(["policia","investigaciones","visita"])
+@group_required(["policia","investigaciones","visita","radio"])
 def ciudadesadd(request):
   ciudades = ""
   departa = ""
@@ -3368,7 +3400,7 @@ def nrubros(request):
 #la funcion en donde se carga el template de barrios y se graba
 @login_required
 #@permission_required('user.is_staff')
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def barrios(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -3406,7 +3438,7 @@ def barrios(request):
 #la funcion en donde se carga el template de barrios y se graba
 @login_required
 #@permission_required('user.is_staff')
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def addbarrios(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -3445,7 +3477,7 @@ def addbarrios(request):
 #la funcion en donde se carga el template de ingreso de dependencias
 @login_required 
 #@permission_required('user.is_staff')
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def addcalles(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -3489,7 +3521,7 @@ def obtener_calles(request,idci):
 #la funcion en donde se actualiza y/o elimina un Barrio segun la ciudad
 @login_required 
 #@permission_required('user.is_staff')
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def nbarrios(request, idbar):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -3547,7 +3579,7 @@ def nbarrios(request, idbar):
 #la funcion en donde se carga el template de ingreso de dependencias
 @login_required 
 #@permission_required('user.is_staff')
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def calles(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -3579,7 +3611,7 @@ def calles(request):
 #la funcion en donde se actualiza y/o elimina las dependencias segun unidad regional
 @login_required 
 #@permission_required('user.is_staff')
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def ncalles(request, idadrs):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -3840,7 +3872,7 @@ def oficiales(request,idact):
 #abm de personas
 @login_required
 @transaction.commit_on_success
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def personas(request):
   state       = request.session.get('state')
   destino     = request.session.get('destino')
@@ -3969,7 +4001,7 @@ def personas(request):
 #abm de personas
 @login_required
 #@permission_required('user.is_staff')
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def newperso(request):
   state       = request.session.get('state')
   destino     = request.session.get('destino')
@@ -4064,7 +4096,7 @@ def newperso(request):
 
 @login_required
 @transaction.commit_on_success
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 #@permission_required('user.is_staff')
 def persona(request, idper):
   state = request.session.get('state')
@@ -4392,7 +4424,7 @@ def modos(request, idmod):
         return render_to_response('./modusop.html',{'form':form,'formp':formp,'modos':modos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 @login_required
-@group_required(["policia","investigaciones","visita"])
+@group_required(["policia","investigaciones","visita","radio"])
 def verprev(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -4643,7 +4675,7 @@ def verprev(request):
   return render_to_response('./seeprev.html',info,context_instance=RequestContext(request))
 
 @login_required
-@group_required(["policia","investigaciones","visita"])
+@group_required(["policia","investigaciones","visita","radio"])
 def verhechos(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -4733,7 +4765,7 @@ def verhechos(request):
 
 
 @login_required
-@group_required(["policia","investigaciones","visita"])
+@group_required(["policia","investigaciones","visita","radio"])
 def verdelitos(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -4824,7 +4856,7 @@ def verdelitos(request):
   return render_to_response('./seedelitos.html',info,context_instance=RequestContext(request))
 
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def pdfs(request,idprev):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -5288,7 +5320,7 @@ def updatehechos(request,idprev):
 
 
 @login_required
-@group_required(["policia","investigaciones","visita"])
+@group_required(["policia","investigaciones","visita","radio"])
 def selectPrev(request,prev):
    state= request.session.get('state')
    destino= request.session.get('destino')
@@ -5410,7 +5442,7 @@ def selectPrev(request,prev):
   
 @login_required   
 @transaction.commit_on_success
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def persinvo(request,idhec,idper):
 
   state= request.session.get('state')
@@ -5936,7 +5968,7 @@ def persinvo(request,idhec,idper):
 
 @login_required   
 @transaction.commit_on_success
-@group_required(["administrador","policia","investigaciones"])
+@group_required(["administrador","policia","investigaciones","radio"])
 def persinvom(request,idhec,idper):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -6155,7 +6187,7 @@ def persinvom(request,idhec,idper):
 
 @login_required   
 @transaction.commit_on_success
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def lugar_hecho(request,idhecho,idprev):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -6169,7 +6201,7 @@ def lugar_hecho(request,idhecho,idprev):
   errors=[]
   if  Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all():
         
-        datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.values('id')).involu.all()
+        datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all()
      
         notienePer= True
   if not notienePer:
@@ -6339,7 +6371,7 @@ def street_name(string):
 #informar a autoridades por email
 @login_required   
 @transaction.commit_on_success
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def informe(request,idhec,idprev):
     info_enviado = False
     name=""
@@ -6627,7 +6659,7 @@ def informe(request,idhec,idprev):
 
 @login_required   
 @transaction.commit_on_success
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def elementos(request,idhecho):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -6833,7 +6865,7 @@ def elementos(request,idhecho):
 
 @login_required   
 @transaction.commit_on_success
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def elemento(request,idhecho,elemento):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -6950,7 +6982,7 @@ def get_categories(request,rubro):
         return HttpResponse(data, mimetype='application/json')
 
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def seemaps(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -7490,7 +7522,7 @@ def verobjin(request):
 
 #definicion de los reposrtes estadisticos
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def repestadis(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -7597,7 +7629,7 @@ def repestadis(request):
 
 #definicion de los reposrtes estadisticos
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def repforages(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -8889,7 +8921,7 @@ def repforages(request):
 
 #definicion de los reposrtes estadisticos
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def rephechos(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -9333,7 +9365,7 @@ def rephechos(request):
 #homicidios segun tipo de lugar
 #definicion de los reposrtes estadisticos
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def killings(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -9855,7 +9887,7 @@ def killings(request):
  
 #cantidad de automotores segun delitos
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def repautos(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -10608,7 +10640,7 @@ def funverifica(idper):
 
 
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def ampliacion(request,idprev):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -10687,7 +10719,7 @@ def ver_ampliacion(request,idprev,idamp):
   return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))   
 
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def amplia_ele(request,idprev,idamp):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -10873,7 +10905,7 @@ def amplia_ele(request,idprev,idamp):
   return render_to_response('./objampli.html',values,context_instance=RequestContext(request))   
 
 
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 @login_required   
 def reporampli(request,idprev,idamp):
   state= request.session.get('state')
@@ -11137,7 +11169,7 @@ def reporampli(request,idprev,idamp):
 
 
 @login_required
-@group_required(["policia","investigaciones","visita"])
+@group_required(["policia","investigaciones","visita","radio"])
 def verampli(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -11358,7 +11390,7 @@ def verampli(request):
 
 @login_required   
 @transaction.commit_on_success
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def eleampli(request,idhecho,elemento,idamp):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -11583,7 +11615,7 @@ def helpassword(request):
 
 
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def amplia_pers(request,idprev,idamp):
 
   state= request.session.get('state')
@@ -11673,7 +11705,7 @@ def amplia_pers(request,idprev,idamp):
   return render_to_response('./amplipers.html',values,context_instance=RequestContext(request))   
 
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def amplia_per(request,idprev,idamp,idper):
 
   state= request.session.get('state')
@@ -11976,7 +12008,7 @@ def amplia_per(request,idprev,idamp,idper):
   return render_to_response('./amplipers.html',values,context_instance=RequestContext(request)) 
 
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def finalizar(request,idprev,idamp):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -11994,7 +12026,7 @@ def finalizar(request,idprev,idamp):
   return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))   
 
 @login_required   
-@group_required(["policia","investigaciones"])
+@group_required(["policia","investigaciones","radio"])
 def enviar(request,idprev,idamp):
   state= request.session.get('state')
   destino= request.session.get('destino')
