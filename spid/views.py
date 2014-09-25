@@ -107,6 +107,8 @@ def login_user(request):
                 uregis=uregi.id
                 depen=Dependencias.objects.get(descripcion=depes)
                 depeni=depen.id
+              
+              
                 gr=user.groups.values_list('name', flat=True)
                 for varios in gr:
                     state = str(Group.objects.get(name=varios))
@@ -126,7 +128,7 @@ def login_user(request):
             else:
               
                state = "Su usuario y/o password son incorrectos"
-            
+          
             return render(request, 'index.html', {'state':state,'form':form})
          else:
             user = auth.authenticate(username=username, password=password)
@@ -143,6 +145,7 @@ def login_user(request):
                 uregis=uregi.id
                 depen=Dependencias.objects.get(descripcion=depes)
                 depeni=depen.id
+
                 gr=user.groups.values_list('name', flat=True)
                 for varios in gr:
                     state = str(Group.objects.get(name=varios))
@@ -161,7 +164,9 @@ def login_user(request):
                   else:
                     state="Usuario no Autorizado"
                     return render(request, 'index.html', {'state':state,'form':form})
-         
+              
+
+              
                         
               else:    
                 state="Usuario no Autorizado"
