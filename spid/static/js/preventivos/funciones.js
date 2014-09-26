@@ -644,7 +644,7 @@ $(document).ready(function() {
 
      
         $("#depe").select2({
-          
+             
          });
         $('#ciudad').select2({
               minimumInputLength: 1

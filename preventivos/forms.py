@@ -307,14 +307,21 @@ class PrimerForm(forms.ModelForm):
         else:
           raise forms.ValidationError("Ingrese una Fecha de Denuncia menor o igual a la Fecha actual")
    
+        
+        if self.cleaned_data.get('unidad') is not None:
+           filtro=Dependencias.objects.filter(unidades_regionales_id__exact=self.cleaned_data.get('unidad'))
+           if self.cleaned_data.get('dependencia') not in filtro:
+              raise forms.ValidationError('La dependencia elegida no pertenece a la U.R.E seleccionada')
+          
         return self.cleaned_data
-  
     class Meta:
         model = Preventivos
         fields = ('fecha_denuncia','caratula','dependencia',)
     
 
 class SegundoForm(forms.ModelForm):
+    unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
+    
     def clean(self):
         cleaned_data = super(SegundoForm, self).clean()
         #if self.cleaned_data.get('actuante') is not None:
@@ -334,6 +341,7 @@ class SegundoForm(forms.ModelForm):
 
 
 class TerceroForm(forms.ModelForm):
+    unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
     
     def __init__(self, *args, **kwargs):
         super(TerceroForm,self).__init__(*args,**kwargs)
@@ -346,7 +354,8 @@ class TerceroForm(forms.ModelForm):
 
 
 class FinForm(forms.ModelForm):
-
+    unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
+    
     def __init__(self, *args, **kwargs):
         super(FinForm,self).__init__(*args,**kwargs)
         self.fields["autoridades"].widget = CheckboxSelectMultiple()
@@ -432,7 +441,7 @@ class SearchPreveForm(forms.Form):
     anio=forms.IntegerField(required=False)
     fecha_carga=forms.DateField(required=False)
     caratula=forms.CharField(required=False)
-    unidades_regionales=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.all())
+    unidades_regionales=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.exclude(descripcion__icontains='INVESTIGACION') &  UnidadesRegionales.objects.exclude(descripcion__icontains='AREA'))
     #unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.filter(Q(descripcion__startswith="OPERA") | Q(descripcion__startswith="UNIDAD")))
     dependencias = forms.Select()
     
@@ -595,17 +604,24 @@ class VehiculosForm(forms.ModelForm):
 
 class MapaForm(forms.Form):
     ciudades = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13',}), required=False, queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
-    ureg= forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.all())
+    ureg= forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.exclude(descripcion__icontains='INVESTIGACION') &  UnidadesRegionales.objects.exclude(descripcion__icontains='AREA'))
     depe = forms.Select()
     ciu = forms.BooleanField(required=False,initial=False)
     depes=forms.BooleanField(required=False,initial=False)
-    #delito=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13',}),queryset = RefDelito.objects.all(), initial=RefDelito.objects.get(id=1),required=False)
+    delito=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13',}),queryset = RefDelito.objects.all(), initial=RefDelito.objects.get(id=1),required=False)
     
     """def __init__(self, *args, **kwargs):
         super(MapaForm,self).__init__(*args,**kwargs)
         self.fields["delito"].widget = CheckboxSelectMultiple()
         self.fields["delito"].queryset = RefDelito.objects.all()
         self.fields["delito"].help_text='Seleccione haciendo click sobre cada uno de los Delitos'"""
+    
+    def clean(self):
+        cleaned_data = super(MapaForm,self).clean()
+        if not self.cleaned_data.get['ciudades']:
+           raise forms.ValidationError('Debe indicar una Ciudad ')
+               
+        return cleaned_data
 
 class AmpliacionForm(forms.ModelForm):
     
