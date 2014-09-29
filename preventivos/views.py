@@ -150,61 +150,68 @@ class preventivos(SessionWizardView):
     def get_form(self, step=None, data=None, files=None):
          
         form = super(preventivos, self).get_form(step, data, files)
+        print step,self.request.user.get_profile().depe.descripcion
+        if step=='nro' or step=='confirmation' or step is None:
 
-        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-PM':
-            depe = self.request.user.get_profile().ureg
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='MADRYN')
-            if depe is None:
-               form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
-          
-            depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
-            form.fields['unidad'].queryset = ureg
-            form.fields['dependencia'].queryset = depes
-
-        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-TW':
-            depe = self.request.user.get_profile().ureg
+            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-PM':
+                depe = self.request.user.get_profile().ureg
+                ureg= UnidadesRegionales.objects.filter(descripcion__contains='MADRYN')
+                if depe is None:
+                   form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='TRELEW')     
-            if depe is None:
-               form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
-          
-            depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
-            form.fields['unidad'].queryset = ureg
-            form.fields['dependencia'].queryset = depes
+                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                form.fields['dependencia'].queryset = depes
 
-        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-ESQ':
-            depe = self.request.user.get_profile().ureg
+            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-TW':
+                depe = self.request.user.get_profile().ureg
+                  
+                ureg= UnidadesRegionales.objects.filter(descripcion__contains='TRELEW')     
+                if depe is None:
+                   form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='ESQUEL')  
-            if depe is None:
-               form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
-          
-            depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
-            form.fields['unidad'].queryset = ureg
-            form.fields['dependencia'].queryset = depes
+                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                form.fields['dependencia'].queryset = depes
 
-        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-CR':
-            depe = self.request.user.get_profile().ureg
+            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-ESQ':
+                depe = self.request.user.get_profile().ureg
+                  
+                ureg= UnidadesRegionales.objects.filter(descripcion__contains='ESQUEL')  
+                if depe is None:
+                   form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='COMODORO RIVADAVIA')  
-            if depe is None:
-               form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
-          
-            depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
-            form.fields['unidad'].queryset = ureg
-            form.fields['dependencia'].queryset = depes
+                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                form.fields['dependencia'].queryset = depes
 
-        if  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
-            depe = self.request.user.get_profile().ureg
-            if step is None:
-               step=self.steps.current   
+            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-CR':
+                depe = self.request.user.get_profile().ureg
+                  
+                ureg= UnidadesRegionales.objects.filter(descripcion__contains='COMODORO RIVADAVIA')  
+                if depe is None:
+                   form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
+              
+                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                form.fields['dependencia'].queryset = depes
+
+            if  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
+                depe = self.request.user.get_profile().ureg
+                if step is None:
+                   step=self.steps.current   
+                ureg= UnidadesRegionales.objects.exclude(descripcion__icontains='AREA') 
+                ureg= ureg.exclude(descripcion__icontains='INVESTIGACION')
+                #depes= Dependencias.objects.all
+                #depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                #form.fields['dependencia'].queryset = depes
+        else:
             ureg= UnidadesRegionales.objects.exclude(descripcion__icontains='AREA') 
             ureg= ureg.exclude(descripcion__icontains='INVESTIGACION')
             #depes= Dependencias.objects.all
             #depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
-            form.fields['unidad'].queryset = ureg
-            #form.fields['dependencia'].queryset = depes
-            
+            form.fields['unidad'].queryset = ureg    
             
         
            
