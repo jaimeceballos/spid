@@ -150,39 +150,75 @@ class preventivos(SessionWizardView):
     def get_form(self, step=None, data=None, files=None):
          
         form = super(preventivos, self).get_form(step, data, files)
-        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-PM':
-            depe = self.request.user.get_profile().ureg
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='MADRYN')
+        print step,self.request.user.get_profile().depe.descripcion
+        if step=='nro' or step=='confirmation' or step is None:
 
-        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-TW':
-            depe = self.request.user.get_profile().ureg
+            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-PM':
+                depe = self.request.user.get_profile().ureg
+                ureg= UnidadesRegionales.objects.filter(descripcion__contains='MADRYN')
+                if depe is None:
+                   form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='TRELEW')     
+                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                form.fields['dependencia'].queryset = depes
 
-        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-ESQ':
-            depe = self.request.user.get_profile().ureg
+            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-TW':
+                depe = self.request.user.get_profile().ureg
+                  
+                ureg= UnidadesRegionales.objects.filter(descripcion__contains='TRELEW')     
+                if depe is None:
+                   form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='ESQUEL')  
+                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                form.fields['dependencia'].queryset = depes
 
-        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-CR':
-            depe = self.request.user.get_profile().ureg
+            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-ESQ':
+                depe = self.request.user.get_profile().ureg
+                  
+                ureg= UnidadesRegionales.objects.filter(descripcion__contains='ESQUEL')  
+                if depe is None:
+                   form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='COMODORO RIVADAVIA')  
+                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                form.fields['dependencia'].queryset = depes
 
-        if  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
-            depe = self.request.user.get_profile().ureg
+            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-CR':
+                depe = self.request.user.get_profile().ureg
+                  
+                ureg= UnidadesRegionales.objects.filter(descripcion__contains='COMODORO RIVADAVIA')  
+                if depe is None:
+                   form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-            ureg= UnidadesRegionales.objects.filter(descripcion__contains='OPERACIONES')  
+                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                form.fields['dependencia'].queryset = depes
 
-        if depe is None:
-           form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
-          
-        depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
-        form.fields['unidad'].queryset = ureg
-        form.fields['dependencia'].queryset = depes
+            if  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
+                depe = self.request.user.get_profile().ureg
+                if step is None:
+                   step=self.steps.current   
+                ureg= UnidadesRegionales.objects.exclude(descripcion__icontains='AREA') 
+                ureg= ureg.exclude(descripcion__icontains='INVESTIGACION')
+                #depes= Dependencias.objects.all
+                #depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                form.fields['unidad'].queryset = ureg
+                #form.fields['dependencia'].queryset = depes
+        else:
+            ureg= UnidadesRegionales.objects.exclude(descripcion__icontains='AREA') 
+            ureg= ureg.exclude(descripcion__icontains='INVESTIGACION')
+            #depes= Dependencias.objects.all
+            #depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+            form.fields['unidad'].queryset = ureg    
+            
+        
+           
+      
+        
          
-        if step is None:
-           step=self.steps.current 
+        
         
         ### realizar el paso en caso de que el usuario sea de investigaciones
         #depe=self.request.user.get_profile().depe
@@ -1114,14 +1150,14 @@ def gruposperm(request):
 
 @login_required
 @transaction.commit_on_success
-@permission_required('user.is_staff')
+@permission_required('user.is_staff','administrador')
 def usuarios(request, iduser):
   state= request.session.get('state')
   destino= request.session.get('destino')
   errors = []
   usuarios=""
   reenvio=False
-  
+  print request.POST.get('modifica')
   if iduser.isnumeric():
       if request.POST.get('cancelar')=="Cancelar": 
          return HttpResponseRedirect('../')   
@@ -1134,7 +1170,7 @@ def usuarios(request, iduser):
           if grupous:
            namegru=Group.objects.get(id=grupous)  
            grupo=namegru.name
-         
+          print grupo
           if grupous:
              namegru=Group.objects.get(id=grupous)  
              grupo=namegru.name
@@ -1245,7 +1281,7 @@ def usuarios(request, iduser):
                             user.is_staff=False
                             user.is_superuser=False
                      
-
+                       
                         user.save()
                         user = User.objects.get(username=iduser)
                         profiles = user.get_profile()
@@ -1271,6 +1307,8 @@ def usuarios(request, iduser):
 
                         errors.append(mensaje)"""
                         #errors.append('Los datos del Usuarios fueron actualizados.-')
+
+                        formnew = UserForm()
                         form = UserProfileForm()
                         lista = User.objects.all()
                         return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
@@ -4866,6 +4904,7 @@ def pdfs(request,idprev):
   tieneper=False
   tienelugar=False
   tieneelementos=False
+  elementos=[]
   i=0
   grabo='fin'
   preventivo = Preventivos.objects.get(id = idprev)
@@ -6673,7 +6712,7 @@ def elementos(request,idhecho):
  
   if  Hechos.objects.get(id=Preventivos.objects.get(id=hecho.preventivo_id).hecho.values('id')).involu.all():
         
-        datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.values('id')).involu.all()
+        datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=hecho.preventivo_id).hecho.values('id')).involu.all()
      
         notienePer= True
   if not notienePer:
@@ -7020,8 +7059,12 @@ def seemaps(request):
         depese=Dependencias.objects.get(id=depes)
         buscar=depese.unidades_regionales.descripcion+' - '+depese.descripcion
       else:
-        buscarciu=RefCiudades.objects.get(id=ciudad).descripcion
-        buscar=buscarciu
+        if ciudad:
+           buscarciu=RefCiudades.objects.get(id=ciudad).descripcion
+           buscar=buscarciu
+        else:
+           form.errors['__all__'] = form.error_class(["debe seleccionar una Ciudad y/o Unidad y dependencia en cada caso"])
+
       i=0
       if (fechadesde and fechahasta and delitos and ureg and depes) or (fechadesde and fechahasta and delitos and ciudad) or (fechadesde and fechahasta and ureg and depes) or (fechadesde and fechahasta and ciudad):
           dias=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()-datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
@@ -7294,7 +7337,7 @@ def seemaps(request):
           #print preventivo, depes,ureg  
           """values={'today':today,'ref':ref,'refdelitosdes':refdelitosdes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,}
           return render_to_response('./vermapa.html', values, context_instance=RequestContext(request)) """
- 
+  
   values={'buscar':buscar,'buscarciu':buscarciu,'ayerfue':ayerfue,'hoyes':hoyes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,'depes':depes,'ureg':ureg,'refdelitosdes':refdelitosdes,}
   return render_to_response('./mapsanality.html',values,context_instance=RequestContext(request)) 
 
@@ -10646,6 +10689,7 @@ def ampliacion(request,idprev):
   destino= request.session.get('destino')
   preventivo = Preventivos.objects.get(id = idprev)
   ampliaciones = preventivo.ampli.all()
+  depe=preventivo.dependencia
   ampliacion = AmpliacionForm()
   if request.POST.get('grabar') == 'Grabar':
     ampliacion = AmpliacionForm(request.POST, request.FILES)
@@ -10671,7 +10715,7 @@ def ampliacion(request,idprev):
      ampliacion.fields['autoridades'].initial = preventivo.autoridades.all()
 
 
-  values={'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion}
+  values={'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion,'depe':depe,}
 
   return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request)) 
 
@@ -10681,6 +10725,7 @@ def ver_ampliacion(request,idprev,idamp):
   destino= request.session.get('destino')
   preventivo = Preventivos.objects.get(id = idprev)
   hecho = Hechos.objects.get(preventivo_id=preventivo.id)
+  depe=preventivo.dependencia
   ampliaciones = preventivo.ampli.all()
   ampli = Ampliacion.objects.get(id=idamp)
   ampliacion = AmpliacionForm(instance=ampli)
@@ -10714,7 +10759,7 @@ def ver_ampliacion(request,idprev,idamp):
     if request.POST.get('verper'):
         verpers=True
  
-  values={'tienep':tienep,'personas':personas,'verpers':verpers,'finaliza':finaliza,'tiene':tiene,'veriele':veriele,'verelemento':verelemento,'tieneelemento':tieneelemento,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion,'tienepersonas':tienepersonas,}
+  values={'depe':depe,'tienep':tienep,'personas':personas,'verpers':verpers,'finaliza':finaliza,'tiene':tiene,'veriele':veriele,'verelemento':verelemento,'tieneelemento':tieneelemento,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion,'tienepersonas':tienepersonas,}
 
   return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))   
 

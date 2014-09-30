@@ -34,12 +34,14 @@
             title="Imprimir Ampliación" rel="tooltip"/></input></a> </p>
    {%endif%}</span></td>
  </tr>
+{{ampliacion.fecha_autorizacion}}
 </table>
    {% if not preventivo.fecha_cierre %}
    <p><strong>Cierre de preventivo: </strong>{{ampliacion.cierre_causa}}</p>
    {% endif %}
     {%if not ampliacion.fecha_autorizacion%}
-         {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and id%}
+                  
+         {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or  user.get_profile.depe.descripcion == 'CENTRAL RADIO' and id%}
          {% if finaliza and not ampliacion.fecha_autorizacion%}
         <p align="right">
           <a class="btn btn-success"  href="{% url 'finalizar' preventivo.id id %}" >
@@ -57,7 +59,6 @@
 
  
         
-   <br>
    <h1>Listado de ampliaciones generadas</h1>
    <div id="demo">
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">

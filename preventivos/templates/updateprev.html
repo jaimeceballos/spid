@@ -59,12 +59,12 @@
 
 
       <div align="right">
-      {%if 'policia' in state or 'investigaciones' in state%}
-       {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES'%} 
+      {%if 'policia' in state or 'investigaciones' in state or 'radio' in state%}
+       {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or not fecha_autorizacion and user.get_profile.depe.descripcion == 'CENTRAL RADIO'%} 
          <input  class="new-aqua" type="submit" name = "button" id = "button" value="Modificar" 
          title="Permite modificar solamente los datos cabeceras del preventivos" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"/>
        {%endif%}
-       {%if fecha_autorizacion and depe == user.get_profile.depe  or  fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES'%} 
+       {%if fecha_autorizacion and depe == user.get_profile.depe  or  fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or fecha_autorizacion and user.get_profile.depe.descripcion == 'CENTRAL RADIO'%} 
         <a href="{% url 'ampliacion' idprev %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_editp.png" style="border:0" title="Permite generar radios ampliatorios." /></a>
        {%endif%}
       {%endif%}
@@ -114,7 +114,7 @@
        <a class="btn btn-success"  href="{% url 'persinvoluc' idhec idper%}">
         <label title="Permite Ver mas detalles de las personas involucradas en el Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Personas</label></a></p><hr>
   {%else%}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES'  or user.get_profile.depe.descripcion == 'CENTRAL RADIO' %}
         <p align="right">
            <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
            <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
@@ -131,14 +131,14 @@
         style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Ver Lugar </label></a></p><hr>
       
    {% else %}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
-      <p align="right">
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or user.get_profile.depe.descripcion == 'CENTRAL RADIO' %}
+        <p align="right">
         <a class="btn btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label  title="Permite Indicar la Ubicación del Hecho y caracteristicas del lugar"
           style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Lugar </label></a></p>
       {% endif %}
 
     {% endif %}
- 
+  
     {% if tieneelemento %}
       <h1>Listado de elementos</h1> 
 
@@ -180,48 +180,54 @@
         <label title="Permite Ver mas detalle de los Elementos pertenecientes al Hecho" style="font-size:10px;text-align:center;"> Ver elementos </label></a></p><hr>
       
     {% else %}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or user.get_profile.depe.descripcion == 'CENTRAL RADIO'%}
           <p align="right">
         <a class="btn btn-success"  href="{% url 'elementos' idhec %}" ><label  title="Permite Agregar Elementos según sean Denunciados/Utilizados/Secuestrados/Utilizados y Secuestrados en el Hecho"
           style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Elementos </label></a></p>
       {% endif %}<!--  FIN COMPROBACION DEPENDENCIA -->
 
     {% endif %}<!--  FIN COMPROBACION TIENE ELEMENTO -->
-     
+ 
     {%if tienelugar%}
-    {%if state == "jefes" and  not fecha_autorizacion%}
+
+      {%if state == "jefes" and  not fecha_autorizacion or state == "radio" and  not fecha_autorizacion%}
+       <p align="center">
         <a class="btn1 btn-success"  href="{% url 'informa' idhec idprev %}" >
            <label title="Permite Informar el Preventivo a las Autoridades correspondientes" 
-          style="font-size:14px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Informar</label></a>
-       {%else%}  
-        {%if not fecha_autorizacion%} 
-       <p align="center">
+          style="font-size:14px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Informar</label></a></p>
+      {%else%}  
+          {%if not fecha_autorizacion%} 
+                 <p align="center">
 
-     <a  type="button" href="{% url 'informa' idhec idprev %}"  class="new-aqua">
-      <label   title="Permite Informar el Preventivo a las Autoridades correspondientes" 
-      style="font-size:14px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Informar </label></a></p>
-      {%else%}
-          {%if preventivo.fecha_cierre%} 
-            <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
-            <strong style="color:red;margin-left:20px;">Prev. / Causa cerrada el : {{preventivo.fecha_cierre|date:"d/m/y"}}</strong>
+                   <a  type="button" href="{% url 'informa' idhec idprev %}"  class="new-aqua">
+                    <label   title="Permite Informar el Preventivo a las Autoridades correspondientes" 
+                    style="font-size:14px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Informar </label>
+                    </a>
+                 </p>
+          
           {%else%}
-             <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+  
+          {%if preventivo.fecha_cierre and fecha_autorizacion%} 
+                <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+                <strong style="color:red;margin-left:20px;">Prev. / Causa cerrada el : {{preventivo.fecha_cierre|date:"d/m/y"}}</strong>
+          {%else%}
+                <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
           {%endif%}
         
-           {%if not preventivo.fecha_cierre%} 
-             <p align="center">
-               <a  type="button" href="{% url 'ampliacion' idprev %}"  class="new-aquas">
-               <label   title="Permite realizar el Cierre del Preventivo mediante una Ampliación" 
-                style="margin-left:-8px;margin-top:3px;font-size:10px;text-align:center;">CERRAR CAUSA
-              </label>
-              </a>
-            </p>
+               {%if not preventivo.fecha_cierre%} 
+                 <p align="center">
+                   <a  type="button" href="{% url 'ampliacion' idprev %}"  class="new-aquas">
+                   <label   title="Permite realizar el Cierre del Preventivo mediante una Ampliación" 
+                    style="margin-left:-8px;margin-top:3px;font-size:10px;text-align:center;">CERRAR CAUSA
+                  </label>
+                  </a>
+                </p>
+              {%endif%}
           {%endif%}
-          {%endif%}
-      {%endif%}  
-    <br>{%endif%}
+      {%endif%}
+     {%endif%} 
 {% else %}
-    {% if depe == user.get_profile.depe or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+    {% if depe == user.get_profile.depe or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or user.get_profile.depe.descripcion == 'CENTRAL RADIO'%}
       <p align="right">
       <a class="btn btn-success"  href="{% url 'newhecho' idprev %}" ><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Hecho</label></a>
       </p>
@@ -238,7 +244,7 @@
    <a class="btn btn-success"  href="{% url 'updatehechos' idprev %}"><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Hecho</label></a>
  
        <a class="btn btn-success"  href="{% url 'persinvoluc' idhec idper%}">
-        <label style="font-size:10px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Personas Inv.</label></a>
+        <label style="font-size:10px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Personas Inv.</label></a>-->
          <!-- {%if tienePersonas %}-->
    <!--{%endif%}  -->
 <!--{% else %}
