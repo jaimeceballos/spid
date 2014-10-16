@@ -95,13 +95,14 @@ def login_user(request):
 
             if user is not None:
               if user.is_active:
-                print user.last_login,user.date_joined
-                fecha_login=datetime.datetime.strptime(user.last_login, '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
-                fecha_joined=datetime.datetime.strptime(user.date_joined, '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
-     
-                if user.last_login != user.date_joined:
-                  if user.date_joined!='None':
-                     changePass = 'si'
+                #print user.last_login,user.date_joined
+
+                #fecha_login=datetime.datetime.strftime(user.last_login, "%Y-%m-%d %H:%M:%S")
+                #fecha_joined=datetime.datetime.strftime(user.date_joined, "%Y-%m-%d %H:%M:%S")
+                #print type(datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")),fecha_login,fecha_joined
+                #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")<=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
+                if user.get_profile().last_login:
+                   changePass = 'si'
                
                 auth.login(request, user)
                 userp=user.get_profile()
@@ -139,10 +140,12 @@ def login_user(request):
             user = auth.authenticate(username=username, password=password)
             if user is not None:
               if user.is_active:
-                print user.last_login,user.date_joined
-                if user.last_login != user.date_joined:
-                   if user.date_joined!='None':
-                     changePass = 'si'
+                #fecha_login=datetime.datetime.strftime(user.last_login, "%Y-%m-%d %H:%M:%S")
+                #fecha_joined=datetime.datetime.strftime(user.date_joined, "%Y-%m-%d %H:%M:%S")
+                #print type(datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")),fecha_login,fecha_joined
+                #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")!=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
+                if user.get_profile().last_login:
+                   changePass = 'si'
                 auth.login(request, user)
                 userp=user.get_profile()
                 profiles = user.get_profile()
@@ -307,6 +310,9 @@ def passwordChange(request):
      user.date_joined=datetime.datetime.now()
      user.set_password(pass1)
      user.save()
+     profiles = user.get_profile()
+     profiles.last_login=False
+     profiles.save()
      changePass = ''
   logout(request)
   try:
