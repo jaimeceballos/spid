@@ -4,6 +4,7 @@
 .inner_copy, .inner_copy a {border:0;float:right;background:#fff;color:#f00;width:50%;line-height:10px;font-size:10px;margin:-220% 0 0 0;overflow:hidden;padding:0}
 body {background:#fff url(../../imagenes/spid/divider.png)repeat; font:normal normal "DroidSansMono";color:#666}
 #main3 {width:50%;margin:0 auto;overflow:hidden;float:middle center;margin-top:10%;margin-left:40%;}
+#main1 {width:90%;margin:0 auto;overflow:hidden;float:middle center;margin-top:1%;margin-left:25%;}
 h1, h2, h3 {color:black;}
 h2,h3 {font-family: "DroidSansMono";}
 h2,h3,p {font-size:9px;}
@@ -28,6 +29,7 @@ h5 {float:center;text-align:center;font-size:12px;font-family: "DroidSansMono";c
 #logo a {text-decoration:none;text-transform:lowercase;font-style:italic;color:#479AC6}
 /* Content */
 #content {width:34.1%}
+#content1 {width:35.1%}
 #extra {}
 /* Content > Main */
 
