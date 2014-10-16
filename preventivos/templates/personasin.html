@@ -82,13 +82,13 @@
      {% endfor%}        
    </p>
 
-   <h1>Descripcion del Hecho Ocurrido</h1>  
+   <h1>Datos del Hecho Ocurrido</h1>  
         <p>
         Motivo :<strong> {{motivo}}</strong> 
         &nbsp;&nbsp;Fecha y Hora Inicio : <strong>{{fecha_desde|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong>
         &nbsp;&nbsp;Fecha y Hora Final : <strong>{{fecha_hasta|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong> </p>
-      <p>
-       Hecho :&nbsp;<strong>{{descripcion|safe}}</strong></p>
+ <!--     <p>
+       Hecho :&nbsp;<strong>{{descripcion|safe}}</strong></p>-->
       <p>
        Delito/s Cometido/s :
                {% for y in delito %}
@@ -120,7 +120,7 @@
             <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
           <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de personas"/>
 
-          <a href="/preventivos/persona/{{idhec}}/0/" ><button class="btn btn-success" id="nuevo" name="nuevo" value="Nuevo"
+          <a href="{%url 'persinvol' idhec 0 %}" ><button class="btn btn-success" id="nuevo" name="nuevo" value="Nuevo"
             title="Permite Agregar una Persona que no registra en Base"/>Nuevo</button></a>
               
         

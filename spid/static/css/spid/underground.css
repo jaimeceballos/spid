@@ -200,7 +200,8 @@ form.search input.searchbutton {
 ***********************************/
 #wrap {
 	margin: 0 auto; 
-		
+		background:  url(../../imagenes/light-wool-bg.png) repeat;
+
 	width:95%;
 }
 

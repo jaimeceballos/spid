@@ -199,8 +199,11 @@
         <p><strong><i>En el caso que se conozca calle y altura del hecho, se seleccionara la calle desde el cuadro calle y se indicara la altura
         en el cuadro numero. En caso de haber ocurrido en una interseccion directamente seleccionelo desde el mapa. Si la calle que necesita no esta
         disponible en el listado solamente seleccione desde el mapa la calle e indique la altura en el cuadro numero. </i></strong></p>
+       
+        <p><strong><i><img src="{{STATIC_URL}}imagenes/preventivos/streetview.png" style="border:0" title="Arrastre el Icono para obtener una vista callejera real del lugar" rel='tooltip' />Arrastre este icono en el mapa para visualizar imagenes callejeras reales del lugar</i></strong></p>
+        <p <p><strong Style="color:red;"><i>PARA LOS HECHOS EN DONDE SE DESCONOCE EL LUGAR, MANTENGA CALLE Y NRO VACIOS, TAMPOCO SELECCIONE UN PUNTO EN EL MAPA.</i><strong></p>
         </blockquote>
-        </p>
+
  
         <p>
           <strong>Calle:</strong>
@@ -214,7 +217,9 @@
           <strong>Numero:</strong>
            <input type="text" name="altura" id="altura" value="{{lugar.altura}}" autocomplete="off"/> 
            <input  class="btn1 btn-success" type="button" name="buscar" id="buscar" value="Ubicar en mapa" />&nbsp;
+           {% if  not lugar.id %}  
            <input  class="btn1 btn-success" type="submit" name="limpiar" id="limpiar" value="Limpiar datos" />&nbsp;
+           {%endif%}
           </p>
          <div class="forma"> <strong style="margin-left:18px;"> Lugar señalado :<input type="text" id="callen" name="callen" size="50"
           style="border:none;font-weight:bold;font-variant: small-caps;font-size:11px;" 

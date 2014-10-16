@@ -95,8 +95,13 @@ def login_user(request):
 
             if user is not None:
               if user.is_active:
-                if user.last_login == user.date_joined:
-                  changePass = 'si'
+                print user.last_login,user.date_joined
+                fecha_login=datetime.datetime.strptime(user.last_login, '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
+                fecha_joined=datetime.datetime.strptime(user.date_joined, '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
+     
+                if user.last_login != user.date_joined:
+                  if user.date_joined!='None':
+                     changePass = 'si'
                
                 auth.login(request, user)
                 userp=user.get_profile()
@@ -134,8 +139,10 @@ def login_user(request):
             user = auth.authenticate(username=username, password=password)
             if user is not None:
               if user.is_active:
-                if user.last_login == user.date_joined:
-                  changePass = 'si'
+                print user.last_login,user.date_joined
+                if user.last_login != user.date_joined:
+                   if user.date_joined!='None':
+                     changePass = 'si'
                 auth.login(request, user)
                 userp=user.get_profile()
                 profiles = user.get_profile()
@@ -291,6 +298,7 @@ def passwordChange(request):
   state = request.session['state']
   destino = request.session['destino']
   form = DependenciasForm()
+
   user = User.objects.get(username=request.user)
   #if formpass.is_valid():
   pass1 = request.POST.get('pass1')
@@ -300,5 +308,16 @@ def passwordChange(request):
      user.set_password(pass1)
      user.save()
      changePass = ''
-
-  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})
+  logout(request)
+  try:
+      del request.session['state']
+      del request.session['destino']
+      request.session.flush()
+  except KeyError:
+      pass
+      state = "SE DESCONECTO DEL SISTEMA"
+  form = DependenciasForm()      
+  formd = []  
+  print form,formd
+  return render(request, 'index.html', {'formd':formd,'form':form,'state':state,})
+  #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})

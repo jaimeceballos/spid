@@ -182,19 +182,25 @@
 
   </p>
      -->
-     
+
      <p>
        <div id="informacion2" ><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><h3><legend><u>Por favor leer esta       información</u></legend></h3><p><strong><i>No Asignar ni redestinar lugar de trabajo para los usuarios con roles de administrador y/o visitas.-</i></strong></p></blockquote>
        </div>
 
+     {%if 'policia' in ocupacion%}
        <strong for="groups" id="basic-modal">Asignar Grupo de Usuarios:  
        <select id="groups" name="groups" multiple="multiple" lastindex="-1" class="combolistas">
          <option {{formnew.groups}}</opcion>
         </select>  
          <a onclick="" href="." class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" title="Agregar Grupos de Usuarios">
          </a></strong> 
- 
-        
+      {%else%}
+         <strong for="groups" id="basic-modal">Asignar Grupo de Usuarios:  
+       <select id="groups" name="groups" multiple="multiple" lastindex="-1" class="combolistas">
+         <option {{formnew.groups}}</opcion>
+        </select>  
+       </strong> 
+    {%endif%}
   </p>
     
 

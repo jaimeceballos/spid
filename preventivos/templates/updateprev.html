@@ -60,11 +60,11 @@
 
       <div align="right">
       {%if 'policia' in state or 'investigaciones' in state or 'radio' in state%}
-       {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or not fecha_autorizacion and user.get_profile.depe.descripcion == 'CENTRAL RADIO'%} 
+       {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or not fecha_autorizacion and 'RADIO' in user.get_profile.depe.descripcion%} 
          <input  class="new-aqua" type="submit" name = "button" id = "button" value="Modificar" 
          title="Permite modificar solamente los datos cabeceras del preventivos" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"/>
        {%endif%}
-       {%if fecha_autorizacion and depe == user.get_profile.depe  or  fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or fecha_autorizacion and user.get_profile.depe.descripcion == 'CENTRAL RADIO'%} 
+       {%if fecha_autorizacion and depe == user.get_profile.depe  or  fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or fecha_autorizacion and 'RADIO' in user.get_profile.depe.descripcion%} 
         <a href="{% url 'ampliacion' idprev %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_editp.png" style="border:0" title="Permite generar radios ampliatorios." /></a>
        {%endif%}
       {%endif%}
@@ -78,10 +78,27 @@
 
 {% if tieneHecho %}
 
-  <p>
+   <h1>Datos del Hecho Ocurrido</h1>  
+        <p style="font-size:12px;">
+        Motivo :<strong> {{idmodo}}</strong> 
+        &nbsp;&nbsp;Fecha y Hora Inicio : <strong  style="font-size:12px;">{{fecha_desde|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong>
+        &nbsp;&nbsp;Fecha y Hora Final : <strong  style="font-size:12px;vertical-align: middle; ">{{fecha_hasta|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong> </p>
+ <!--     <p>
+       Hecho :&nbsp;<strong>{{descripcion|safe}}</strong></p>-->
+      <p  style="font-size:12px;">
+       Delito/s Cometido/s :
+               {% for y in delito %}
+                <ul>
+                   <li>
+                      <strong>{{y}}</strong>
+                   </li>
+                </ul>      
+     {% endfor%}        
+       </p>
+ <!-- <p>
       <h1>Breve Descripcion del Hecho : {{hechodeli}} </h1>
         <textarea type="text" style="width: 100%;" id="descripcion" name="descripcion"> {{descripcion}} </textarea>
-     </p>
+     </p>-->
       <p align="right">
    <a class="btn btn-success"  href="{% url 'updatehechos' idprev %}">
     <label title="Permite Ver mas detalles del Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">
@@ -184,13 +201,16 @@
           <p align="right">
         <a class="btn btn-success"  href="{% url 'elementos' idhec %}" ><label  title="Permite Agregar Elementos según sean Denunciados/Utilizados/Secuestrados/Utilizados y Secuestrados en el Hecho"
           style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Elementos </label></a></p>
+        
       {% endif %}<!--  FIN COMPROBACION DEPENDENCIA -->
 
     {% endif %}<!--  FIN COMPROBACION TIENE ELEMENTO -->
- 
+  <p align="right">
+          <a class="btn btn-success"  href="{% url 'newhecho' idprev %}" ><label  title="Permite Indicar una breve descripcion del Hecho Delictivo sucedido y otras caracteristicas que no fueron detalladas anteriormente"
+          style="margin-top:0px;font-size:10px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Descripcion del Hecho</label></a></p>
     {%if tienelugar%}
 
-      {%if state == "jefes" and  not fecha_autorizacion or state == "radio" and  not fecha_autorizacion%}
+      {%if depe == user.get_profile.depe and state == "jefes" and not fecha_autorizacion or state == "radio" and  not fecha_autorizacion%}
        <p align="center">
         <a class="btn1 btn-success"  href="{% url 'informa' idhec idprev %}" >
            <label title="Permite Informar el Preventivo a las Autoridades correspondientes" 
