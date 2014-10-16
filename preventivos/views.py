@@ -684,18 +684,22 @@ def obtener_datosfirst(request,idprev):
        
   else:  
    
-      if request.POST.get("grabar")=='Guardar Hecho':
+      if request.POST.get("grabar")=='Guardar Hecho' or request.POST.get("grabar")=='Modificar':
+       
          form=HechosForm(request.POST, request.FILES)
          hecho = Hechos.objects.get(id=request.POST.get('id'))
+        
          idhec=hecho.id
          delitos =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
-       
-         if not hecho.descripcion:
-            hecho.descripcion=request.POST.get('descrihecho')
-            if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
+         
+         #if not hecho.descripcion:
+         hecho.descripcion=request.POST.get('descrihecho')
+         if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
+            
               hecho.save()
               idhec=hecho.id
-            
+   
+
          motivo=request.POST.get('motivo')
          fecha_desde=request.POST.get('fecha_desde')
          fecha_hasta=request.POST.get('fecha_hasta')
@@ -746,6 +750,7 @@ def obtener_datosfirst(request,idprev):
                  idhec=idhe.id
                  fecha_desde=idhe.fecha_desde
                  fecha_hasta=idhe.fecha_hasta
+                 descripcionhecho=idhe.descripcion
                  continua='des'
            else:
               si = Hechos()
@@ -6375,22 +6380,23 @@ def lugar_hecho(request,idhecho,idprev):
         lugar.departamento        = form.cleaned_data['departamento']
      
         
-        if not form.cleaned_data['calle']:
+        #if not form.cleaned_data['calle']:
         
-          ncalle,numero = street_name(form.cleaned_data['callen'])
-          try:
-            calle = RefCalles.objects.get(descripcion=ncalle.upper(),ciudad=preventivo.dependencia.ciudad.id)
-          except Exception, e:
-            calle=RefCalles()
-            calle.ciudad = RefCiudades.objects.get(id=preventivo.dependencia.ciudad_id)
-            calle.descripcion = ncalle
-            calle.save()
+        ncalle,numero = street_name(form.cleaned_data['callen'])
+        try:
+          calle = RefCalles.objects.get(descripcion=ncalle.upper(),ciudad=preventivo.dependencia.ciudad.id)
+        except Exception, e:
+          calle=RefCalles()
+          calle.ciudad = RefCiudades.objects.get(id=preventivo.dependencia.ciudad_id)
+          calle.descripcion = ncalle
+          calle.save()
 
-          lugar.calle =calle
+        lugar.calle =calle
                
          
-        else:
-          lugar.calle = form.cleaned_data['calle']
+        #else:
+          #lugar.calle = form.cleaned_data['calle']
+
       
         if not form.cleaned_data['altura']:
            if numero:

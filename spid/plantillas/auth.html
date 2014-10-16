@@ -7,6 +7,41 @@
  <link rel='stylesheet' href='{% get_static_prefix %}css/spid/underground.css'>
  <link rel="shortcut icon" href="{% get_static_prefix %}imagenes/spid/icono.ico" type="image/x-icon">
  {% include "inicial.html"%}
+ <script type="text/javascript">
+        $(document).ready(function () {
+           
+            //Demo code
+            $('.password-container').pschecker({ onPasswordValidate: validatePassword, onPasswordMatch: matchPassword });
+
+            var submitbutton = $('.submit-button');
+            var errorBox = $('.error');
+            var errorBox1 = $('.errorpass');
+            errorBox.css('visibility', 'hidden');
+            errorBox1.css('visibility', 'hidden');
+            submitbutton.attr("disabled", "disabled");
+
+            //this function will handle onPasswordValidate callback, which mererly checks the password against minimum length
+            function validatePassword(isValid) {
+                if (!isValid)
+                    errorBox.css('visibility', 'visible');
+                else
+                    errorBox.css('visibility', 'hidden');
+            }
+            //this function will be called when both passwords match
+            function matchPassword(isMatched) {
+                if (isMatched) {
+                    submitbutton.addClass('unlocked').removeClass('locked');
+                    submitbutton.removeAttr("disabled", "disabled");
+                    errorBox1.css('visibility', 'hidden');
+                }
+                else {
+                    submitbutton.attr("disabled", "disabled");
+                    submitbutton.addClass('locked').removeClass('unlocked');
+                    errorBox1.css('visibility', 'visible');
+                }
+            }
+        });
+    </script>
 </head>
 <body oncontextmenu="return false">
   <div id="main3">
@@ -17,6 +52,13 @@
                     
    </div>	
  </div>
-
+<div id="main1">
+   <div id="content1">
+        {% block sidebars %}
+          
+                {% endblock %}
+                    
+   </div>   
+ </div>
 </body>
 </html>

@@ -79,7 +79,12 @@
      
        <br>
      <div align="right">
-     <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Guardar Hecho"/>
+      {%if not descripcionhecho %}
+         <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Guardar Hecho"/>
+      {%else%}
+          <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>
+      {%endif%}
+      <a href="{% url 'selectPrev' idprev %}" class="btn1 btn-success"><label style="font-size:11px;text-align:center;">Volver</label></a>
      </div>
    {%else%}
     {%if 'fin' in grabo %}
@@ -101,11 +106,15 @@
                 </ul>      
      {% endfor%}        
    </p>
+   <!--
      <div align="right">
     <a class="btn1 btn-success"  href="{% url 'persinvol' idhec 0%}"> <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:center; ">
          Involucrados</label></a>
   
-  </div>
+  </div>-->
+  <div align="right">
+  <a href="{% url 'selectPrev' idprev %}" class="btn1 btn-success"><label style="font-size:11px;text-align:center;">Volver</label></a>
+</div>
      <!--input class="btn btn-success" type="submit" value="Imprimir" id="imprime" name="imprime"
         title="Permite la impresion del Preventivo y el Hecho"/-->
   {%else%}
