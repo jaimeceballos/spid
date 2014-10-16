@@ -5,6 +5,7 @@ from django.forms import ModelForm
 from django.contrib.auth.models import Group,Permission,User
 from django.contrib.admin.models import LogEntry
 from django.db.models import signals
+from django.core.validators import MinValueValidator,MaxValueValidator
 
 class Registrouser(models.Model):
     user = models.ForeignKey(User)
@@ -621,8 +622,8 @@ class RefComunidades(models.Model):
 
 class Preventivos(models.Model):
     id = models.AutoField(primary_key=True)
-    nro = models.IntegerField(verbose_name='Nro. :')
-    anio = models.IntegerField(verbose_name='Año :')
+    nro = models.PositiveIntegerField(verbose_name='Nro. :',validators=[MinValueValidator(1),MaxValueValidator(9999999)])
+    anio = models.PositiveIntegerField(verbose_name='Año :',validators=[MinValueValidator(2012),MaxValueValidator(2025)])
     caratula = models.CharField(max_length=250)
     fecha_carga = models.DateField()
     fecha_denuncia = models.DateField()

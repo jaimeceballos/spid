@@ -150,53 +150,56 @@ class preventivos(SessionWizardView):
     def get_form(self, step=None, data=None, files=None):
          
         form = super(preventivos, self).get_form(step, data, files)
-        print step,self.request.user.get_profile().depe.descripcion
-        if step=='nro' or step=='confirmation' or step is None:
-
-            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-PM':
+      
+        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-PM':
                 depe = self.request.user.get_profile().ureg
                 ureg= UnidadesRegionales.objects.filter(descripcion__contains='MADRYN')
                 if depe is None:
                    form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
-              
-                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
-                form.fields['unidad'].queryset = ureg
-                form.fields['dependencia'].queryset = depes
+                
+                depe= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
 
-            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-TW':
+                form.fields['unidad'].queryset = ureg
+                if step=='nro':
+                   form.fields['dependencia'].queryset = depe
+       
+        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-TW':
                 depe = self.request.user.get_profile().ureg
                   
                 ureg= UnidadesRegionales.objects.filter(descripcion__contains='TRELEW')     
                 if depe is None:
                    form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                depe= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
                 form.fields['unidad'].queryset = ureg
-                form.fields['dependencia'].queryset = depes
+                if step=='nro':
+                   form.fields['dependencia'].queryset = depe
 
-            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-ESQ':
+        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-ESQ':
                 depe = self.request.user.get_profile().ureg
                   
                 ureg= UnidadesRegionales.objects.filter(descripcion__contains='ESQUEL')  
                 if depe is None:
                    form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                depe= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
                 form.fields['unidad'].queryset = ureg
-                form.fields['dependencia'].queryset = depes
+                if step=='nro':
+                   form.fields['dependencia'].queryset = depe
 
-            if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-CR':
+        if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-CR':
                 depe = self.request.user.get_profile().ureg
                   
                 ureg= UnidadesRegionales.objects.filter(descripcion__contains='COMODORO RIVADAVIA')  
                 if depe is None:
                    form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
               
-                depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
+                depe= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
                 form.fields['unidad'].queryset = ureg
-                form.fields['dependencia'].queryset = depes
+                if step=='nro':
+                   form.fields['dependencia'].queryset = depe
 
-            if  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
+        if  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
                 depe = self.request.user.get_profile().ureg
                 if step is None:
                    step=self.steps.current   
@@ -206,13 +209,7 @@ class preventivos(SessionWizardView):
                 #depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
                 form.fields['unidad'].queryset = ureg
                 #form.fields['dependencia'].queryset = depes
-        else:
-            ureg= UnidadesRegionales.objects.exclude(descripcion__icontains='AREA') 
-            ureg= ureg.exclude(descripcion__icontains='INVESTIGACION')
-            #depes= Dependencias.objects.all
-            #depes= Dependencias.objects.filter(unidades_regionales_id__exact=ureg)
-            form.fields['unidad'].queryset = ureg    
-            
+        
         
            
       
@@ -224,35 +221,26 @@ class preventivos(SessionWizardView):
         #depe=self.request.user.get_profile().depe
         if step == "actores":
               #print self.get_cleaned_data_for_step('nro')['dependencia']
-              if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
+              if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in self.request.user.get_profile().depe.descripcion:
+               
                 depe = self.get_cleaned_data_for_step('nro')['dependencia']
+                nro = self.get_cleaned_data_for_step('nro')['nro']
+                anio= self.get_cleaned_data_for_step('nro')['anio']
+                #print nro,anio,dependencia
+                existen= Preventivos.objects.filter(dependencia__exact=depe.id,nro__exact=nro,anio__exact=anio).values('nro')
+                if existen:
+                   form.errors['__all__'] = form.error_class(["Preventivo Existente. regrese a la pantalla anterior."])
+ 
+               
+
                 if depe is None:
                    form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
 
-                #id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
-                actuante=Actuantes.objects.filter(funcion__exact=1) | Actuantes.objects.filter(funcion__exact=3)
-                preventor=Actuantes.objects.filter(funcion__exact=2) | Actuantes.objects.filter(funcion__exact=3)
-                if actuante is None:
-
-                  form.fields['actuante'].initial = data.get('actuante')
-                  form.fields['actuante'].widget.attrs['readonly'] = True
-                  form.fields['actuante'].widget.attrs['disabled'] = True
-                  form.fields['preventor'].initial = data.get('preventor')
-                  form.fields['preventor'].widget.attrs['readonly'] = True
-                  form.fields['preventor'].widget.attrs['disabled'] = True
-                else:
-                  
-                  form.fields['actuante'].queryset = actuante
-                  form.fields['preventor'].queryset = preventor
-              else:
-                depe=self.request.user.get_profile().depe
-    
-              if depe!="Jefatura" and self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion != 'CENTRAL RADIO':
-
-
+                
                 id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
                 actuante=Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=1) | Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=3)
                 preventor=Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=2) | Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=3)
+
                 if actuante is None:
 
                   form.fields['actuante'].initial = data.get('actuante')
@@ -265,7 +253,33 @@ class preventivos(SessionWizardView):
                   
                   form.fields['actuante'].queryset = actuante
                   form.fields['preventor'].queryset = preventor
+              
+               
+              if self.request.user.get_profile().depe.descripcion!="Jefatura" and self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES' and  self.request.user.get_profile().depe.descripcion != 'CENTRAL RADIO':
+         
+                if 'RADIO CABECERA' in self.request.user.get_profile().depe.descripcion:
+                   depe=self.get_cleaned_data_for_step('nro')['dependencia']
+                else:
+                   depe=self.request.user.get_profile().depe
+
+                id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
+               
+                actuante=Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=1) | Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=3)
+                preventor=Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=2) | Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=3)
+              
+                if actuante is None:
+
+                  form.fields['actuante'].initial = data.get('actuante')
+                  form.fields['actuante'].widget.attrs['readonly'] = True
+                  form.fields['actuante'].widget.attrs['disabled'] = True
+                  form.fields['preventor'].initial = data.get('preventor')
+                  form.fields['preventor'].widget.attrs['readonly'] = True
+                  form.fields['preventor'].widget.attrs['disabled'] = True
+                else:
                   
+                  form.fields['actuante'].queryset = actuante
+                  form.fields['preventor'].queryset = preventor
+                 
 
         if step == 'autoridades':
              if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
@@ -278,10 +292,14 @@ class preventivos(SessionWizardView):
               
         
         if step=='confirmation':
-           if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES'  or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
+           if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES'  or  'RADIO' in self.request.user.get_profile().depe.descripcion:
                 depe = self.get_cleaned_data_for_step('nro')['dependencia']
+                #id_ciudad = Dependencias.objects.get(id=self.get_cleaned_data_for_step('nro')['dependencia'].id).ciudad_id
+      
            else:
                depe=self.request.user.get_profile().depe
+               #id_ciudad=self.request.user.get_profile().depe.ciudad.id
+      
            id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
                
            form.fields['fecha_denuncia'].initial= self.get_cleaned_data_for_step('nro')['fecha_denuncia']
@@ -313,23 +331,36 @@ class preventivos(SessionWizardView):
         actuante= form.cleaned_data['actuante']
         preventor=  form.cleaned_data['preventor']
         autoridades=form.cleaned_data['autoridades']
-        if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
-          depe = self.get_cleaned_data_for_step('nro')['dependencia'].id
+        if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES'  or  'RADIO' in self.request.user.get_profile().depe.descripcion:
+          dependencia = self.get_cleaned_data_for_step('nro')['dependencia']
+          nro = self.get_cleaned_data_for_step('nro')['nro']
+          anio= self.get_cleaned_data_for_step('nro')['anio']
+          #print nro,anio,dependencia
+          existen= Preventivos.objects.filter(dependencia__exact=dependencia.id,nro__exact=nro,anio__exact=anio).values('nro')
+          if existen:
+             form.errors['__all__'] = form.error_class(["Preventivo Existente. regrese a la pantalla inicial de carga de preventivo."])
+          else:
+             pre.nro=nro
+             pre.anio=anio
+        
+               
         else:
-          depe=self.request.user.get_profile().depe.id
+          depe=self.request.user.get_profile().depe
 
-        dependencia=Dependencias.objects.get(id__exact=depe)
+          dependencia=Dependencias.objects.get(id__exact=depe.id)
 
-        existen= Preventivos.objects.filter(dependencia__exact=dependencia,anio__exact=date.today().year).values('nro')
-        #genera nro de preventivos por dependencia
+          existen= Preventivos.objects.filter(dependencia__exact=dependencia,anio__exact=date.today().year).values('nro')
+          #genera nro de preventivos por dependencia
        
-        if len(existen)==0:
-          nro=1
-        else:
-          nro=existen[len(existen)-1]['nro']+1
+          if len(existen)==0:
+             nro=1
+          else:
+             nro=existen[len(existen)-1]['nro']+1
     
-        pre.nro=nro
-        pre.anio=date.today().year
+          pre.nro=nro
+          pre.anio=date.today().year
+
+
         pre.caratula=caratula
         pre.fecha_denuncia=fecha_denuncia
         pre.fecha_carga=date.today()
@@ -471,7 +502,7 @@ def obtener_datosfirst(request,idprev):
   preventivo = Preventivos.objects.get(id = idprev)
   #idprev=preventivo
   depe= preventivo.dependencia
-
+  voyper=False
   errors=[]
   continua='no'
   grabo='no'
@@ -479,19 +510,22 @@ def obtener_datosfirst(request,idprev):
   motivo=''
   idhec=''
   delitos = []
+  notienePer=False
   idper=0
+  mostrar=''
   descripcionhecho=''
   if request.POST.get("continua")=='Continuar' or request.POST.get("continua")=='Agregar' or request.POST.get("continuar")=='Agregar':
      form=HechosForm(request.POST, request.FILES)
- 
+   
    
      if form.is_valid():
       continua="si" 
      
       hec=Hechos()
-      if request.POST.get("continua")=='Agregar': 
-       
-        if request.POST.get('id'):
+  
+      if request.POST.get("continua")=='Agregar' and request.POST.get("id"): 
+
+        #if request.POST.get('id'):
 
          hecho = Hechos.objects.get(id=request.POST.get('id'))
          idhec=hecho.id
@@ -508,28 +542,40 @@ def obtener_datosfirst(request,idprev):
          else:
       
           if request.POST.get('delito'):
-           #print request.POST.get('delito')
+      
            hechoDelito = HechosDelito()
            hechoDelito.hechos = hecho
            hechoDelito.refdelito = RefDelito.objects.get(id = request.POST.get('delito'))
+           
            if request.POST.get('modos'):
             hechoDelito.refmodoshecho = RefModosHecho.objects.get(id = request.POST.get('modos'))
-           if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES':
+           if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+            
              try:
-               hechoDelito.save()
+               idhec=hecho.id
+               busco=HechosDelito.objects.filter(refdelito_id = request.POST.get('delito'),hechos_id=idhec)
+               if busco:
+                 errors.append('Delito que intenta agregar ya fue cargado')
+               else:
+                 hechoDelito.save()
              except IntegrityError:
                errors.append('Delito que intenta agregar ya fue cargado')
               # return render(request, '.', {'errors': errors})
               #hechoDelito.save()
              delitos =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
+             continua='si'
            else:
             errors.append('No se puede modificar preventivos de otras dependencias.')   
-    
+          
           else:
            continua="no" 
-    
-      else:
+        #else:
+           #grabo="si" 
+           #idhecs=Hechos.objects.filter(preventivo_id=idprev)
       
+           #delitos =HechosDelito.objects.filter(hechos = idhecs,borrado__isnull=True)
+      else:
+
        motivo=form.cleaned_data['motivo']
        fecha_desde=form.cleaned_data['fecha_desde']
        fecha_hasta=form.cleaned_data['fecha_hasta']
@@ -539,7 +585,7 @@ def obtener_datosfirst(request,idprev):
        fd = time.strptime(fecha_denuncia, "%d/%m/%Y")
        fde = time.strptime(fecha_des, "%d/%m/%Y")
        fha = time.strptime(fecha_has, "%d/%m/%Y")
-      
+       
        if fde>fd or fha>fd:
           errors.append('La Fecha de Denuncia nunca puede ser menor a la Fecha y Hora del Hecho sucedido')
           continua="no" 
@@ -552,18 +598,20 @@ def obtener_datosfirst(request,idprev):
           hec.fecha_carga=date.today()
           hec.descripcion=''
           hec.preventivo_id=idprev
-          if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES':
+      
+          if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in  request.user.get_profile().depe.descripcion:
             try: 
               hec.save()
             except IntegrityError:
               continua="si" 
-   
+         
           else:
              errors.append('No se puede modificar preventivos de otras dependencias.')   
     
           """for grabahec in form.cleaned_data['delito']:
           hec.delito.add(int(RefDelito.objects.get(descripcion=grabahec).id))"""
-          if request.POST.get("continua")=='Agregar' or request.POST.get('id'):
+ 
+          if request.POST.get("continua")=='Agregar' and request.POST.get('id'):
              hecho = Hechos.objects.get(id=request.POST.get('id'))
              idhec=hecho.id
              hechoDelito = HechosDelito()
@@ -571,24 +619,36 @@ def obtener_datosfirst(request,idprev):
              descripcionhecho=request.POST.get('descrihecho')
              continua='no'
              grabo='si'
-          else:
 
+          else:
              idhec=hec.id
              hechoDelito = HechosDelito()
              hechoDelito.hechos = hec
           
           hechoDelito.refdelito = RefDelito.objects.get(id = request.POST.get('delito'))
+        
           if request.POST.get('modos'):
            hechoDelito.refmodoshecho = RefModosHecho.objects.get(id = request.POST.get('modos'))
-          if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES': 
+
+          if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
             try:
+
               hechoDelito.save()
               delitos =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
-              grabo='si'
+              
+              continua='si'
               
             except IntegrityError:
               errores=True 
-     
+
+              idhecs=Hechos.objects.filter(preventivo_id=idprev).values('id')
+              idhe=Hechos.objects.get(id=idhecs)
+              delitos =HechosDelito.objects.filter(hechos = idhecs,borrado__isnull=True)
+              if idhe:
+                 
+                 form=HechosForm(instance=idhe)
+                 idhec=idhe.id
+              continua='si'
         else:
           continua="no" 
  
@@ -623,19 +683,7 @@ def obtener_datosfirst(request,idprev):
          fecha_hasta=request.POST.get('fecha_hasta')
        
   else:  
-    if request.POST.get("continuas")=='Continuar':
-     
-      form=HechosForm(request.POST, request.FILES)
-      if 'None' not in request.POST.get('id'):
-        grabo="si"
-        hecho = Hechos.objects.get(id=request.POST.get('id'))
-        idhec=hecho.id
-        delitos =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
-        motivo=request.POST.get('motivo')
-        fecha_desde=request.POST.get('fecha_desde')
-        fecha_hasta=request.POST.get('fecha_hasta')
-      
-    else:
+   
       if request.POST.get("grabar")=='Guardar Hecho':
          form=HechosForm(request.POST, request.FILES)
          hecho = Hechos.objects.get(id=request.POST.get('id'))
@@ -644,7 +692,7 @@ def obtener_datosfirst(request,idprev):
        
          if not hecho.descripcion:
             hecho.descripcion=request.POST.get('descrihecho')
-            if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES': 
+            if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
               hecho.save()
               idhec=hecho.id
             
@@ -656,19 +704,23 @@ def obtener_datosfirst(request,idprev):
  
          grabo='fin'
       else:
-      
+       
         if request.POST.get("borrar"):  
-         grabo="si"
+         continua="si"
          form=HechosForm(request.POST, request.FILES)
          hecho = Hechos.objects.get(id=request.POST.get('id'))
-         idhec=hecho.id
          hechoDelito = HechosDelito()
          try:
-           hechoDelito = HechosDelito.objects.get(id=request.POST.get("borrar"))
-           hechoDelito.delete()
-           descripcionhecho=request.POST.get('descrihecho')
+           hechoDelito = HechosDelito.objects.filter(id=request.POST.get("borrar"))
+           try:
+              hechoDelito.delete()
+              descripcionhecho=request.POST.get('descrihecho')
+           except IntegrityError:
+              errorsd=True
          except IntegrityError:
            errorsd=True
+
+         idhec=hecho.id
          delitos =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
            
       
@@ -676,10 +728,29 @@ def obtener_datosfirst(request,idprev):
          fecha_desde=request.POST.get('fecha_desde')
          fecha_hasta=request.POST.get('fecha_hasta')
         else: 
-            
-            si = Hechos()
-            form=HechosForm(instance=si)
-  
+           if  Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all():
+        
+              datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all()
+              notienePer= True
+           if not notienePer:
+             state= request.session.get('state')
+             destino= request.session.get('destino')
+             return render(request,'./errorsinper.html',{'state':state, 'destino': destino})
+           
+           idhecs=Hechos.objects.filter(preventivo_id=idprev).values('id')
+           idhe=Hechos.objects.get(id=idhecs)
+           delito =HechosDelito.objects.filter(hechos = idhecs,borrado__isnull=True)
+           if idhe:
+                 
+                 form=HechosForm(instance=idhe)
+                 idhec=idhe.id
+                 fecha_desde=idhe.fecha_desde
+                 fecha_hasta=idhe.fecha_hasta
+                 continua='des'
+           else:
+              si = Hechos()
+              form=HechosForm(instance=si)
+              idhec=''
 
   ftiposdelitos=DelitoForm()
   modos=RefModosHechoForm()
@@ -697,12 +768,13 @@ def obtener_datosfirst(request,idprev):
   info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,
   'caratula':caratula,'descripcionhecho':descripcionhecho,
   'actuante':actuante,
-  'preventor':preventor,
-  'autoridades':autoridades,'idper':idper,
+  'preventor':preventor,'idprev':idprev,'delito':delito,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,
+  'autoridades':autoridades,'idper':idper,'mostrar':mostrar,
   'errors': errors, 'grabo':grabo,'dependencia':dependencia,'unidadreg':unidadreg,
   'state':state, 'continua':continua,'delitos':delitos,'motivo':motivo,
   'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'modos':modos,'idhec':idhec}
   return render_to_response('./templateidp.html',info,context_instance=RequestContext(request))
+ 
        
         
 
@@ -1157,7 +1229,7 @@ def usuarios(request, iduser):
   errors = []
   usuarios=""
   reenvio=False
-  print request.POST.get('modifica')
+
   if iduser.isnumeric():
       if request.POST.get('cancelar')=="Cancelar": 
          return HttpResponseRedirect('../')   
@@ -1170,7 +1242,7 @@ def usuarios(request, iduser):
           if grupous:
            namegru=Group.objects.get(id=grupous)  
            grupo=namegru.name
-          print grupo
+   
           if grupous:
              namegru=Group.objects.get(id=grupous)  
              grupo=namegru.name
@@ -1183,12 +1255,16 @@ def usuarios(request, iduser):
 
 
           usuarios = Personas.objects.get(nro_doc=request.POST.get('username'))  
-            
-          if usuarios.ocupacion.descripcion.find('POLICI')>=0:
+          estapersonal=Personal.objects.filter(persona_id=usuarios.id)  
+          if estapersonal: 
+            if usuarios.ocupacion.descripcion.find('POLICI')>=0:
              #grupo=namegru.id
              ureg=request.POST.get('ureg')
              depe=request.POST.get('depe')
              #group = Group.objects.get(id=grupo)
+            else:
+             ureg='1'
+             depe='1'
           else:
              #grupo=namegru.id
              #group = Group.objects.get(id=grupous) 
@@ -1235,8 +1311,8 @@ def usuarios(request, iduser):
                        
                         for grupos in formnew.cleaned_data['groups']:
                             grupouser.append(grupos)
-                         
-                        if usuarios.ocupacion.descripcion.find('POLICI')<0:
+                        if estapersonal:
+                         if usuarios.ocupacion.descripcion.find('POLICI')<0:
                           for polis in grupouser:
                             
                             if polis.name!='visita':
@@ -1447,7 +1523,7 @@ def usuarios(request, iduser):
                   return render_to_response('./newuser.html', {'reenvio':reenvio,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
              else:        
                   usuarios = User.objects.get(username=iduser)
-                    
+                  #print usuarios  
                   usua = User.objects.filter(username=iduser).values()
                   idem = usuarios.get_profile()
                   dnis = usuarios.username
@@ -1470,12 +1546,19 @@ def usuarios(request, iduser):
                   form.fields['depe'].initial=datos.depe
                   rolesi=formnew['groups'].value()
                   buscodni=Personas.objects.get(nro_doc=dnis)
-                  if buscodni:
+                  estapersonal=Personal.objects.filter(persona_id__exact=buscodni.id)
+                
+                  if estapersonal:
                    
                      if buscodni.ocupacion.descripcion.find('POLICI')>=0:
                         ocupacion='1'
                      else:
                         ocupacion=''
+                  else:
+                     ocupacion=''
+                     name_lis=['visita']
+                     formnew.fields['groups'].queryset=Group.objects.filter(name__in=name_lis)
+                     
                   return render_to_response('./newuser.html', {'reenvio':reenvio,'ocupacion':ocupacion,'formd':formd,'apellidos':apellidos,'nombres':nombres,'dni':dnis,'usuarios':usuarios,'lista':lista,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
   else:
     formnew=UserForm()
@@ -5261,7 +5344,7 @@ def updatehechos(request,idprev):
           hechoDelito.refdelito = RefDelito.objects.get(id = request.POST.get('delito'))
           if request.POST.get('modos'):
            hechoDelito.refmodoshecho = RefModosHecho.objects.get(id = request.POST.get('modos'))
-          if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES': 
+          if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
              try:
               hechoDelito.save()
               descripcion=request.POST.get('descripcion')
@@ -5310,7 +5393,7 @@ def updatehechos(request,idprev):
            #fecha_has=datetime.datetime.strptime(request.POST.get('fecha_hasta'), '%d/%m/%Y %H:%M:%S')
            #print type(fd),type(fde),type(fha)
            #print fd,fde,fha
-           if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES': 
+           if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
               if hecho.fecha_desde.date() > ids.fecha_denuncia or hecho.fecha_hasta.date() > ids.fecha_denuncia:
                 errors.append('La Fecha de Denuncia nunca puede ser menor a la Fecha y Hora del Hecho sucedido')
               else: 
@@ -5401,7 +5484,8 @@ def selectPrev(request,prev):
         idmodo=j['motivo_id']  
         descri=j['descripcion'].encode('utf8')
         modosref=RefMotivosHecho.objects.get(id=idmodo)
-        
+        fecha_desde=j['fecha_desde']
+        fecha_hasta=j['fecha_hasta']
     cometidos=[]
     hechodeli=""
     for d in delito:
@@ -5436,7 +5520,7 @@ def selectPrev(request,prev):
       preventivo.caratula = form.cleaned_data['caratula']
       preventivo.actuante = form.cleaned_data['actuante']
       preventivo.preventor = form.cleaned_data['preventor']
-      if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES':
+      if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
        preventivo.save()
        preventivo.autoridades.clear()
        for grabauto in form.cleaned_data['autoridades']:
@@ -5460,7 +5544,7 @@ def selectPrev(request,prev):
           autoridad.append(ids)
       form.fields['autoridades'].initial=autoridad
       form.fields['autoridades'].widget.attrs["onclick"] = False
-      return render_to_response('./updateprev.html',{'preventivo':preventivo,'fecha_autorizacion':fecha_autorizacion,'unireg':unireg,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,},context_instance=RequestContext(request))  
+      return render_to_response('./updateprev.html',{'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'fecha_autorizacion':fecha_autorizacion,'unireg':unireg,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,},context_instance=RequestContext(request))  
    form = PreventivosForm(instance = preventivo)
    id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
    form.fields['actuante'].queryset = Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=1) | Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=3)
@@ -5477,7 +5561,7 @@ def selectPrev(request,prev):
    form.fields['autoridades'].initial=autoridad
    form.fields['autoridades'].widget.attrs["onclick"] = False
 
-   return render_to_response('./updateprev.html',{'preventivo':preventivo,'unireg':unireg,'fecha_autorizacion':fecha_autorizacion,'lista':lista,'lugarhecho':lugarhecho,'datosinvo':datosinvo,'descripcion':descri,'hechodeli':hechodeli,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,'tieneelemento':tieneelemento,},context_instance=RequestContext(request))
+   return render_to_response('./updateprev.html',{'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'unireg':unireg,'fecha_autorizacion':fecha_autorizacion,'lista':lista,'lugarhecho':lugarhecho,'datosinvo':datosinvo,'descripcion':descri,'hechodeli':hechodeli,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,'tieneelemento':tieneelemento,},context_instance=RequestContext(request))
   
 @login_required   
 @transaction.commit_on_success
@@ -5708,7 +5792,7 @@ def persinvo(request,idhec,idper):
       if persoinvoluc:
         persoinvolu=PersInvolucradas.objects.get(id=request.POST.get('dele'))
         if 'si' in persoinvolu.detenido:
-          if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES': 
+          if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
             Detenidos.objects.filter(persona_id = persoinvolu.persona_id).update(borrado='S',observaciones=request.user.username)
             PersInvolucradas.objects.get(id=request.POST.get('dele')).delete()
           else:
@@ -6124,7 +6208,7 @@ def persinvom(request,idhec,idper):
                 detenidos.hechos  = hechos
                 detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
                 try:
-                 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES':   
+                 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:   
                    if fde>=fd:
                       detenidos.save()
                  else:
@@ -6159,7 +6243,7 @@ def persinvom(request,idhec,idper):
      if persoinvoluc:
        persoinvolu=PersInvolucradas.objects.get(id=request.POST.get('dele'))
        if 'si' in persoinvolu.detenido:
-         if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES': 
+         if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
            Detenidos.objects.filter(persona_id = persoinvolu.persona_id).update(borrado='S',observaciones=request.user.username)
            PersInvolucradas.objects.get(id=request.POST.get('dele')).delete()
          else:
@@ -6328,7 +6412,7 @@ def lugar_hecho(request,idhecho,idprev):
           barrio.save()
           lugar.barrio = barrio
         #print request.user.get_profile().depe_id,depe
-        if request.user.get_profile().depe_id==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES': 
+        if request.user.get_profile().depe_id==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
          
            lugar.save() 
            if request.POST.get('grabar') == 'Modificar':
@@ -6339,8 +6423,9 @@ def lugar_hecho(request,idhecho,idprev):
               for clima in form.cleaned_data['cond_climaticas']:
                  lugar.cond_climaticas.add(clima)
            else:
-             if request.POST.get('grabar') == 'Modificar':
-                
+            
+             if request.POST.get('grabar') == 'Modificar' :
+              if request.POST.get('cond_climaticas') is not None:
                 for clima in request.POST.get('cond_climaticas'):
                     lugar.cond_climaticas.add(clima)
 
@@ -6724,7 +6809,7 @@ def elementos(request,idhecho):
       elementosin=Elementos.objects.filter(id=request.POST.get('dele'))
      
       if elementosin:
-        if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0:
+        if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0 or request.user.get_profile().depe.descripcion.find('RADIO')>=0:
             obs="elemento borrado por usuario : "+request.user.username
 
             Elementos.objects.filter(id = request.POST.get('dele')).update(borrado='S',observaciones=obs)
@@ -10799,7 +10884,7 @@ def amplia_ele(request,idprev,idamp):
       elementosin=Elementos.objects.filter(id=request.POST.get('dele'))
      
       if elementosin:
-        if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0:
+        if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0 or request.user.get_profile().depe.descripcion.find('RADIO')>=0:
             obs="elemento borrado por usuario : "+request.user.username
              
             Elementos.objects.filter(id = request.POST.get('dele')).update(borrado='S',observaciones=obs)
@@ -11461,7 +11546,7 @@ def eleampli(request,idhecho,elemento,idamp):
       elementosin=Elementos.objects.filter(id=request.POST.get('dele'))
      
       if elementosin:
-        if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0:
+        if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0  or request.user.get_profile().depe.descripcion.find('RADIO')>=0:
             obs="elemento borrado por usuario : "+request.user.username
              
             Elementos.objects.filter(id = request.POST.get('dele')).update(borrado='S',observaciones=obs)

@@ -15,7 +15,9 @@
 
             var submitbutton = $('.submit-button');
             var errorBox = $('.error');
+            var errorBox1 = $('.errorpass');
             errorBox.css('visibility', 'hidden');
+            errorBox1.css('visibility', 'hidden');
             submitbutton.attr("disabled", "disabled");
 
             //this function will handle onPasswordValidate callback, which mererly checks the password against minimum length
@@ -30,10 +32,12 @@
                 if (isMatched) {
                     submitbutton.addClass('unlocked').removeClass('locked');
                     submitbutton.removeAttr("disabled", "disabled");
+                    errorBox1.css('visibility', 'hidden');
                 }
                 else {
                     submitbutton.attr("disabled", "disabled");
                     submitbutton.addClass('locked').removeClass('unlocked');
+                    errorBox1.css('visibility', 'visible');
                 }
             }
         });

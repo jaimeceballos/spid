@@ -11,9 +11,9 @@
              
                <div id="fade" class="overlay"  style="display: block;"></div>
                      <div id="light" class="modals" style="display: block;">
-                  <p style="color: red;" > {{ errors }}.- &nbsp;&nbsp;
+                  <p style="color: red;font-size:14px;" > {{ errors }}.- &nbsp;&nbsp;</p>
                   <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
-                       </p>
+                       
                        </div>
           
              
@@ -28,7 +28,7 @@
      Unidad Regional / Dependencia : <strong style="font-weight:bold">{{unidadreg}} / {{dependencia}}</strong></p>
 <p>
      Preventivo  Nro. :
-     <input type="text" name="nro" id="id_nro" value="{{nro}}/{{anio}}" readonly="readonly"/> 
+     <input type="text" name="nro" id="id_nro"  value="{{nro}}/{{anio}}" readonly="readonly"/> 
     
      Fecha de Denuncia :
      <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/y"}}" readonly="readonly"/>
@@ -54,6 +54,34 @@
         </ul>      
      {% endfor%}        
    </p>
+   {%if 'des' in continua%}
+   <h1>Datos del Hecho Ocurrido</h1>  
+        <p>
+        Motivo :<strong> {{motivo}}</strong> 
+        &nbsp;&nbsp;Fecha y Hora Inicio : <strong>{{fecha_desde|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong>
+        &nbsp;&nbsp;Fecha y Hora Final : <strong>{{fecha_hasta|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong> </p>
+ <!--     <p>
+       Hecho :&nbsp;<strong>{{descripcion|safe}}</strong></p>-->
+      <p>
+       Delito/s Cometido/s :
+               {% for y in delito %}
+                <ul>
+                   <li>
+                      <strong>{{y}}</strong>
+                   </li>
+                </ul>      
+     {% endfor%}        
+       </p>
+    <p>
+     <h1>Breve Descripcion del Hecho Ocurrido :</h1>
+     <textarea  type="text" id="descrihecho" name="descrihecho" style="width: 100%;height:200px;" >{{descripcionhecho}}</textarea>
+     </p>
+     
+       <br>
+     <div align="right">
+     <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Guardar Hecho"/>
+     </div>
+   {%else%}
     {%if 'fin' in grabo %}
     
       <h6> Hecho Sucedido </h6>
@@ -236,14 +264,16 @@
         <select id="modos" name="modos" class="combox">
         <option {{modos.descripcion}}  </option>
         </select> 
-   {%if 'no' in continua%} 
+   <input class="btn btn-success" type="submit" value="Agregar" id="continua" name="continua"
+        title="Permite agregar mas delitos cometidos en el Hechos"/>
+   <!--{%if 'no' in continua%} 
        <input class="btn btn-success" type="submit" value="Agregar" id="continuar" name="continuar"
         title="Permite agregar mas delitos cometidos en el Hechos"/>
   {%else%}
         <input class="btn btn-success" type="submit" value="Agregar" id="continua" name="continua"
         title="Permite agregar mas delitos cometidos en el Hechos"/>
     
-   {%endif%}
+   {%endif%}-->
    {%if not delitos %}
      <strong style="color:red;">{{form.delito.errors}}</strong> 
    {%endif%} 
@@ -251,7 +281,7 @@
   </p>
   <br>
    
-    <input type="hidden" id="id" name="id" value="{{idhec}}"/>
+ <!--   <input type="hidden" id="id" name="id" value="{{idhec}}"/>-->
  
    {%if 'si' in continua %} 
 
@@ -269,13 +299,12 @@
         </tr>   
        {%endfor%}
       </table> 
-           <br>
+  
+<br>
      <div align="right">
-       <input class="new-aqua" type="submit" value="Continuar" id="continuas" name="continuas"
-       title="Continuar con el ingreso del Texto Breve del Hecho Delictivo"/>
-      </div>
-    
-
+         <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
+           <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
+      </div> 
    
   
    {%else%} 
@@ -298,6 +327,8 @@
         </tr>   
        {%endfor%}
       </table> 
+       
+      <!--
      <p>
      <h1>Breve Descripcion del Hecho Ocurrido :</h1>
      <textarea  type="text" id="descrihecho" name="descrihecho" style="width: 100%;" >{{descripcionhecho}}</textarea>
@@ -306,11 +337,15 @@
        <br>
      <div align="right">
      <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Guardar Hecho"/>
-     </div>
+     </div>-->
    
    
-      {%endif%}   
-  {%endif%}   
+      {%endif%}  
+
+  {%endif%}  
+    
   {%endif%}
+{%endif%}
+    
  </form>
 {% endblock %}

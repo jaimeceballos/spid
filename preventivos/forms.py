@@ -293,10 +293,15 @@ class ComunidadesForm(forms.ModelForm):
 
 class PrimerForm(forms.ModelForm):
     unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
-    
+    nro = forms.IntegerField(required=False,validators=[MinValueValidator(1),MaxValueValidator(9999999)])
+    anio = forms.IntegerField(required=False,validators=[MinValueValidator(2012),MaxValueValidator(2025)])
     def clean(self):
         cleaned_data = super(PrimerForm, self).clean()
-      
+        #if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
+        #   raise forms.ValidationError("El Nro y Año Existentes")
+     
+        #if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
+        #   raise forms.ValidationError("El Nro y Año Existentes")
         if self.cleaned_data.get('fecha_denuncia') is not None:
             fecha_denuncia = self.cleaned_data.get('fecha_denuncia')
             #Obtenemos la fecha actual
@@ -316,12 +321,14 @@ class PrimerForm(forms.ModelForm):
         return self.cleaned_data
     class Meta:
         model = Preventivos
-        fields = ('fecha_denuncia','caratula','dependencia',)
+        fields = ('fecha_denuncia','caratula','dependencia')
     
 
 class SegundoForm(forms.ModelForm):
     unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
-    
+    nro = forms.IntegerField(required=False)
+    anio = forms.IntegerField(required=False)
+
     def clean(self):
         cleaned_data = super(SegundoForm, self).clean()
         #if self.cleaned_data.get('actuante') is not None:
@@ -330,6 +337,9 @@ class SegundoForm(forms.ModelForm):
               #raise forms.ValidationError("Seleccione Actuante y Preventor")
         #else:
         #raise forms.ValidationError("Seleccione Actuante y Preventor diferentes")
+        #if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
+        #    raise forms.ValidationError("El Nro y Año Existentes")
+       
         if  self.cleaned_data.get('actuante') is None or self.cleaned_data.get('preventor') is None:
             raise forms.ValidationError("Seleccione Actuante y Preventor")
     
@@ -342,7 +352,15 @@ class SegundoForm(forms.ModelForm):
 
 class TerceroForm(forms.ModelForm):
     unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
-    
+    nro = forms.IntegerField(required=False)
+    anio = forms.IntegerField(required=False)
+    def clean(self):
+        cleaned_data = super(TerceroForm, self).clean()
+      
+        if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
+           raise forms.ValidationError("El Nro y Año Existentes")
+        return self.cleaned_data
+        
     def __init__(self, *args, **kwargs):
         super(TerceroForm,self).__init__(*args,**kwargs)
         self.fields["autoridades"].widget = CheckboxSelectMultiple()
@@ -355,7 +373,15 @@ class TerceroForm(forms.ModelForm):
 
 class FinForm(forms.ModelForm):
     unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
-    
+    nro = forms.IntegerField(required=False)
+    anio = forms.IntegerField(required=False)
+    """
+    def clean(self):
+        cleaned_data = super(FinForm, self).clean()
+      
+        if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
+           raise forms.ValidationError("El Nro y Año Existentes")
+        return self.cleaned_data"""
     def __init__(self, *args, **kwargs):
         super(FinForm,self).__init__(*args,**kwargs)
         self.fields["autoridades"].widget = CheckboxSelectMultiple()

@@ -15,6 +15,19 @@
         {{ form }}
     {% endfor %}
 {% else %}
+ {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+
+        <div id="fade" class="overlay"  style="display: block;"></div>
+
+                     <div id="light" class="modals" style="display: block;">
+                         <div align="right">  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"> <input class="borrarde"  type="button" value= "" title="Cerrar Ventana" ></a></div>
+                  <p style="color: red; font-size:12px;" > Error : {{error}}.- &nbsp;&nbsp;
+                      
+                       </p>
+                       </div>
+      {% endfor %}
+  {% endif %}  
 
 <hr>
     

@@ -10,7 +10,9 @@
                <th >Nro/Año</th>
                <th>Caratula</th>
                 <th>U.Regional/Dependencias</th>
-               <th>Carga</th> <th>Autorizado</th> <th>Cierre</th><th>Ampliaciones</th>
+               <th>Carga</th> <th>Autorizado</th> <th>Cierre</th>
+               <th>Ampliaciones</th>
+         
              </tr>
         </thead>
             <tbody>
@@ -25,9 +27,13 @@
                    <td width="10%">{{ datos.fecha_carga | date:"d/m/Y"}}</td>
                    <td width="10%">{{ datos.fecha_autorizacion | date:"d/m/Y"}}</td>
                    <td width="12%">{{ datos.fecha_cierre | date:"d/m/Y"}}</td>
-                   </a>
+         
                   </td>
-                  <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
+                  {%if datos.fecha_autorizacion or user.get_profile.depe.descripcion == 'INVESTIGACIONES'%}
+                    <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
+                  {%else%}
+                       <td width="12%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="Para generar una Ampliacion debe estar Autorizado/Enviado el Preventivo" rel='tooltip' /></a></center></td>
+                  {%endif%}
                  </tr>
                  {% endfor %}
                 {%endfor%}

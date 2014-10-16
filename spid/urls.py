@@ -13,7 +13,7 @@ handler500 = 'preventivos.views.server_error'
 
 admin.autodiscover()
 
-urlpatterns = patterns('',  url(r'^$', 'spid.views.passwordChange', name="changePass"),
+urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', name="changePass"),
     (r'^spid/$', 'spid.views.iniciar'),
     (r'^spid/depes/(?P<depes>[0-9A-Za-z]+)/$', 'spid.views.obtener_dependencias'),
     (r'^spid/login/$', 'spid.views.login_user'),

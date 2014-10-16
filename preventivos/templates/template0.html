@@ -22,7 +22,7 @@
 
                      <div id="light" class="modals" style="display: block;">
                          <div align="right">  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"> <input class="borrarde"  type="button" value= "" title="Cerrar Ventana" ></a></div>
-                  <p style="color: red;" > Error : {{error}}.- &nbsp;&nbsp;
+                  <p style="color: red; font-size:12px;" > Error : {{error}}.- &nbsp;&nbsp;
                       
                        </p>
                        </div>
@@ -58,6 +58,18 @@
     </p>
 
     {% if user.get_profile.depe.descripcion == 'INVESTIGACIONES' or user.get_profile.depe.descripcion == 'CENTRAL RADIO' %}
+     <p>
+     <div style="color:red;">{{wizard.form.nro.errors}}</div><div style="color:red;"> {{wizard.form.anio.errors}}
+   </div>
+      <strong><span style="color:red;"> * </span> Preventivo Nro :</strong>
+      <input type="number" name = "nro-nro" id="nro-nro" 
+      style="margin-left:28px;width:80px;color:black;height: 22px;margin-top: 5px;" {{wizard.form.nro}}
+      <span >  </span> <strong style="margin-left:10px;">  Año :</strong>  
+      <input type="number" name = "nro-anio" id="nro-anio" style="width:65px;color:black;height: 22px;margin-top: 5px;"
+      {{wizard.form.anio}}
+    
+    </p>
+     
       <p>
      <div style="color:red;">{{wizard.form.unidad.errors}}</div><div style="color:red;"> {{wizard.form.dependencia.errors}}
    </div>
@@ -70,7 +82,7 @@
        
     <strong> <span style="color:red"> * </span> Dependencia : </strong>
       <select name = "nro-dependencia" id="depe" style="width:200px;margin-left:36px">
-        <option name="depe" {{wizard.form.dependencia}}</option>
+        <option {{wizard.form.dependencia}}</option>
       </select> 
     {%else%} 
        {%if 'CABECERA' in user.get_profile.depe.descripcion%}

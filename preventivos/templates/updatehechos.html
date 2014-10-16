@@ -157,24 +157,28 @@
    
 
      <h6>Delitos cometidos</h6>
-     <table class="table">
+    <!-- <table class="table">-->
        {% for cometieron in delito %}
        
-        <tr
-          <td>
+       <!-- <tr
+          <td>-->
+             <ul>
+                  
             <button type="submit" name="borrar" id="borrar" class="borrarde"
               value="{{cometieron.id}}" onclick=(this.value) title="Permite borrar un delito"/></button>
-              <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">  [  {{cometieron}} ]&nbsp;&nbsp;</strong>
-          </td>
+              <strong >  {{cometieron}} </strong>
+      
+          </ul>
+          <!--</td>
               
-        </tr>   
+        </tr> style="display: inline-block; vertical-align: middle; line-height: normal; "-->  
        {%endfor%}
-      </table> 
+     <!-- </table> -->
      
-     <p>
+ <!--    <p>
       <h6>Breve Descripcion </h6>
         <textarea type="text" style="width: 100%;" id="descripcion" name="descripcion"> {{descripcion}} </textarea>
-     </p>
+     </p>-->
       <hr>
        <br>
      <div align="right">
