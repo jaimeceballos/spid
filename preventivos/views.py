@@ -4009,6 +4009,7 @@ def personas(request):
   errors=[]
   lista = Personas.objects.all()
   form = PersonasForm()
+  form.fields['tipo_doc'].queryset = RefTipoDocumento.objects.exclude(descripcion__icontains='NO POSEE') 
   dom = DomiciliosForm()
   formpa=PadresForm()
   formpr=ProvinciasForm()
@@ -4115,6 +4116,7 @@ def personas(request):
 
   lista = Personas.objects.all()
   form = PersonasForm()
+  form.fields['tipo_doc'].queryset = RefTipoDocumento.objects.exclude(descripcion__icontains='NO POSEE') 
   dom = DomiciliosForm()
   formpa=PadresForm()
   formpr=ProvinciasForm()
@@ -4122,7 +4124,6 @@ def personas(request):
   formbarrios = BarriadasForm()
   formciu=RefCiudades.objects.all()
   return render_to_response('./persona.html',{'formcalles':formcalles,'formbarrios':formbarrios,'formciu':formciu,'formpr':formpr,'errors':errors,'dom':dom,'ciudad':ciudad,'formpa':formpa,'form':form,'personas':personas,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
-
 
 #abm de personas
 @login_required
@@ -4253,6 +4254,7 @@ def persona(request, idper):
                               errors.append('La ciudad que UD. desea Guardar ya Existe. Verifique')
   if request.POST.get('cancelar') == 'Cancelar':
     form = PersonasForm()
+    form.fields['tipo_doc'].queryset = RefTipoDocumento.objects.exclude(descripcion__icontains='NO POSEE') 
     lista = Personas.objects.all()
     return render_to_response('./persona.html',{'form':form, 'personas':personas,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
   else:
@@ -4384,6 +4386,8 @@ def persona(request, idper):
 
   personas = Personas.objects.get(id = idper)
   form = PersonasForm(instance=personas)
+  form.fields['tipo_doc'].queryset = RefTipoDocumento.objects.exclude(descripcion__icontains='NO POSEE') 
+  form.fields['tipo_doc'].initial=personas.tipo_doc
   domicilios = Domicilios()
   dom = DomiciliosForm()
  
