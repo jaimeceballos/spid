@@ -1093,7 +1093,7 @@ def new_user(request):
                     depes=Dependencias.objects.get(pk=depe)
                     profiles.ureg=uregs
                     profiles.depe=depes
-                      
+                    profiles.last_login=True
                     profiles.save() 
                      
                     info_enviado= True
@@ -1502,7 +1502,7 @@ def usuarios(request, iduser):
                   
                   profiles.ureg_id=UnidadesRegionales.objects.get(id=ureg)
                   profiles.depe_id=Dependencias.objects.get(id=depe)
-                
+                  profiles.last_login=True
                   profiles.save() 
                   #reenvio de usuario y pass
                   info_enviado= True
