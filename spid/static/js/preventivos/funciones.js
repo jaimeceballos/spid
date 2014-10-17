@@ -93,14 +93,14 @@
      
       }
 function documentVerify(){
-         var nro_doc=document.getElementById('nro_doc').value
+         /*var nro_doc=document.getElementById('nro_doc').value
 
          
         if( !nro_doc && $('#tipo_doc option:selected').text()=='NO POSEE'){
          var fechaActual = new Date();
          var dni = fechaActual.getTime();
          $('#nro_doc').val(dni);
-        }
+        }*/
         if($('#fecha_nac').val()!=''){
           var anioNac= $('#fecha_nac').val().substr($('#fecha_nac').val().length-4,$('#fecha_nac').val().length);
           var anio = new Date().getFullYear();
@@ -133,16 +133,43 @@ function documentVerify(){
 
       }
       function valp(){
-        
+            if($('#apellidos').val()==''){
+                 alert('Debe Indicar el/los apellido/s.');
+                 return false;
+            }
+            if($('#nombres').val()==''){
+                 alert('Debe indicar el/los nombre/s.');
+                 return false;
+            }
+            if($('#tipo_doc').val()==''){
+                 alert('Debe seleccionar Tipo de Documento.');
+                 return false;
+            }
+            if($('#nro_doc').val()==''){
+                 alert('Debe indicar el Numero de documento.');
+                 return false;
+            }
+            if($('#sexo_id').val()==''){
+                 alert('Debe seleccionar Sexo.');
+                 return false;
+            }
+            if($('#fecha_nac').val()==''){
+                 alert('Debe indicar Fecha de nacimiento.');
+                 return false;
+            }
             if($('#estado_civil').val()==''){
                  alert('Debe seleccionar Estado Civil.');
                  return false;
             }
-            if($('#pais_nac').val()==''){
+            if($('#ocupacion').val()==''){
+                 alert('Debe seleccionar Ocupacion.');
+                 return false;
+            }
+            if($('#pais').val()==''){
                  alert('Debe seleccionar pais de nacimiento.');
                  return false;
             }
-            if($('#ciudad_nac').val()==''){
+            if($('#ciudades').val()==''){
                  alert('Debe seleccionar Ciudad de nacimiento.');
                  return false;
             }
@@ -155,12 +182,8 @@ function documentVerify(){
                  alert('Debe seleccionar ciudad de residencia.');
                  return false;
             }
-            
-            if($('#ocupacion').val()==''){
-                 alert('Debe seleccionar Ocupacion.');
-                 return false;
-            }
-            if($('padre_apellidos').val()=='' || $('padre_nombres').val()=='' || $('madre_apellidos').val()=='' || $('madre_nombres').val()=='' ){
+                        
+            if($('#padre_apellidos').val()=='' || $('#padre_nombres').val()=='' || $('#madre_apellidos').val()=='' || $('#madre_nombres').val()=='' ){
                  alert('Debe ingresar los datos de los padres.');
                  return false;
             }
@@ -534,8 +557,13 @@ function documentVerify(){
 }(window.jQuery);
 
 $(document).ready(function() {
-      
- 
+        $("#tipo_doc").change(function(event){
+          if ($('#tipo_doc option:selected').text()=='NO POSEE') {
+              $("#nro_doc").attr('disabled', 'disabled');
+          } else {
+              $("#nro_doc").removeAttr('disabled');
+          }
+        }).trigger('change');
         $('#example').dataTable( {
                   "aaSorting": [[ 2 , "asc" ]]
                   } );
@@ -545,11 +573,13 @@ $(document).ready(function() {
         $("[rel='tooltip']").tooltip();
         $('#roles').change(function(event){
            var options= $(this).find(":selected").text();
-         
+          
            if (options=='APREHENDIDO' || options=='APRENDIDO' || options=='DETENIDO'){
               $('#detenidos').fadeIn(50);
               $('#razon').fadeOut(50);
               $('#menores').fadeOut(50);
+               $(".obligatorios_denunciante").fadeOut(50);
+                $(".obligatorios_otros").fadeIn(50);         
             
            }else{
              if (options=='DENUNCIANTE'){
@@ -557,6 +587,8 @@ $(document).ready(function() {
                 $('#detenidos').fadeOut(50);
                 $('#menores').fadeOut(50);
                 $('#esdetenido').fadeOut(50);
+                 $(".obligatorios_otros").fadeOut(50);
+                $(".obligatorios_denunciante").fadeIn(50);
     
              }else{
               if (options=='DENUNCIADO' || options=='VICTIMA'){
@@ -564,15 +596,20 @@ $(document).ready(function() {
                 $('#razon').fadeIn(50);
                 $('#detenidos').fadeOut(50);
                 $('#esdetenido').fadeOut(50);
+                 $(".obligatorios_denunciante").fadeOut(50);
+                $(".obligatorios_otros").fadeIn(50);         
     
               }else{
                 $('#detenidos').fadeOut(50);
                 $('#razon').fadeOut(50);
                 $('#menores').fadeIn(50);
                 $('#esdetenido').fadeOut(50);
+                 $(".obligatorios_denunciante").fadeOut(50);
+                $(".obligatorios_otros").fadeIn(50);         
     
               } 
-             } 
+             }
+            
       
            }   
     

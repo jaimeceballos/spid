@@ -125,6 +125,101 @@
             title="Imprimir Preventivo"/></input></a></div>
       
   {%if 'si' in mostrar%}
+
+ <h6>Rol que cumple la Persona en el Hecho </h6>
+  
+  <p>
+    <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p>
+  <strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
+        
+        </blockquote>
+        
+  </div>
+      <strong style="color:red;margin-left:7px"> * </strong> <strong>Rol:</strong>
+        <select name="roles" id="roles" class="combolist"  size="1">
+           <!-- {%for sele in roles%}
+
+              <option  selected="selected" name="roles" id="roles" value="{{sele.id}}">{{sele.descripcion}}</option>
+                <option name="roles" {{formr.roles}}</option>
+            {%endfor%}  -->
+           <option name="roles" {{formr.roles}}</option>
+
+        </select> &nbsp;&nbsp;&nbsp;&nbsp;
+     <strong> Es Menor :</strong>  
+        <select class="combodni" id="menor" name="menor" >
+            <option name="menor"{{formr.menor}}</option>
+         </select> 
+    </p>     
+     <div id="detenidos" style="display:none;">
+        <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
+       <option {{formr.detenido}}</option>
+       </select>
+         <strong>Fecha y Hora Ingreso :</strong>
+        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+        {{formr.fechahoradetencion}} 
+        <input class="botoncalendar" button id="fecha_hasta1" ></button>
+        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
+        <!-- script que define y configura el calendario--> 
+        <script type="text/javascript" charset="utf-8">
+        
+         var cal = Calendar1.setup({onSelect: function(cal) {
+         cal.hide() },showTime: 12,});
+         cal.manageFields('fecha_hasta1','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
+
+       </script>&nbsp;
+
+       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
+       <option {{formr.infraganti}}</option>
+       </select>
+       </div> 
+
+    {%if estadetenido%}
+      <p>
+     <div id="detenidos">
+      <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
+       <option {{formr.detenido}}</option>
+       </select>
+     
+   
+      
+        <strong>Fecha y Hora Ingreso :</strong>
+        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+        {{formr.fechahoradetencion}} 
+        <input class="botoncalendar" button id="fecha" ></button>
+        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
+        <!-- script que define y configura el calendario--> 
+        <script type="text/javascript" charset="utf-8">
+        
+         var cal = Calendar1.setup({onSelect: function(cal) {
+         cal.hide() },showTime: 12,});
+         cal.manageFields('fecha','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
+
+       </script>&nbsp;
+
+       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
+       <option {{formr.infraganti}}</option>
+       </select></div></p>
+     
+    
+{%else%}
+      <p>
+   
+   
+   
+      <strong >Persona Juridica :</strong>
+      
+         <select class="combodni" id="juridcia" name="juridica">
+          <option name="juridica"{{formr.juridica}}</option></select>
+
+      <strong >Descripcion :</strong>
+      <input type="text" id="razon_social" name="razon_social"  size="45" {{formr.razon_social}}
+
+       </p> 
+
+      
+      
+    {%endif%}
+
                    <h6>Datos de la Persona</h6>
             <p>
         <strong>Apellido/s :</strong><input type="text" id="apellidos" name="apellidos" readonly="readonly"
@@ -223,106 +318,14 @@
 </div>
 
   <br>
-  <hr>
-    <h6>Rol que cumple la Persona en el Hecho </h6>
   
-  <p>
-    <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p>
-  <strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
-        
-        </blockquote>
-        
-  </div>
-      <strong style="color:red;margin-left:7px"> * </strong> <strong>Rol:</strong>
-        <select name="roles" id="roles" class="combolist"  size="1">
-           <!-- {%for sele in roles%}
-
-              <option  selected="selected" name="roles" id="roles" value="{{sele.id}}">{{sele.descripcion}}</option>
-                <option name="roles" {{formr.roles}}</option>
-            {%endfor%}  -->
-           <option name="roles" {{formr.roles}}</option>
-
-        </select> &nbsp;&nbsp;&nbsp;&nbsp;
-     <strong> Es Menor :</strong>  
-        <select class="combodni" id="menor" name="menor" >
-            <option name="menor"{{formr.menor}}</option>
-         </select> 
-    </p>     
-     <div id="detenidos" style="display:none;">
-        <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
-       <option {{formr.detenido}}</option>
-       </select>
-         <strong>Fecha y Hora Ingreso :</strong>
-        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
-        {{formr.fechahoradetencion}} 
-        <input class="botoncalendar" button id="fecha_hasta1" ></button>
-        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
-        <!-- script que define y configura el calendario--> 
-        <script type="text/javascript" charset="utf-8">
-        
-         var cal = Calendar1.setup({onSelect: function(cal) {
-         cal.hide() },showTime: 12,});
-         cal.manageFields('fecha_hasta1','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
-
-       </script>&nbsp;
-
-       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
-       <option {{formr.infraganti}}</option>
-       </select>
-       </div> 
-
-    {%if estadetenido%}
-      <p>
-     <div id="detenidos">
-      <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
-       <option {{formr.detenido}}</option>
-       </select>
-     
    
-      
-        <strong>Fecha y Hora Ingreso :</strong>
-        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
-        {{formr.fechahoradetencion}} 
-        <input class="botoncalendar" button id="fecha" ></button>
-        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
-        <!-- script que define y configura el calendario--> 
-        <script type="text/javascript" charset="utf-8">
-        
-         var cal = Calendar1.setup({onSelect: function(cal) {
-         cal.hide() },showTime: 12,});
-         cal.manageFields('fecha','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
-
-       </script>&nbsp;
-
-       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
-       <option {{formr.infraganti}}</option>
-       </select></div></p>
-     
-    
-{%else%}
-      <p>
-   
-   
-   
-      <strong >Persona Juridica :</strong>
-      
-         <select class="combodni" id="juridcia" name="juridica">
-          <option name="juridica"{{formr.juridica}}</option></select>
-
-      <strong >Descripcion :</strong>
-      <input type="text" id="razon_social" name="razon_social"  size="45" {{formr.razon_social}}
-
-       </p> 
-
-      
-      
-    {%endif%}
 
 
  
   
      <br>
-  <br><hr>
+  <br>
     <div align="right">
        
              {%if not fecha_autorizacion%}

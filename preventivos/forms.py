@@ -262,7 +262,7 @@ class PersonasForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PersonasForm, self).__init__(*args, **kwargs)
         # Making name required
-        self.fields['nro_doc'].required = True
+        self.fields['nro_doc'].required = False
         #self.fields['estado_civil'].required = True
         #self.fields['ocupacion'].required = True
         self.fields['pais_res'].queryset= RefPaises.objects.all()
