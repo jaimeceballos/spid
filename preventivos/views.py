@@ -514,6 +514,8 @@ def obtener_datosfirst(request,idprev):
   idper=0
   mostrar=''
   descripcionhecho=''
+  fecha_desde=''
+  fecha_hasta=''
   if request.POST.get("continua")=='Continuar' or request.POST.get("continua")=='Agregar' or request.POST.get("continuar")=='Agregar':
      form=HechosForm(request.POST, request.FILES)
    
@@ -732,7 +734,9 @@ def obtener_datosfirst(request,idprev):
          fecha_desde=request.POST.get('fecha_desde')
          fecha_hasta=request.POST.get('fecha_hasta')
         else: 
-           if  Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all():
+          data=Preventivos.objects.get(id=idprev).hecho.values('id')
+          if len(data)>0:
+           if  Hechos.objects.get(id=data).involu.all():
         
               datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all()
               notienePer= True
@@ -756,7 +760,11 @@ def obtener_datosfirst(request,idprev):
               si = Hechos()
               form=HechosForm(instance=si)
               idhec=''
-
+          else:
+              si = Hechos()
+              form=HechosForm(instance=si)
+              idhec=''
+            
   ftiposdelitos=DelitoForm()
   modos=RefModosHechoForm()
   datos=Preventivos.objects.get(id=idprev)
@@ -5474,8 +5482,10 @@ def selectPrev(request,prev):
    lugarhecho=''
    descri=''
    hechodeli=''
-  
-
+   fecha_desde=''
+   fecha_hasta=''
+   modosref=''
+   delito=''
    if Preventivos.objects.get(id=prev).hecho.all():
     tieneHecho = True
     if len(Elementos.objects.filter(hechos = Hechos.objects.get(preventivo = prev).id)) > 0:
