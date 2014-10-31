@@ -142,10 +142,10 @@
         <option {{modos.descripcion}}  </option>
         </select> 
 
-  
+   {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
        <input class="btn btn-success" type="submit" value="Agregar" id="continua" name="continua"
         title="Permite agregar mas delitos cometidos en el Hechos"/>
-  
+   {%endif%}
    {%if not delito %}
      <strong style="color:red;">{{form.delito.errors}}</strong> 
    {%endif%} 
@@ -183,14 +183,19 @@
        <br>
      <div align="right">
     
-          {%if not fecha_autorizacion%}
-     <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>{%else%}
-          <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
-    
-    <a class="btn1 btn-success"  href="{% url 'persinvol' idhec 0%}"> <label title="Permite Agregar otra Persona Involucrada" >
+    {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+     <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>
+     <a class="btn1 btn-success"  href="{% url 'persinvol' idhec 0%}"> <label title="Permite Agregar otra Persona Involucrada" >
          Involucrados</label></a>
   
  
+    {%else%}
+        {%if fecha_autorizacion %}
+          <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+        {%endif%}
+    {%endif%}
+    
+    
       <a href="{% url 'selectPrev' idprev %}" class="btn1 btn-success"><label style="font-size:11px;text-align:center;">Volver</label></a> 
    
 

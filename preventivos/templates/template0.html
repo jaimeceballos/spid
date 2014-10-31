@@ -57,7 +57,7 @@
      
     </p>
 
-    {% if user.get_profile.depe.descripcion == 'INVESTIGACIONES' or user.get_profile.depe.descripcion == 'CENTRAL RADIO' %}
+    {% if user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion%}
      <p>
      <div style="color:red;">{{wizard.form.nro.errors}}</div><div style="color:red;"> {{wizard.form.anio.errors}}
    </div>
@@ -85,7 +85,7 @@
         <option {{wizard.form.dependencia}}</option>
       </select> 
     {%else%} 
-       {%if 'CABECERA' in user.get_profile.depe.descripcion%}
+     <!--  {%if 'CABECERA' in user.get_profile.depe.descripcion%}-->
   <p>
      <div style="color:red;">{{wizard.form.unidad.errors}}</div><div style="color:red;"> {{wizard.form.dependencia.errors}}
    </div>

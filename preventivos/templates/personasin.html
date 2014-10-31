@@ -561,7 +561,7 @@
    {%endif%}
 
     {%if "si" in mostrar or "no" in mostrar%}
-     
+     <!--{% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}-->
       <br>
        <div align="right">
              <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
@@ -570,7 +570,7 @@
            title="Permite guardar personas involucradas" onclick="documentVerify()" />
          </div>
        
-
+     <!--{%endif%}-->
        
     {%endif%}
 
