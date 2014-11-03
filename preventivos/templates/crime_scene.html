@@ -246,9 +246,11 @@
     {% else %}
     <div align="right">
      
-          {% if not fecha_autorizacion%}
+          {% if depe == user.get_profile.depe and not fecha_autorizacion or "CENTRAL RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
       <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>{%else%}
-    <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
+               {%if fecha_autorizacion%}
+                    <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
+              {%endif%}
       <td>    <a class="btn1 btn-success"  href="{% url 'elementos' idhec %}" ><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> (+) Elementos </label></a>
      
       <a href="{% url 'selectPrev' idprev %}" class="btn btn-success"><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Volver</label></a>

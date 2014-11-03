@@ -263,9 +263,10 @@
 
         {%if tieneob %}
          <div align="right">
-
+ {% if depe == user.get_profile.depe and not preventivo.fecha_cierre or "CENTRAL RADIO" in user.get_profile.depe.descripcion and not preventivo.fecha_cierre%}
                <input  class="new-aqua" type="submit" name = "button" id = "button" value="Guardar" 
                onclick="location.href='{% url 'amplia_ele' preventivo.id idamp %}';"/>
+               {%endif%}
                  <a href="{% url 'amplia_ele' preventivo.id idamp %}" class="btn btn-succes"><label style="font-size:12px;text-align:center;">Limpiar</label></a> 
                 <a href="{% url 'ver_ampliacion' preventivo.id idamp %}" class="btn btn-succes"><label style="font-size:11px;text-align:center;">Volver</label></a> 
             
@@ -326,11 +327,12 @@
                     {%else%}
                        <td>---</td>
                     {%endif%}
-       
+        {% if depe == user.get_profile.depe  and not fechaenvio or "CENTRAL RADIO" in user.get_profile.depe.descripcion and not fechaenvio%}
                            <td  width="2%"> <button type="submit" name="dele" id="dele" class="borrarde"
-              value="{{elemento.id}}" onclick=(this.value) title="Permite borrar un elemento"/></button>
-        
-                      </td>          
+              value="{{elemento.id}}" onclick=(this.value) title="Permite borrar un elemento"/></button></td>
+        {%else%}
+          <td width="12%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="" rel='tooltip' /></a></center></td>
+                      {%endif%}          
                   </tr>
                  {% endfor %}
             </tbody>

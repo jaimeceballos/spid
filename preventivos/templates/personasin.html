@@ -584,8 +584,10 @@
          
           <tr>
              <td>
+               {% if depe == user.get_profile.depe and not fecha_autorizacion or "CENTRAL RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
                <button type="submit" name="dele" id="dele" class="borrarde"
                 value="{{involus.id}}" onclick=(this.value) title="Permite borrar un involucrado"/></button>
+                {%endif%}
           
                                 <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">  
                                   [ {{involus.persona}} -- {{involus.roles}} ]&nbsp;&nbsp;</strong>

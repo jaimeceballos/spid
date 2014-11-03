@@ -201,7 +201,7 @@ def registro(request):
     if request.POST.get('envia')=='Enviar':
           
            info_enviado= True
-           subject, from_email, to = 'Solicitud de Usuario - SPID' ,request.POST.get('mail'), 'divsistemasjp@policia.chubut.gov.ar'
+           subject, from_email, to = 'Solicitud de Usuario - SPID' ,request.POST.get('mail'), 'divsistemasjp@policia.chubut.gov.ar,admredes@policia.chubut.gov.ar'
            text_content = "Solicitud recibida de : %s<br><br>Nro de Dni : %s<br><br>Jerarquia : %s<br><br>Destino actual : %s<br><br> Usuarios <br><br> %s <br><br>" % (request.POST.get('name'),str(request.POST.get('docu')),request.POST.get('jerarca'),request.POST.get('destino'),request.POST.get('comment'))
            msg = EmailMultiAlternatives(subject,text_content,from_email, [to])
            msg.attach_alternative(text_content,'text/html')
