@@ -183,10 +183,7 @@ function documentVerify(){
                  return false;
             }
                         
-            if($('#padre_apellidos').val()=='' || $('#padre_nombres').val()=='' || $('#madre_apellidos').val()=='' || $('#madre_nombres').val()=='' ){
-                 alert('Debe ingresar los datos de los padres.');
-                 return false;
-            }
+            
             return true;
       }
 
