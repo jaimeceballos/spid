@@ -294,6 +294,8 @@ def nologin(request):
     formd = []  
     return render(request, 'index.html', {'formd':formd,'state':state,'form':form})
 
+
+
 def passwordChange(request):
   formpass = CambiarPassForm(request.POST)
   changePass = 'si'

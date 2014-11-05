@@ -6777,7 +6777,7 @@ def informe(request,idhec,idprev):
     #print type(titulo),type(tresto),type(titulo1), type(titulo2)
     text_content=titulo+tresto+titulo1+titulo2+titulo3+titulo4+titulo5+titulo6+titulo7
    
-    if self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
+    if request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
              
       informa=datos.autoridades.values_list('email',flat=True)
       #agregar email 2jefeacei para que reciba los preventivos
@@ -12384,7 +12384,7 @@ def enviar(request,idprev,idamp):
          titulo4="Sin Elementos"+'<br><br><hr>'
       text_content=titulo2+titulo3+titulo4+titulo+tresto+titulo1
          
-      if self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
+      if request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
         informa=amplia.autoridades.values_list('email',flat=True)
         #agregar email 2jefeacei para que reciba los preventivos
 

@@ -3,13 +3,13 @@
 {% block main %}
 <script>
   function abrirModal(){
-    window.showModalDialog("http://policia.chubut.gov.ar:8000/preventivos/addbarrios/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    window.showModalDialog("http://127.0.0.1:8000/preventivos/addbarrios/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
    function abrirModalc(){
-    window.showModalDialog("http://policia.chubut.gov.ar:8000/preventivos/addcalles/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    window.showModalDialog("http://127.0.0.1:8000/preventivos/addcalles/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
   function abrirModalcr(){
-    window.showModalDialog("http://policia.chubut.gov.ar:8000/preventivos/addciudades/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    window.showModalDialog("http://127.0.0.1:8000/preventivos/addciudades/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
 </script>
 <form id="form" action="." method="post" onsubmit="return validaPersonaInv()">{% csrf_token %} 
@@ -180,10 +180,8 @@
         <select name ="calle" id ="calles" style="width: 160px;">   
           <option{{dom.calle}}</option>
         </select>
-        <!--
-        <a onclick="abrirModalc();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
-         width="18px" title="Agregar Calles"></a> 
-       -->
+     <!--   <a onclick="abrirModalc();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         width="18px" title="Agregar Calles"></a>-->
        <strong>Altura: </strong>
        <input type="text" name="altura" id="altura" size="4" value="{{domicilios.altura}}" onkeypress="return isNumberKeyc(event,this)" autocomplete="off"/> 
        <strong>Interseccion:</strong>

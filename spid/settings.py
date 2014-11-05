@@ -109,6 +109,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.threadlocals.ThreadLocals',
      # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'spid.middleware.AutoLogout', 
 )
 
 WKHTMLTOPDF_CMD_OPTIONS = {
@@ -195,6 +196,9 @@ LOGGING = {
         },
     }
 }
+
+AUTO_LOGOUT_DELAY = 30 #equivalent to 30 minutos de espera de actividad en el sistema
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 AUTH_PROFILE_MODULE = 'preventivos.UserProfile'
 #*** aqui va el servidor de correo de policia
 """
