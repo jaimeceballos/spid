@@ -286,9 +286,11 @@
         {%else%}   
           
            <div align="right">
-              {%if not fecha_autorizacion%}
+              {% if depe == user.get_profile.depe and not fecha_autorizacion or "CENTRAL RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
               <input  class="new-aqua" type="submit" name = "button" id = "button" value="Guardar" /> {%else%}
+               {%if fecha_autorizacion%}
                     <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
+              {%endif%}
    
                 <a href="{% url 'elementos' hecho.id %}" class="btn btn-succes"><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Limpiar</label></a> 
             
@@ -332,14 +334,15 @@
                     <td width="30%">{{ elemento.rubro }}</td>
                     <td width="30%">{{ elemento.categoria }}</td>
                     <td width="30%">{{ elemento.cantidad }}  {{ elemento.unidadmed }}</td>
-
+   {% if depe == user.get_profile.depe and not fecha_autorizacion or "CENTRAL RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
                              <td  width="2%"> <button type="submit" name="dele" id="dele" class="borrarde"
               value="{{elemento.id}}" onclick=(this.value) title="Permite borrar un elemento"/></button>
-        
-                      </td>          
-           
-                  </a>
+      
                       </td>
+        {%else%}
+          <td width="12%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="" rel='tooltip' /></a></center></td>      
+           
+              {%endif%}
                   </tr>
                  {% endfor %}
             </tbody>

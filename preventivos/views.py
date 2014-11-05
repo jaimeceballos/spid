@@ -230,7 +230,9 @@ class preventivos(SessionWizardView):
                 existen= Preventivos.objects.filter(dependencia__exact=depe.id,nro__exact=nro,anio__exact=anio).values('nro')
                 if existen:
                    form.errors['__all__'] = form.error_class(["Preventivo Existente. regrese a la pantalla anterior."])
- 
+                   #form.fields['nro'].initial = 0
+                   #form.fields['anio'].initial = 0
+                       
                
 
                 if depe is None:
@@ -308,8 +310,8 @@ class preventivos(SessionWizardView):
            form.fields['caratula'].widget.attrs['readonly'] = True
            form.fields['actuante'].queryset = Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=1) | Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=3)
            form.fields['preventor'].queryset= Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=2) | Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=3)
-           form.fields['actuante'].initial= self.get_cleaned_data_for_step('actores')['actuante'].id
-           form.fields['preventor'].initial =  self.get_cleaned_data_for_step('actores')['preventor'].id
+           #form.fields['actuante'].initial= self.get_cleaned_data_for_step('actores')['actuante'].id
+           #form.fields['preventor'].initial =  self.get_cleaned_data_for_step('actores')['preventor'].id
            id_ciudad=Dependencias.objects.filter(descripcion__exact=depe).values('ciudad')
            form.fields['autoridades'].queryset=RefCiudades.objects.get(id=id_ciudad).ciu_autori.all()
            autoridades=self.get_cleaned_data_for_step('autoridades')['autoridades']
@@ -5539,14 +5541,18 @@ def selectPrev(request,prev):
       preventivo.caratula = form.cleaned_data['caratula']
       preventivo.actuante = form.cleaned_data['actuante']
       preventivo.preventor = form.cleaned_data['preventor']
-      if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
-       preventivo.save()
-       preventivo.autoridades.clear()
-       for grabauto in form.cleaned_data['autoridades']:
+      ureg=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+     
+
+      if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in request.user.get_profile().depe.descripcion and depe.ciudad_id==ureg.ciudad_id:
+         preventivo.save()
+         preventivo.autoridades.clear()
+         for grabauto in form.cleaned_data['autoridades']:
             preventivo.autoridades.add(int(RefAutoridad.objects.get(descripcion=grabauto).id))
       else:
-        errors.append('No se puede modificar preventivos de otras dependencias.')
-      
+
+         errors.append('No se puede modificar preventivos de dependencias que no pertenezcan a la Jurisdiccion.-')
+       
 
     else:
       id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
@@ -5580,7 +5586,7 @@ def selectPrev(request,prev):
    form.fields['autoridades'].initial=autoridad
    form.fields['autoridades'].widget.attrs["onclick"] = False
 
-   return render_to_response('./updateprev.html',{'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'unireg':unireg,'fecha_autorizacion':fecha_autorizacion,'lista':lista,'lugarhecho':lugarhecho,'datosinvo':datosinvo,'descripcion':descri,'hechodeli':hechodeli,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,'tieneelemento':tieneelemento,},context_instance=RequestContext(request))
+   return render_to_response('./updateprev.html',{'errors':errors,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'unireg':unireg,'fecha_autorizacion':fecha_autorizacion,'lista':lista,'lugarhecho':lugarhecho,'datosinvo':datosinvo,'descripcion':descri,'hechodeli':hechodeli,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,'tieneelemento':tieneelemento,},context_instance=RequestContext(request))
   
 @login_required   
 @transaction.commit_on_success
@@ -6771,24 +6777,25 @@ def informe(request,idhec,idprev):
     #print type(titulo),type(tresto),type(titulo1), type(titulo2)
     text_content=titulo+tresto+titulo1+titulo2+titulo3+titulo4+titulo5+titulo6+titulo7
    
-
-    informa=datos.autoridades.values_list('email',flat=True)
-    #agregar email 2jefeacei para que reciba los preventivos
-    direcciones=[]
-    for dire in informa:
-        direcciones.append(dire)
-    direcciones.append('2jefeacei@policia.chubut.gov.ar')    
-    
-    for cantdir in direcciones:
+    if self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
+             
+      informa=datos.autoridades.values_list('email',flat=True)
+      #agregar email 2jefeacei para que reciba los preventivos
+      direcciones=[]
+      for dire in informa:
+          direcciones.append(dire)
+      direcciones.append('2jefeacei@policia.chubut.gov.ar')    
       
-        try:
-          msg = EmailMultiAlternatives(subject,text_content,from_email, [cantdir])
-          msg.attach_alternative(text_content,'text/html')
-          
-          msg.send(fail_silently=True)
-        except IndexError:
-         pass
+      for cantdir in direcciones:
         
+          try:
+            msg = EmailMultiAlternatives(subject,text_content,from_email, [cantdir])
+            msg.attach_alternative(text_content,'text/html')
+            
+            msg.send(fail_silently=True)
+          except IndexError:
+           pass
+          
     info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,'tieneelementos':tieneelementos,
        'caratula':caratula,'idhec':idhec,'involus':involus,'involuscra':involuscra,'datosper':datosper,
        'actuante':actuante,'today':today,'datosgral':datosgral,'hechodeli':hechodeli,'elementos':elementos,
@@ -12377,25 +12384,25 @@ def enviar(request,idprev,idamp):
          titulo4="Sin Elementos"+'<br><br><hr>'
       text_content=titulo2+titulo3+titulo4+titulo+tresto+titulo1
          
+      if self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
+        informa=amplia.autoridades.values_list('email',flat=True)
+        #agregar email 2jefeacei para que reciba los preventivos
 
-      informa=amplia.autoridades.values_list('email',flat=True)
-      #agregar email 2jefeacei para que reciba los preventivos
-
-      direcciones=[]
-      for dire in informa:
-          direcciones.append(dire)
-      #direcciones.append('fydsoftware@gmail.com')    
-        
-      for cantdir in direcciones:
-      
-          try:
-              msg = EmailMultiAlternatives(subject,text_content,from_email, [cantdir])
+        direcciones=[]
+        for dire in informa:
+            direcciones.append(dire)
+        #direcciones.append('fydsoftware@gmail.com')    
           
-              msg.attach_alternative(text_content,'text/html')
-              
-              msg.send(fail_silently=True)
-          except IndexError:
-             pass
+        for cantdir in direcciones:
+        
+            try:
+                msg = EmailMultiAlternatives(subject,text_content,from_email, [cantdir])
+            
+                msg.attach_alternative(text_content,'text/html')
+                
+                msg.send(fail_silently=True)
+            except IndexError:
+               pass
   
 
   finaliza=False

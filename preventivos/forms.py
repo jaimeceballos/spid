@@ -356,9 +356,10 @@ class TerceroForm(forms.ModelForm):
     anio = forms.IntegerField(required=False)
     def clean(self):
         cleaned_data = super(TerceroForm, self).clean()
-      
+       
         if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
            raise forms.ValidationError("El Nro y Año Existentes")
+        
         return self.cleaned_data
         
     def __init__(self, *args, **kwargs):
@@ -375,13 +376,14 @@ class FinForm(forms.ModelForm):
     unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
     nro = forms.IntegerField(required=False)
     anio = forms.IntegerField(required=False)
-    """
+   
     def clean(self):
         cleaned_data = super(FinForm, self).clean()
-      
-        if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
-           raise forms.ValidationError("El Nro y Año Existentes")
-        return self.cleaned_data"""
+        if  self.cleaned_data.get('actuante') is None or self.cleaned_data.get('preventor') is None:
+            raise forms.ValidationError("Seleccione Actuante y Preventor")
+        #if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
+           #raise forms.ValidationError("El Nro y Año Existentes")
+        return self.cleaned_data
     def __init__(self, *args, **kwargs):
         super(FinForm,self).__init__(*args,**kwargs)
         self.fields["autoridades"].widget = CheckboxSelectMultiple()
