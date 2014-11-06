@@ -133,7 +133,7 @@
        <a class="btn btn-success"  href="{% url 'persinvoluc' idhec idper%}">
         <label title="Permite Ver mas detalles de las personas involucradas en el Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Personas</label></a></p><hr>
   {%else%}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES'  or user.get_profile.depe.descripcion == 'CENTRAL RADIO' %}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES'  or 'RADIO' in user.get_profile.depe.descripcion%}
         <p align="right">
            <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
            <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
@@ -199,7 +199,7 @@
         <label title="Permite Ver mas detalle de los Elementos pertenecientes al Hecho" style="font-size:10px;text-align:center;"> Ver elementos </label></a></p><hr>
       
     {% else %}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or user.get_profile.depe.descripcion == 'RADIO'%}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion%}
           <p align="right">
         <a class="btn btn-success"  href="{% url 'elementos' idhec %}" ><label  title="Permite Agregar Elementos según sean Denunciados/Utilizados/Secuestrados/Utilizados y Secuestrados en el Hecho"
           style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Elementos </label></a></p>
@@ -252,7 +252,7 @@
       {%endif%}
      {%endif%} 
 {% else %}
-    {% if depe == user.get_profile.depe or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or user.get_profile.depe.descripcion == 'RADIO'%}
+    {% if depe == user.get_profile.depe or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion%}
       <p align="right">
       <a class="btn btn-success"  href="{% url 'newhecho' idprev %}" ><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Hecho</label></a>
       </p>

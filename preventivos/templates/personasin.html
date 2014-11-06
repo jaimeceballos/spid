@@ -323,9 +323,11 @@
           </select>
           <a onclick="abrirModalc();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
            width="18px" title="Agregar Calles"></a>
-      <!--<a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" 
+      <!--
+      <a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" 
       width="18px" title="Agregar Calles">
-      </a></strong></strong>  id="basic-modal" -->
+      </a></strong></strong>  id="basic-modal" 
+    -->
          <strong>Altura: </strong>
          <input type="text" name="altura" id="altura" size="2"  onkeypress="return isNumberKey1(event)" 
           autocomplete="off" {{dom.altura}}
@@ -561,8 +563,7 @@
    {%endif%}
 
     {%if "si" in mostrar or "no" in mostrar%}
-     <!--{% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}-->
-      <br>
+       <br>
        <div align="right">
              <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
     
@@ -570,7 +571,7 @@
            title="Permite guardar personas involucradas" onclick="documentVerify()" />
          </div>
        
-     <!--{%endif%}-->
+     
        
     {%endif%}
 
