@@ -151,7 +151,7 @@
         style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Ver Lugar </label></a></p><hr>
       
    {% else %}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or user.get_profile.depe.descripcion == 'RADIO' %}
+      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion %}
         <p align="right">
         <a class="btn btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label  title="Permite Indicar la Ubicación del Hecho y caracteristicas del lugar"
           style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Lugar </label></a></p>
