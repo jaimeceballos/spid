@@ -96,15 +96,16 @@
                 </ul>      
      {% endfor%}        
        </p>
- <p>
-      <h1>Breve Descripcion del Hecho</h1>
-      <!-- : {{hechodeli}} </h1>-->
-        <textarea type="text" style="width: 100%;" id="descripcion" name="descripcion"> {{descripcion}} </textarea>
-     </p>
-      <p align="right">
+        <p align="right">
    <a class="btn btn-success"  href="{% url 'updatehechos' idprev %}">
     <label title="Permite Ver mas detalles del Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">
       Ver Datos</label></a></p><hr>
+ <p>
+      <h1>Breve Descripcion del Hecho</h1>
+      <!-- : {{hechodeli}} </h1>-->
+        <pre> {{descripcion|safe}} </pre>
+     </p>
+     
    <p>
 
    {%if tienePersonas%}
