@@ -43,6 +43,8 @@
 
                   {%if datos.dependencia.ciudad.descripcion != jurisdi%}
                    <td width="12%"><center><a href="{% url 'reportes' datos.id %}" target="_blank" > <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" title="Solo puede ver el preventivo en modo vista preeliminar" rel='tooltip' /> </a></center></td>
+                  {%else%}
+                       <td width="12%"><center>---</center></td>
                   {%endif%}
                  </tr>
                  {% endfor %}
