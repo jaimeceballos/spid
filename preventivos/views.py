@@ -4578,6 +4578,8 @@ def verprev(request):
   todos=[]
   total='no'
   errors=[]
+  unidadregi=''
+  jurisdi=''
   if request.POST.get('search')=="Buscar":
      form=SearchPreveForm(request.POST, request.FILES)
      nro=request.POST.get('nro')
