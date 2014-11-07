@@ -12,7 +12,7 @@ class AutoLogout:
       return
 
     try:
-      if datetime.now() - request.session['last_touch'] > timedelta( 0, settings.AUTO_LOGOUT_DELAY * 1, 0):
+      if datetime.now() - request.session['last_touch'] > timedelta( 0, settings.AUTO_LOGOUT_DELAY * 60, 0):
         state="SE CERRO SPID POR FALTA DE TRABAJO" 
         auth.logout(request)
         del request.session['last_touch']

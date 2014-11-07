@@ -4587,6 +4587,9 @@ def verprev(request):
      fecha_cargah=request.POST.get('fecha_cargah')
      ureg=request.POST.get('ureg')
      depe=request.POST.get('depe')
+     unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+     jurisdi=unidadregi.ciudad.descripcion
+   
      if nro and not ureg and not depe:
         if anio and not ureg and not depe:
           if caratula:
@@ -4810,7 +4813,7 @@ def verprev(request):
   
   
   info={'nro':nro,'anio':anio,'fecha_carga':fecha_carga,'fecha_cargah':fecha_cargah,
-  'caratula':caratula,'todos':todos,'total':total,'errors':errors,
+  'caratula':caratula,'todos':todos,'total':total,'errors':errors,'unidadregi':unidadregi,'jurisdi':jurisdi,
   'state':state,'destino': destino,'form':form}
 
   return render_to_response('./seeprev.html',info,context_instance=RequestContext(request))
@@ -5489,6 +5492,7 @@ def selectPrev(request,prev):
    fecha_hasta=''
    modosref=''
    delito=''
+ 
    if Preventivos.objects.get(id=prev).hecho.all():
     tieneHecho = True
     if len(Elementos.objects.filter(hechos = Hechos.objects.get(preventivo = prev).id)) > 0:
