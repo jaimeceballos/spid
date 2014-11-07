@@ -326,13 +326,13 @@
      <br>
   <br>
     <div align="right">
-       
-             {%if not fecha_autorizacion%}
+        {% if depe == user.get_profile.depe and not fecha_autorizacion  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'CENTRAL RADIO' in user.get_profile.depe.descripcion and not fecha_autorizacion%}
              <a href="." name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
      <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>{%else%}
+     {%if fecha_autorizacion%}
            <strong style="color:red;">Fue enviado y Autorizado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
     
-   
+    {%endif%}
         
 
 

@@ -780,9 +780,10 @@ def obtener_datosfirst(request,idprev):
   autoridades= datos.autoridades.values_list('descripcion',flat=True)
   dependencia=datos.dependencia.descripcion
   unidadreg=datos.dependencia.unidades_regionales.descripcion
+  fecha_autorizacion=datos.fecha_autorizacion
   info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,
   'caratula':caratula,'descripcionhecho':descripcionhecho,
-  'actuante':actuante,
+  'actuante':actuante,'fecha_autorizacion':fecha_autorizacion,
   'preventor':preventor,'idprev':idprev,'delito':delito,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,
   'autoridades':autoridades,'idper':idper,'mostrar':mostrar,
   'errors': errors, 'grabo':grabo,'dependencia':dependencia,'unidadreg':unidadreg,
