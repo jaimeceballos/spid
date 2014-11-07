@@ -214,7 +214,7 @@
           style="margin-top:0px;font-size:10px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Descripcion del Hecho</label></a></p>
     {%if tienelugar%}
 
-      {%if depe == user.get_profile.depe and state == "jefes" and not fecha_autorizacion or "CENTRAL RADIO" in user.get_profile.depe.descripcion and  not fecha_autorizacion or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and  not fecha_autorizacion%}
+      {%if depe == user.get_profile.depe and state == "jefes" and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and  not fecha_autorizacion or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and  not fecha_autorizacion%}
        <p align="center">
         <a class="btn1 btn-success"  href="{% url 'informa' idhec idprev %}" >
            <label title="Permite Informar el Preventivo a las Autoridades correspondientes" 
@@ -240,7 +240,7 @@
              {%endif%}
           {%endif%}
         
-               {%if depe == user.get_profile.depe and state == "jefes" and not preventivo.fecha_cierre or "CENTRAL RADIO" in user.get_profile.depe.descripcion and not preventivo.fecha_cierre%} 
+               {%if depe == user.get_profile.depe and state == "jefes" and not preventivo.fecha_cierre or "RADIO" in user.get_profile.depe.descripcion and not preventivo.fecha_cierre%} 
                  <p align="center">
                    <a  type="button" href="{% url 'ampliacion' idprev %}"  class="new-aquas">
                    <label   title="Permite realizar el Cierre del Preventivo mediante una Ampliación" 

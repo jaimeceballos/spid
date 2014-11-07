@@ -82,7 +82,7 @@
       {%if not descripcionhecho %}
          <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Guardar Hecho"/>
       {%else%}
-       {% if depe == user.get_profile.depe and not fecha_autorizacion  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'CENTRAL RADIO' in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+       {% if depe == user.get_profile.depe and not fecha_autorizacion  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'RADIO' in user.get_profile.depe.descripcion and not fecha_autorizacion%}
           <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>
           {%endif%}
       {%endif%}

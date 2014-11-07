@@ -97,7 +97,7 @@
             
             <button type="submit" name="ver" id="ver" class="verdata"
               value="{{involus.id}}" onclick=(this.value) title="Permite Ver mas Datos de la Persona Involucrada"/></button>
- {% if depe == user.get_profile.depe and not fecha_autorizacion or "CENTRAL RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+ {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
             <button type="submit" name="dele" id="dele" class="borrarde"
               value="{{involus.id}}" onclick=(this.value) title="Permite borrar un involucrado"/></button>
          {%endif%}
@@ -326,7 +326,7 @@
      <br>
   <br>
     <div align="right">
-        {% if depe == user.get_profile.depe and not fecha_autorizacion  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'CENTRAL RADIO' in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+        {% if depe == user.get_profile.depe and not fecha_autorizacion  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'RADIO' in user.get_profile.depe.descripcion and not fecha_autorizacion%}
              <a href="." name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
      <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>{%else%}
      {%if fecha_autorizacion%}
