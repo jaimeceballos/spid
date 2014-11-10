@@ -21,7 +21,7 @@
                 {% for existen in todos %}
                  {%for datos in existen %}
                   <tr  class="gradeC"> 
-                   {%if datos.dependencia.ciudad.descripcion == jurisdi%}
+                   {%if datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES'%}
                    <td width="15%"><a href='{% url 'selectPrev' datos.id %}'>
                    {{ datos.nro }}/{{ datos.anio}}</a></td>
                    {%else%}
