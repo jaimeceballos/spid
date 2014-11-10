@@ -46,7 +46,7 @@
 
          <input type="hidden" id="ids" name="ids" value="{{idhec}}"/>
        <input type="hidden" id="idp" name="idp" value="{{idprev}}"/>
-    
+     <input type="hidden" id="idper" name="idper" value="{{idper}}"/>
       <input type="hidden" id="idciu" name="idciu"/>
       <input type="hidden" id="dependencia" name="dependencia" value="{{preventivo.dependencia.id}}"/>
       <input type="hidden" id="unidad" name="unidad" value="{{preventivo.dependencia.unidades_regionales.id}}"/>
@@ -120,8 +120,8 @@
               <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
             <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de personas"/>
 
-            <a href="{%url 'persinvol' idhec 0 %}" ><button class="btn btn-success" id="nuevo" name="nuevo" value="Nuevo"
-              title="Permite Agregar una Persona que no registra en Base"/>Nuevo</button></a>
+            <a href="{%url 'persinvol' idhec 0 %}" ><input type="submit" class="btn btn-success" id="nuevo" name="nuevo" value="Nuevo"
+              title="Permite Agregar una Persona que no registra en Base"/></a>
                 
           
         <br><br>

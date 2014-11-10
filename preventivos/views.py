@@ -5092,7 +5092,7 @@ def pdfs(request,idprev):
                      padys='<dd>Hijo de : '+str(la.padre_apellidos)+', '+str(la.padre_nombres)+' -- '+'y de : '+str(la.madre_apellidos)+', '+str(la.madre_nombres)+'</dd>'
                   else:
                      padys='<dd>no registra datos de los padres'+'<br></dd>'    
-                  datosgral=roles+persona+domi+padys
+                  datosgral=roles+persona+domi+str(padys.encode("utf8"))
              else:
                  roles='<u>'+str(p.roles)+'</u>'+' : '
                  if bandera:
@@ -5103,7 +5103,7 @@ def pdfs(request,idprev):
                  #persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
                  domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
                  padys='<dd>no registra datos de los padres'+'<br></dd>'
-                 datosgral=roles+persona+domi+padys  
+                 datosgral=roles+persona+domi+str(padys.encode("utf8"))
              involuscra.append(datosgral)      
            else:
             roles='<u>'+str(p.roles)+'</u>'+' : '
@@ -5631,6 +5631,7 @@ def persinvo(request,idhec,idper):
   formpr = ProvinciasForm()
   #print ids.id
   #graba ciudad
+
   if request.POST.get('grabarciu')=="Grabar": 
      formc = CiudadesForm(request.POST, request.FILES)
      descripcion = request.POST.get('descripcion')
@@ -5748,6 +5749,7 @@ def persinvo(request,idhec,idper):
      formpa = PadresForm()
      idper=0
      mostrar="no"
+
    
      
    
@@ -5843,9 +5845,10 @@ def persinvo(request,idhec,idper):
          dom = DomiciliosForm(request.POST,request.FILES)           #obtiene los datos del domicilio en un formulario domicilio
          formr = PersInvolucradasForm(request.POST,request.FILES)   #obtiene los datos de persona involucrada en un formulario persona involucrada
          formpa = PadresForm(request.POST,request.FILES)
-         
+         #print idper
          #fecha_detencion=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
          #print request.POST.get('fechahoradetencion')
+
          if request.POST.get('fechahoradetencion'):
             fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
             fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'), '%d/%m/%y').strftime('%d/%m/%Y')
@@ -5856,6 +5859,7 @@ def persinvo(request,idhec,idper):
                 mostrar="no"
                 estadete="si"
          if idper!='0':
+
            perso=Personas.objects.get(id=idper)
            fil=Padres.objects.filter(persona=perso.id)
            if fil:
@@ -5874,6 +5878,7 @@ def persinvo(request,idhec,idper):
            papis=Padres()
         
            iddom='1'  
+
          if len(Domicilios.objects.filter(personas = idper)) > 0:
            domicilios = Domicilios.objects.filter(personas = idper)[0]
            iddom=domicilios.id
@@ -6110,12 +6115,13 @@ def persinvo(request,idhec,idper):
   formcalles= AddressForm()
   formbarrios = BarriadasForm()
   formciu=RefCiudades.objects.all()
+
   #formr = PersInvolucradasForm()
   info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,
   'caratula':caratula,'idhec':idhec,'domicilios':domicilios,'formro':formro,'formcalles':formcalles,
   'actuante':actuante,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'formbarrios':formbarrios,
   'preventor':preventor,'mostrar':mostrar,'formr':formr,'datosinvo':datosinvo,'fecha_autorizacion':fecha_autorizacion,
-  'autoridades':autoridades,'formp':formp,'dom':dom,'roles':roles,'formciu':formciu,
+  'autoridades':autoridades,'formp':formp,'dom':dom,'roles':roles,'formciu':formciu,'idper':idper,
   'errors': errors,'motivo':motivo,'todos':todos,'comb':comb,'idciu':idciu, 'tieneHecho':tieneHecho,
   'tienePersonas':tienePersonas,'tienelugar':tienelugar,'formd':formd,'formpr':formpr,'formc':formc,
   'state':state,'delito':delito,'descripcion':descripcion,'formpa':formpa,'depe':depe,'unidadreg':unidadreg,'dependencia':dependencia,
@@ -6262,13 +6268,16 @@ def persinvom(request,idhec,idper):
             except IntegrityError:
               errors.append('Datos existente en Personas Involucradas')
          else:
+
             mostrar="no"
     else:
+
      formp = PersonasForm() 
      domicilios = Domicilios()
      dom = DomiciliosForm()
      formr = PersInvolucradasForm()
      formpa= PadresForm()
+     
   
   if request.POST.get('dele'):
      persoinvoluc=PersInvolucradas.objects.filter(id=request.POST.get('dele'))

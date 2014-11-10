@@ -112,7 +112,7 @@
        
   </table> 
 <div align="right">
-              {%if depe == user.get_profile.depe and  not fecha_autorizacion%} 
+              {%if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion  and not fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and  not fecha_autorizacion%} 
          
               <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
                 <label title="Permite Agregar otra Persona Involucrada" >Involucrados</label></a>
