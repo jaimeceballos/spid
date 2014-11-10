@@ -326,7 +326,7 @@ onclick="imprSelec('onlytext')"/>
 {%include "header.html"%}<hr>
 
     <p > <strong >Personas Involucradas </strong></p>  <hr>
-   <strong>{%autoescape off%}{{datosper}}{%endautoescape%}</strong>
+   <strong>{%autoescape off%}{{datosper|safe}}{%endautoescape%}</strong>
       <!--
             {% for involu in involus%}
                 <ul>
