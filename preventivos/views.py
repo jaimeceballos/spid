@@ -5168,6 +5168,7 @@ def pdfs(request,idprev):
             rubros='Rubro y Categoria :'+str(eles.rubro)+' --- '+str(eles.categoria)
             canti=' Cantidad : '+str(eles.cantidad)+' --- '+str(eles.unidadmed)
             obse=' Observaciones : '+str(eles.descripcion.encode("utf8"))
+            obse=obse.replace('&NBSP;','') 
             """if eles.ampliacion:
                ampli=' Por medio de Ampliacion :'+str(eles.ampliacion.titulo)+' --- '+str(eles.ampliacion.fecha.strftime("%d/%m/%Y"))
             if deta:
