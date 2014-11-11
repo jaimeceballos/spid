@@ -41,7 +41,7 @@
    {% endif %}
     {%if not ampliacion.fecha_autorizacion%}
                   
-         {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or  user.get_profile.depe.descripcion == 'CENTRAL RADIO' and id%}
+         {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or  user.get_profile.depe.descripcion == 'RADIO' and id%}
          {% if finaliza and not ampliacion.fecha_autorizacion%}
         <p align="right">
           <a class="btn btn-success"  href="{% url 'finalizar' preventivo.id id %}" >

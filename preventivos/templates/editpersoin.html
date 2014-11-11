@@ -114,7 +114,7 @@
 <div align="right">
               {%if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion  and not fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and  not fecha_autorizacion%} 
          
-              <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
+              <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}" id="involucrados">
                 <label title="Permite Agregar otra Persona Involucrada" >Involucrados</label></a>
                {%endif%}
               <a href="{% url 'selectPrev' idprev %}" class="btn btn-success"><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Volver</label></a> 

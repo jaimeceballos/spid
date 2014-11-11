@@ -5089,7 +5089,7 @@ def pdfs(request,idprev):
 
                   domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
                   if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-                     padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br></dd>'   
+                     padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'   
                   else:
                      padys='<dd>no registra datos de los padres'+'<br></dd>'    
                   datosgral=roles+persona+domi+str(padys)
@@ -5740,18 +5740,15 @@ def persinvo(request,idhec,idper):
   if  hechos.involu.all():
         tienePersonas= True
   
- 
-  if request.POST.get('nuevo')=="Nuevo": 
+
+  if request.POST.get('nuevo')=="Nuevo" :
      formp=PersonasForm() 
      domicilios = Domicilios()
      dom = DomiciliosForm()
      formr = PersInvolucradasForm()
      formpa = PadresForm()
      idper=0
-     mostrar="no"
-
-   
-     
+     mostrar="no"   
    
 
   else:
@@ -6126,7 +6123,10 @@ def persinvo(request,idhec,idper):
   'tienePersonas':tienePersonas,'tienelugar':tienelugar,'formd':formd,'formpr':formpr,'formc':formc,
   'state':state,'delito':delito,'descripcion':descripcion,'formpa':formpa,'depe':depe,'unidadreg':unidadreg,'dependencia':dependencia,
   'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,'preventivo':datos,'noposee':noposee,}
-  return render_to_response('./personasin.html',info,context_instance=RequestContext(request))
+  if request.POST.get('grabar')=="Guardar":   
+     return HttpResponseRedirect(reverse('persinvol',args=[idhec,0]))
+  else:
+     return render_to_response('./personasin.html',info,context_instance=RequestContext(request))
 
 @login_required   
 @transaction.commit_on_success
@@ -6629,7 +6629,7 @@ def informe(request,idhec,idprev):
                   #persona='<dd>'+str(p)+', '+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+',  Estado Civil :'+' '+str(p.persona.estado_civil)+'<br><dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'<br></dd>'
                   domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'<br></dd>'
                   if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-                      padys='<dd>Hijo de : '+str(la.padre_apellidos)+', '+str(la.padre_nombres)+' -- '+'y de : '+str(la.madre_apellidos)+', '+str(la.madre_nombres)+'<br><br></dd>'
+                      padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
                   else:
                       padys='<dd>no registra datos de los padres'+'<br><br></dd>'    
                   datosgral=roles+persona+domi+padys
@@ -11143,7 +11143,7 @@ def reporampli(request,idprev,idamp):
 
                   domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
                   if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-                     padys='<dd>Hijo de : '+str(la.padre_apellidos)+', '+str(la.padre_nombres)+' -- '+'y de : '+str(la.madre_apellidos)+', '+str(la.madre_nombres)+'</dd>'
+                     padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
                   else:
                      padys='<dd>no registra datos de los padres'+'<br></dd>'    
                   datosgral=roles+persona+domi+padys
@@ -12256,7 +12256,7 @@ def enviar(request,idprev,idamp):
 
                   domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
                   if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-                     padys='<dd>Hijo de : '+str(la.padre_apellidos)+', '+str(la.padre_nombres)+' -- '+'y de : '+str(la.madre_apellidos)+', '+str(la.madre_nombres)+'</dd>'
+                     padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
                   else:
                      padys='<dd>no registra datos de los padres'+'<br></dd>'    
                   datosgral=roles+persona+domi+padys
