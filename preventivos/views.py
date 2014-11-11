@@ -5089,7 +5089,7 @@ def pdfs(request,idprev):
 
                   domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
                   if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-                     padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'</dd>'
+                     padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br></dd>'   
                   else:
                      padys='<dd>no registra datos de los padres'+'<br></dd>'    
                   datosgral=roles+persona+domi+str(padys)
