@@ -22,7 +22,7 @@
 
                      <div id="light" class="modals" style="display: block;">
                          <div align="right">  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"> <input class="borrarde"  type="button" value= "" title="Cerrar Ventana" ></a></div>
-                  <p style="color: red; font-size:12px;" > Error : {{error}}.- &nbsp;&nbsp;
+                  <p style="color: red; font-size:12px;" > Error ==> Confirme datos: {{error}}.- &nbsp;&nbsp;
                       
                        </p>
                        </div>
@@ -40,10 +40,10 @@
   	 <strong>Caratula Policial :</strong> <input type="text" style="border:0px;color:#000;font-weight:bold;font-size:12px;text-transform: uppercase;" name="confirmation-caratula"  id="id_confirmation-caratula" size="80px" border="0px"{{wizard.form.caratula}}
   </p>
    <p>   
-  	 <strong>Actuante :</strong> <select class="combox" name="confirmation-actuante"  id="id_confirmation-actuante" border="0px">
+  	 <strong>Actuante :</strong> <select style="width: 200px;" tabindex="-1" name="confirmation-actuante"  id="id_confirmation-actuante" border="0px">
   	 <option {{wizard.form.actuante}}</option>
   	 </select>
-  	 <strong>Preventor :</strong> <select class="combox" name="confirmation-preventor"  id="id_confirmation-preventor" border="0px">
+  	 <strong>Preventor :</strong> <select style="width: 200px;" tabindex="-1" name="confirmation-preventor"  id="id_confirmation-preventor" border="0px">
   	 <option {{wizard.form.preventor}}</option>
 
   	 </select>

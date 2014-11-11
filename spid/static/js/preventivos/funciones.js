@@ -650,8 +650,10 @@ $(document).ready(function() {
         $('#sistema_disparo').select2({});
         $('#tipo').select2({});
         $('#categorias').select2({  minimumInputLength: 1});
-         $('#id_actores-actuante').select2({minimumInputLength: 1});
-        $('#id_actores-preventor').select2({minimumInputLength: 1});
+         $('#id_actores-actuante').select2({minimumInputLength: 4});
+        $('#id_actores-preventor').select2({minimumInputLength: 4});
+        $('#id_confirmation-actuante').select2({minimumInputLength: 4});
+        $('#id_confirmation-preventor').select2({minimumInputLength: 4});
         $('#marcas').select2({  minimumInputLength: 1});
         $('#ciudades_r').select2({ });
         $("#permissions").select2({});
