@@ -34,14 +34,14 @@
             title="Imprimir Ampliación" rel="tooltip"/></input></a> </p>
    {%endif%}</span></td>
  </tr>
-{{ampliacion.fecha_autorizacion}}
+
 </table>
    {% if not preventivo.fecha_cierre %}
    <p><strong>Cierre de preventivo: </strong>{{ampliacion.cierre_causa}}</p>
    {% endif %}
     {%if not ampliacion.fecha_autorizacion%}
                   
-         {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or  user.get_profile.depe.descripcion == 'RADIO' and id%}
+         {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in user.get_profile.depe.descripcion and id%}
          {% if finaliza and not ampliacion.fecha_autorizacion%}
         <p align="right">
           <a class="btn btn-success"  href="{% url 'finalizar' preventivo.id id %}" >
@@ -80,7 +80,8 @@
                   {%if not ampliacion.fecha_autorizacion%}
                     <th style="text-align:center">Informar</th>
                  {%else%}
-                      <th style="text-align:center"></th>
+                      <th style="text-align:center">
+                       </th>
             
                  {%endif%}
                 {%endif%}
@@ -125,9 +126,10 @@
                    <img src="{{STATIC_URL}}imagenes/preventivos/forget.png" style="border:0" title="Ampliacion informada/envida por email" rel="tooltip" />
                     </center></td>
                    {%else%}
-                         <td width="12%"><center>
-                  
-                    </center></td>
+                         <td width="12%">
+                   <center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" 
+                    title="Para informar una ampliacion debe estar autorizada (Fin de Ediccion)" rel='tooltip' /></a></center>
+                 </td>
                    {%endif%}
                   {%endif%}
                  </tr>

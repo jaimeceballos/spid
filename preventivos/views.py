@@ -10849,6 +10849,7 @@ def ampliacion(request,idprev):
   return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request)) 
 
 @login_required   
+@group_required(["policia","investigaciones","radio"])
 def ver_ampliacion(request,idprev,idamp):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -10887,7 +10888,7 @@ def ver_ampliacion(request,idprev,idamp):
        tienep.append(v)
     if request.POST.get('verper'):
         verpers=True
- 
+  
   values={'depe':depe,'tienep':tienep,'personas':personas,'verpers':verpers,'finaliza':finaliza,'tiene':tiene,'veriele':veriele,'verelemento':verelemento,'tieneelemento':tieneelemento,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion,'tienepersonas':tienepersonas,}
 
   return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))   
