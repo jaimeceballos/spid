@@ -5089,10 +5089,10 @@ def pdfs(request,idprev):
 
                   domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
                   if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-                     padys='<dd>Hijo de : '+str(la.padre_apellidos)+', '+str(la.padre_nombres)+' -- '+'y de : '+str(la.madre_apellidos)+', '+str(la.madre_nombres)+'</dd>'
+                     padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'</dd>'
                   else:
                      padys='<dd>no registra datos de los padres'+'<br></dd>'    
-                  datosgral=roles+persona+domi+str(padys.encode("utf8"))
+                  datosgral=roles+persona+domi+str(padys)
              else:
                  roles='<u>'+str(p.roles)+'</u>'+' : '
                  if bandera:
@@ -5103,7 +5103,7 @@ def pdfs(request,idprev):
                  #persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
                  domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
                  padys='<dd>no registra datos de los padres'+'<br></dd>'
-                 datosgral=roles+persona+domi+str(padys.encode("utf8"))
+                 datosgral=roles+persona+domi+str(padys)
              involuscra.append(datosgral)      
            else:
             roles='<u>'+str(p.roles)+'</u>'+' : '
