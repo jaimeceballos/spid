@@ -286,7 +286,7 @@
         {%else%}   
           
            <div align="right">
-              {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+              {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
               <input  class="new-aqua" type="submit" name = "button" id = "button" value="Guardar" /> {%else%}
                {%if fecha_autorizacion%}
                     <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
@@ -334,7 +334,7 @@
                     <td width="30%">{{ elemento.rubro }}</td>
                     <td width="30%">{{ elemento.categoria }}</td>
                     <td width="30%">{{ elemento.cantidad }}  {{ elemento.unidadmed }}</td>
-   {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+   {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
                              <td  width="2%"> <button type="submit" name="dele" id="dele" class="borrarde"
               value="{{elemento.id}}" onclick=(this.value) title="Permite borrar un elemento"/></button>
       
