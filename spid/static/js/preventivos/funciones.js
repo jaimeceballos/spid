@@ -115,12 +115,15 @@ function documentVerify(){
 }
 
       function validaPersonaInv(){
+
         var grabar = $('#grabar').val()
-     
-        if(grabar=='Guardar'){
-           if($('#roles option:selected').text()=='DENUNCIANTE'){
-              return valp();
-          }
+       if(grabar=='Guardar'){
+           if($('#roles').val() != ''){
+              return valp($('#roles option:selected').text());
+           }
+           alert('Debe indicar el rol de la persona');
+           return false; 
+
         }
         if(grabar == 'Grabar'){
 
@@ -132,59 +135,104 @@ function documentVerify(){
         
 
       }
-      function valp(){
-            if($('#apellidos').val()==''){
-                 alert('Debe Indicar el/los apellido/s.');
-                 return false;
-            }
-            if($('#nombres').val()==''){
-                 alert('Debe indicar el/los nombre/s.');
-                 return false;
-            }
+
+
+      function valp(rol){
+          if(rol != '' && rol == 'DENUNCIANTE'){
+              if($('#apellidos').val()==''){
+                   alert('Debe Indicar el/los apellido/s.');
+                   return false;
+              }
+              if($('#nombres').val()==''){
+                   alert('Debe indicar el/los nombre/s.');
+                   return false;
+              }
+              if($('#tipo_doc').val()==''){
+                   alert('Debe seleccionar Tipo de Documento.');
+                   return false;
+              }
+              if($('#nro_doc').val()==''){
+                   alert('Debe indicar el Numero de documento.');
+                   return false;
+              }
+              if($('#sexo_id').val()==''){
+                   alert('Debe seleccionar Sexo.');
+                   return false;
+              }
+              if($('#fecha_nac').val()==''){
+                   alert('Debe indicar Fecha de nacimiento.');
+                   return false;
+              }
+              if($('#estado_civil').val()==''){
+                   alert('Debe seleccionar Estado Civil.');
+                   return false;
+              }
+              if($('#ocupacion').val()==''){
+                   alert('Debe seleccionar Ocupacion.');
+                   return false;
+              }
+              if($('#pais').val()==''){
+                   alert('Debe seleccionar pais de nacimiento.');
+                   return false;
+              }
+              if($('#ciudades').val()==''){
+                   alert('Debe seleccionar Ciudad de nacimiento.');
+                   return false;
+              }
+              
+              if($('#pais_res').val()==''){
+                   alert('Debe seleccionar pais de residencia.');
+                   return false;
+              }
+              if($('#ciudades_r').val()==''){
+                   alert('Debe seleccionar ciudad de residencia.');
+                   return false;
+              }
+          }else if(rol != '' && rol != 'DENUNCIANTE'){
             if($('#tipo_doc').val()==''){
                  alert('Debe seleccionar Tipo de Documento.');
                  return false;
+            }else if($('#tipo_doc option:selected').text()!= 'NO POSEE'){
+                if($('#apellidos').val()==''){
+                     alert('Debe Indicar el/los apellido/s.');
+                     return false;
+                }
+                if($('#nombres').val()==''){
+                     alert('Debe indicar el/los nombre/s.');
+                     return false;
+                }
+                if($('#nro_doc').val()==''){
+                     alert('Debe indicar el Numero de documento.');
+                     return false;
+                }
+                if($('#sexo_id').val()==''){
+                     alert('Debe seleccionar Sexo.');
+                     return false;
+                }
+                if($('#fecha_nac').val()==''){
+                     alert('Debe indicar Fecha de nacimiento.');
+                     return false;
+                }
+            }else{
+              if($('#apellidos').val()==''){
+                     alert('Debe Indicar el/los apellido/s.');
+                     return false;
+                }
+                if($('#nombres').val()==''){
+                     alert('Debe indicar el/los nombre/s.');
+                     return false;
+                }
+                if($('#sexo_id').val()==''){
+                     alert('Debe seleccionar Sexo.');
+                     return false;
+                }
+                if($('#fecha_nac').val()==''){
+                     alert('Debe indicar Fecha de nacimiento.');
+                     return false;
+                }
             }
-            if($('#nro_doc').val()==''){
-                 alert('Debe indicar el Numero de documento.');
-                 return false;
-            }
-            if($('#sexo_id').val()==''){
-                 alert('Debe seleccionar Sexo.');
-                 return false;
-            }
-            if($('#fecha_nac').val()==''){
-                 alert('Debe indicar Fecha de nacimiento.');
-                 return false;
-            }
-            if($('#estado_civil').val()==''){
-                 alert('Debe seleccionar Estado Civil.');
-                 return false;
-            }
-            if($('#ocupacion').val()==''){
-                 alert('Debe seleccionar Ocupacion.');
-                 return false;
-            }
-            if($('#pais').val()==''){
-                 alert('Debe seleccionar pais de nacimiento.');
-                 return false;
-            }
-            if($('#ciudades').val()==''){
-                 alert('Debe seleccionar Ciudad de nacimiento.');
-                 return false;
-            }
-            
-            if($('#pais_res').val()==''){
-                 alert('Debe seleccionar pais de residencia.');
-                 return false;
-            }
-            if($('#ciudades_r').val()==''){
-                 alert('Debe seleccionar ciudad de residencia.');
-                 return false;
-            }
-                        
-            
-            return true;
+          }
+          return true;
       }
 
 +function ($) { "use strict";
