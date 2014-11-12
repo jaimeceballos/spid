@@ -5318,6 +5318,7 @@ def fetch_resources(uri, rel):
     return path         
   
 @login_required   
+@group_required(["policia","investigaciones","radio"])
 def updatehechos(request,idprev):
   state= request.session.get('state')
   destino= request.session.get('destino')
