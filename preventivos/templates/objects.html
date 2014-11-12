@@ -276,20 +276,15 @@
   
   <p> 
 
-        {%if tieneob %}
-         <div align="right">
-                 <a href="{% url 'elementos' hecho.id %}" class="btn btn-succes"><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Limpiar</label></a> 
-                 <a href="{% url 'selectPrev' idprev %}" class="btn btn-success"><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Volver</label></a> 
-                <a href="{% url 'reportes' idprev %}" target="_blank" ><input type="button" class="botonprint"
-            title="Imprimir Preventivo"/></input></a> 
-           </div> 
-        {%else%}   
+       
           
            <div align="right">
               {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
-              <input  class="new-aqua" type="submit" name = "button" id = "button" value="Guardar" /> {%else%}
-               {%if fecha_autorizacion%}
-                    <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}
+                 <input  class="new-aqua" type="submit" name = "button" id = "button" value="Guardar" /> 
+              {%else%}
+                {%if fecha_autorizacion%}
+                    <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+                {%endif%}
               {%endif%}
    
                 <a href="{% url 'elementos' hecho.id %}" class="btn btn-succes"><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Limpiar</label></a> 
@@ -302,7 +297,7 @@
               
            </div>  
      
-      {%endif%}
+
             
      </p>
 
