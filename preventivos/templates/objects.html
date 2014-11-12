@@ -276,10 +276,8 @@
   
   <p> 
 
-       
-          
-           <div align="right">
-              {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+   <div align="right">
+   {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not  fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
                  <input  class="new-aqua" type="submit" name = "button" id = "button" value="Guardar" /> 
               {%else%}
                 {%if fecha_autorizacion%}
