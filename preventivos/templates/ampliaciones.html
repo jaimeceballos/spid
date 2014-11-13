@@ -24,7 +24,8 @@
         <strong>Texto Ampliatorio</strong>{{ampliacion.descripcion}} 
       </td>
       <td> 
-        <span style="margin-right:20px;"> {%if not id%}
+        <span style="margin-right:20px;">
+   {%if not id%}
    <input class="new-aqua" type="submit" name="grabar" id="grabar" value="Grabar" />
    {%else%}
    <p align="right">
@@ -32,7 +33,8 @@
 &nbsp;&nbsp;
          <a href="{% url 'reporampli' preventivo.id id%}" target="_blank" ><input type="button" class="botonprint"
             title="Imprimir Ampliación" rel="tooltip"/></input></a> </p>
-   {%endif%}</span></td>
+   {%endif%} 
+   <a href="{% url 'selectPrev' preventivo.id %}" class="btn btn-success"><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Volver</label></a> </span></td>
  </tr>
 
 </table>
