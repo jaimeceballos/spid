@@ -4840,34 +4840,55 @@ def verhechos(request):
   autora=[]
   tipodelito=''
   delito=''
+  unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+  jurisdi=unidadregi.ciudad.descripcion
   if request.POST.get('ver')=='1':
-     auti='si'
-     filtro=Hechos.objects.all().filter(descripcion__icontains=request.POST.get('hechos')).order_by('fecha_carga',)
-     for regs in filtro:
-         autorizados=Preventivos.objects.all().filter(id=regs.preventivo_id,fecha_autorizacion__isnull=False)
-  
-         if autorizados:
-            filtro=Hechos.objects.all().filter(preventivo_id=autorizados,descripcion__icontains=request.POST.get('hechos')).order_by('fecha_carga',)
-            if filtro not in todos:
-              todos.append(filtro)
-
      sonauti=request.POST.get('sonauti')
      nosonauti=request.POST.get('nosonauti')   
      hechos=request.POST.get('hechos') 
+     auti='si'
+     if hechos:
+
+       query_string=hechos
+       entry_query = get_query(query_string, ['descripcion',])
+                
+       filtro=Hechos.objects.all().filter(entry_query).order_by('fecha_carga',)
+      
+     if filtro:
+        for regs in filtro:
+          autorizados=Preventivos.objects.all().filter(id=regs.preventivo_id,fecha_autorizacion__isnull=False)
+         
+          if autorizados:
+            for hay in autorizados:
+               
+               filtro=Hechos.objects.all().filter(preventivo_id=hay).order_by('fecha_carga',)
+               
+               if filtro not in todos:
+                  todos.append(filtro)
   else:
     if request.POST.get('ver')=='2':
        sonauti=request.POST.get('sonauti')
        nosonauti=request.POST.get('nosonauti')   
        hechos=request.POST.get('hechos') 
        auti='si'
-       filtro=Hechos.objects.all().filter(descripcion__icontains=request.POST.get('hechos')).order_by('fecha_carga',)
-       for regs in filtro:
-         autorizados=Preventivos.objects.all().filter(id=regs.preventivo_id,fecha_autorizacion__isnull=True)
-  
-         if autorizados:
-            filtro=Hechos.objects.all().filter(preventivo_id=autorizados,descripcion__icontains=request.POST.get('hechos')).order_by('fecha_carga',)
-            if filtro not in todos:
-              todos.append(filtro)
+       if hechos:
+
+           query_string=hechos
+           entry_query = get_query(query_string, ['descripcion',])
+                
+           filtro=Hechos.objects.all().filter(entry_query).order_by('fecha_carga',)
+      
+       if filtro:
+        for regs in filtro:
+          autorizados=Preventivos.objects.all().filter(id=regs.preventivo_id,fecha_autorizacion__isnull=True)
+         
+          if autorizados:
+            for hay in autorizados:
+               
+               filtro=Hechos.objects.all().filter(preventivo_id=hay).order_by('fecha_carga',)
+               
+               if filtro not in todos:
+                  todos.append(filtro)
 
     else:
        if request.POST.get('search')=="Buscar":
@@ -4880,14 +4901,17 @@ def verhechos(request):
               entry_query = get_query(query_string, ['descripcion',])
                 
            filtro=Hechos.objects.all().filter(entry_query).order_by('fecha_carga',)
-          
-           for regs in filtro:
+           print filtro
+           if filtro:
+            for regs in filtro:
               autorizados=Preventivos.objects.all().filter(id=regs.preventivo_id,fecha_autorizacion__isnull=False)
               if autorizados:
                  sonauti+=1
               else:
                  nosonauti+=1
-           
+           else:
+             sonauti=0
+             nosonauti=0
 
          
            if filtro not in todosa:
@@ -4905,7 +4929,7 @@ def verhechos(request):
     
 
   info={'hechos':hechos,'total':total,'errors':errors,'sonauti':sonauti,'nosonauti':nosonauti,'auti':auti,'autora':autora,
-  'state':state,'destino': destino,'form':form,'todos':todos,'tipodelito':tipodelito,'delito':delito,}
+  'state':state,'destino': destino,'form':form,'todos':todos,'tipodelito':tipodelito,'delito':delito,'jurisdi':jurisdi}
 
   return render_to_response('./seehec.html',info,context_instance=RequestContext(request))
 
@@ -4930,6 +4954,8 @@ def verdelitos(request):
   autora=[]
   tipodelito=''
   delito=''
+  unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+  jurisdi=unidadregi.ciudad.descripcion
   if request.POST.get('ver')=='1':
      auti='si'
 
@@ -4996,7 +5022,7 @@ def verdelitos(request):
              total='si'
     
   ftiposdelitos=DelitoForm()
-  info={'hechos':hechos,'total':total,'errors':errors,'sonauti':sonauti,'nosonauti':nosonauti,'auti':auti,'autora':autora,
+  info={'hechos':hechos,'total':total,'errors':errors,'sonauti':sonauti,'nosonauti':nosonauti,'auti':auti,'autora':autora,'jurisdi':jurisdi,
   'state':state,'destino': destino,'form':form,'todos':todos,'ftiposdelitos':ftiposdelitos,'tipodelito':tipodelito,'delito':delito,}
 
   return render_to_response('./seedelitos.html',info,context_instance=RequestContext(request))
@@ -7525,7 +7551,8 @@ def verperin(request):
   info={'errors': errors,'state':state,'destino': destino,'mostrar':mostrar,'filtro':filtro,'todos':todos,'idhecho':idhecho,}
   return render_to_response('./peoplesin.html',info,context_instance=RequestContext(request))
 
-@login_required   
+@login_required  
+@group_required(["policia","investigaciones","radio"]) 
 def verpersin(request,idper):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -7579,7 +7606,7 @@ def verpersin(request,idper):
            persinv.append(relacion)
 
      dataper=PersonasForm(instance=personas)
-    
+     print alldata
      dataper.fields['tipo_doc'].initial=dataper['tipo_doc']
      dataper.fields['ocupacion'].initial=dataper['ocupacion']
      hec = Hechos.objects.get(id = idhec)
@@ -11358,6 +11385,7 @@ def verampli(request):
   todos=[]
   total='no'
   errors=[]
+  jurisdi=''
   if request.POST.get('search')=="Buscar":
      form=SearchPreveForm(request.POST, request.FILES)
      titulo=request.POST.get('titulo')
@@ -11365,7 +11393,9 @@ def verampli(request):
      fecha_cargah=request.POST.get('fecha_cargah')
      ureg=request.POST.get('ureg')
      depe=request.POST.get('depe')
-    
+     unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+     jurisdi=unidadregi.ciudad.descripcion
+   
      if titulo and not ureg and not depe:
         query_string=titulo
         entry_query = get_query(query_string, ['titulo',])
@@ -11557,7 +11587,7 @@ def verampli(request):
          total=Preventivos.objects.all().count
   
   
-  info={'fecha_carga':fecha_carga,'fecha_cargah':fecha_cargah,
+  info={'fecha_carga':fecha_carga,'fecha_cargah':fecha_cargah,'jurisdi':jurisdi,
   'titulo':titulo,'todos':todos,'total':total,'errors':errors,
   'state':state,'destino': destino,'form':form}
 

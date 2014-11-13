@@ -33,7 +33,7 @@
                    <td width="10%">{{ datos.fecha_autorizacion | date:"d/m/Y"}}</td>
                    <td width="12%">{{ datos.fecha_cierre | date:"d/m/Y"}}</td>
          
-                  </td>
+               
                   {%if datos.fecha_autorizacion and datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and datos.fecha_autorizacion%}
                     <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
                   {%else%}

@@ -19,12 +19,15 @@
                 {% for existen in todos %}
                  {%for datos in existen %}
                   <tr  class="gradeC"> 
+                 
                    <td width="5%">
 
-                    <a href='{% url 'ver_ampliacion' datos.preventivo_id datos.id  %}'>
+                    <a href='{% url 'reporampli' datos.preventivo_id datos.id  %}' target="_blank">
                       <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" 
                       title="Permite Ver Datos de la Ampliacion"  rel='tooltip'/>
                    </a></td>
+
+          
                    <td width="10%">{{ datos.fecha|date:"d/m/Y"}}</td>
                      <td width="55%">{{ datos.titulo}}</td>
                    <td width="45%">{{datos.preventivo.dependencia.unidades_regionales.descripcion}} / {{ datos.preventivo.dependencia.descripcion}}</td>

@@ -293,7 +293,7 @@ class ComunidadesForm(forms.ModelForm):
 
 class PrimerForm(forms.ModelForm):
     unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
-    nro = forms.IntegerField(required=False,validators=[MinValueValidator(1),MaxValueValidator(9999999)])
+    nro = forms.IntegerField(required=False,validators=[MinValueValidator(1),MaxValueValidator(9999)])
     anio = forms.IntegerField(required=False,validators=[MinValueValidator(2012),MaxValueValidator(2025)])
     def clean(self):
         cleaned_data = super(PrimerForm, self).clean()

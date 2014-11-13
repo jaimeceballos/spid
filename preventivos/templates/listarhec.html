@@ -29,7 +29,7 @@
                <th>URE / Dependencia</th>
                 <th >Fecha de carga del Hecho </th>
                 <th>Motivo/Tipo</th>
-               <th>Fecha Inicial</th> <th>Fecha Final</th>
+               <th>Fecha Inicial</th> <th>Fecha Final</th><th>Vista</th>
              </tr>
         </thead>
             <tbody>
@@ -37,18 +37,26 @@
                 {% for existen in todos %}
                  {%for datos in existen %}
                   <tr  class="gradeC"> 
-                      <td width="10%"><a href='{% url 'selectPrev' datos.preventivo_id %}'>
-                   {{ datos.preventivo.nro }} / {{ datos.preventivo.anio}}</a></td>
-              
+                      {%if datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES'%}
+                        <td width="15%"><a href='{% url 'selectPrev' datos.preventivo_id %}'>
+                        {{ datos.preventivo.nro }} / {{ datos.preventivo.anio}}</a></td>
+                      {%else%}
+                        <td width="15%"><strong> {{ datos.preventivo.nro }} / {{ datos.preventivo.anio}}</strong></td>
+                      {%endif%}
                   
-                      <td width="35%">{{datos.preventivo.dependencia.unidades_regionales.descripcion}} / {{datos.preventivo.dependencia.descripcion}}</td>
+                      <td width="34%">{{datos.preventivo.dependencia.unidades_regionales.descripcion}} / {{datos.preventivo.dependencia.descripcion}}</td>
                        <td width="15%">{{datos.fecha_carga| date:"d/m/Y"}}</td>
-                   <td width="22%">{{datos.motivo.descripcion}}</td>
+                   <td width="18%">{{datos.motivo.descripcion}}</td>
                    <td width="10%">{{ datos.fecha_desde | date:"d/m/Y P"}}</td>
                    <td width="10%">{{ datos.fecha_hasta | date:"d/m/Y P"}}</td>
-         
-                   </a>
-                  </td>
+                
+
+                  {%if datos.dependencia.ciudad.descripcion != jurisdi%}
+                   <td width="12%"><center><a href="{% url 'reportes' datos.preventivo.id %}" target="_blank" > <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" title="Solo puede ver el preventivo en modo vista preeliminar" rel='tooltip' /> </a></center></td>
+                  {%else%}
+                       <td width="12%"><center>---</center></td>
+                  {%endif%}
+               
                  </tr>
                  {% endfor %}
                 {%endfor%}

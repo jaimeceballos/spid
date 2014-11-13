@@ -153,11 +153,11 @@
            
                  {%for eles in alldata%}
                        {%for elesi in eles%}
-                         <p>
+                       
                        
                             {%for rela in persinv%}
                               {%for rel in rela%}
-                             
+                               <p>
                                    <strong>Rol : </strong> {{rel.roles.descripcion}}</p>
                      {{rel.hecho.refdelito.descripcion}}
                             {%endfor%}
@@ -165,13 +165,14 @@
                                    <p>
                             <strong>Descripcion del Hecho :</strong></p>
                             <p>{% autoescape off %}{{ elesi.descripcion }}{% endautoescape %}</p><hr>
-                            <p> <strong><u>Delitos cometidos :</u></strong>
+                          
      <table class="table">
+       
        {% for cometieron in delitos %}
        
         <tr>
           <td>
-          
+           <p> <strong><u>Delitos cometidos :</u></strong></p>
              <strong style="display: inline-block; vertical-align: middle; line-height: normal; ">&nbsp;{{cometieron.refdelito.tipo_delito.descripcion}} &nbsp;:&nbsp; {{cometieron.refdelito.descripcion}} &nbsp;&nbsp;</strong>
           </td>
               
