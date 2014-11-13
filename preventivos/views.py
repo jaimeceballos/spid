@@ -6250,7 +6250,7 @@ def persinvom(request,idhec,idper):
          formpa = PadresForm()
          perso=Personas.objects.get(id=request.POST.get('idper'))
          if formr.is_valid():
-            persoin=PersInvolucradas.objects.get(persona=perso.id)
+            persoin=PersInvolucradas.objects.get(persona=perso.id,hechos_id=idhec)
             persoin.roles = formr.cleaned_data['roles']
             persoin.menor = formr.cleaned_data['menor']
             persoin.detenido = formr.cleaned_data['detenido']
