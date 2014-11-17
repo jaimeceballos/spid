@@ -4397,7 +4397,9 @@ def persona(request, idper):
 
   personas = Personas.objects.get(id = idper)
   form = PersonasForm(instance=personas)
-  form.fields['tipo_doc'].queryset = RefTipoDocumento.objects.exclude(descripcion__icontains='NO POSEE') 
+  if personas.tipo_doc.descripcion!="NO POSEE":
+     form.fields['tipo_doc'].queryset = RefTipoDocumento.objects.exclude(descripcion__icontains='NO POSEE') 
+     
   form.fields['tipo_doc'].initial=personas.tipo_doc
   domicilios = Domicilios()
   dom = DomiciliosForm()
