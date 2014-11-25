@@ -433,7 +433,7 @@ class RefAutoridad(models.Model):
     id = models.AutoField(primary_key = True)
     descripcion = models.CharField(max_length = 80)
     ciudades = models.ManyToManyField('RefCiudades', related_name="ciu_autori", blank = True, null = True)
-    email = models.EmailField("e mail")
+    email = models.EmailField("e mail",max_length = 300)
  
     def __unicode__(self):
         return self.descripcion

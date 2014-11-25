@@ -3832,22 +3832,25 @@ def autoridad(request,idaut):
   destino = request.session.get('destino')
   errors = []
   autoridades = ""
+ 
   if request.POST.get('cancelar') == 'Cancelar':
     form = AuthoritiesForm()
     lista = RefAutoridad.objects.all()
     return render_to_response('./authorities.html',{'form':form,'autoridades':autoridades,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
   else:
-    if request.POST.get('modifica') == 'Actualizar':
 
+    if request.POST.get('modifica') == 'Actualizar':
+      
       autoridad = RefAutoridad.objects.get(id = idaut)
       form = AuthoritiesForm(request.POST, request.FILES)
-      #print form
-      if form.is_valid():
+     
+      if form.is_valid() or validateEmail(request.POST.get('email')):
        
       
         autoridad.descripcion = request.POST.get('descripcion')
         autoridad.email =request.POST.get('email')
         autoridad.ciudades =  form.cleaned_data['ciudades']
+    
         autoridad.save()
         return HttpResponseRedirect('../')
       else:
@@ -3869,6 +3872,13 @@ def autoridad(request,idaut):
   lista = RefAutoridad.objects.all()
   return render_to_response('./authorities.html',{'form':form,'autoridades':autoridades,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
 
+def validateEmail(email):
+    if len(email) > 6:
+        #print re.match(r'\b[\w.-]+@[\w.-]+.\w{2,4}\b', email)
+        if re.match(r'\b[\w.-]+@[\w.-]+.\w{2,4}\b', email) != None:
+           
+            return 1
+    return 0
 #funcion que permite ingresar los actuantes autorizados para preventivos
 @login_required
 @permission_required('user.is_staff')
@@ -6463,15 +6473,24 @@ def lugar_hecho(request,idhecho,idprev):
         #else:
           #lugar.calle = form.cleaned_data['calle']
 
-      
+        
         if not form.cleaned_data['altura']:
+         
            if numero:
              numero2 = int(numero)
            else:
              numero2 = None
            lugar.altura = numero2
         else:
-           lugar.altura              = form.cleaned_data['altura']
+           if numero or numero==form.cleaned_data['altura'] :
+             if numero!=form.cleaned_data['altura']:
+                numero2=form.cleaned_data['altura']
+             else:
+                numero2 = int(numero)
+             lugar.altura=numero2
+           else:
+             numero2 = None
+             lugar.altura              = form.cleaned_data['altura']
 
         lugar.latitud             = form.cleaned_data['latitud']
         lugar.longitud            = form.cleaned_data['longitud']
@@ -6553,15 +6572,26 @@ def street_name(string):
   nstring =''
   indice = 0
   number = ''
+  
   while string[indice] != '-' and string[indice] != ',' and indice < len(string):
+
     nstring = nstring + string[indice]
     indice = indice +1
+
   cant = 0
+
+
   while nstring[len(nstring)-1] == ' ' or nstring[len(nstring)-1].isdigit():
+  
+    
+    
+    
+    if nstring[len(nstring)-1].isdigit():
+      number=nstring[len(nstring)-1]+number
+
     nstring = nstring[:-1]
-    if(nstring[len(nstring)-1].isdigit()):
-      number = nstring[len(nstring)-1]+number
  
+
   return (nstring,number)
 
 #informar a autoridades por email
@@ -6828,20 +6858,20 @@ def informe(request,idhec,idprev):
       informa=datos.autoridades.values_list('email',flat=True)
       #agregar email 2jefeacei para que reciba los preventivos
       direcciones=[]
+    
       for dire in informa:
           direcciones.append(dire)
-      direcciones.append('2jefeacei@policia.chubut.gov.ar')    
-      
-      for cantdir in direcciones:
-        
+      #direcciones.append('2jefeacei@policia.chubut.gov.ar')    
+          nstring=extraeemail(dire)
+          #print nstring
           try:
-            msg = EmailMultiAlternatives(subject,text_content,from_email, [cantdir])
+            msg = EmailMultiAlternatives(subject,text_content,from_email,[nstring])
             msg.attach_alternative(text_content,'text/html')
             
             msg.send(fail_silently=True)
           except IndexError:
-           pass
-          
+            pass
+     
     info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,'tieneelementos':tieneelementos,
        'caratula':caratula,'idhec':idhec,'involus':involus,'involuscra':involuscra,'datosper':datosper,
        'actuante':actuante,'today':today,'datosgral':datosgral,'hechodeli':hechodeli,'elementos':elementos,
@@ -6854,6 +6884,27 @@ def informe(request,idhec,idprev):
     #return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))     
     return render_to_response('./informado.html', info, context_instance=RequestContext(request))     
 
+def extraeemail(string):
+
+  nstring =''
+  indice = 0
+  number = ''
+  
+  while indice < len(string):
+    
+       if string[indice]!=',' and string[indice]!=';':
+          nstring = nstring + string[indice]
+          indice = indice +1 
+     
+       else:
+          
+          indice=indice+1
+          nstring=''
+
+         
+     
+
+  return (nstring)
 @login_required   
 @transaction.commit_on_success
 @group_required(["policia","investigaciones","radio"])
@@ -12443,11 +12494,11 @@ def enviar(request,idprev,idamp):
         for dire in informa:
             direcciones.append(dire)
         #direcciones.append('fydsoftware@gmail.com')    
-          
-        for cantdir in direcciones:
+            nstring=extraeemail(dire)
+        #for cantdir in direcciones:
         
             try:
-                msg = EmailMultiAlternatives(subject,text_content,from_email, [cantdir])
+                msg = EmailMultiAlternatives(subject,text_content,from_email, [nstring])
             
                 msg.attach_alternative(text_content,'text/html')
                 

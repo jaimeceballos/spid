@@ -20,8 +20,8 @@
       <input type="text" name="descripcion" id="descripcion" value="{{autoridades.descripcion}}" autocomplete="off"/>
       <a href="/preventivos/authorities/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
       {% if autoridades in lista %}
-          <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">
-          <input class="btn btn-success" type="submit" value= "Borrar" name="borrar" title="Elimina el registro actual">
+          <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" id="modifica"  title="Actualiza los cambios">
+          <input class="btn btn-success" type="submit" value= "Borrar" name="borrar" id="borrar" title="Elimina el registro actual">
         {%else%}
           <input class="btn btn-success" type="submit" value= "Grabar" name="grabar" title="Grabar el registro actual" >
         {%endif%}
