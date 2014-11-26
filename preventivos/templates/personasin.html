@@ -2,6 +2,7 @@
 
 
   {% block main %}
+  
    <script>
     function abrirModal(){
       window.showModalDialog("../../../addbarrios/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
@@ -105,10 +106,13 @@
        
            <hr>
           <h6>Registro de Personas</h6>
-           <div id="informacion"><blockquote style="font-size:11px;font-family: Arial;">
+           <div id="informacion">
+            <p style="color: #000;background-color: #B0E0E6;border-color: #d58512;border-radius:3px;font-size:20px;font-style:oblique;font-variant:small-caps;font-weight:bold;"><u>IMPORTANTE</u>: <i>Realice una busqueda exaustiva de la persona antes de hacer click en el boton Nuevo. Asegurese que la persona involucrada no exista en la base de datos.</i></p>
+           <blockquote style="font-size:11px;font-family: Arial;">
           <p><strong style="color:green;">
           <i> Para realizar una busqueda de Personas, puede ingresar cualquier de estos datos:
             Nro de Documento, Apellido o Nombres</i>
+
         </strong></p>
           
           </blockquote>
@@ -119,9 +123,12 @@
             <input type="text" id="texto" name="texto" size="30" value="" placeholder="Nro de Dni | Apellido | Nombres" autocomplete="off">
               <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
             <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de personas"/>
-
-            <a href="{%url 'persinvol' idhec 0 %}" ><input type="submit" class="btn btn-success" id="nuevo" name="nuevo" value="Nuevo"
+           
+                <a href="{%url 'persinvol' idhec 0 %}" ><input type="submit" class="btn btn-success" id="nuevo" name="nuevo" onclick="return confirm('Esta seguro de querer agregar una nueva persona a la base de datos?');" value="Nuevo"
               title="Permite Agregar una Persona que no registra en Base"/></a>
+           
+            
+  
                 
           
         <br><br>
@@ -249,12 +256,13 @@
           <strong style="color:red;"> * </strong><strong>Tipo Doc :&nbsp;&nbsp;</strong><select class="combodni" id="tipo_doc" name="tipo_doc"  style="margin-left:18px">
          <option {{formp.tipo_doc}}</option>
          </select>
-     <strong  style="margin-left:89px"> <strong style="color:red;"> * </strong>Nro :</strong><input type="text" id="nro_doc" name="nro_doc" size="8" readonly="readonly" {{formp.nro_doc}}
+     <strong  style="margin-left:89px"> <strong style="color:red;"> * </strong>Nro :</strong><input type="text" id="nro_doc" name="nro_doc" size="12" readonly="readonly" {{formp.nro_doc}}
            <strong style="color:red;"> * </strong><strong>Sexo : </strong>
          <select name="sexo_id" id="sexo_id" class="comboxs" readonly="readonly"><option{{formp.sexo_id}}</option></select>
           &nbsp;<strong style="color:red;display:none" class="obligatorios_denunciante"> * </strong><strong>Estado Civil :</strong>
          <select name="estado_civil" id="estado_civil" class="comboxs"><option value="{{formo.estado_civil.id}}" {{formp.estado_civil}}</option></select>
     </p>
+   
       <p>
           <strong style="color:red;display:none" class="obligatorios_denunciante" > * </strong><strong>Pais de Nac. :</strong><select class="comboxs" id="pais" name="pais_nac" readonly="readonly" >
          <option {{formp.pais_nac}}</option></select>&nbsp;
@@ -389,7 +397,7 @@
 
           <hr>
             <h6>Datos de la Persona</h6>
-            <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p>
+            <div id="info"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p>
     <strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
           
           </blockquote>
@@ -407,13 +415,21 @@
         <select class="combodni" id="tipo_doc" name="tipo_doc" style="margin-left:18px" >
          <option {{formp.tipo_doc}}</option>
          </select>
-      <strong style="color:red;margin-left:87px"> * </strong><strong>Nro :</strong><input type="text" id="nro_doc" name="nro_doc" size="8" max_lenght ="8" autocomplete="off"
+      <strong style="color:red;margin-left:87px"> * </strong><strong>Nro :</strong><input type="text" id="nro_doc" name="nro_doc" size="12" max_lenght ="8" autocomplete="off"
       onkeypress="return isNumberKey(event,this)"  title="Nro de DNI sin puntos y hasta 8 digitos"  {{formp.nro_doc}}
          <strong style="color:red;"> * </strong>  <strong>Sexo :</strong>
          <select name="sexo_id" id="sexo_id" class="comboxs"><option{{formp.sexo_id}}</option></select>
            &nbsp;<strong style="color:red;display:none" class="obligatorios_denunciante"> * </strong><strong>Estado Civil : </strong>
          <select name="estado_civil" id="estado_civil" class="comboxs"><option value="{{formo.estado_civil.id}}" {{formp.estado_civil}}</option></select>
     </p>
+    <div id="informacion" style="display:none"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><h3><legend><u>La persona ya existe</u></legend></h3>
+        <div id="datosexiste">
+          
+        </div>
+        
+        </blockquote>
+        
+  </div>
       <p>
            <strong style="color:red;display:none" class="obligatorios_denunciante"> * </strong> 
            <strong>Pais de Nac. :</strong><select class="comboxs" id="pais" name="pais_nac"  >

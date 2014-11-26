@@ -12512,3 +12512,10 @@ def enviar(request,idprev,idamp):
   values={'finaliza':finaliza,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion}
 
   return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))   
+
+
+def verificardni(request,tdni,dni):
+  data = request.POST
+  persona = Personas.objects.filter(nro_doc = dni,tipo_doc=tdni)
+  data = serializers.serialize("json", persona)
+  return HttpResponse(data, mimetype='application/json')

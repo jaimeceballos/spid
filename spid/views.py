@@ -36,6 +36,7 @@ def some_view(request):
 
 
 def obtener_dependencias(request,depes):
+        
         data = request.POST
         dependencias = Dependencias.objects.filter(unidades_regionales = depes)
         data = serializers.serialize("json", dependencias)

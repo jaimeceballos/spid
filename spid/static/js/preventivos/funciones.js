@@ -602,6 +602,27 @@ function documentVerify(){
 }(window.jQuery);
 
 $(document).ready(function() {
+        $('#nro_doc').change(function(event){
+            if($('#tipo_doc').val() == ''){
+              alert('Debe seleccionar Tipo de documento');
+              $('#tipo_doc').focus();
+              $('#nro_doc').val('');
+            }else{
+              toLoad = '../../../verificardni/'+$('#tipo_doc').val()+'/'+$('#nro_doc').val()+'/';
+              $.get(toLoad, function(data){
+                  if(data.length > 0){
+                    $('#informacion').fadeIn();
+                    $('#grabar').attr('disabled', 'disabled');
+                    for(var i = 0; i < data.length; i++){
+                      $('#datosexiste').append('<p><b>Apellido y nombre: </b>'+data[i].fields["apellidos"]+', '+data[i].fields["nombres"]+'</p>'+
+                                                '<p>Si considera que cometi&oacute; un error haga click en'+ 
+                                                 ' el boton limpiar ingreso y realice la busqueda de persona. En caso de no '+
+                                                 'considerar un error por favor presione F5 y cargue a la persona con tipo de DNI "NO POSEE" y contactese con un administrador para solucionar el inconveniente.</p>');
+                    }
+                  }
+              }, "json");
+            }
+        });
         $("#tipo_doc").change(function(event){
           if ($('#tipo_doc option:selected').text()=='NO POSEE') {
               $("#nro_doc").attr('disabled', 'disabled');
