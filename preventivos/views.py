@@ -6556,7 +6556,7 @@ def lugar_hecho(request,idhecho,idprev):
       'autoridades':autoridades,'unidadreg':unidadreg,'dependencia':dependencia,
       'state':state, 'fecha_autorizacion':fecha_autorizacion,
       'destino': destino,
-      'form': form,
+      'form': form,'depe':depe,
       'idhecho':idhecho,
       'idprev':idprev,
       'preventivo':preventivo,
