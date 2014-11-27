@@ -3,13 +3,13 @@
 {% block main %}
 <script>
   function abrirModal(){
-    window.showModalDialog("http://127.0.0.1:8000/preventivos/addbarrios/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addbarrios/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
    function abrirModalc(){
-    window.showModalDialog("http://127.0.0.1:8000/preventivos/addcalles/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addcalles/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
   function abrirModalcr(){
-    window.showModalDialog("http://127.0.0.1:8000/preventivos/addciudades/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addciudades/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
 </script>
 <form id="form" action="." method="post" onsubmit="return validaPersonaInv()">{% csrf_token %} 
