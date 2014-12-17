@@ -6,7 +6,7 @@
 	<title>Formulario de contacto para solicitar permiso al Sistema SPID</title>
 	 <link rel="shortcut icon" href="{% get_static_prefix %}imagenes/spid/icono.ico" type="image/x-icon">
 	<link href="{% get_static_prefix %}css/spid/stylos.css" type="text/css" rel="stylesheet" />
-		<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/jquery.min.js"></script>
+ 		<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/jquery.min.js"></script>
 	<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/funciones.js"></script>
 	<script type="text/javascript"  src="{{STATIC_URL}}js/spid/jquery.numeric.js"></script>
 <script type="text/javascript">
@@ -44,10 +44,17 @@ $(document).ready(function(){
         </tr>
          <tr>
 			<td>
-			<DIV><label for="jerarquia">Jerarquia *:</label>
-			<input name="jerarca" id="jerarca" placeholder="Jerarquia actual" class="jerarca" AUTOCOMPLETE="OFF"/></div>
+
+			      <label for="jerarquia">Jerarquia *:</label>
+      <select name="jerarca" id="jerarca" class="comboj" ><option name="jerarca">Seleccione Jerarquia</option>
+      <option {{formj.jerarquia_id}}</option>
+      </select>
+
+        <!--<label for="jerarquia">Jerarquia *:</label>
+			<input name="jerarca" id="jerarca" placeholder="Jerarquia actual" class="jerarca" AUTOCOMPLETE="OFF"/></div>-->
               </td>
         </tr>
+
           <tr>
         <td>
 			<div><label for="destino">Destino actual *:</label>
@@ -66,8 +73,8 @@ $(document).ready(function(){
                           <td valign="top">
                           <label id="modif01" for="comentario" style="text-align:top">Solicitud/Personas *:</label>
                             <img src="{% get_static_prefix %}imagenes/spid/ayuda.png" style="border:0px solid #C0C0C0; width:20px; height:20px;" 
-                               onclick="alert('En solicitud/personal. Deberá detallar para cada usuario que tendrá acceso al sistema como usuario. Ejemplo : 1- Apellido y Nombres | N° Dni  | Jerarquia | Si es Actuante y/o Preventor | Email ya sea de la Institucion de uso policial o de uso personal de cada usuario. 2-..., 3-...')"> <br/>
-                          <textarea id="modif02" autocomplete="off" placeholder="Detalle el personal que tendrá acceso al sistema como usuario. Ejemplo : 1- Apellido y Nombres | N° Dni  | Jerarquia | Actuante y/o Preventor | Email de la Institucion de uso policial o de uso personal de cada usuario 2- ... 3-... " name="comment" class="modif02"></textarea>
+                               onclick="alert('En solicitud/personal. Deberá detallar para cada usuario que tendrá acceso al sistema como usuario. Ejemplo : 1- Apellido y Nombres | Tipo y Nro de Documento | Jerarquia | Si es Actuante y/o Preventor | Fecha de Nacimiento | Estado Civil| Lugar de nacimiento|Lugar de residencia. Email de uso personal y privado de cada usuario...')"> <br/>
+                          <textarea id="modif02" autocomplete="off" placeholder="Detalle el personal que tendrá acceso al sistema como usuario. Ejemplo : 1- Apellido y Nombres | Tipo y Nro de Documento | Jerarquia | Si es Actuante y/o Preventor | Fecha de Nacimiento | Estado Civil| Lugar de nacimiento| Lugar de residencia. Email de uso personal y privado de cada usuario..." name="comment" class="modif02"></textarea>
                         </td>
                           </tr>
                         </table>

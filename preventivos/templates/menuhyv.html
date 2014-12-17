@@ -20,9 +20,11 @@
 -->
 {% block cabecera %}
 <li class='current'><a href='#'><span>Utilidades</span></a>
-                        <ul>
        
+                        <ul>
+       {% if 'judiciales' in not state%}
         <li><a href="/spid/manual/"><span>Instructivo</span></a></li>
+       {%endif%}
          <!--{% if user.is_authenticated and user.is_staff%}
           li><a href="/admin/config/" target="new"><span>Administrador</span></a></li>
          {%endif%}-->

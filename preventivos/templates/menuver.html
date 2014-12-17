@@ -142,6 +142,23 @@
                                
                                 {% endif %}
                             {% endif %}
+                            {% if user.is_authenticated and not user.is_staff%}
+                                 {%if 'judiciales' in state%}
+                                       <li class='has-sub'><a href='#'><span>Mapa del Delito</span></a>
+                                         <ul>
+                                           <li><a href="/preventivos/mapsanality/"><span>Ver</span></a></li>
+                                         </ul>
+                                       </li> 
+                                  <li class='has-sub'><a href='#'><span>Consultas</span></a>
+                                     <ul>
+                                           <li><a href='/preventivos/seedata/'><span>Preventivos</span></a></li>
+                                     </ul>
+                                </li>
+                                
+                                
+                               
+                                {% endif %}
+                            {% endif %}
                             {% if user.is_authenticated and user.is_staff %}
                                 <li class='has-sub'><a href='#'><span>Bases de Datos</span></a>
                                      <ul>

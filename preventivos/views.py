@@ -4577,7 +4577,7 @@ def modos(request, idmod):
         return render_to_response('./modusop.html',{'form':form,'formp':formp,'modos':modos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 @login_required
-@group_required(["policia","investigaciones","visita","radio"])
+@group_required(["policia","investigaciones","visita","radio","judiciales"])
 def verprev(request):
   state= request.session.get('state')
   destino= request.session.get('destino')
@@ -7230,7 +7230,7 @@ def get_categories(request,rubro):
         return HttpResponse(data, mimetype='application/json')
 
 @login_required   
-@group_required(["policia","investigaciones","radio"])
+@group_required(["policia","investigaciones","radio","visita","judiciales"])
 def seemaps(request):
   state= request.session.get('state')
   destino= request.session.get('destino')

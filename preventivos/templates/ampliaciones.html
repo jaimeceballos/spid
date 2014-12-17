@@ -116,8 +116,8 @@
 
                      </center></td>
                    {%endif%}
-                   
-                   {%if a.fin_edicion and not a.fecha_autorizacion%}
+                    {%if depe == user.get_profile.depe and state == "jefes" and a.fin_edicion and not a.fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and a.fin_edicion and not a.fecha_autorizacion or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and a.fin_edicion and  not a.fecha_autorizacion%}
+               
                    <td width="12%"><center>
                     <a href="{% url 'enviar' preventivo.id a.id %}"><input type="button" name="enviar" id="enviar"  class="botonenviar"  
                       title="Permite informar por email a todas las Autoridades" rel="tooltip"/></input></a>

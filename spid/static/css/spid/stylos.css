@@ -387,7 +387,26 @@ input[type=submit].new-aqua {
     padding: 10px 20px;
     text-align: center;
 }
+.comboj {
+ 
+  width: 62%;
+  height: 25px;
+  color: black;
+  font-weight: bold;
+  display: inline-block;
+  white-space: nowrap;
+  overflow-x: hidden;
+  overflow: scroll;
+  z-index: 10;  
+  margin-bottom: 2px;
+  list-style: inherit;
+  margin-left: 0px;
+  font: 11px \93Arial,lighter;
+  background-color: #E6E6E6;
+  border: 1px solid black;
+  border-radius: 6px;
 
+}
 
 
 

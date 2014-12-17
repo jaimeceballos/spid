@@ -63,7 +63,9 @@ def login_user(request):
     form = DependenciasForm()
     formpass = CambiarPassForm()
     if request.POST.get('username')=='':
-         return render(request, 'correocontacto.html', {'state':state})
+         formj = ActuantesForm()
+         
+         return render(request, 'correocontacto.html', {'state':state,'formj':formj})
     else:
         if request.POST.get('logonea')=='Conectar':
          username = request.POST.get('username')
@@ -200,10 +202,11 @@ def registro(request):
     datos=[]
     soli=''
     if request.POST.get('envia')=='Enviar':
-          
+           jerarca=RefJerarquias.objects.get(id=request.POST.get('jerarca'))
+           
            info_enviado= True
            subject, from_email, to = 'Solicitud de Usuario - SPID' ,request.POST.get('mail'), 'divsistemasjp@policia.chubut.gov.ar,admredes@policia.chubut.gov.ar'
-           text_content = "Solicitud recibida de : %s<br><br>Nro de Dni : %s<br><br>Jerarquia : %s<br><br>Destino actual : %s<br><br> Usuarios <br><br> %s <br><br>" % (request.POST.get('name'),str(request.POST.get('docu')),request.POST.get('jerarca'),request.POST.get('destino'),request.POST.get('comment'))
+           text_content = "Solicitud recibida de : %s<br><br>Nro de Dni : %s<br><br>Jerarquia : %s<br><br>Destino actual : %s<br><br> Usuarios <br><br> %s <br><br>" % (request.POST.get('name'),str(request.POST.get('docu')),jerarca,request.POST.get('destino'),request.POST.get('comment'))
            msg = EmailMultiAlternatives(subject,text_content,from_email, [to])
            msg.attach_alternative(text_content,'text/html')
            try:
@@ -214,7 +217,7 @@ def registro(request):
       
            cabecera = '<br><br><br>'+'Al Sr :............................'+'<br>'+'ADMINISTRADOR SPID'+'<br>'+'S____________/_____________D'+'<br><br>'
            cuerpos='Por medio de la presente, me dirijo a UD. con el fin de solicitar el ALTA de usuarios al Sistema SPID'
-           usuas='Lista del Personal A/C: '+str(request.POST.get('jerarca'))+' - '+str(request.POST.get('destino'))+'<br><br>'+str(request.POST.get('comment'))+'<br><br><br><br><br><br>'
+           usuas='Lista del Personal A/C: '+str(jerarca)+' - '+str(request.POST.get('destino'))+'<br><br>'+str(request.POST.get('comment'))+'<br><br><br><br><br><br>'
            saludo='Sin más que agregar, aprovecho la ocasión para saludarlo muy atentamente.'+'<br><br><br><br><br><br><br><br><br><br>'
            datos.append(cabecera)
            for i in datos:
@@ -222,7 +225,9 @@ def registro(request):
          
            return  render(request,'solicitud.html',{'name':soli,'today':today,'cuerpos':cuerpos,'usuas':usuas,'saludo':saludo,})
     else:
-       return render(request, 'correocontacto.html',  {'name':name})
+       formj = ActuantesForm()
+
+       return render(request, 'correocontacto.html',  {'name':name,'formj':formj})
 
 def contactar(request):
     info_enviado = False
