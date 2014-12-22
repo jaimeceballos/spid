@@ -1957,7 +1957,8 @@ def ciudadesadd(request):
                          if formc.is_valid():
                              formc.save()
                              errors.append('Datos guardados')
-                             return render(request, './ciudadadd.html', {'errors': errors})
+                             form=PersonasForm()
+                             return render(request, './ciudadadd.html', {'errors': errors,'form':form,})
                            
                              #return HttpResponse('')
                          else:
@@ -6482,12 +6483,15 @@ def lugar_hecho(request,idhecho,idprev):
              numero2 = None
            lugar.altura = numero2
         else:
+           print numero,form.cleaned_data['altura']
            if numero or numero==form.cleaned_data['altura'] :
+             print numero
              if numero!=form.cleaned_data['altura']:
-                numero2=form.cleaned_data['altura']
+                numero2=int(numero)
              else:
-                numero2 = int(numero)
+                numero2 = form.cleaned_data['altura']
              lugar.altura=numero2
+          
            else:
              numero2 = None
              lugar.altura              = form.cleaned_data['altura']
@@ -6572,26 +6576,26 @@ def street_name(string):
   nstring =''
   indice = 0
   number = ''
-  
+  numbers=''
+ 
   while string[indice] != '-' and string[indice] != ',' and indice < len(string):
 
     nstring = nstring + string[indice]
     indice = indice +1
 
   cant = 0
-
-
-  while nstring[len(nstring)-1] == ' ' or nstring[len(nstring)-1].isdigit():
   
-    
-    
-    
-    if nstring[len(nstring)-1].isdigit():
-      number=nstring[len(nstring)-1]+number
 
+  while nstring[len(nstring)-1].isdigit():
+    number=nstring[len(nstring)-1]+number
+      
+    #if nstring[len(nstring)-1].isdigit():
+      #number=nstring[len(nstring)-1]+number
+   
     nstring = nstring[:-1]
- 
-
+    
+  #print nstring,number
+  
   return (nstring,number)
 
 #informar a autoridades por email
