@@ -9,7 +9,7 @@
     window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addcalles/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
   function abrirModalcr(){
-    ret = window.showModalDialog("http://127.0.0.1:8000/preventivos/addciudades/?id="+form,window.document,"dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    ret = window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addciudades/?id="+form,window.document,"dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
     if(ret !=null){
       alert(id)
       document.getElementById(ciudades_r).innerText=form;
