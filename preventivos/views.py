@@ -6483,11 +6483,11 @@ def lugar_hecho(request,idhecho,idprev):
              numero2 = None
            lugar.altura = numero2
         else:
-           print numero,form.cleaned_data['altura']
+           #print numero,form.cleaned_data['altura']
            if numero or numero==form.cleaned_data['altura'] :
-             print numero
+             #print numero,form.cleaned_data['altura']
              if numero!=form.cleaned_data['altura']:
-                numero2=int(numero)
+                numero2=form.cleaned_data['altura']
              else:
                 numero2 = form.cleaned_data['altura']
              lugar.altura=numero2
