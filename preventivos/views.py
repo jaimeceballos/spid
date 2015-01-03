@@ -5120,6 +5120,9 @@ def pdfs(request,idprev):
 
                 for la in Personas.objects.get(id=p.persona.id).padre.all():
                   #print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
+                  if p.menor=='':
+                     p.menor="NO"
+
                   roles='<u>'+str(p.roles)+'</u>'+' : '
                   if bandera:
                      persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -5134,6 +5137,8 @@ def pdfs(request,idprev):
                   datosgral=roles+persona+domi+str(padys)
              else:
                  roles='<u>'+str(p.roles)+'</u>'+' : '
+                 if p.menor=='':
+                     p.menor="NO"
                  if bandera:
                      persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
                  else:
@@ -5145,6 +5150,8 @@ def pdfs(request,idprev):
                  datosgral=roles+persona+domi+str(padys)
              involuscra.append(datosgral)      
            else:
+            if p.menor=='':
+               p.menor="NO"
             roles='<u>'+str(p.roles)+'</u>'+' : '
             if bandera:
                persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -6683,6 +6690,8 @@ def informe(request,idhec,idprev):
 
               for la in Personas.objects.get(id=p.persona.id).padre.all():
                   #print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
+                  if p.menor=='':
+                     p.menor="NO"
                   roles='<u>'+str(p.roles)+'</u><br><br>'
                   if bandera:
                      persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -6697,6 +6706,8 @@ def informe(request,idhec,idprev):
                       padys='<dd>no registra datos de los padres'+'<br><br></dd>'    
                   datosgral=roles+persona+domi+padys
            else:
+             if p.menor=='':
+                p.menor="NO"
              roles='<u>'+str(p.roles)+'</u><br><br>'
              if bandera:
                 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -6709,6 +6720,8 @@ def informe(request,idhec,idprev):
              datosgral=roles+persona+domi+padys  
         involuscra.append(datosgral)      
       else:
+        if p.menor=='':
+           p.menor="NO"
         roles='<u>'+str(p.roles)+'</u><br><br>'
         if bandera:
            persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -11221,6 +11234,8 @@ def reporampli(request,idprev,idamp):
 
                 for la in Personas.objects.get(id=p.persona.id).padre.all():
                   #print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
+                  if p.menor=='':
+                     p.menor="NO"
                   roles='<u>'+str(p.roles)+'</u>'+' : '
                   if bandera:
                      persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -11234,6 +11249,8 @@ def reporampli(request,idprev,idamp):
                      padys='<dd>no registra datos de los padres'+'<br></dd>'    
                   datosgral=roles+persona+domi+padys
              else:
+                 if p.menor=='':
+                     p.menor="NO"
                  roles='<u>'+str(p.roles)+'</u>'+' : '
                  if bandera:
                      persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -11246,6 +11263,8 @@ def reporampli(request,idprev,idamp):
                  datosgral=roles+persona+domi+padys  
              involuscra.append(datosgral)      
            else:
+            if p.menor=='':
+                     p.menor="NO"
             roles='<u>'+str(p.roles)+'</u>'+' : '
             if bandera:
                persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -12337,6 +12356,8 @@ def enviar(request,idprev,idamp):
 
                 for la in Personas.objects.get(id=p.persona.id).padre.all():
                   #print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
+                  if p.menor=='':
+                     p.menor="NO"
                   roles='<u>'+str(p.roles)+'</u>'+' : '
                   if bandera:
                      persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -12350,6 +12371,8 @@ def enviar(request,idprev,idamp):
                      padys='<dd>no registra datos de los padres'+'<br></dd>'    
                   datosgral=roles+persona+domi+padys
              else:
+                 if p.menor=='':
+                     p.menor="NO"
                  roles='<u>'+str(p.roles)+'</u>'+' : '
                  if bandera:
                      persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
@@ -12362,6 +12385,8 @@ def enviar(request,idprev,idamp):
                  datosgral=roles+persona+domi+padys  
              involuscra.append(datosgral)      
            else:
+            if p.menor=='':
+                     p.menor="NO"
             roles='<u>'+str(p.roles)+'</u>'+' : '
             if bandera:
                persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
