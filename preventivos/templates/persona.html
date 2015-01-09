@@ -9,7 +9,7 @@
     window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addcalles/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
   function abrirModalcr(){
-    ret = window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addciudades/?id="+form,window.document,"dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    ret = window.showModalDialog("http://127.0.0.1:8000/preventivos/addciudades/?id="+form,window.document,"dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
     if(ret !=null){
       alert(id)
       document.getElementById(ciudades_r).innerText=form;
@@ -137,16 +137,17 @@
        <strong >Ciudad de Residencia :</strong>
       <!--id="basic-modalcr"-->
       {% if not form.nro_doc %}
-        <select name="ciudad_res" id="ciudades_r" class="comboxs" tabindex="-1">
+        <select name="ciudad_res" id="ciudades_r" class="comboxs" tabindex="-1" >
          <option name="ciudades_r"></option>
          <option {{ciudad}}</option></select>
       {% else %}
    
-        <select name="ciudad_res" id="ciudades_r" style="width: 165px;" tabindex="-1">
+        <select name="ciudad_res" id="ciudades_r" style="width: 165px;" tabindex="-1" >
          <option name="ciudades_r"></option>
        <option {{form.ciudad_res}}</option></select>
          <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
          width="18px" title="Agregar Ciudad de Residencia"></a>
+         
        <!-- <a onclick="." href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
          width="18px" title="Agregar Ciudad de Residencia"></a></strong>-->
 

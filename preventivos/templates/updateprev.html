@@ -60,7 +60,9 @@
 
 
       <div align="right">
-      {%if 'policia' in state or 'investigaciones' in state or 'radio' in state%}
+
+      {%if 'policia' in state or 'investigaciones' in state or 'radio' in state or 'jefes' in state%}
+  
        {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or not fecha_autorizacion and 'RADIO' in user.get_profile.depe.descripcion%} 
          <input  class="new-aqua" type="submit" name = "button" id = "button" value="Modificar" 
          title="Permite modificar solamente los datos cabeceras del preventivos" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"/>
