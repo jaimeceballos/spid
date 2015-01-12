@@ -5406,7 +5406,7 @@ def updatehechos(request,idprev):
   descripcionhecho=''
   idprev=idprev
   #envio de datos al template updatehechos.html
-  
+  print fecha_autorizacion,depe
 
 
   if request.POST.get('continua')=="Agregar": 
@@ -5505,7 +5505,7 @@ def updatehechos(request,idprev):
   info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,
   'caratula':caratula,'idhec':idhec,
   'actuante':actuante,
-  'preventor':preventor,
+  'preventor':preventor,'depe':depe,
   'autoridades':autoridades,'unidadreg':unidadreg,'dependencia':dependencia,
   'errors':errors,'grabo':grabo,'fecha_autorizacion':fecha_autorizacion,
   'state':state, 'continua':continua,'delito':delito,'descripcion':descripcion,
