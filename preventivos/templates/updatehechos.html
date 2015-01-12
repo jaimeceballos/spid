@@ -195,7 +195,13 @@
           <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
         {%endif%}
     {%endif%}
-    
+       {%if 'policia' in state or 'jefes' in state%}
+  
+       {%if not fecha_autorizacion and depe == user.get_profile.depe%} 
+         <input  class="new-aqua" type="submit" name = "grabar" id = "grabar" value="Modificar" 
+         title="Permite modificar datos del hecho delictual" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"/>
+       {%endif%}
+       {%endif%}
     
       <a href="{% url 'selectPrev' idprev %}" class="btn1 btn-success"><label style="font-size:11px;text-align:center;">Volver</label></a> 
    
