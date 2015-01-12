@@ -787,7 +787,7 @@ def obtener_datosfirst(request,idprev):
   'preventor':preventor,'idprev':idprev,'delito':delito,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,
   'autoridades':autoridades,'idper':idper,'mostrar':mostrar,
   'errors': errors, 'grabo':grabo,'dependencia':dependencia,'unidadreg':unidadreg,
-  'state':state, 'continua':continua,'delitos':delitos,'motivo':motivo,
+  'state':state, 'continua':continua,'delitos':delitos,'motivo':motivo,'depe':depe,
   'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'modos':modos,'idhec':idhec}
   return render_to_response('./templateidp.html',info,context_instance=RequestContext(request))
  
