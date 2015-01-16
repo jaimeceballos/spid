@@ -17,7 +17,7 @@
     {% endif %}  
    <br>
    <p><label for="descripcion" name="descripcion"> Descripcion:
-      <input type="text" name="descripcion" id="descripcion" value="{{autoridades.descripcion}}" autocomplete="off"/>
+      <input type="text" name="descripcion" id="descripcion" value="{{autoridades.descripcion}}" autocomplete="off" />
       <a href="/preventivos/authorities/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
       {% if autoridades in lista %}
           <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" id="modifica"  title="Actualiza los cambios">
@@ -28,8 +28,8 @@
       </label> 
     </p>
     <p><label for="email" name="email">E-mail: 
-      <input type="text" name="email" id="email" value="{{autoridades.email}}"  style="margin-left:32px;" 
-       autocomplete="off"/>
+      <input type="text" name="email" id="email" value="{{autoridades.email}}"   style="margin-left:32px;width:850px;" 
+       autocomplete="off" />
     </label>
     </p>
     

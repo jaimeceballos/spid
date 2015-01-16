@@ -6875,20 +6875,37 @@ def informe(request,idhec,idprev):
       informa=datos.autoridades.values_list('email',flat=True)
       #agregar email 2jefeacei para que reciba los preventivos
       direcciones=[]
-    
-      for dire in informa:
+      indice=0
+      nstring=''
+      acumula=''
+      envio=1
+      for dire in infor:
           direcciones.append(dire)
-      #direcciones.append('2jefeacei@policia.chubut.gov.ar')    
-          nstring=extraeemail(dire)
-          #print nstring
-          try:
-            msg = EmailMultiAlternatives(subject,text_content,from_email,[nstring])
-            msg.attach_alternative(text_content,'text/html')
-            
-            msg.send(fail_silently=True)
-          except IndexError:
-            pass
-     
+      #direcciones.append('2jefeacei@policia.chubut.gov.ar')   
+          if dire.find(',')>=0 or dire.find(';')>=0:
+
+               while indice < len(dire):
+                  
+                  if dire[indice] != ',' and dire[indice] != ';' and dire[indice]!='':
+                     nstring = nstring + dire[indice]
+                     indice = indice +1
+                  
+                  else:
+                    
+                     envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                     indice=indice+1
+                     nstring=''
+
+               if nstring:
+                
+                  envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                  nstring=''
+         
+          else:
+           
+               envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+               nstring=''
+          
     info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,'tieneelementos':tieneelementos,
        'caratula':caratula,'idhec':idhec,'involus':involus,'involuscra':involuscra,'datosper':datosper,
        'actuante':actuante,'today':today,'datosgral':datosgral,'hechodeli':hechodeli,'elementos':elementos,
@@ -6899,8 +6916,11 @@ def informe(request,idhec,idprev):
        'destino': destino,'form1':form1,'ftiposdelitos':ftiposdelitos,'tamaño':5,}
 
     #return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))     
+    #if envio<1:
     return render_to_response('./informado.html', info, context_instance=RequestContext(request))     
-
+    #else:
+    #return render_to_response('./500.html',info,context_instance=RequestContext(request))   
+"""
 def extraeemail(string):
 
   nstring =''
@@ -6917,11 +6937,12 @@ def extraeemail(string):
           
           indice=indice+1
           nstring=''
-
+         
          
      
 
   return (nstring)
+"""
 @login_required   
 @transaction.commit_on_success
 @group_required(["policia","investigaciones","radio"])
@@ -12520,31 +12541,66 @@ def enviar(request,idprev,idamp):
         #agregar email 2jefeacei para que reciba los preventivos
 
         direcciones=[]
+        indice=0
+        nstring=''
+        acumula=''
+        envio=1
         for dire in informa:
             direcciones.append(dire)
-        #direcciones.append('fydsoftware@gmail.com')    
-            nstring=extraeemail(dire)
-        #for cantdir in direcciones:
-        
-            try:
-                msg = EmailMultiAlternatives(subject,text_content,from_email, [nstring])
-            
-                msg.attach_alternative(text_content,'text/html')
+            #direcciones.append('fydsoftware@gmail.com') 
+           
+            if dire.find(',')>=0 or dire.find(';')>=0:
+
+               while indice < len(dire):
+                  
+                  if dire[indice] != ',' and dire[indice] != ';' and dire[indice]!='':
+                     nstring = nstring + dire[indice]
+                     indice = indice +1
+                  
+                  else:
+                    
+                     envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                     indice=indice+1
+                     nstring=''
+
+               if nstring:
                 
-                msg.send(fail_silently=True)
-            except IndexError:
-               pass
+                  envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                  nstring=''
+         
+            else:
+           
+               envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+               nstring=''
+
+        
   
-
   finaliza=False
-    
+  
   values={'finaliza':finaliza,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion}
-
+  #if envio<1:
   return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))   
+  #return render_to_response('./envioamp.html',values,context_instance=RequestContext(request))   
+  #else:
+    #return render_to_response('./500.html',values,context_instance=RequestContext(request))   
 
+    
 
 def verificardni(request,tdni,dni):
   data = request.POST
-  persona = Personas.objects.filter(nro_doc = dni,tipo_doc=tdni)
+  persona = Personas.objects.filter(nro_doc = dni,tipo_doc=tdni) 
   data = serializers.serialize("json", persona)
   return HttpResponse(data, mimetype='application/json')
+
+def envioemail(envio,nstring,subject,text_content,from_email):
+  
+  try:
+      msg = EmailMultiAlternatives(subject,text_content,from_email, [nstring])
+      msg.attach_alternative(text_content,'text/html')
+      msg.send(fail_silently=True)
+    
+  except IndexError:
+    
+      pass
+
+  return(envio,nstring,subject,text_content,from_email)
