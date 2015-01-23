@@ -910,12 +910,9 @@ $(document).ready(function() {
                   }
            });
        
-
        
-        
-        
 
- $('#ciudades_r').change(function(event){
+  $('#ciudades_r').change(function(event){
                     var idcit= $('#ciudades_r').val();
                     var valor = $('#ids').val();
                     var toLoad;

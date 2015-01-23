@@ -2352,6 +2352,7 @@ def paise(request, idlista):
      return render_to_response('./paises.html',{'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
   else:   
     if request.POST.get('borrar')=="Borrar": 
+
       try:
        RefPaises.objects.get(id=idlista).delete()
        noborro=False
@@ -2360,11 +2361,8 @@ def paise(request, idlista):
 
       form = PaisesForm(request.POST)
       lista = RefPaises.objects.all()
-      #return render_to_response('./paises.html',{'errors':errors,'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
-      if noborro:
-        return  HttpResponseRedirect('/nosepudoborrarlorequerido')
-      else:
-        return HttpResponseRedirect('../')   
+      return render_to_response('./paises.html',{'errors':errors,'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+     
     else:
       if request.POST.get('modifica')=='Actualizar':
               pais = RefPaises.objects.get(id=idlista)
@@ -6832,12 +6830,13 @@ def informe(request,idhec,idprev):
     for a in autoridades:
         autoridad=autoridad+'*'+str(a)+'<br>'
     informa=datos.autoridades.values_list('email',flat=True)
+    """
     for i in informa:
         infor=infor+str(i)+','
 
     if infor[len(infor)-1] == ',':
       infor = infor[:-1]
-   
+    """
     jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=actuante).values('jerarquia_id'))
     jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=preventor).values('jerarquia_id'))
     form1=Hechos.objects.filter(preventivo=idprev)
@@ -6879,9 +6878,13 @@ def informe(request,idhec,idprev):
       nstring=''
       acumula=''
       envio=1
-      for dire in infor:
+      #print infor
+      for dire in informa:
           direcciones.append(dire)
-      #direcciones.append('2jefeacei@policia.chubut.gov.ar')   
+      #direcciones.append('2jefeacei@policia.chubut.gov.ar')  
+          #print dire
+          indice=0
+          nstring=''
           if dire.find(',')>=0 or dire.find(';')>=0:
 
                while indice < len(dire):
@@ -6891,10 +6894,11 @@ def informe(request,idhec,idprev):
                      indice = indice +1
                   
                   else:
-                    
+                     
                      envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
                      indice=indice+1
                      nstring=''
+               
 
                if nstring:
                 
@@ -6902,7 +6906,7 @@ def informe(request,idhec,idprev):
                   nstring=''
          
           else:
-           
+               nstring=dire
                envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
                nstring=''
           
@@ -12539,7 +12543,7 @@ def enviar(request,idprev,idamp):
       if request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
         informa=amplia.autoridades.values_list('email',flat=True)
         #agregar email 2jefeacei para que reciba los preventivos
-
+        #print informa,autoridad
         direcciones=[]
         indice=0
         nstring=''
@@ -12548,7 +12552,8 @@ def enviar(request,idprev,idamp):
         for dire in informa:
             direcciones.append(dire)
             #direcciones.append('fydsoftware@gmail.com') 
-           
+            indice=0
+            nstring=''
             if dire.find(',')>=0 or dire.find(';')>=0:
 
                while indice < len(dire):
@@ -12564,12 +12569,12 @@ def enviar(request,idprev,idamp):
                      nstring=''
 
                if nstring:
-                
+           
                   envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
                   nstring=''
          
             else:
-           
+               nstring=dire
                envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
                nstring=''
 
@@ -12593,6 +12598,7 @@ def verificardni(request,tdni,dni):
   return HttpResponse(data, mimetype='application/json')
 
 def envioemail(envio,nstring,subject,text_content,from_email):
+  #print nstring
   
   try:
       msg = EmailMultiAlternatives(subject,text_content,from_email, [nstring])
@@ -12602,5 +12608,5 @@ def envioemail(envio,nstring,subject,text_content,from_email):
   except IndexError:
     
       pass
-
+  
   return(envio,nstring,subject,text_content,from_email)

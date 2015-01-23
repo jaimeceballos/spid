@@ -10,49 +10,49 @@
 <table>
 {{ wizard.management_form }}
 {% if wizard.form.forms %}
-    {{ wizard.form.management_form }}
-    {% for form in wizard.form.forms %}
-        {{ form }}
-    {% endfor %}
+		{{ wizard.form.management_form }}
+		{% for form in wizard.form.forms %}
+				{{ form }}
+		{% endfor %}
 {% else %}
  {% if form.non_field_errors %}
-      {% for error in form.non_field_errors %}
+			{% for error in form.non_field_errors %}
 
-        <div id="fade" class="overlay"  style="display: block;"></div>
+				<div id="fade" class="overlay"  style="display: block;"></div>
 
-                     <div id="light" class="modals" style="display: block;">
-                         <div align="right">  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"> <input class="borrarde"  type="button" value= "" title="Cerrar Ventana" ></a></div>
-                  <p style="color: red; font-size:12px;" > Error ==> Confirme datos: {{error}}.- &nbsp;&nbsp;
-                      
-                       </p>
-                       </div>
-      {% endfor %}
-  {% endif %}  
+										 <div id="light" class="modals" style="display: block;">
+												 <div align="right">  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"> <input class="borrarde"  type="button" value= "" title="Cerrar Ventana" ></a></div>
+									<p style="color: red; font-size:12px;" > Error ==> Confirme datos: {{error}}.- &nbsp;&nbsp;
+											
+											 </p>
+											 </div>
+			{% endfor %}
+	{% endif %}  
 
 <hr>
-    
-      <h1>Datos del Preventivo a crear</h1>
+		
+			<h1>Datos del Preventivo a crear</h1>
  
-  <p>
-     <strong>Fecha de Denuncia :</strong>   <input type="text" style="border:0px;color:#000;font-weight:bold;font-size:12px;" name="confirmation-fecha_denuncia" size="9" id="id_confirmation-fecha_denuncia" border="0px" {{wizard.form.fecha_denuncia}} 
-  </p>
-  <p>   
-  	 <strong>Caratula Policial :</strong> <input type="text" style="border:0px;color:#000;font-weight:bold;font-size:12px;text-transform: uppercase;" name="confirmation-caratula"  id="id_confirmation-caratula" size="80px" border="0px"{{wizard.form.caratula}}
-  </p>
-   <p>   
-  	 <strong>Actuante :</strong> <select style="width: 200px;" tabindex="-1" name="confirmation-actuante"  id="id_confirmation-actuante" border="0px">
-  	 <option {{wizard.form.actuante}}</option>
-  	 </select>
-  	 <strong>Preventor :</strong> <select style="width: 200px;" tabindex="-1" name="confirmation-preventor"  id="id_confirmation-preventor" border="0px">
-  	 <option {{wizard.form.preventor}}</option>
+	<p>
+		 <strong>Fecha de Denuncia :</strong>   <input type="text" style="border:0px;color:#000;font-weight:bold;font-size:12px;" name="confirmation-fecha_denuncia" size="9" id="id_confirmation-fecha_denuncia" border="0px" {{wizard.form.fecha_denuncia}} 
+	</p>
+	<p>   
+		 <strong>Caratula Policial :</strong> <input type="text" style="border:0px;color:#000;font-weight:bold;font-size:12px;text-transform: uppercase;" name="confirmation-caratula"  id="id_confirmation-caratula" size="80px" border="0px"{{wizard.form.caratula}}
+	</p>
+	 <p>   
+		 <strong>Actuante :</strong> <select style="width: 200px;" tabindex="-1" name="confirmation-actuante"  id="id_confirmation-actuante" border="0px">
+		 <option {{wizard.form.actuante}}</option>
+		 </select>
+		 <strong>Preventor :</strong> <select style="width: 200px;" tabindex="-1" name="confirmation-preventor"  id="id_confirmation-preventor" border="0px">
+		 <option {{wizard.form.preventor}}</option>
 
-  	 </select>
-  </p>
-  <p>
-     <strong class="multi6">Autoridades a Informar :</strong>
-   {{wizard.form.autoridades}}
-     
-   </p>
+		 </select>
+	</p>
+	<p>
+		 <strong class="multi6">Autoridades a Informar :</strong>
+	 {{wizard.form.autoridades}}
+		 
+	 </p>
 
 {% endif %}
 </table>
