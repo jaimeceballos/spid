@@ -142,7 +142,7 @@
         <option {{modos.descripcion}}  </option>
         </select> 
 
-   {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+   {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES'  %}
        <input class="btn btn-success" type="submit" value="Agregar" id="continua" name="continua"
         title="Permite agregar mas delitos cometidos en el Hechos"/>
    {%endif%}
