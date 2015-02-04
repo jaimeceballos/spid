@@ -211,9 +211,10 @@ p#P a:hover {
         </ul>      
      {% endfor%}        
  <br><hr>
-  <p><strong> Texto Ampliatorio : </strong> <strong>{%autoescape off%}{{amplia.descripcion}} {%endautoescape%}</strong></p>  
+  <div><strong> Texto Ampliatorio : </strong> <strong>{%autoescape off%}{{amplia.descripcion}} {%endautoescape%}</strong>
+  </div><br> 
 
- <hr>
+ <hr><br><br>
    <h1 class='salto'> </h1><br>  
    {%include "header.html"%}<hr>
      {%if datosper%}
@@ -274,9 +275,7 @@ p#P a:hover {
 <div>
    {%include "footer.html"%}</div>
   
-    
-  
-  </div>
+</div>
 
 
 </body>

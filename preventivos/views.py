@@ -7,6 +7,16 @@ from django.contrib.admin.models import LogEntry
 from django.core.context_processors import csrf
 from django.template import RequestContext
 import smtplib
+import httplib,urllib,httplib2
+import urllib2
+import xmlrpclib
+from xml.dom.minidom import parseString
+import xml
+from httplib2 import Http
+from urllib import urlencode
+from base64 import b64encode
+import base64
+import pycurl
 from email.mime.text import MIMEText
 from django.template import Context, Template, RequestContext
 from django.template.loader import get_template,render_to_string
@@ -17,6 +27,7 @@ from django.core.exceptions import ObjectDoesNotExist
 #import cgi
 #import logging
 #logging.basicConfig()
+
 import locale
 locale.setlocale(locale.LC_ALL, ('es_AR', 'utf8')) 
 from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404
@@ -52,6 +63,9 @@ from django.db.models import Q
 from django.utils.translation import ugettext
 from wkhtmltopdf.views import PDFResponse, PDFTemplateView, PDFTemplateResponse
 from django.forms.util import ErrorList
+from xml.sax import make_parser, SAXException
+from xml.sax.handler import feature_namespaces
+
 
 def normalize_query(query_string,
 										findterms=re.compile(r'"([^"]+)"|(\S+)').findall,
@@ -12610,3 +12624,129 @@ def envioemail(envio,nstring,subject,text_content,from_email):
 			pass
 	
 	return(envio,nstring,subject,text_content,from_email)
+
+@login_required   
+def enviado(request):
+
+	state= request.session.get('state')
+	destino= request.session.get('destino')
+	grabarfa = Preventivos.objects.filter(fecha_autorizacion=date.today())
+	datosdict={}
+	for hay in grabarfa:
+		datos = Preventivos.objects.get(id=hay.id)
+		nro=datos.nro
+		anio=datos.anio
+		fecha_denuncia=datos.fecha_denuncia
+		fecha_carga=datos.fecha_carga
+		caratula=datos.caratula
+		actuante=datos.actuante
+		preventor=datos.preventor
+		autoridades= datos.autoridades.values_list('descripcion',flat=True)
+		fecha_cierre=datos.fecha_cierre
+		fecha_autorizacion=datos.fecha_autorizacion
+		dependencia=datos.dependencia.descripcion
+		ciudad=datos.dependencia.ciudad
+		unidadreg=datos.dependencia.unidades_regionales.descripcion
+		jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=actuante).values('jerarquia_id'))
+		jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=preventor).values('jerarquia_id'))
+		titulo ='Preventivo Nro : '+str(nro)+'/'+str(anio)+','
+		tresto='Unidad Reg. :'+str(unidadreg)+', Dependencia : '+str(dependencia)+', Ciudad de : '+str(ciudad)+','
+		titulo1='Fecha de Denuncia : '+str(fecha_denuncia.strftime("%d/%m/%Y"))+', Fecha de Carga: '+str(fecha_carga.strftime("%d/%m/%Y"))+', Caratula :'+str(caratula.encode("utf8"))+', Actuante : '+str(jerarqui_a)+'-'+str(actuante)+', Preventor :'+str(jerarqui_p)+'-'+str(preventor)+', Autoridades :'+str(autoridades)
+		datosdict=titulo+tresto+titulo1
+		#datosdict="'URE:'unidadreg +",Dependencia :" +dependencia,'Ciudad':ciudad,'Preventivo': str(nro)+"/"+str(anio),'Fecha_carga':fecha_carga,'Caratula':caratula,'Actuante':actuante,'Preventor':preventor}
+		#print unidadreg,dependencia,ciudad,nro,anio,fecha_denuncia,fecha_carga,caratula,actuante,preventor,autoridades,fecha_cierre,fecha_autorizacion
+		#print datosdict
+		xml ='<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"> '+ \
+		'<soap:Header>' +\
+		'<LoginInfo xmlns="http://sij.juschubut.gov.ar"> '+\
+		'<_usuario>policia-test</_usuario>' +\
+		'<_password>policia-test</_password>' +\
+		'<_logAuditoria>string</_logAuditoria>' +\
+		'<Usuario>policia-test</Usuario>' +\
+		'<LogAuditoria>string</LogAuditoria>' +\
+		'<Password>policia-test</Password>' +\
+		'</LoginInfo>' +\
+		'</soap:Header>' +\
+		'<soap:Body>' +\
+		'<Enviar xmlns="http://sij.juschubut.gov.ar">' +\
+		'<asunto>PREVENTIVOS-SPID</asunto>' +\
+		'<cuerpo>'+datosdict+'</cuerpo>' +\
+		'<destino>coironrw-test</destino>' +\
+		'</Enviar>' +\
+		'</soap:Body>' +\
+		'</soap:Envelope>'
+	   
+		
+		print xml
+		#curl --header "Content-Type: text/xmt ; charset=utf-8" --header "SOAPAction:http://sij.juschubut.gov.ar/Enviar" --data @xml http://listas.juschubut.gov.ar/mensajero/mensajes.asmx
+		import pycurl
+		import StringIO
+		ncServerURL="http://listas.juschubut.gov.ar:80"
+		action="http://sij.juschubut.gov.ar/Enviar"
+		data="--data @xml"
+		c = pycurl.Curl()
+		c.setopt(pycurl.URL, ncServerURL)
+		c.setopt(pycurl.POST, 1)
+		c.setopt(pycurl.SSL_VERIFYPEER, 0)
+		c.setopt(pycurl.SSL_VERIFYHOST, 0)
+		header=["Content-type: text/xml;charset=utf-8","SOAPAction:"+action,'Content-Length: '+str(len(xml))]
+		c.setopt(pycurl.HTTPHEADER, header)
+		c.setopt(pycurl.POSTFIELDS, str(xml))
+		c.setopt(pycurl.READFUNCTION, StringIO.StringIO(xml).read)
+		c.setopt(pycurl.UPLOAD, 1)
+		import StringIO
+		verbose=0
+		b = StringIO.StringIO()
+		c.setopt(pycurl.WRITEFUNCTION, b.write)
+		c.setopt(pycurl.VERBOSE, verbose)
+		#self.verbose = verbose
+		try:
+		   c.perform()
+		except pycurl.error, v:
+			raise xmlrpclib.ProtocolError(host + handler,v[0], v[1], None)
+		
+		b.seek(0)
+
+		c.perform()
+		ncServerData = b.getvalue()
+	
+		"""SOAPAction="http://sij.juschubut.gov.ar/Enviar"
+		curl = pycurl.Curl()
+		url = 'http://listas.juschubut.gov.ar:80'
+		curl.setopt(pycurl.URL,url)
+		curl.setopt(pycurl.VERBOSE, 1)
+		body = datosdict
+		curl.setopt(pycurl.READFUNCTION, StringIO.StringIO(body).read)
+		curl.setopt(pycurl.UPLOAD, 1)
+		curl.setopt(pycurl.HTTPHEADER,['Content-Type: text/xmt ; charset=utf-8'])
+		curl.setopt(curl.TIMEOUT, 5)
+		curl.perform()"""
+		"""
+		user='policia-test'
+		password='policia-test'
+		params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
+		headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
+		webservice = urllib2.Request('http://listas.juschubut.gov.ar/mensajero/mensajes.asmx') 
+		webservice = httplib.HTTPConnection('209.13.117.104',80)
+		webservice.putrequest("POST", "http://listas.juschubut.gov.ar/mensajero/mensajes.asmx", params, headers)
+		webservice.putheader("Host", "http://listas.juschubut.gov.ar")
+		webservice.putheader("User-Agent", "Python Post")
+		webservice.putheader("Content-type", "text/xml; charset=\"UTF-8\"")
+		webservice.putheader("Content-length", "%d" % len(xml))
+		webservice.putheader("SOAPAction", "\"http://sij.juschubut.gov.ar/Enviar\"")
+		webservice.endheaders()
+		webservice.send(xml)
+		
+		ref=webservice.getresponse()
+		print ref.status,ref.reason
+		if ref.status==200:
+		   webservice.close()
+		else:
+		   return render(request, './error404.html')
+		#print ref.read()
+		"""
+		
+		datosdict={}
+	values={'destino': destino,'state':state,}
+	#if envio<1:
+	return render_to_response('./index1.html',values,context_instance=RequestContext(request))   

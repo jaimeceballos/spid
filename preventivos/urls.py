@@ -139,7 +139,7 @@ urlpatterns = patterns('',
     (r'^seedelitos/(?P<idtd>[0-9A-Za-z]+)/$', 'preventivos.views.obtener_delitos'),
     (r'^peoplein/$', 'preventivos.views.verperin'),
     (r'^objectsin/$', 'preventivos.views.verobjin'),
-   
+   #(r'^webservice/$', 'preventivos.views.enviado'),
     (r'^', 'preventivos.views.page_not_found'),
     (r'^', 'preventivos.views.server_error'),
 
