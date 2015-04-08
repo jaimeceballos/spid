@@ -19,7 +19,7 @@ from httplib2 import Http
 from urllib import urlencode
 from base64 import b64encode
 import base64
-import pycurl
+#import pycurl
 import dict2xml
 import html2text
 from django.http import QueryDict
