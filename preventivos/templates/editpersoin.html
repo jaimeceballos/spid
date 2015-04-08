@@ -24,7 +24,13 @@
               
              
     {% endif %}
-
+<div id="invalidoe"  name="invalidoe" style='display:none;'>
+               <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+               <label style="color: red;" ><h5>  No es valida la direccion de Email - Ej. email@servidor.com </h5></label>
+          <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </div>
+                     </div>
 
 
      <input type="hidden" id="ids" name="ids" value="{{idhec}}"/>
@@ -42,7 +48,7 @@
   </p>
   
   <p>   
-  	 Caratula Policial :
+     Caratula Policial :
      <input type="text" name="caratula"  
      id="caratula" size="70px" readonly="readonly" value="{{caratula}}"/>
   </p>
@@ -146,64 +152,16 @@
         </select> &nbsp;&nbsp;&nbsp;&nbsp;
      <strong> Es Menor :</strong>  
         <select class="combodni" id="menor" name="menor" >
-            <option name="menor"{{formr.menor}}</option>
+            <option{{formr.menor}}</option>
          </select> 
     </p>     
-     <div id="detenidos" style="display:none;">
-        <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
-       <option {{formr.detenido}}</option>
-       </select>
-         <strong>Fecha y Hora Ingreso :</strong>
-        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
-        {{formr.fechahoradetencion}} 
-        <input class="botoncalendar" button id="fecha_hasta1" ></button>
-        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
-        <!-- script que define y configura el calendario--> 
-        <script type="text/javascript" charset="utf-8">
-        
-         var cal = Calendar1.setup({onSelect: function(cal) {
-         cal.hide() },showTime: 12,});
-         cal.manageFields('fecha_hasta1','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
-
-       </script>&nbsp;
-
-       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
-       <option {{formr.infraganti}}</option>
-       </select>
-       </div> 
-
     {%if estadetenido%}
+ 
+     <div id="detenidos" >
+    {%else%}
       <p>
-     <div id="detenidos">
-      <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
-       <option {{formr.detenido}}</option>
-       </select>
-     
-   
-      
-        <strong>Fecha y Hora Ingreso :</strong>
-        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
-        {{formr.fechahoradetencion}} 
-        <input class="botoncalendar" button id="fecha" ></button>
-        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
-        <!-- script que define y configura el calendario--> 
-        <script type="text/javascript" charset="utf-8">
-        
-         var cal = Calendar1.setup({onSelect: function(cal) {
-         cal.hide() },showTime: 12,});
-         cal.manageFields('fecha','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
 
-       </script>&nbsp;
-
-       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
-       <option {{formr.infraganti}}</option>
-       </select></div></p>
-     
-    
-{%else%}
-      <p>
-   
-   
+     <div id="razon">
    
       <strong >Persona Juridica :</strong>
       
@@ -212,12 +170,44 @@
 
       <strong >Descripcion :</strong>
       <input type="text" id="razon_social" name="razon_social"  size="45" {{formr.razon_social}}
-
+  </div>
        </p> 
+     <div id="detenidos" style="display:none;">
 
-      
-      
     {%endif%}
+    <div id="datetimepicker" class="input-append date">
+      <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong>
+      <select class="combodni" id="detenido" name="detenido"  style="width:60px;font-size:11px;" >
+       <option {{formr.detenido}}</option>
+       </select>
+
+  <strong style="color:red;margin-left:15px;"> * </strong><strong>Fecha y Hora Ingreso:</strong>
+      <input type="text" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+     {{formr.fechahoradetencion}} 
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span> 
+   
+     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+<script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script>
+<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script>&nbsp;
+       <strong style="margin-left:15px;">Tentativa? :</strong>  
+       <select class="combodni" id="tentativa" name="tentativa"  style="width:60px;font-size:11px;"  >
+         <option {{formr.tentativa}}</option>
+         </select>&nbsp;
+
+       <strong style="margin-left:15px;">Infraganti? :</strong>  
+       <select class="combodni" id="infraganti" name="infraganti"   style="width:60px;font-size:11px;" >
+       <option {{formr.infraganti}}</option>
+       </select></div></div>
+
+
+    
+
 
                    <h6>Datos de la Persona</h6>
             <p>
@@ -257,7 +247,34 @@
   </p>
   <p>
        <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias" readonly="readonly" {{formp.alias}}
-  </p>
+
+   <strong>Telefonos:</strong>
+      <input type="text" name="celular" id="celular" placeholder="Cod. Area+Numero"  
+      onkeypress="return isNumberKey2(event,this)"  readonly="readonly" {{personas.celular}}
+      </p>
+       <p>
+        <strong>Emails :</strong>
+      <input type="text" id="emails" name="emails" onKeyUp="javascript:validateMail('emails')"  readonly="readonly"
+          style="margin-left:68px;height:25px;" size="30" autocomplete="off"  
+          title="Direccion de email incorrecto" pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$" {{formp.emails}}
+        <strong style="margin-left:30px" >Redes Sociales:</strong>
+       <input type="text" name="redsociales" id="redsociales" title="Ej. twitter "  readonly="readonly" size="30" {{formp.redsociales}}
+       
+      </p>
+       <p>
+       <strong>Domicilio Laboral :</strong><input type="text" id="domiciliolab" name="domiciliolab"  readonly="readonly"
+       style="margin-left:8px" size="30" autocomplete="off" {{formp.domiciliolab}}
+        <strong style="margin-left:30px" >Horario Laboral:</strong>
+       <input type="text" name="horariolab" id="horariolab" size="30" readonly="readonly" {{formp.horariolab}}
+       
+      </p>
+       <p>
+       <strong>Otras Actividades(deportivas,recreactivas):</strong><input type="text" id="otrasactividades" name="otrasactividades" 
+       style="margin-left:8px" size="30" autocomplete="off"  readonly="readonly" {{formp.otrasactividades}}
+        <strong style="margin-left:30px" >Hora/lugar:</strong>
+       <input type="text" name="horalugaractivi" id="horalugaractivi" size="30"  readonly="readonly" {{formp.horalugaractivi}}
+       
+      </p>
    <p>
  
 

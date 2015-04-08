@@ -42,7 +42,14 @@ def obtener_dependencias(request,depes):
         data = serializers.serialize("json", dependencias)
         return HttpResponse(data, mimetype='application/json')
 
-
+def help_view(request):
+    state = ''
+    name=''
+    username = password = ''
+    destino = ''
+    form = DependenciasForm()
+    formd = []
+    return render(request, 'musers.html', {'formd':formd,'state':state,'destino':destino,'form':form})
 
 def iniciar(request):
     state = ''

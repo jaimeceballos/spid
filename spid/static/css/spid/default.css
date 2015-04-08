@@ -3,11 +3,11 @@
 .fclear {clear:both}
 .inner_copy, .inner_copy a {border:0;float:right;background:#fff;color:#f00;width:50%;line-height:10px;font-size:10px;margin:-220% 0 0 0;overflow:hidden;padding:0}
 body {background:#fff url(../../imagenes/spid/divider.png)repeat; font:normal normal "DroidSansMono";color:#666}
-#main3 {width:50%;margin:0 auto;overflow:hidden;float:middle center;margin-top:10%;margin-left:40%;}
+#main3 {width:50%;margin:0 auto;overflow:hidden;float:middle center;margin-top:5%;margin-left:40%;}
 #main1 {width:90%;margin:0 auto;overflow:hidden;float:middle center;margin-top:1%;margin-left:25%;}
 h1, h2, h3 {color:black;}
-h2,h3 {font-family: "DroidSansMono";}
-h2,h3,p {font-size:9px;}
+h2,h3 {font-family: "DroidSansMono";font-weight:normal}
+h2,h3,p {font-size:10px;}
 p {font-size:12px; color:black;}
 h6 {float:center;text-align:center;font-size:10px;font-weight:normal;color:black}
 h5 {float:center;text-align:center;font-size:12px;font-family: "DroidSansMono";color:blue}
@@ -48,8 +48,8 @@ h5 {float:center;text-align:center;font-size:12px;font-family: "DroidSansMono";c
 #login legend {display:none}
 #login label {font-size:11px;font-weight:bold}
 #login input {margin-bottom:5px}
-input[type=text].ame{width:120px;padding:2px;font-family:"DroidSansMono";font-size:12px;color:black}
-input[type=password].ame{width:120px;padding:2px;font-family:"DroidSansMono";font-size:12px;color:black}
+input[type=text].ame{height:20px;width:170px;padding:2px;font-family:"DroidSansMono";font-size:12px;color:black}
+input[type=password].ame{height:20px;width:170px;padding:2px;font-family:"DroidSansMono";font-size:12px;color:black}
 
 #inputtext1, #inputtext2, #username, #user, #password, #apeynom, #usuario, #dni, #propositouso, #email, #apellidos, #nombres {width:180px;padding:2px;font-family:"DroidSansMono";color:blue}
 #apeynom, #username, #usuario, #dni, #propositouso, #email {width:200px;padding:2px;font-family:"DroidSansMono";color:#666}
@@ -60,11 +60,9 @@ input[type=submit].new-aqua {
 display: inline-block;
   padding: 1px 12px;
   margin-bottom: 4px;
-  font: 11px DroidSansMono;
-  font-weight: normal;
   line-height: 1;
-  height: 20px;    
-  width: 80px;
+  height: 25px;    
+  width: 85px;
   vertical-align: middle;
   cursor: pointer;
   border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
@@ -72,21 +70,18 @@ display: inline-block;
   border: 2px solid #ccc; 
   border-radius: 5px;
   white-space: nowrap;
-  font: 11px DroidSansMono,lighter;
-  color: #000; 
-  text-shadow: rgba(10, 10, 10, 0.5) 1px 2px 2px;
   text-align: center; 
   vertical-align: middle; 
   white-space: nowrap; 
   text-overflow: ellipsis; 
   overflow: hidden;
-  box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
-  -moz-box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
-  -webkit-box-shadow: 0 10px 16px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf, inset 0 -8px 0 8px #48c, inset 0 -35px 15px -10px #7ad;
+  box-shadow: 0 8px 10px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf,  inset 0 -35px 15px -10px #7ad;
+  -moz-box-shadow: 0 8px 10px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf,  inset 0 -35px 15px -10px #7ad;
+  -webkit-box-shadow: 0 8px 10px rgba(33, 140, 240, 0.150), inset 0 -8px 12px 0 #6bf,  inset 0 -35px 15px -10px #7ad;
   background: #cee; 
   border: 2px solid #ccc; 
   border-color: #8ba2c1 #5890bf #4f93ca #768fa5; 
-  font: 11px DroidSansMono,lighter;
+  font: 12px DroidSansMono,lighter;
   color: #000; 
 }
 
@@ -165,11 +160,11 @@ input[type=submit].new-aqua:hover {
 	border-radius: 5px;		
 }
 .combopeq {
-	width: 160px; /* With the padding included, the width is 190 pixels: the actual width of the image. */
-	height: 19px;
+	width: 180px; /* With the padding included, the width is 190 pixels: the actual width of the image. */
+	height: 25px;
 	color: black;
 	margin-left: -5px;
-  font: 10px DroidSansMono,lighter;
+  font: 11px DroidSansMono,lighter;
 	background: white ;
 	border: 1px solid black;
 	overflow:auto;
@@ -188,13 +183,14 @@ input[type=submit].new-aqua:hover {
 }
 .lefttitle
 {
-	font:10px DroidSansMono;
+	font:12px DroidSansMono;
 	text-decoration: none;
 	color:#ffffff;
+  text-align: center;
 	padding-left:10px;
-  text-align: left;
-	background-image:url('../../imagenes/spid/cabmenu.jpg');
-	height:23px;
+  background-color: black;
+  /*image:url('../../imagenes/spid/cabmenu.jpg');*/
+	height:20px;
         border-bottom:0px solid;
        }
 .righttitle

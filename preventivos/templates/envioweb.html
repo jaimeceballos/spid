@@ -1,0 +1,19 @@
+{% load static %}
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+<link href="{{STATIC_URL}}css/preventivos/default.css" rel="stylesheet" type="text/css" />
+<title>Informar Preventivo</title>	
+{% block error %}
+   <div align="center">
+   	  <img onclick="mensajes();" src="{{STATIC_URL}}imagenes/preventivos/policia.png" 
+        style="align:center;border:0px solid #C0C0C0;">
+    <h4>EL PREVENTIVO FUE ENVIADO</h4>
+    <h4>SATISFACTORIAMENTE AL MINISTERIO PUBLICO FISCAL.-</h4>
+    <p>Por cualquier consulta y/o sugerencia comuniquese con el Administrador. <a href="mailto:divsistemasjp@policia.chubut.gov.ar?Subject=Consulta y/o sugerencias" target="_top">
+    Enviar un Mail</a>
+    </p>
+    
+        <input class="new-aqua" type="submit" onclick="window.history.back();" value="Volver"/></p></div>
+
+ </div>
+{%endblock%}

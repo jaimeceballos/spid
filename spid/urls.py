@@ -10,7 +10,6 @@ from django.conf import settings
 
 handler404 = 'preventivos.views.page_not_found'
 handler500 = 'preventivos.views.server_error' 
-
 admin.autodiscover()
 
 urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', name="changePass"),
@@ -25,6 +24,8 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     (r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
     (r'^spid/inicio/$', 'preventivos.views.inicial'),
     (r'^spid/manual/$', 'spid.views.some_view'),
+    (r'^spid/help/$', 'spid.views.help_view'),
+    (r'^spid/ayudaonline/$', 'spid.views.help_view'),
     (r'^spid/inicio/$', 'preventivos.views.inicial'),
     (r'^spid/salir/$', 'spid.views.nologin'),
     (r'^admin/config/', include(admin.site.urls)),

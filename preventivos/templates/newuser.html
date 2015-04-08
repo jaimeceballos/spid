@@ -7,14 +7,14 @@
    
    {% if errors %}
             
-               {% for error in errors %}
+            
                     <div id="fade" class="overlay"  style="display: block;"></div>
                      <div id="light" class="modals" style="display: block;">
-                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
-                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                  <p style="color: red;" > {{ errors }}.- 
+                         <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
                        </p>
                        </div>
-               {% endfor %}
+        
              
     {% endif %}   
 <br> 

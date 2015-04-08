@@ -233,7 +233,7 @@ for (j=0;j<vecesl;j++){
           
         }
            
-           delis=delis.replace(/xd1/gi,'Ñ')
+           delis=delis.replace(/xc3/gi,'Ñ')
            var refew='<strong style="color:red;font-size:10px;font-family:Arial"> Delitos : '+delis+' - Preventivo N°: '+preve+'<br>'+'Fecha de Denuncia :'+den+'</strong>'+'<a href='+'/preventivos/seleccionar/'+idpreve+'/'+'> Ver Preventivo</a>'
            var refe= 'Delitos : '+delis+' - Prev.N°: '+preve+' - Fecha de Denuncia :'+den
                       var marcadores = new google.maps.Marker({

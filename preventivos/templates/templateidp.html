@@ -31,7 +31,7 @@
      <input type="text" name="nro" id="id_nro"  value="{{nro}}/{{anio}}" readonly="readonly"/> 
     
      Fecha de Denuncia :
-     <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/y"}}" readonly="readonly"/>
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/Y H:i:s"}}" readonly="readonly"/>
   </p>
   
   <p>   
@@ -74,6 +74,11 @@
        </p>
     <p>
      <h1>Breve Descripcion del Hecho Ocurrido :</h1>
+      <div id="informacion">
+            <p style="color: #000;background-color: #B0E0E6;border-color: #d58512;border-radius:3px;font-size:16px;font-variant:small-caps;font-weight:bold;"><u>IMPORTANTE</u>: <i>Cuando ingrese informacion en un cuadro de texto por ejemplo DESCRIPCION DEL HECHO.</i>
+             <i>Por favor evite ingresar en el mismo palabras acentuadas y signos(° & "), como asi mismo no ingrese texto resaltado, entre comillas ni tampoco realice tabulaciones, SOLO INGRESE TEXTO PLANO!.</i>
+             <i> No realice copias de texto de otros procesadores por ejemplo WORD. MUCHAS GRACIAS.-</i></p>
+        </div>
      <textarea  type="text" id="descrihecho" name="descrihecho" style="width: 100%;height:200px;" >{{descripcionhecho}}</textarea>
      </p>
      
@@ -123,7 +128,7 @@
 
    {%if 'si' in continua or 'si' in grabo%} 
 
-<h1>Formulario de Carga de Hecho Delictual</h1>
+<h1>Formulario de Carga de Hecho Delictivo</h1>
 <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p>
   <strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
         
@@ -189,7 +194,7 @@
 
    {%else%}
 
-<h1>Formulario de Carga de Hecho Delictual</h1>
+<h1>Formulario de Carga de Hecho Delictivo</h1>
 <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p><strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
         
         </blockquote>
@@ -295,29 +300,35 @@
  <!--   <input type="hidden" id="id" name="id" value="{{idhec}}"/>-->
  
    {%if 'si' in continua %} 
+    <strong><u>Delitos seleccionados</u></strong>
 
-     <strong><u>Delitos seleccionados</u></strong>
-     <table class="table">
-       {% for cometieron in delitos %}
+     {% for cometieron in delitos %}
        
-        <tr>
-          <td>
-            <button type="submit" name="borrar" id="borrar" class="borrarde"
+      <p> <button type="submit" name="borrar" id="borrar" class="borrarde"
               value="{{cometieron.id}}" onclick=(this.value) title="Permite borrar un delito"/></button>
-              <strong style="color:gray;"> *  {{cometieron}} &nbsp;&nbsp;</strong>
-          </td>
-              
-        </tr>   
-       {%endfor%}
-      </table> 
-  
+              <strong style="color:midnigthblue;"> *  {{cometieron|upper}} &nbsp;&nbsp;</strong></p>
+         
+      {%endfor%}
 <br>
-     <div align="right">
+  <!--
+  {%if 'MUJER' in user.get_profile.depe.descripcion and 'si' in boton %}
+   <div align="right">
+         <a class="btn btn-success"  href="">
+           <label title="Permite registrar Hecho de Violencia Familiar" style="font-size:10px;text-align:left;">Formulario VIF</label></a>
+          
+      
+      </div> 
+  {%else%}-->
+ 
+    <!-- <div align="right">
          <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
            <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
       </div> 
-   
-  
+  {%endif%}-->
+    <div align="right">
+         <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
+           <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
+      </div> 
    {%else%} 
     {%if 'si' in grabo %}
 

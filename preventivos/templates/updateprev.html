@@ -19,13 +19,28 @@
                        </div>
                {% endfor %}
              
-    {% endif %}  
- 
+    {% endif %} 
+    <br>
+    <p>
+     <div id="datetimepicker" class="input-append date">
+         
+      <strong style="margin-left:5px;">Fecha / Hora de Denuncia :</strong>
+      <input type="text" name="fecha_denuncia" size="16" id="fecha_denuncia" {{form.fecha_denuncia}} 
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+
+<script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script></div></p>
+<!--
   <p>
      Fecha de Denuncia :
-     <input type="text" name="fecha_denuncia" size="12" id="fecha_denuncia" {{form.fecha_denuncia}}
+     <input type="text" name="fecha_denuncia" size="12" id="fecha_denuncia" {{form.fecha_denuncia|date:"d/m/Y H:m:s"}}
      <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha de Denuncia">
-       <!-- script que define y configura el calendario--> 
+    
       <script type="text/javascript"> 
         Calendar.setup({ 
           inputField : "fecha_denuncia", // id del campo de texto 
@@ -35,18 +50,19 @@
       </script> 
       
 
-  </p>
-  <p>   
-  	 Caratula Policial : <input type="text" style="text-transform: uppercase;" name="caratula"  id="caratula" size="100px" {{form.caratula}} 
+  </p> -->
+  <p>  
+     <strong> Caratula Policial :</strong>
+      <input type="text" style="text-transform: uppercase;" name="caratula"  id="caratula" size="100px" {{form.caratula}} 
   </p>
    <p>   
-  	 Actuante : <select class="combox" name="actuante"  id="actuante" >
-  	 <option {{form.actuante}}</option>
-  	 </select>
-  	 Preventor : <select class="combox" name="preventor"  id="preventor" >
-  	 <option {{form.preventor}}</option>
+      <strong>Actuante : </strong><select class="combox" name="actuante"  id="actuante" >
+     <option {{form.actuante}}</option>
+     </select>
+   <strong>   Preventor : </strong><select class="combox" name="preventor"  id="preventor" >
+     <option {{form.preventor}}</option>
 
-  	 </select>
+     </select>
   </p>
   <p>
      <strong class="multi6">Autoridades a Informar :</strong>
@@ -101,7 +117,8 @@
         <p align="right">
    <a class="btn btn-success"  href="{% url 'updatehechos' idprev %}">
     <label title="Permite Ver mas detalles del Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">
-      Ver Datos</label></a></p><hr>
+      Ver Datos</label></a>
+  
  <p>
       <h1>Breve Descripcion del Hecho</h1>
       <!-- : {{hechodeli}} </h1>-->
@@ -109,7 +126,7 @@
      </p>
      
    <p>
-
+  
    {%if tienePersonas%}
     {%if datosinvo %}
  
@@ -235,10 +252,10 @@
   
           {%if preventivo.fecha_cierre and fecha_autorizacion%} 
                 <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
-                <strong style="color:red;margin-left:20px;">Prev. / Causa cerrada el : {{preventivo.fecha_cierre|date:"d/m/y"}}</strong>
+                <strong style="color:red;margin-left:20px;">Prev. / Causa cerrada el : {{preventivo.fecha_cierre|date:"d/m/y H:i:s"}} Hrs.</strong>
           {%else%}
              {%if fecha_autorizacion%}
-                <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+                <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y H:i:s"}} Hrs.</strong>
              {%endif%}
           {%endif%}
         
@@ -254,6 +271,7 @@
           <!--{%endif%}-->
       {%endif%}
      {%endif%} 
+
 {% else %}
     {% if depe == user.get_profile.depe or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion%}
       <p align="right">

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block main %}
+
+ <form id="form" action="." method="post">{% csrf_token %} 
+   <h1>Formulario de Envio de Informacion al MPF</h1>
+
+
+    {% if errors %}
+            
+              
+               <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+                  <p style="color: red;" > {{ errors }}.- &nbsp;&nbsp;
+                  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </p>
+                       </div>
+           
+             
+    {% endif %}  
+    <br>
+    <table class="table" >
+  
+    <tr><td>
+      <!--
+      <strong> Fecha y Hora de Autorizacion : </strong>
+      <p>
+       <div id="datetimepicker" class="input-append date">
+        <strong> Desde:</strong>
+    <input type="text" id="fecha_cargas" name="fecha_cargas" autocomplete="off" size="9" placeholder="dd/mm/aaaa h:m:s" />
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span> </div>
+     
+      <div id="datetimepicker1" class="input-append date">
+      <strong> Hasta :</strong>
+      <input type="text" id="fecha_cargah" name="fecha_cargah" autocomplete="off" size="9" 
+     placeholder="dd/mm/aaaa h:m:s" />
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+<script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script>
+<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script></div></p>-->
+
+    <strong> Fecha Autorizacion : Desde :</strong>
+    <input type="text" id="fecha_cargas" name="fecha_cargas" autocomplete="off" size="9" value="{{fecha_carga | date:"d/m/Y"}}"
+     placeholder="dd/mm/aaaa" />
+      <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha Autorizacion Desde">
+
+      <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_cargas", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "lanzador" // el id del botón que lanzará el calendario 
+        }); 
+      </script> 
+
+    &nbsp;&nbsp;
+    <strong> Hasta :</strong>
+    <input type="text" id="fecha_cargah" name="fecha_cargah" autocomplete="off" size="9" 
+     placeholder="dd/mm/aaaa" />
+      <input class="botoncalendar"  type="button" id="lanzadora" title="Seleccione Fecha de Autorrizacion Hasta">
+    
+      <script type="text/javascript"> 
+        Calendar.setup({ 
+          inputField : "fecha_cargah", // id del campo de texto 
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+          button : "lanzadora" // el id del botón que lanzará el calendario 
+        }); 
+      </script>
+     
+   </td>
+   
+      </td>
+ <td width="300px;">
+       <div align="left">
+        <input class="btn btn-success" type="submit" value="Informar" id="search" name="search"
+        title="Permite la busqueda de preventivos"/>
+        <input class="btn btn-success" type="submit" value="Limpiar" id="reset" name="reset"
+        title="Limpia la pantalla de datos"/></div>
+ </tr>
+ </tr>
+</table>
+  <p>
+ 
+      <b><h6>Estado de Preventivos Autorizados</h6></b>
+    </p>  
+      <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th >Items</th>
+               <th>Fecha de Envio</th>
+               <th>Id Preventivo</th>
+                <th>Fecha Autorizado</th>
+             
+               <th>Usuario</th>
+               <th>Envio Webservice</th>
+            </tr>
+        </thead>
+      
+             <tbody>
+                 {% for listas in lista %}
+                  <tr  class="gradeC"> 
+                    <td width="5%"><a href=''>{{ listas.id }}</a></td>
+                    <td width="10%">{{ listas.fecha_envio|date:"d/m/Y"}}</td>
+                    <td width="50%">{{ listas.preventivo.caratula }}</td>
+                      <td width="10%">{{ listas.preventivo.fecha_autorizacion|date:"d/m/Y"}}</td>
+                       <td width="50%">{{ listas.user.first_name }},{{ listas.user.last_name }}</td>
+                    {%if '0' in listas.enviado%}</td>}
+                      <td width="8%">NO</td>
+                    {%else%}
+                      <td width="8%">SI</td>
+                    {%endif%}
+                      
+                  </a>
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+       </div>
+
+
+ </form> 
+{% endblock %}

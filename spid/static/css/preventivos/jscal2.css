@@ -5,14 +5,15 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   user-select: none;
-  font: 10px "lucida grande",tahoma,verdana,sans-serif;
-  line-height: 12px;
+  font: 12px "lucida grande",tahoma,verdana,sans-serif;
+  line-height: 10px;
   position: relative;
+   background-color: #444;
   cursor: default;
 }
 
 .DynarchCalendar1 table {
-  font: 9px "lucida grande",tahoma,verdana,sans-serif;
+  font: 12px "lucida grande",tahoma,verdana,sans-serif;
   margin-top: 0px;
   line-height: 0px;
 }
@@ -23,19 +24,19 @@
 }
 
 table.DynarchCalendar1-titleCont {
-  font-size: 95%; font-weight: bold;
+  font-size: 12px; font-weight: bold;
   color: #444;
   border: hidden;
   margin-left: 30%;
   z-index: 9;
   position: relative;
   margin-top: -6px;
-  background-color: green;
+  background-color: #444;
   text-align: center
 }
 
 .DynarchCalendar1-title div {
-  border: hidden;
+  border: 1px solid #aaa;
   padding: 10px 20px;
   color: black;
   background-image: url("../../imagenes/preventivos/drop-down.gif");
@@ -43,7 +44,7 @@ table.DynarchCalendar1-titleCont {
   background-position: 100% 50%;
 }
 .DynarchCalendar1-hover-title div {
-  border: hidden;
+  border: 1px solid #aaa;
   padding: 10px 20px;
   color: white;
   background-image: url("../../imagenes/preventivos/drop-down.gif");
@@ -51,7 +52,7 @@ table.DynarchCalendar1-titleCont {
   background-position: 100% 50%;
 }
 .DynarchCalendar1-pressed-title div {
-  border: hidden;
+ border: 1px solid #aaa;
   padding: 10px 20px;
   color: white;
   background-image: url("../../imagenes/preventivos/drop-up.gif");
@@ -62,26 +63,26 @@ table.DynarchCalendar1-titleCont {
 
 
 .DynarchCalendar1-bottomBar {
-  border:hidden;
+ border: 1px solid #aaa;
   padding: 2px;
   position: relative;
   text-align: center;
 }
 
 .DynarchCalendar1-bottomBar-today {
-    border: hidden;
-  padding: 8px 15px;
+   border: 1px solid #aaa;
+  padding: 8px 8px;
 }
 
 .DynarchCalendar1-hover-bottomBar-today {
-  border: hidden;
+  border: 1px solid #aaa;
   background: #fff;
-  padding: 8px 14px;
+  padding: 8px 8px;
 }
 .DynarchCalendar1-pressed-bottomBar-today {
-  border: hidden;
+ border: 1px solid #aaa;
   color: #fff;
-  padding: 8px 14px;
+  padding: 8px 8px;
 }
 
 
@@ -91,12 +92,13 @@ table.DynarchCalendar1-titleCont {
   position: relative;
   overflow: hidden;
   padding-top: 2px;
-  padding-left: 5px;
+  padding-left: 12px;
   padding-bottom: 2px;
+     background-color: #fff;
 }
 
-.DynarchCalendar1-first-col { padding-left: 0px; }
-.DynarchCalendar1-last-col { padding-right: 12px; }
+.DynarchCalendar1-first-col { padding-left: 10px; }
+.DynarchCalendar1-last-col { padding-right: 4px; }
 
 .DynarchCalendar1-animBody-backYear {
   position: absolute;
@@ -125,12 +127,13 @@ table.DynarchCalendar1-titleCont {
 }
 
 .DynarchCalendar1-dayNames {
-  padding-left: 0px;
+  padding-left: 5px;
   padding-right: 0px;
+  
 
 }
 
-.DynarchCalendar1-dayNames div {font-weight: bold; color: green; font-size: 9px; text-align: center;}
+.DynarchCalendar1-dayNames div {font-weight: bold; color: blue; font-size: 14px;  line-height: 4px;}
 
 .DynarchCalendar1-navBtn {
   position: absolute;
@@ -141,12 +144,12 @@ table.DynarchCalendar1-titleCont {
 .DynarchCalendar1-navBtn div {
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  height: 15px;
-  width: 16px;
+  height: 16px;
+  width: 12px;
   padding: 0px;
 }
 .DynarchCalendar1-hover-navBtn div {
-  border: hidden;
+  border: 1px solid #000;
   padding: 0;
   background-color: #fff;
 }
@@ -157,7 +160,7 @@ table.DynarchCalendar1-titleCont {
 .DynarchCalendar1-pressed-navBtn div {
   border: 1px solid #000;
   padding: 0;
-  background-color: #777;
+  background-color: #fff;
   color: #fff;
 }
 
@@ -199,11 +202,11 @@ table.DynarchCalendar1-titleCont {
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
+  width: 80%;
   height: 100%;
   background-color: gray;
   overflow: hidden;
-  color: black; font-size: 10px;
+  color: black; font-size: 12px;
   opacity: 1;
   filter: alpha(opacity=1);
 }
@@ -211,62 +214,62 @@ table.DynarchCalendar1-titleCont {
 .DynarchCalendar1-menu table td div {
   text-align: left;
   font-weight: bold;
-  padding: 10px 10px;
+  padding: 6px 6px;
 }
 .DynarchCalendar1-menu table td div.DynarchCalendar1-menu-month {
-  width: 3em;
+  width: 4em;
   text-align: center;
 }
 .DynarchCalendar1-menu table td div.DynarchCalendar1-hover-navBtn {
   border: 1px solid #000;
   padding: 8px 8px;
-  background-color: #fff;
+  background-color: #eee;
   color: #000;
 }
 .DynarchCalendar1-menu table td div.DynarchCalendar1-pressed-navBtn {
   border: 1px solid #000;
   padding: 2px 4px;
-  background-color: #777;
+  background-color: #fff;
   color: #fff !important;
 }
 
 .DynarchCalendar1-menu-year {
-  text-align: center;
-  font: 9px "lucida grande",tahoma,verdana,sans-serif;
+  text-align: left;
+  font: 12px "lucida grande",tahoma,verdana,sans-serif;
   font-weight: bold;
 }
-#fecha_desde,#fecha_hasta {font:black;}
+#fecha_desde,#fecha_hasta,#fechahoradetencion {font:black;}
 .DynarchCalendar1-menu-sep {
-  height: 1px; font-size: 9px; line-height: 1px;
-  overflow: hidden;
-  border-top: 1px solid #888;
+  height: 1px; font-size: 12px; line-height: 1px;
+  overflow: hidden
+  border-top: 1px solid #000;
   background: #fff;
   margin-top: 0px; margin-bottom: 0px;
   margin-left: 0px;
 }
 
-.DynarchCalendar1-time td { border: hidden;  font-size: 120%; font-weight: bold;}
-.DynarchCalendar1-time-hour, .DynarchCalendar1-time-minute { padding:0px 0px; }
+.DynarchCalendar1-time td { border: hidden;  font-size: 12px; font-weight: bold;}
+.DynarchCalendar1-time-hour, .DynarchCalendar1-time-minute { padding:2px 2px; }
 .DynarchCalendar1-time-down { background: url("../../imagenes/preventivos/sort_desc.png"); height: 4px;}
 .DynarchCalendar1-time-up { background: url("../../imagenes/preventivos/sort_asc.png"); }
 .DynarchCalendar1-time-sep { padding: 0 0px; }
-.DynarchCalendar1-pressed-time { background-color: #000; color: #fff;}
-.DynarchCalendar1-time-am { padding: 0px; width: 1em; text-align: center; }
+.DynarchCalendar1-pressed-time { background-color: #000; color: #ccc;}
+.DynarchCalendar1-time-am { padding: 0px; width: 0.5em; text-align: center; }
 
-/* body */
+/* body 
 
-.DynarchCalendar1-hover-week { background-color: #ddd; }
+.DynarchCalendar1-hover-week { background-color: #ddd; }*/
 
 .DynarchCalendar1-dayNames div, .DynarchCalendar1-day, .DynarchCalendar1-weekNumber {
-  width: 0.9em;
-  padding: 5px 5px;
+  width: 0.5em;
+  padding: 2px 6px;
 
 }
 .DynarchCalendar1-weekNumber {
   border-right: 1px solid #aaa;
-  margin-right: 0px;
+  margin-right: 4px;
   width: 0em !important;
-  padding-right: 0px !important;
+
 }
 
 .DynarchCalendar1-day {
@@ -278,25 +281,24 @@ table.DynarchCalendar1-titleCont {
 
 .DynarchCalendar1-day-disabled {
   opacity: 0.5;
-  text-shadow: 1px 1px 1px #fff;
+  text-shadow: 1px 1px 1px #1862Fe;
 }
 
 .DynarchCalendar1-hover-date {
-  padding: 5px 5px;
-  background-color: #eef;
-  border: 1px solid green;
-  margin: 2 !important;
-  color: #000;
+ padding: 8px 6px;
+ padding-right: 18px !important;
+  background-color: #1864FC;
+  color: #fff !important;
 }
 
-.DynarchCalendar1-day-othermonth.DynarchCalendar1-hover-date { border-color: #aaa; color: #888; }
+.DynarchCalendar1-day-othermonth.DynarchCalendar1-hover-date { border-color: 1px solid #aaa; color: #000; }
 
 .DynarchCalendar1-dayNames .DynarchCalendar1-weekend { color: #c22; }
 .DynarchCalendar1-day-othermonth.DynarchCalendar1-weekend { color: #d88; }
 
 .DynarchCalendar1-day-selected {
-  padding: 5px 5px;
-  margin: 0px;
+  padding: 8px 6px;
+ padding-right: 18px !important;
   background-color: #aaa;
   color: #000 !important;
 }
@@ -316,12 +318,12 @@ table.DynarchCalendar1-titleCont {
 }
 
 .DynarchCalendar1-focused .DynarchCalendar1-topBar, .DynarchCalendar1-focused .DynarchCalendar1-bottomBar {
-  background-color: #ccc;
-  border-color: #fff;
+  background-color: #eee;
+  border-color: #000;
 }
 
 .DynarchCalendar1-focused .DynarchCalendar1-hover-week {
-  background-color: #ccc;
+  background-color: #def;
 }
 
 .DynarchCalendar1-tooltip {
@@ -335,7 +337,7 @@ table.DynarchCalendar1-titleCont {
   border: 0px solid #aaa;
   border-top: 0;
   padding: 5px 5px;
-  background: #ddd;
+  background: #eee;
 }
 
 .DynarchCalendar1-focused .DynarchCalendar1-tooltipCont {

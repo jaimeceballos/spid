@@ -6,10 +6,9 @@
     window.showModalDialog("http://policia.chubut.gov.ar:8000/contacto/","","dialogWidth:670px;dialogHeight:540px;dialogTop:200;dialogLeft: 350");
   }
   </script>
-		   <table border="0" cellspacing="0" cellpadding="0" width="219px" style="margin:0 auto;">{% csrf_token %}
-                       <tr><td class="lefttitle"><b>Iniciar Sistema  S P I D </b>
-                        <a href="#" onclick="abrirMod();"> <img src="{% get_static_prefix %}imagenes/spid/contact.gif" style="border:0px solid #C0C0C0; width:15px; height:15px;" title="Enviar Consultas a:"></a></td></tr>
-                               <tr><td class="box_middle" >
+		   <table border="0" cellspacing="0" cellpadding="0" width="230px" style="margin:0 auto;">{% csrf_token %}
+                       <tr><td class="lefttitle"><b>INICIAR SESION</b>
+                                 <tr><td class="box_middle" >
                                  <table>
                                      {{ state }}
                                 	<form id="form" action="/spid/login/" method="POST">{% csrf_token %} 
@@ -17,26 +16,27 @@
 		                                <input type="hidden" name="next" value="{{ next }}" />
 		                                {% endif %}
                                     <input type="hidden" name="estado" id="estado" value="{{ state }}" /> 
-                                    <p><span class="rojo"></span>Unidad Regional  :
+                                    <p><span class="rojo"></span>Unidad Regional
                                     <select name="ureg" id="ureg" class="combopeq" size="1"/>
                                     <option {{form.unidades_regionales}}</option>
                                     </select></p>
                                     <p>
-                                     <span class="rojo"></span> Dependencias :
+                                     <span class="rojo"></span> Dependencias
                                     <select name="dependencias" id="dependencias" class="combopeq"  size="1"/>
                                     <option name="dependencias">{{formd.descripcion}}</option>
                                   </select>   </p>   
-		                                <h2>Usuario   :</h2> 
-		                                <input type="text" name="username" class="ame" value="{{ username }}" autocomplete="off"/><br />
-		                                <h2>Contraseña :</h2>
-		                                <input type="password" name="password" class="ame" value="" /><br />
-		                                <br>
+		                                <p><span class="rojo"></span>Usuario</p>
+		                                <input type="text" name="username" class="ame" value="{{ username }}" autocomplete="off"/>
+		                                <p><span class="rojo"></span>Contraseña</p>
+		                                <input type="password" name="password" class="ame" value="" />
+		                                <br><br>
                                   
 		                                  <input class="new-aqua" class="btn btn-success" type="submit" value="Conectar" name="logonea"/>
                                                 <input type="submit" class="new-aqua" name="registrar" value="Registrarse" />
                                         
                                 </form><br><br>
                                   <p>Olvido su contraseña? <a href="/resetpassword/"> <img src="{% get_static_prefix %}imagenes/spid/forget.png" style="border:0px solid #C0C0C0; width:20px; height:20px;"></a></p>
+                                  <p>Contactar a: <a href="#" onclick="abrirMod();"> <img src="{% get_static_prefix %}imagenes/spid/contact.gif" style="border:0px solid #C0C0C0; width:20px; height:20px;" title="Enviar Consultas a:"></a></p>
                                    </table>
                                 </td></tr>
                          	<tr><td class="box_foot"></td></tr>

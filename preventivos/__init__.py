@@ -9,6 +9,7 @@ from django.db.models.signals import post_save,post_delete
 from django.middleware import threadlocals
 from preventivos.models import *
 from django.utils.dates import MONTHS
+from django.utils import timezone 
 #import datetime
 from datetime import datetime, date
 import csv
@@ -45,11 +46,11 @@ def msg_render(msg):
     msgr=t.render(c)
     return msgr
 def hoydia():
-    ahora=datetime.datetime.now()
+    ahora=timezone.now()
     hoy=ahora.date()
     return hoy
 def hoyhora():
-    ahora=datetime.datetime.now()
+    ahora=timezone.now()
     hora=ahora.time()
     a_hora=str(hora)
     a_hora=a_hora[:8]
@@ -85,7 +86,12 @@ def registro_post_save(sender, instance, created, **kwargs):
         valor_nuevo=getattr(op,f.name)
         #print valor_nuevo
         #log_reg[f.name]=str(valor_nuevo)
-        ref=valor_nuevo
+        valor=str(valor_nuevo)
+        if len(valor)<=48:
+          ref=valor
+        else:
+          ref=user
+        
         if f.primary_key==True:
             log_pk['pk']=f.name
             log_pk['valor']=str(valor_nuevo)
@@ -106,7 +112,7 @@ def registro_post_save(sender, instance, created, **kwargs):
     log.link='Id Nro: '+str(log_pk['valor'])
     log.session='Ref : '+str(ref)
     log.action=str(accion)
-    log.fecha=datetime.datetime.now()
+    log.fecha=timezone.now()
     log.save()
     return
 #Registro de Proceso   
@@ -128,7 +134,11 @@ def registro_post_delete(sender, instance, **kwargs):
     for f in op.__class__._meta.fields:
         valor_nuevo=getattr(op,f.name)
         log_reg[f.name]=str(valor_nuevo)
-        ref=valor_nuevo
+        valor=str(valor_nuevo)
+        if len(valor)<=48:
+          ref=valor
+        else:
+          ref=user
         if f.primary_key==True:
             log_pk['pk']=f.name
             log_pk['valor']=str(valor_nuevo)
@@ -161,7 +171,7 @@ def registro_post_delete(sender, instance, **kwargs):
     log.link='Id Nro: '+str(log_pk['valor'])
     log.session='Ref : '+str(ref)
     log.action=str(accion)
-    log.fecha=datetime.datetime.now()
+    log.fecha=timezone.now()
     log.save()
     return
 
@@ -205,7 +215,7 @@ def log_user_activity(sender, **kwargs):
     
     users=User.objects.get(username=user)
     log_entry = Registrouser(user=users, action=action, tablas='user',
-                       link=request.path, session=session_key, fecha=datetime.datetime.now())
+                       link=request.path, session=session_key, fecha=timezone.now())
     log_entry.save()
 
 # Listener Signals

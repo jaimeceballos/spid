@@ -83,7 +83,7 @@ h2,h3 {font-size:9px;}
 #login legend {display:none}
 #login label {font-size:11px;font-weight:bold}
 #login input {margin-bottom:5px; height: 25px;}
-#inputtext1, #inputtext2, #user, #password, #last_name, #apeynom, #usuario, #propositouso, #nombres, #email{height: 25px;width:200px;padding:2px;font-family:"Arial";color:black}
+#inputtext1, #inputtext2, #user, #password, #last_name, #apeynom, #usuario, #propositouso, #nombres, #emails, #redsociales{height: 25px;width:200px;padding:2px;font-family:"Arial";color:black}
 #dni,#username,#documento {width:60px;padding:2px;font-family:"Arial";color:#000; }
 #apeynom, #apellidos, #propositouso, #first_name {width:170px;padding:2px;font-family:"Arial";color:black}
 #nro,#anio {width:60px;padding:2px;font-family:"Arial";color:black;height: 22px;margin-top: 5px;}
@@ -756,7 +756,7 @@ fieldset legend {
 }
 
 .combolistas {
-  height: 100px;
+  height: 180px;
   width: 120px;
   color: black;
   display: inline-block;
@@ -783,7 +783,32 @@ fieldset legend {
    -webkit-column-gap: 2em;
   
 } 
-
+.multi2{
+-moz-column-count: 5;
+   -moz-column-gap: -1em;
+   
+   -webkit-column-count: 5;
+   -webkit-column-gap: 2em;
+display: inline-block;
+padding-left: 15px;
+margin-top: -5px;
+vertical-align: top;
+font-weight: bold;
+  
+} 
+.multi8{
+-moz-column-count: 2;
+   -moz-column-gap: 1em;
+   
+   -webkit-column-count: 2;
+   -webkit-column-gap: 1em;
+display: inline-block;
+padding-left: 15px;
+margin-top: -5px;
+vertical-align: top;
+font-weight: bold;
+  
+} 
 .multi6{ 
     word-wrap: break-word;
     width:600px;

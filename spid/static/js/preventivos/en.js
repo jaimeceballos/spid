@@ -2,9 +2,9 @@ Calendar1.LANG("es", "Spanish", {
 
         fdow: 1,                // first day of week for this locale; 0 = Sunday, 1 = Monday, etc.
 
-        goToday: "Hoy es",
+        goToday: "Hoy",
 
-        today: "Hoy es",         // appears in bottom bar
+        today: "Hoy",         // appears in bottom bar
 
         wk: "sem",
 
@@ -27,18 +27,18 @@ Calendar1.LANG("es", "Spanish", {
                "Noviembre",
                "Diciembre" ],
 
-        smn : [ "Ene",
-                "Feb",
-                "Mar",
-                "Abr",
-                "May",
-                "Jun",
-                "Jul",
-                "Ago",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dic" ],
+        smn : [ "Ene ",
+                "Feb ",
+                "Mar ",
+                "Abr ",
+                "May ",
+                "Jun ",
+                "Jul ",
+                "Ago ",
+                "Sep ",
+                "Oct ",
+                "Nov ",
+                "Dic " ],
 
         dn : [ "Sunday",
                "Monday",

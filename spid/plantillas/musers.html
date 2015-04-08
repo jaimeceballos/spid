@@ -1,0 +1,1796 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+      {% load static %}
+       <meta charset='utf-8'>
+  <title>SPID - Manual de Usuario</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>
+Abiword HTML Document
+        </title>
+        <meta name="author" content="fernando">
+        <style type="text/css">
+<!-- #toc,
+.toc,
+.mw-warning {
+	border: 1px solid #aaa;
+	background-color: #f9f9f9;
+	padding: 5px;
+	font-size: 95%;
+}
+#toc h2,
+.toc h2 {
+	display: inline;
+	border: none;
+	padding: 0;
+	font-size: 100%;
+	font-weight: bold;
+}
+#toc #toctitle,
+.toc #toctitle,
+#toc .toctitle,
+.toc .toctitle {
+	text-align: center;
+}
+#toc ul,
+.toc ul {
+	list-style-type: none;
+	list-style-image: none;
+	margin-left: 0;
+	padding-left: 0;
+	text-align: left;
+}
+#toc ul ul,
+.toc ul ul {
+	margin: 0 0 0 2em;
+}
+#toc .toctoggle,
+.toc .toctoggle {
+	font-size: 94%;
+}p, h1, h2, h3, li {
+	color:#000000;
+	font-family:'Times New Roman';
+	font-size:12pt;
+	text-align:left;
+	vertical-align:normal;
+}
+body{
+padding-top : 0.0500in;
+padding-bottom : 1.0000in;
+padding-left : 1.0000in;
+padding-right : 1.0000in;
+font-family:'Times New Roman';
+font-variant:normal;
+widows:2;
+font-style:normal;
+text-indent:0in;
+color:#000000;
+background-color: #f3f3f3;
+font-weight:normal;
+font-size:12pt;
+text-decoration:none;
+text-align:left;
+} -->
+        </style>
+
+    </head>
+<body>        <div >
+     
+            <div class="" style="text-align:center;background-color: #0099ff;">
+                 
+      <p class="" style="text-align:center">
+<span style="font-style:italic;font-size:16pt;font-family:'Droid Sans Ethiopic'">Proyecto Web</span>
+            </p>
+            <p class="" style="text-align:center">
+<span style="font-style:italic;font-size:16pt;font-family:'Droid Sans Ethiopic'">Sistema Informático</span>
+            </p>
+            <p class="" style="text-align:center">
+<span style="font-style:italic;font-size:16pt;font-family:'Droid Sans Ethiopic'"> de Información Policial</span>
+            </p>
+            <p class="" style="text-align:center">
+</p>
+            </div>
+         <hr><p class="" style="text-align:center">
+<span style="font-style:italic;font-size:14pt;font-family:'Droid Sans Ethiopic';text-decoration:underline">Manual de Usuario</span>
+            </p><hr>
+          
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;font-size:14pt;font-family:'Times New Roman';color:#000000">SPID</span><span style="font-size:12pt"> es una herramienta informática para la Gestión y Control de actuaciones policiales dentro del ámbito judicial-contravenciónal, en donde la información en las bases de datos es, como su nombre lo indica, almacenar datos organizados siguiendo un determinado esquema o modelo de datos que facilite su almacenamiento, recuperación y modificación, para su posterior explotación de información en materia de estadísticas que faciliten la generación de estrategias de prevención.</span>
+            </p>
+           
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">Toda la información almacenada será remitida al Poder Judicial, como así también el sistema permitirá enviar los preventivos a otros organismos u oficinas policiales.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt;text-decoration:underline">Quienes lo van autilizar:</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">-Administrador DBA&lt;todos los privilegios&gt;</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">-Empleado de Dependencias Policiales&lt;según su función El Administrador debe designar privilegios&gt;</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">-Visitantes &lt;Fiscalía, Jefes policiales, gobierno&gt;</span>
+            </p>
+           <hr>
+  <p class="" style="text-align:left">
+<span style="font-weight:bold;font-size:14pt;font-family:'Times New Roman';color:#000000">IMPORTANTE:</span></p>
+<p> La carga, modificacion,consulta de Preventivos y Ampliaciones pueden hacerlas solamente aquellos usuarios que tengan los permisos necesarios y autorizados para realizar dichas tareas. </p>
+<p>Por ejemplo un empleado policial que cumpla la funcion Actuante tendra el rol de policia con los privilegios de:</p>
+<p><ul><li> Cargar  (crear, editar preventivos y ampliaciones)</li>
+      <li> Modificar(mientras no hayan sido Informado) </li></ul></p>
+      <p>Los privilegios que tienen los usuarios son unicamente en el ambito de la Dependencia Policial a la que actualmente esten prestando servicio</p>
+<p>Para el caso de hacer Busquedas y consultas podran hacerlas sin restrincion de modo lectura y obtener la misma por Impresora aquellos que no pertenecen a la jurisdiccion de la Dependencia policial.-</p>
+<p>Personal de las Radios Cabeceras tienen los privilegios de realizar cualquier tipo de tareas sobre todos los preventivos y ampliaciones de la Jurisdiccion segun la Unidad Regional que pertenezcan</p></span>
+            </p>
+            <hr>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt;text-decoration:underline">Requisitos necesarios para la utilización del Sistema:</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">1-Disponer de una Conexión a Internet.</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">2-Navegadores Web: Mozilla Firefox(recomendado),</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">Chrome, Explored de windows.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">3-Registrarse como usuario a través de un formulario de registro.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">4-Poseer Usuario y contraseña de ingreso al sistema.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-size:12pt">Para poder utilizar el Sistema SPID se debe colocar en el navegador web:</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:center">
+<span style="font-weight:bold;font-size:12pt">http://www.policia.chubut.gov.ar:8000/spid/</span><span style="font-size:12pt"></span></p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:center">
+<span style="font-size:12pt">A través de esta petición que hacemos con esta dirección web nos dará como resultado la siguiente imagen:</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:center">
+<img style="width:59.5mm; height:83.9mm" src="{% get_static_prefix %}musers.html_files/7788283e-d54c-11e4-95ef-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:justify">
+Para poder ingresar al Sistema lo primero que se debe hacer es; solicitar USUARIO y CONTRASEÑA a través de un formulario de Registro de Usuario haciendo click en el botón<span style="font-weight:bold">[Registrarse]</span>
+            </p>
+            <p class="" style="text-align:left">
+</p>
+            <p class="" style="text-align:left">
+<img style="width:158.8mm; height:114.3mm" src="{% get_static_prefix %}musers.html_files/38613d4c-d54e-11e4-95ef-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:left">
+</p>
+            <p class="" style="text-align:left">
+<span>En este formulario el solicitante deberá llenar los campos que se necesitan para poder ser usuario del sistema:</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>- Apellido y Nombres</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span>- Nro de DNI.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span>- Seleccionar jerarquía.</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span>- Destino(Dependencia) actual del solicitante.</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span>- E-mail &nbsp;de uso personal y privado(puede ser de la Institución y/o de otros proveedores ejemplo: Hotmail, Gmail, etc.-)</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span>- Solicitud/Personas: en este cuadro de texto como se describe en la pantalla el solicitante debe ingresar todos los datos ya sea uno o &nbsp;muchos los usuarios.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>Además de los datos anteriores debe enviar si el usuario es Actuante/Preventor o ambos, Fecha de nacimiento, Estado civil, Lugar de Nacimiento, Lugar de Residencia, y es muy importante que el email sea de uso privado y personal. Estos datos son mínimos y requeridos para la creación de Usuario.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>Una vez cumplimentado el ingreso de los datos en el Formulario el solicitante debe enviarlo a través del botón</span><span style="font-weight:bold">[ENVIAR].</span><span style="font-weight:bold">Cuando se realiza el envió de este formulario el sistema permite imprimir un documento de tipo Nota en donde se detalla la solicitud de registro al Sistema para constancia del solicitante.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+El solicitante al término de unas horas o días, recibirá en su correo privado un detalle de como debe ingresar al sistema.-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+- UNIDAD REGIONAL y DEPENDENCIA: Destino actual de trabajo del empleado.-
+            </p>
+            <p class="" style="text-align:justify">
+- USUARIO : Nro de DNI.
+            </p>
+            <p class="" style="text-align:justify">
+- PASSWORD : un código generado por el sistema de forma aleatoria.
+            </p>
+            <p class="" style="text-align:justify">
+- Dirección web del sistema<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">http://www.policia.chubut.gov.ar:8000/spid/</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:center">
+<img style="width:63.2mm; height:88.1mm" src="{% get_static_prefix %}musers.html_files/4c9c3152-d555-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:center">
+<span></span>
+            </p>
+            <p class="" style="text-align:center">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">IMPORTANTE:</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000"> la contraseña debe ser ingresada tal cual fue enviada por email al usuario.</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span>A través del botón</span><span style="font-weight:bold">[Conectar]</span><span> el usuario puede iniciar sesión.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span>En caso de que el usuario ya haya ingresado al Sistema con anterioridad y que por olvido no recuerde su contraseña, podrá recuperarla haciendo click en la tilde de color verde en donde dice Olvido su contraseña?, el sistema guiará al usuario a completar el ingreso de la dirección de email de uso personal y privado con la que se dio de alta como usuario en el sistema.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>Nuevamente el usuario recibe en su cuenta de correo otro email con una guía de como debe continuar para ingresar/iniciar Sesión en el sistema.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>El botón de Contactar a: tiene la posibilidad de enviar alguna consulta y/o comentarios al Administrador del Sistema.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>El usuario cuando inicia sesión en el sistema muestra lo siguiente:</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:94.2mm" src="{% get_static_prefix %}musers.html_files/95c67896-d556-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>Si el usuario ingresa por primera vez al sistema además de esta pantalla tendrá la posibilidad de cambiar su contraseña por una nueva que solamente el usuario tendrá el conocimiento de la misma y que no deberá divulgarla a otras personas.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>El gráfico anterior consta de las siguientes partes:</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>1- Parte Superior es la Barra de Menú en donde el usuario tiene acceso a las distintas opciones que ofrece la misma. Estas opciones son según el tipo y los permisos que se les otorgaron al usuario al momento de su alta en el sistema.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>2- Parte Central es el Cuerpo en donde el usuario puede trabajar con los formularios sobre los cuales tiene los permisos de acceso. Ejemplo la carga de preventivos.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>3- Parte Inferior es la Barra de Estado en donde se muestra Tipo de Usuario, Apellido y Nombre y Destino actual del usuario.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:88.4mm" src="{% get_static_prefix %}musers.html_files/a5f750da-d558-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span>Las distintas opciones que muestra el Menu Principal depende de la función y permisos del usuario:[Para ver cada una de ellas hacer click en:]
+</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Preventivos"></a><a href="#1- Preventivos : Nuevo"></a><span style="font-weight:bold">Preventivos - Nuevo</span>                    <ul>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Preventivos : Nuevo"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">1er Paso</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#2do. Paso"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">2do Paso</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#3er Paso:"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">3er Paso</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#4to Paso. :"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">4to Paso</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#HECHO DELICTIVO"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Hecho Delictivo</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Delitos cometidos"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Delitos</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#PERSONAS INVOLUCRADAS"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Persona Involucradas</span></a>                            <ul>
+                                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Roles:"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Roles</span></a>
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#LUGAR DEL HECHO"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Lugar del Hecho</span></a>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Elementos en Preventivos"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Elementos</span></a>                    <ul>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#ARMAS de FUEGO"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Armas de Fuego</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#VEHICULOS"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Vehículos - Automotor</span></a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#relato de la denuncia">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Breve Relato Denuncia</span></a>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#INFORMAR"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">Preventivos - Informar</span></a>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Imprimir Preventivos :"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">Preventivos - Imprimir</span></a>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Ampliaciones:"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">Ampliaciones</span></a>                    <ul>
+                        <li>
+<a href="#informada"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Ampliaciones - Informar</span></a>
+                        </li>
+                        <li>
+<a href="#Imprimir Ampliacion"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Ampliaciones - Imprimir</span></a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in;margin-left:0pt">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in;margin-left:0pt">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#2- Personas:"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Personas</span></a>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-left:0.5000in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0.5000in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0.5000in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#3- Búsqueda"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Búsqueda</span></a>                    <ul>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Menú Búsqueda"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">Preventivos</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Busqueda por Descripcion de Hechos"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Descripcion de Hechos</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Busqueda de Delitos"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Delitos</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Búsqueda de Ampliación"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Ampliaciones</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Consultas de Personas Involucr"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Personas Involucradas</span></a>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Búsqueda de Elementos Involuc"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Elementos involucrados</span></a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-left:0.5000in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><a href="#Mapa del Delito"><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Mapa de Delito</span></a>
+                </li>
+
+            </ul>
+            <hr><br>
+            <p class="" style="text-align:justify;margin-left:0.5000in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0.5000in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+<span style="font-weight:bold">1-</span>                <a name="Preventivos : Nuevo">
+<span style="font-weight:bold">Preventivos : Nuevo</span>
+                </a>
+<span style="font-weight:bold"></span><span> Permite la creación de preventivos.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:68.5mm" src="{% get_static_prefix %}musers.html_files/836ebba2-d562-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Esta gráfica representa la primera parte de la creación y carga de un preventivo, donde permite el ingreso de la Fecha y Hora de la actuación<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000"> y de la Carátula Policial del Hecho, Se debe tener en cuenta</span>que la Fecha y Hora debe ser siempre menor e igual a la fecha actual.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">[CONTINUAR]</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="2do. Paso">
+<span style="font-weight:bold">2do. Paso</span>
+                </a>
+<span style="font-weight:bold">.</span>
+            </p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:66.7mm" src="{% get_static_prefix %}musers.html_files/0921e656-d569-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">Selección de Actuantes y Preventores con el ingreso de las 4 primeras letras</span>.
+            </p>
+            <p class="" style="text-align:justify">
+Botones:
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span>Inicio : Vuelve al primer paso de la carga de preventivos.
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Anterior : Vuelve al paso anterior para este caso regresa al primer paso de la carga.</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Continuar: Permite seguir con la carga 3er paso de preventivos.</span>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+                <a name="3er Paso:">
+<span style="font-weight:bold">3er Paso:</span>
+                </a>
+ Seleccionar las Autoridades a las que se da conocimiento del Hecho mediante el envió del preventivo por email.
+            </p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+<img style="width:158.8mm; height:81.8mm" src="{% get_static_prefix %}musers.html_files/b2088c92-d56a-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+                <a name="4to Paso. :">
+<span style="font-weight:bold">4to Paso. :</span>
+                </a>
+<span style="font-weight:bold"></span><span style="font-weight:bold">Informar Autoridades la Actuación Policial.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:89.1mm" src="{% get_static_prefix %}musers.html_files/73a7d1fa-d56b-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En este formulario el usuario debe confirmar Actuante y Preventor de la Actuación Policial como así también puede cambiar las autoridades a las que se les informa el Preventivo.
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">[GUARDAR]</span><span style="font-weight:bold">con este botón el sistema almacena los datos de la creación del Preventivo.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="HECHO DELICTIVO">
+<span style="font-weight:bold">HECHO DELICTIVO</span>
+                </a>
+<span style="font-weight:bold"> : Datos importantes que el usuario tiene la obligación de cargar.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:123.8mm" src="{% get_static_prefix %}musers.html_files/39ef752c-d614-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En la figura anterior muestra un formulario que en su parte superior detalla que el Preventivo por ejemplo fue creado con fecha 29/03/2015 por el usuario Dorado, Fernando.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En cuanto a los demás datos que este usuario cargo siguiendo los 4 pasos para crear un nuevo preventivo también son visualizado en el formulario.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Si observamos que en la parte central e inferior la figura anterior muestra que el usuario puede seguir cargando datos, para este caso se refiere a datos(obligatorios) del Hecho Delictivo:
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-decoration:underline;color:#000000">PREVENTIVO : HECHO</span><span style="font-weight:bold">- Motivo del Hecho</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:89.7mm" src="{% get_static_prefix %}musers.html_files/f0529954-d617-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">- Fecha y Hora de Inicio - Fecha y Hora Final del Hecho Sucedido.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:69.3mm" src="{% get_static_prefix %}musers.html_files/34b19fc8-d618-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:60.3mm" src="{% get_static_prefix %}musers.html_files/3968c64a-d618-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">-</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"></span>                <a name="Delitos cometidos">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Delitos cometidos</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">(Tipos / delitos / modalidades )</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:84.1mm" src="{% get_static_prefix %}musers.html_files/cff81656-d618-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:89.2mm" src="{% get_static_prefix %}musers.html_files/15a7d010-d619-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:73.0mm" src="{% get_static_prefix %}musers.html_files/1bcce3e0-d619-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:69.6mm" src="{% get_static_prefix %}musers.html_files/241dff98-d619-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Las figuras anteriores muestran como se debe cargar los datos del Hecho Delictivo, selección en la Lista desplegable: Motivo del Hecho(Denuncia Particular,Intervención Policial,Orden Judicial).
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+La Fecha y Hora Desde y Hasta se refiere al tiempo en que sucedido el Hecho.-
+            </p>
+            <p class="" style="text-align:justify">
+Los delitos cometidos se clasifican según su Tipo / delito y modalidad, la elección de estos ítems el usuario debe hacer click en cada &nbsp;lista desplegable y seleccionar según lo que aconteció en &nbsp;el Hecho.-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Una vez que el usuario esta seguro que haber cargado datos correctos podrá guardar los mismos haciendo click en el botón<span style="font-weight:bold">[AGREGAR]</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:104.0mm" src="{% get_static_prefix %}musers.html_files/72784864-d61a-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En caso de que se hayan cometidos más delitos, el usuario tiene la posibilidad de agregar mas delitos podrá realizarlo de la misma forma como la que agrego anteriormente ej. ROBO como se puede ver en la figura anterior.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Una vez que se finalizo con la carga de los datos del Hecho, el sistema permite que el usuario siga con la carga del Preventivo. Siguiente paso Personas Involucradas en el Hecho.-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="PERSONAS INVOLUCRADAS">
+<span style="font-weight:bold">PERSONAS INVOLUCRADAS</span>
+                </a>
+<span style="font-weight:bold"> :</span> EL Sistema SPID ofrece la posibilidad de Agregar personas según el Rol que protagonizó la misma dentro del Hecho, pero antes de cargar estos datos el sistema muestra al usuario la siguiente pantalla.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:80.7mm" src="{% get_static_prefix %}musers.html_files/9570ee90-d61d-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Aquí como se puede ver en la figura el Sistema a medida de que el usuario va cargando los distintos datos del Preventivo, los mismos se va visualizando.<span style="font-weight:bold">-DATOS DEL HECHO OCURRIDO.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">IMPORTANTE: se recomienda leer siempre los mensajes de ayuda que ofrece el sistema.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">Para la carga de Personas involucradas el sistema permite al usuario registrar personas de la siguiente forma:</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Búsqueda de Personas :</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> En este caso el usuario puede buscar una persona que haya participado de otro hecho y que los datos de la misma hayan sido guardados en la Base de Datos. Esta búsqueda la puede hacer mediante el ingreso de: 1-DNI, 2-Apellido y 3-Nombres.</span>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-left:0.5000in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Nuevo :</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Haciendo click en este botón el sistema guiará al usuario hacia otra pantalla en donde los datos de la personas deberán ser cargados de forma completa, por la razón de que la misma no Existe en la Base de Datos y/o porque no participó en ningún Hecho.-</span>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">Por Ejemplo realicemos una búsqueda de Persona que supuestamente existe en la Base de Datos: La hacemos por Apellido para este caso ingresamos «garcia «</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:81.2mm" src="{% get_static_prefix %}musers.html_files/e4c754ce-d61e-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">Para realiza la búsqueda una vez ingresado el texto de la búsqueda hacemos click en</span><span style="font-weight:bold">[BUSCAR]</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:83.9mm" src="{% get_static_prefix %}musers.html_files/49d29bee-d61f-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+El sistema nos devolverá esta pantalla: la búsqueda que hace el sistema es toda persona que existe en la base de datos y que el Apellido sea garcia o contenga la palabra garcia.
+            </p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:100.8mm" src="{% get_static_prefix %}musers.html_files/b1240d96-d61f-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+El resultado de la búsqueda fue exitosa y para este caso encontró 9 registros que coinciden y que existen en la base de datos Personas de apellido Garcia. Como se puede apreciar en el pantalla el cuadro del resultado permite ver que cada 5 registros encontrados, esto se puede modificar haciendo click en el cuadro de Ver cada(parte superior del cuadro de resultado de búsqueda), también ofrece la posibilidad de buscar entre los registros encontrados por los distintos campos que se muestran: Tipo y Nro de Doc. - Apellido y Nombres - Fecha de Nacimiento - Profesión / Ocupación.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Si algunas de esta personas es la que esta involucrada en el hecho ocurrido, el usuario puede seleccionarla haciendo click en el Tipo y Nro de documento(link de color azul). Una vez seleccionada la persona el sistema muestra la siguiente pantalla.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En caso de que la persona que se esta buscando no figura en el cuadro anterior y quiere buscarla por Dni y/o por Nombres, &nbsp;inicialice la búsqueda mediante el accionar del botón de color negro forma de fecha en-curva.-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:center">
+<img style="width:69.1mm; height:23.0mm" src="{% get_static_prefix %}musers.html_files/585b21ca-d626-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:94.5mm" src="{% get_static_prefix %}musers.html_files/b3ed0f84-d627-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:57.1mm" src="{% get_static_prefix %}musers.html_files/de372a5e-d627-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+La Persona Involucrada que existe en la base de Datos tendrá los datos previamente cargados al momento de la carga del rol de la misma como se muestra anteriormente.-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Al momento de seleccionar el Rol y según el mismo, el sistema permite cargar datos adicionales por ejemplo:
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="Roles:">
+<span style="font-weight:bold;text-decoration:underline">Roles:</span>
+                </a>
+<span style="font-weight:bold;text-decoration:underline"> Denunciante,Denunciado,Víctima</span> los datos adicionales son Es Menor?(SI/NO) - &nbsp;Persona Jurídica :(SI/NO) en caso de que sea SI ingrese a que Institución pertenece?(Descripción).-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:24.9mm" src="{% get_static_prefix %}musers.html_files/705a40bc-d62b-11e4-801e-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;text-decoration:underline">Roles: Aprehendido,Detenido</span> los datos adicionales son<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">Es Menor?(SI/NO) - Esta Detenido (SI/NO), Fecha y Hora de Ingreso, fue detenido bajo la descripción Tentativa (SI/NO), Infraganti (SI/NO).-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:38.1mm" src="{% get_static_prefix %}musers.html_files/3c9594ca-d630-11e4-8dd7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:38.9mm" src="{% get_static_prefix %}musers.html_files/43602ea0-d630-11e4-8dd7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">Estos datos mencionados anteriormente según el rol de la persona involucrada son importante y está en la obligación del usuario ingresar al</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">MENOS el Rol y si es Menor(SI/NO).-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">En cuanto a los demás datos de la persona que falten cargar y/o modificar y que el sistema permita el usuario puede hacerlo, tanto para los datos personales, como así también para los datos de los Padres y los datos del Domicilio de la Persona en cuestión. En la parte del Domicilio en donde dice</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">Fecha desde</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000"> se refiere a la fecha desde cuando esta viviendo la persona en ese domicilio y la fecha de actualización es una fecha que es útil para tener actualizado el ultimo domicilio de residencia del involucrado.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">Recordemos que en el caso de que la persona no exista en la base de datos, se puede agregar en Personas Involucradas mediante el accionar del Botón [NUEVO], pero para este caso la carga de datos de la Persona es total(ya sea</span><span style="font-weight:bold"></span><span style="font-weight:bold">datos Personales,de los Padres y del Domicilio actual).</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">Una vez cargados estos datos el usuario puede guardarlos mediante el botón</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">[GUARDAR]</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:left">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">El sistema después de guardar las personas involucradas muestra la siguiente pantalla, en donde el usuario tiene la posibilidad de borrar la persona en caso de que se haya equivocado.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+<img style="width:156.1mm; height:88.4mm" src="{% get_static_prefix %}musers.html_files/41.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="LUGAR DEL HECHO">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-decoration:underline;color:#000000">LUGAR DEL HECHO</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-decoration:underline;color:#000000">:</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Formulario de carga que permite al usuario ingresar datos relevantes para describir el lugar del Hecho ocurrido y también para la formación de un Mapa de Delito que ayuda a la toma de decisiones en cuanto a la PREVENCION DE DELITOS.-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:68.5mm" src="{% get_static_prefix %}musers.html_files/de39e1da-d6cd-11e4-9db0-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+En esta primera parte del Formulario de carga del Lugar del Hecho se puede observar<span style="font-weight:bold">Detalles del Lugar</span> que el usuario deberá seleccionar en las listas desplegables de:
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Tipo Lugar</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> que hace referencia al tipo en donde posiblemente se haya cometido el Delito.</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Ej. VIA PUBLICA.-</span>                    <ul>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Zona</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> que hace referencia a la zona de población según su clasificación:</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Ej. ZONA URBANA</span>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:45.8mm" src="{% get_static_prefix %}musers.html_files/56727eaa-d6ce-11e4-9db0-a14d156e55c1.png" title="" alt="" align=""><img style="width:158.8mm; height:32.5mm" src="{% get_static_prefix %}musers.html_files/5d61a2c2-d6ce-11e4-9db0-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Datos del Barrio</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"> en esta parte del formulario, el usuario puede seleccionar e ingresar datos referenciales del Barrio en donde se cometió el Hecho.-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:49.2mm" src="{% get_static_prefix %}musers.html_files/a0e1fac6-d6d1-11e4-9db0-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">La selección del Barrio es ingresando una letra que contenga el nombre del Barrio que esta buscando. En caso de no este en la Lista de selección el usuario puede agregar un nuevo barrio haciendo click en donde dice</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">[Agregar barrio].-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-decoration:underline;text-transform:none;color:#000000">Parte Central del Formulario de Lugar:</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <div style="background-color: #ffffff;  border: solid; clear: none;">
+                <p style="text-align:center;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">IMPORTANTE :</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">En el caso que se conozca calle y altura del hecho, se &nbsp;seleccionara la calle desde el cuadro calle y se indicara la altura en el cuadro numero. En caso de haber ocurrido en una intersección directamente selecciónelo desde el mapa arrastrando el señalizador de calles. Si la calle que necesita no esta disponible en el listado solamente seleccione desde el mapa la calle e indique la altura en el cuadro numero.</span>
+                </p>
+                <p class="" style="text-align:center;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+                <p class="" style="text-align:center;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">PARA LOS HECHOS EN DONDE SE DESCONOCE EL LUGAR, MANTENGA CALLE Y NRO VACIOS, TAMPOCO SELECCIONE UN PUNTO EN EL MAPA.</span>
+                </p>
+
+            </div>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:79.1mm" src="{% get_static_prefix %}musers.html_files/e74a963e-d6d2-11e4-9db0-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Para ingresar la Calle y altura del lugar del Hecho el usuario tiene 2 forma de hacerlo:</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">1- En el caso que no se tenga la calle del lugar el usuario deberá ubicar la misma en el mapa arrastrando el señalizador hacia la calle y altura aproximada del lugar del Hecho. El sistema le indicara en donde esta situado, en caso de que la numeración en el mapa de google no es la correcta puede ingresar la misma en el cuadro de texto de Numero / altura y luego hacer click en el botón</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">[UBICAR EN MAPA].-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:99.2mm" src="{% get_static_prefix %}musers.html_files/7eee3df6-d6fb-11e4-9c2b-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">2- Es seleccionando la calle en la lista desplegable de calles y colocar la altura en Numero.</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:97.1mm" src="{% get_static_prefix %}musers.html_files/900a183a-d6fb-11e4-9c2b-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Para ambos casos e</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">l paso a seguir: Cargar condiciones climáticas y en caso de no ingresar estos datos el usuario deberá guardar el lugar haciendo click en el Botón</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"> [GUARDAR].-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">El Ingreso de los Datos de las condiciones climáticas del Lugar no es OBLIGATORIO.-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:54.2mm" src="{% get_static_prefix %}musers.html_files/efed46b0-d632-11e4-8dd7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">El botón</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000">[Limpiar Datos]</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';color:#000000"> sirve como su nombre lo indica limpiar el formulario porque no están correctos los datos cargados, siempre cuando no haya grabado/guardado los datos.-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">Una vez finaliza la carga del Lugar y los mismos datos se guardaron en la Base de Datos, el sistema permite mostrar nuevamente el Formulario del Lugar con todos los datos que fueron guardados, por lo que el usuario puede modificarlos nuevamente o bien pasar a cargar los Elementos involucrados en el Preventivos.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:134.1mm; height:25.1mm" src="{% get_static_prefix %}musers.html_files/6f3bc742-d6fc-11e4-9c2b-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">En la carga de</span>                <a name="Elementos en Preventivos">
+<span style="font-weight:bold;text-decoration:underline">Elementos en Preventivos</span>
+                </a>
+<span style="font-weight:bold"> se lleva a cargo por parte del usuario/empleado policial a través de un formulario que consta de :</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:109.5mm" src="{% get_static_prefix %}musers.html_files/70b5808c-d72d-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Como se indica en el formulario los Datos Obligatorios son todos, y en cuanto a las <span style="font-weight:bold">características del elemento</span> es importante su carga porque ayuda mucho al Área de Investigaciones cuando existen los allanamientos ordenados por la Justicia por ejemplo.-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Tipo de Elemento</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> hace referencia a que si los mismos son de tipo:</span>                    <ul>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">DENUNCIADOS</span>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> SECUESTRADOS</span>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> UTILIZADOS</span>
+                        </li>
+                        <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">UTILIZADOS Y/O SECUETRADOS</span>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+            <p class="" style="text-align:left;margin-left:0pt;text-indent:0in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Rubro</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> hace referencia a la agrupación que tienen los elementos en cuanto a su descripción. por Ejemplo Electrónica, Ferreterías, Documentos Papeles.</span>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:left;margin-left:0pt;text-indent:0in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Categorías</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> son elementos agrupados dentro de una referencia de Rubro. por ejemplo
+DNI, Carnet de Conducir, Tarjetas de Débito en el rubro Documentos.-</span>
+                </li>
+
+            </ul>
+            
+            <p class="" style="text-align:left;margin-left:0pt;text-indent:0in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Cantidad </span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">como su nombre lo indica es expresada en números. esta referencia es en conjunto con</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> UNIDAD(unidades de medidas: Metros, Litros, Toneladas, Cajas, etc.-)</span>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:left;margin-left:0pt">
+</p>
+            <p class="" style="text-align:left;margin-left:0pt">
+</p>
+            <p class="" style="text-align:left;margin-left:0pt">
+</p>
+            <p class="" style="text-align:left;margin-left:0pt">
+<img style="width:158.8mm; height:95.2mm" src="{% get_static_prefix %}musers.html_files/0a30d908-d730-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:100.0mm" src="{% get_static_prefix %}musers.html_files/3751c26c-d730-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">Cuando el Objeto involucrado en el Hecho cualquiera sea su Tipo el Sistema SPID permite cargar distintos tipo de datos y estos son para los</span><span style="font-weight:bold"> Rubros de</span>                <a name="ARMAS de FUEGO">
+<span style="font-weight:bold">ARMAS de FUEGO</span>
+                </a>
+<span style="font-weight:bold"> y VEHICULOS.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:70.1mm" src="{% get_static_prefix %}musers.html_files/8aaa38da-d731-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:77.3mm" src="{% get_static_prefix %}musers.html_files/d62fa682-d731-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:89.2mm" src="{% get_static_prefix %}musers.html_files/31804244-d732-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:88.1mm" src="{% get_static_prefix %}musers.html_files/64308aa0-d732-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="VEHICULOS">
+<span style="font-weight:bold;text-decoration:underline">VEHICULOS</span>
+                </a>
+<span style="font-weight:bold;text-decoration:underline">:</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:65.1mm" src="{% get_static_prefix %}musers.html_files/c09063c4-d732-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:74.6mm" src="{% get_static_prefix %}musers.html_files/e5a6b424-d732-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:88.6mm" src="{% get_static_prefix %}musers.html_files/109e9976-d733-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Por último queda por parte del usuario cuando termine de cargar los datos del Formulario Elementos y que los mismos son correctos es hacer click en<span style="font-weight:bold">[GUARDAR]</span>guarda todos los datos en la Base o hacer click en<span style="font-weight:bold">[LIMPIAR]</span>para volver a cargar.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Una vez guardados los datos el sistema &nbsp;SPID muestra los datos guardados de la siguientes forma.
+            </p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:50.8mm" src="{% get_static_prefix %}musers.html_files/d79f8ba2-d733-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En caso de que el elemento guardado no haya sido correcto el sistema SPID ofrece al usuario borrar este elemento.
+            </p>
+            <p class="" style="text-align:center">
+<img style="width:17.2mm; height:17.2mm" src="{% get_static_prefix %}musers.html_files/450c31e0-d734-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify"><a name="relato de la denuncia">
+La carga de Preventivos termina con la carga de la Descripción del Hecho (relato de la denuncia).</a>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:34.1mm" src="{% get_static_prefix %}musers.html_files/0cf16874-d735-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:93.7mm" src="{% get_static_prefix %}musers.html_files/661b4398-d735-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+I<span style="font-weight:bold">MPORTANTE</span> la Breve descripción del Hecho sea un texto simple y sin ningún tipo de caracteres especiales(#"°) además de las palabras acentuadas, y menos texto copiados o traídos de otros procesadores de texto, evite problemas para la impresión del Preventivo<img style="width:6.6mm; height:6.1mm" src="{% get_static_prefix %}musers.html_files/1b2f26b4-d736-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:50.8mm" src="{% get_static_prefix %}musers.html_files/e9225c04-d735-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="INFORMAR">
+<span style="font-weight:bold;text-decoration:underline">INFORMAR</span>
+                </a>
+<span> :Una vez que el Preventivo es cargado y que el mismo sea válido debería esta conformado al menos con datos del Hecho(Denuncia), personas involucradas y Lugar.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:92.1mm" src="{% get_static_prefix %}musers.html_files/52007488-d7a7-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:90.5mm" src="{% get_static_prefix %}musers.html_files/5e0aae74-d7a7-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:72.8mm" src="{% get_static_prefix %}musers.html_files/8ddbfc7a-d7a7-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:66.4mm" src="{% get_static_prefix %}musers.html_files/b1d539f2-d7a7-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+El Preventivo fue cargado correctamente y es válido, el Usuario autorizado con la función de Jefe de Dependencia podrá visar el mismo e informarlo a las Autoridades correspondientes previamente cargadas en el preventivo.</span><span style="font-weight:bold;text-decoration:underline">RECUERDE</span><span> que una vez informado el preventivo no existe posibilidad de que el mismo sea modificado por algún usuario.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:45.5mm" src="{% get_static_prefix %}musers.html_files/71e48fea-d7a8-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<span>Informado el preventivo el Sistema mostrará por pantalla que el preventivo fue Autorizado y Enviado en una fecha x, donde se activará un botón que permite Cerrar Causa mediante un </span><span style="font-weight:bold">radio ampliatorio</span><span>.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="Imprimir Preventivos :">
+<span style="font-weight:bold">Imprimir Preventivos :</span>
+                </a>
+<span></span><img style="width:9.5mm; height:8.4mm" src="{% get_static_prefix %}musers.html_files/22a5d442-d7ae-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""><span>Permite abrir otra pestaña en el navegador en donde se visualiza la siguiente gráfica, permitiendo al usuario imprimir el preventivo.-(Botón Imprimir) se tiene por papel tal como esta el preventivo en pantalla. el Botón IMPRIMIR SOLO TEXTO permite imprimir solo texto sin gráficos.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:68.0mm" src="{% get_static_prefix %}musers.html_files/42ecbf68-d7ae-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:56.9mm" src="{% get_static_prefix %}musers.html_files/4c9622e8-d7ae-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:51.9mm" src="{% get_static_prefix %}musers.html_files/7c05984c-d7ae-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:29.6mm" src="{% get_static_prefix %}musers.html_files/f3eaf208-d7ae-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="Ampliaciones:">
+<span style="font-weight:bold">Ampliaciones:</span>
+                </a>
+ Comunicaciones a las Autoridades de los radios ampliatorios referentes a <span style="font-weight:bold">Preventivos ya informado</span>s(Sin hubo alguna novedad extra: personas involucradas,elementos,detenidos, etc.)
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+El usuario para cargar una Ampliación el preventivo al que hace referencia la ampliación debe estar ya informado y los pasos a seguir para generar una ampliación son los siguientes:
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En el menú principal parte superior de la pantalla principal del sistema SPID existe una opción Búsqueda en donde a través de la selección de Preventivos el sistema ofrece una forma de consultar preventivos, que a través de estos el usuario tendrá la posibilidad de generar ampliaciones.-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">Ejemplo: Para crear una Ampliación de un Preventivo en particular de la Comisaria Primera de Comodoro Rivadavia.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:81.0mm" src="{% get_static_prefix %}musers.html_files/e1570a20-d7a2-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:64.3mm" src="{% get_static_prefix %}musers.html_files/25f7a306-d7a3-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+Una que el usuario selecciona Unidad Regional Y dependencia de la cual quiere ver los preventivos debe hacer click en el botón <span style="font-weight:bold">[BUSCAR]</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:51.1mm" src="{% get_static_prefix %}musers.html_files/7d32117e-d7a3-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:87.3mm" src="{% get_static_prefix %}musers.html_files/0f4be772-d7a6-11e4-9b45-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+Para crear/generar ampliaciones el usuario debe hacer click en<img style="width:10.3mm; height:10.1mm" src="{% get_static_prefix %}musers.html_files/853eecee-d7b6-11e4-8cac-a14d156e55c1.png" title="" alt="" align=""><span></span>
+            </p>
+            <p class="" style="text-align:justify">
+<span>En caso de que el preventivo no haya sido informado se podrá ver este icono</span><img style="width:10.3mm; height:11.9mm" src="musers.html_files/a7d4d3cc-d7b6-11e4-8cac-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En la columna que dice Ver para el caso de [ --- ] el usuario puede acceder al preventivo mediante el link que se refiere al Nro y Año.-
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:10.4mm; height:11.2mm" src="{% get_static_prefix %}musers.html_files/e6be248a-d7b6-11e4-8cac-a14d156e55c1.png" title="" alt="" align=""><span>Este icono / botón se visualiza cuando los preventivos consultados no pertenecen a la jurisdicción y mediante el accionar de este botón solo se podrá tener una vista preliminar del Preventivo [imprimir]</span>
+            </p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:31.8mm" src="{% get_static_prefix %}musers.html_files/694982c0-d7b5-11e4-8cac-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:93.1mm" src="{% get_static_prefix %}musers.html_files/76a838ba-d7b7-11e4-8cac-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:61.6mm" src="{% get_static_prefix %}musers.html_files/7aecbedc-d7b7-11e4-8cac-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Como se puede ver en la gráfica anterior se tiene una visualización de los datos generales del preventivos :
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Nro / Año.</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Dependencia / Unidad Regional</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Actuantes/Preventores</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Carátula</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Autoridades a las que se le informó con anterioridad y que el mismo sistema ofrece al usuario agregar otras autoridades.-</span>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">En</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Título</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"> el usuario ingresar el texto que identificara a la ampliación por ejemplo Radio ampliatorio Nro xxxx, Texto ampliatorio y cuadro de selección de Cierre de Preventivo. Con estos datos ya tenemos una Ampliación inicial.</span>
+            </p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+</p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+<img style="width:159.0mm; height:72.2mm" src="{% get_static_prefix %}musers.html_files/2320cee4-d7dc-11e4-8b0a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-left:0pt;text-indent:0in">
+<img style="width:159.0mm; height:54.5mm" src="{% get_static_prefix %}musers.html_files/2e3f1ad8-d7dc-11e4-8b0a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:31.8mm" src="{% get_static_prefix %}musers.html_files/6b9670d8-d7dd-11e4-8b0a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:54.5mm" src="{% get_static_prefix %}musers.html_files/a0c370a8-d7dd-11e4-8b0a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Haciendo click en el botón [FIN EDICION], la ampliación esta lista para ser                <a name="informada">
+informada
+                </a>
+.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:36.5mm" src="{% get_static_prefix %}musers.html_files/43affc78-d7de-11e4-8b0a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+Si el radio ampliatorio involucra a Personas y/o Elementos, los mismos se puedencargaraccediendo asus formularios correspondientes haciendo click en los botones:
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:center">
+<span style="font-weight:bold;font-size:14pt">[ (+) Personas] </span><span style="font-size:14pt"> </span><span style="font-weight:bold;font-size:14pt">[(+) Elementos]</span>
+            </p>
+            <p class="" style="text-align:center">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:41.0mm" src="{% get_static_prefix %}musers.html_files/af014928-d7de-11e4-8b0a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:43.6mm" src="{% get_static_prefix %}musers.html_files/8fddec94-d7fd-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+En el caso de las personas involucradas la carga de los datos de las mismas es igual al procedimiento de carga en preventivos,además de poder modificar los roles de las personas involucradas anteriormente enpreventivos.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:54.0mm" src="{% get_static_prefix %}musers.html_files/c7153366-d802-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:73.3mm" src="{% get_static_prefix %}musers.html_files/732c728a-d804-11e4-8740-a14d156e55c1.png" title="" alt="" align=""><img style="width:159.0mm; height:85.7mm" src="musers.html_files/7705a35e-d804-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+Para la carga de los elementos es igual como se carga elementos en preventivos explicado anteriormente.-
+            </p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:69.8mm" src="{% get_static_prefix %}musers.html_files/18d75238-d803-11e4-8740-a14d156e55c1.png" title="" alt="" align=""><img style="width:159.0mm; height:67.5mm" src="{% get_static_prefix %}musers.html_files/435d9742-d803-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+Como se puede ver en Elementos de Ampliaciones también se visualiza una lista de los elementos que se agregaron en preventivos.
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="Imprimir Ampliacion">
+<span style="font-weight:bold">Imprimir Ampliacion</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"> :</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"></span><img style="width:9.5mm; height:8.4mm" src="{% get_static_prefix %}musers.html_files/86.png" title="" alt="" align=""><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Permite abrir otra pestaña en el navegador en donde se visualiza la siguiente gráfica, permitiendo al usuario imprimir el preventivo.-(Botón Imprimir Ampliacion) se tiene por papel tal como esta el preventivo en pantalla.-</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:71.4mm" src="{% get_static_prefix %}musers.html_files/ff85f7b4-d805-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+<img style="width:159.0mm; height:94.5mm" src="{% get_static_prefix %}musers.html_files/10d4289c-d806-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+                <a name="2- Personas:">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">2- Personas:</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"> Permite el ingreso y actualizar el Padrón de Personas.-</span>
+            </p>
+            <p class="" style="text-align:left">
+<img style="width:158.8mm; height:107.4mm" src="{% get_static_prefix %}musers.html_files/f48b3e86-d563-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:left">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+                <a name="3- Búsqueda">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">3-</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Búsqueda</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"> :</span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Permite al usuario buscar y/o consultar los distintos preventivos creados por las distintas dependencias de la Institución Policial.</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:98.7mm" src="{% get_static_prefix %}musers.html_files/36b75c2c-d564-11e4-91b7-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Con la opción del</span>   <a name="Menú Búsqueda">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Menú Búsqueda</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"> se despliega una serie de opciones en donde el usuario a través de las mismas puede consultar distintos tipos de información.</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"></span>
+            </p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Preventivos</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Descripción Hechos</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Delitos</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Ampliaciones</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Personas Involucradas</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000">Elementos involucrados</span>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:158.8mm; height:77.3mm" src="{% get_static_prefix %}musers.html_files/36cddf4a-d566-11e4-91b7-a14d156e55c1.png"></p>
+<span>Este formulario permite buscar y consultar preventivos mediante el ingreso por cada uno o la combinaciones de estos ítems:</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <ul>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold">Nro / Año</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold">Fecha de Carga periodos desde/hasta.</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold">Carátulas.</span>
+                </li>
+                <li>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman';text-transform:none;color:#000000"></span><span style="font-weight:bold">Unidad Regional y Dependencias.-</span>
+                </li>
+
+            </ul>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+                <a name="Busqueda por Descripcion de Hechos">
+<span style="font-weight:bold">Busqueda por Descripcion de Hechos</span>
+                </a>
+</span>:Permite ingresar alguna palabra que haga referencia a un Hecho sucedido por ejemplo: Robo.
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:159.0mm; height:54.8mm" src="{% get_static_prefix %}musers.html_files/041ec142-d807-11e4-8740-a14d156e55c1.png" ></p>
+ <a name="Busqueda de Delitos">
+</a>
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold">Busqueda de Delitos</span><span>: Permite consultar delitos cometidos en Hechos delictivos y la búsqueda se hace por tipo y descripción de Delitos.</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:159.0mm; height:48.9mm" src="{% get_static_prefix %}musers.html_files/eea194ea-d809-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:159.0mm; height:57.1mm" src="{% get_static_prefix %}musers.html_files/51838e9c-d80a-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+                <a name="Búsqueda de Ampliación">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Búsqueda de Ampliación:</span>
+                </a></p>
+                <p>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Formulario que permite la consulta de todas las ampliaciones generadas en todas las dependencias, en donde el usuario solo puede editar aquellas en donde tiene jurisdicción.-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:159.0mm; height:50.3mm" src="{% get_static_prefix %}musers.html_files/46e4f7e4-d80c-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+                <a name="Consultas de Personas Involucr">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Consultas de Personas Involucradas</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"> en Hechos delictivos ocurridos.-</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:159.0mm; height:70.9mm" src="{% get_static_prefix %}musers.html_files/51701d10-d80c-11e4-8740-a14d156e55c1.png" title="" alt="" align=""><img style="width:159.0mm; height:88.1mm" src="{% get_static_prefix %}musers.html_files/58ca7498-d80c-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p><br>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+                <a name="Búsqueda de Elementos Involuc">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Búsqueda de Elementos Involucrados</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"> permite visualizar datos de elementos denunciados,secuestrados y/o utilizados en Hechos delictivos cometidos:</span>
+            </p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:159.0mm; height:40.5mm" src="{% get_static_prefix %}musers.html_files/4684b9aa-d80d-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<img style="width:159.0mm; height:74.3mm" src="{% get_static_prefix %}musers.html_files/c81bbf14-d80c-11e4-8740-a14d156e55c1.png" title="" alt="" align=""><img style="width:159.0mm; height:85.7mm" src="{% get_static_prefix %}musers.html_files/4f02f0ec-d80d-11e4-8740-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+</p>
+            <p class="" style="text-align:justify;margin-bottom:0.0000in;margin-top:0.0000in;margin-right:0.0000in">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">4-</span>                <a name="Mapa del Delito">
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">Mapa del Delito</span>
+                </a>
+<span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'"></span><span style="font-weight:bold;font-size:12pt;font-family:'Times New Roman'">: Permite la visualización de los delitos cometidos según las jurisdicciones que se soliciten como así también que tipo de delitos y en que rango de fechas que fueron cometidos.</span>
+            </p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<img style="width:158.8mm; height:104.8mm" src="{% get_static_prefix %}musers.html_files/648acc2c-d737-11e4-995a-a14d156e55c1.png" title="" alt="" align=""></p>
+            <p class="" style="text-align:justify">
+</p>
+            <p class="" style="text-align:justify">
+<span style="font-weight:bold">En el Mapa de Delito el usuario puede ver los delitos cometidos en Hechos delictivos en un período de fechas en toda la jurisdicción de la Provincia de Chubut, como así también por cada ciudad, por cada Dependencias policiales.</span>
+            </p><hr>
+<p style="text-align:justify;font-weight:bold;font-size:16pt;font-family:'Times New Roman'">Por cualquier Consulta, comentarios y sugerencias enviar un email a:  admredes@policia.chubut.gov.ar</p><hr>
+        </div>
+</body>
+</html>

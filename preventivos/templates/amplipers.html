@@ -182,33 +182,44 @@
               <option  selected="selected" name="roles" id="roles" value="{{sele.id}}">{{sele.descripcion}}</option>
                 <option name="roles" {{formr.roles}}</option>
             {%endfor%}  -->
-           <option name="roles" {{formr.roles}} </option>
+           <option name="roles" id="roles" {{formr.roles}} </option>
 
         </select> &nbsp;&nbsp;&nbsp;&nbsp;
-    
+   
+     <strong> Es Menor :</strong>  
+        <select class="combodni" id="menor" name="menor" >
+            <option{{formr.menor}}</option>
+         </select> 
+      
     </p>     
       <div id="detenidos" style="display:none;">
-        <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  >
+         <div id="datetimepicker" class="input-append date">
+        <strong>Esta Detenido &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</strong><select class="combodni" id="detenido" name="detenido"  style="width:60px;font-size:11px;">
        <option {{formr.detenido}}</option>
        </select>
-         <strong>Fecha y Hora Ingreso :</strong>
-        <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
-        {{formr.fechahoradetencion}} 
-        <input class="botoncalendar" button id="fecha_hasta1" ></button>
-        <strong style="color:red;">{{formr.fechahoradetencion.errors}}</strong> 
-        <!-- script que define y configura el calendario--> 
-        <script type="text/javascript" charset="utf-8">
-        
-         var cal = Calendar1.setup({onSelect: function(cal) {
-         cal.hide() },showTime: 12,});
-         cal.manageFields('fecha_hasta1','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
+         <strong style="color:red;margin-left:15px;"> * </strong><strong>Fecha y Hora Ingreso:</strong>
+      <input type="text" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+     {{formr.fechahoradetencion}} 
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span> 
+   
+     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+<script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script>
+<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script>&nbsp;
+ <strong style="margin-left:15px;">Tentativa? :</strong> 
+  <select class="combodni" id="tentativa" name="tentativa" style="width:60px;font-size:11px;" >
+         <option {{formr.tentativa}}</option>
+         </select>&nbsp;
 
-       </script>&nbsp;
-
-       <strong>Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti"  >
+       <strong  style="margin-left:15px;">Infraganti? :</strong>  <select class="combodni" id="infraganti" name="infraganti" style="width:60px;font-size:11px;" >
        <option {{formr.infraganti}}</option>
        </select>
-       </div> 
+       </div> </div>
   
    
 
@@ -267,11 +278,46 @@
          width="18px" title="Agregar Ciudad de Residencia"></a>
         <!-- id="basic-modalcr" <a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
          width="18px" title="Agregar Ciudad de Residencia"></a></strong>-->
-       <strong style="color:red;margin-left:60px;"> * </strong><strong>Ocupacion :</strong>&nbsp;&nbsp;&nbsp;<select class="comboxs" id="ocupacion" name="ocupacion" >
-       <option {{formp.ocupacion}}</option></select>
+
   </p>
   <p>
+     <strong style="color:red;"> * </strong><strong>Ocupacion :</strong>&nbsp;&nbsp;&nbsp;<select class="comboxs" id="ocupacion" name="ocupacion" >
+       <option {{formp.ocupacion}}</option></select>
+         <strong style="margin-left:20px;">Condiciones de Trabajo : <label for = "condicionlaboral" name="condicionlaboral" id = "condicionlaboral" 
+         class = "multi2"  checked="checked">  {{ formp.condicionlaboral }} </label></strong>
+       </p>
+  <p>
+
        <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias" {{formp.alias}}
+       <strong>Telefonos:</strong>  &nbsp;&nbsp;
+      <input type="text" name="celular" id="celular" placeholder="Cod. Area+Numero" 
+      onkeypress="return isNumberKey2(event,this)" {{personas.celular}}
+      </p>
+        
+      </p>
+       <p>
+        <strong>Emails :</strong>
+      <input type="text" id="emails" name="emails" onKeyUp="javascript:validateMail('emails')"
+          style="margin-left:34px;height:25px;" size="30" autocomplete="off"  
+          title="Direccion de email incorrecto" pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"  {{formp.emails}}
+        <strong style="margin-left:30px" >Redes Sociales:</strong>
+       <input type="text" name="redsociales" id="redsociales" title="Ej. twitter " size="30" {{formp.redsociales}}
+       
+      </p>
+       <p>
+       <strong>Domicilio Laboral :</strong><input type="text" id="domiciliolab" name="domiciliolab" 
+       style="margin-left:8px" size="30" autocomplete="off" value="{{personas.domiciliolab}}">
+        <strong style="margin-left:30px" >Horario Laboral:</strong>
+       <input type="text" name="horariolab" id="horariolab" size="30" {{formp.horariolab}}
+       
+      </p>
+       <p>
+       <strong>Otras Actividades(deportivas,recreactivas):</strong><input type="text" id="otrasactividades" name="otrasactividades" 
+       style="margin-left:8px" size="30" autocomplete="off" {{formp.otrasactividades}}
+        <strong style="margin-left:30px" >Hora/lugar:</strong>
+       <input type="text" name="horalugaractivi" id="horalugaractivi" size="30" {{formp.horalugaractivi}}
+       
+      </p>
   </p>
    <h6>Datos de los Padres</h6>
      <p>

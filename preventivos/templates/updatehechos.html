@@ -28,7 +28,7 @@
      <input type="text" name="nro" id="id_nro" value="{{nro}}/{{anio}}" readonly="readonly"/> 
     
      Fecha de Denuncia :
-     <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/Y"}}" readonly="readonly"/>
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/Y H:i:s"}}" readonly="readonly"/>
   </p>
   
   <p>   
@@ -54,7 +54,7 @@
  
 <hr>
 
-<h6>Hecho Delictual</h6>
+<h6>Hecho Delictivo</h6>
   <input type="hidden" id="id" name="id" value="{{idhec}}"/>
      <input type="hidden" id="idp" name="idp" value="{{idprev}}"/>
   <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;"><p><strong style="color:red;"><i> ( * ) Datos Obligatorios.-</i></strong></p>
@@ -72,7 +72,7 @@
 
   </p>
   <p>
-       <div id="datetimepicker" class="input-append date"><strong style="color:red;margin-left:4px;"> * </strong><strong>Fecha y Hora Inicio:</strong>
+     <div id="datetimepicker" class="input-append date"><strong style="color:red;margin-left:4px;"> * </strong><strong>Fecha y Hora Inicio:</strong>
       <input type="text" id="fecha_desde" name="fecha_desde" readonly="readonly" 
        {{form.fecha_desde}}
       <span class="add-on">
@@ -159,7 +159,7 @@
      <h6>Delitos cometidos</h6>
     <!-- <table class="table">-->
        {% for cometieron in delito %}
-       
+   
        <!-- <tr
           <td>-->
              {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
@@ -183,16 +183,14 @@
       <hr>
        <br>
      <div align="right">
-    
     {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
      <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>
-     <a class="btn1 btn-success"  href="{% url 'persinvol' idhec 0%}"> <label title="Permite Agregar otra Persona Involucrada" >
+
+         <a class="btn1 btn-success"  href="{% url 'persinvol' idhec 0%}"> <label title="Permite Agregar otra Persona Involucrada" >
          Involucrados</label></a>
-  
- 
     {%else%}
         {%if fecha_autorizacion %}
-          <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+          <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y H:i:s"}} Hrs.</strong>
         {%endif%}
     {%endif%}
     

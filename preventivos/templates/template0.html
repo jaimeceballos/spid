@@ -32,26 +32,26 @@
 
 <hr>
   <p>
-     <div style="color:red;">{{wizard.form.fecha_denuncia.errors}}</div>
-      <strong ><span style="color:red"> * </span>Fecha de Denuncia :</strong>
-      <input type="text" name="nro-fecha_denuncia" size="9" id="id_nro-fecha_denuncia" placeholder="dd/mm/aaaa"  {{wizard.form.fecha_denuncia}} 
-      
-      <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha de Denuncia" style="margin-left:5px">
-       <!-- script que define y configura el calendario--> 
-      <script type="text/javascript"> 
-        Calendar.setup({ 
-          inputField : "id_nro-fecha_denuncia", // id del campo de texto 
-          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
-          button : "lanzador" // el id del botón que lanzará el calendario 
-        }); 
-      </script> 
-   
-   
-    </p>
+     <div id="datetimepicker1" class="input-append date">
+          <div style="color:red;">{{wizard.form.fecha_denuncia.errors}}</div>
+      <strong ><span style="color:red"> * </span>Fecha / Hora de Denuncia :</strong>
+      <input type="text" name="nro-fecha_denuncia" size="9" id="id_nro-fecha_denuncia" placeholder="dd/mm/aaaa h:m:s" 
+      {{wizard.form.fecha_denuncia}} 
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+
+<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script></div></p>
+
+ 
     <p>
        <div style="color:red;"> {{wizard.form.caratula.errors}}</div>
     <strong> <span style="color:red"> * </span> Caratula Policial :</strong>
-      <input type="text" name="nro-caratula" size="50" id="id_nro-caratula" autocomplete="off" style="margin-left:22px"
+      <input type="text" name="nro-caratula" size="50" id="id_nro-caratula" autocomplete="off" style="margin-left:58px"
       placeholder="Ej. Juan Perez s/Denuncia Robo autores desconocidos"
       {{wizard.form.caratula}} 
      

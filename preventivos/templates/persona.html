@@ -45,7 +45,13 @@
               
              
     {% endif %}
-
+<div id="invalidoe"  name="invalidoe" style='display:none;'>
+               <div id="fade" class="overlay"  style="display: block;"></div>
+                     <div id="light" class="modals" style="display: block;">
+               <label style="color: red;" ><h5>  No es valida la direccion de Email - Ej. email@servidor.com </h5></label>
+          <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </div>
+                     </div>
 
    <input type="hidden" name="ids" id="ids" value="{{personas.id}}" autocomplete="off"/>
    <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;">
@@ -62,37 +68,39 @@
         </div>
   
   {% endif %}
-   <p>
-        <strong style="color:red;"> * </strong> <strong>Apellidos:</strong>
-        <input type="text" name="apellidos" id="apellidos" value="{{personas.apellidos}}" 
-        style="margin-left:56px" autocomplete="off"/>
-  
-        <strong style="color:red;margin-left:16px"> * </strong><strong>Nombres:</strong>
-        <input type="text" name="nombres" id="nombres" value="{{personas.nombres}}" autocomplete="off"/>
-        <a href="/preventivos/persona/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" 
-           style="margin-left:15px" title="Limpiar ingreso"></a>
+   <p style="text-align:right">
+          <a href="/preventivos/persona/" name="cancelar" style="text-align:right"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" 
+           title="Limpiar ingreso"></a>
         {% if personas in lista %}
           <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" 
          title="Actualiza los cambios">
         {%else%}
           <input class="btn btn-success" type="submit" value= "Grabar" name="grabar" id="grabar" title="Grabar el registro actual">
-        {%endif%}
+        {%endif%}</p>
+   <p>
+        <strong style="color:red;"> * </strong> <strong>Apellidos:</strong>
+        <input type="text" name="apellidos" id="apellidos" value="{{personas.apellidos}}" 
+        style="margin-left:56px" autocomplete="off" required/>
+  
+        <strong style="color:red;margin-left:16px"> * </strong><strong>Nombres:</strong>
+        <input type="text" name="nombres" id="nombres" value="{{personas.nombres}}" autocomplete="off" required/>
+       
    </p>
    <p><strong style="color:red;"> * </strong><strong>Tipo Documento:</strong>
-      <select name="tipo_doc" id="tipo_doc" class="combodni"  tabindex="-1" style="margin-left:15px">
+      <select name="tipo_doc" id="tipo_doc" class="combodni"  tabindex="-1" style="margin-left:15px" required>
             <option {{form.tipo_doc}}</option>
         </select> 
  
          <strong style="color:red;margin-left:107px"> * </strong><strong>Nro.Documento:</strong>
-        <input type="text" name ="nro_doc" id ="nro_doc" value="{{personas.nro_doc}}"  size="10" onkeypress="if($('#tipo_doc option:selected').text() == 'PAS'){return this}else{return isNumberKey(event,this)}" autocomplete="off"/>   
+        <input type="text" name ="nro_doc" id ="nro_doc" value="{{personas.nro_doc}}"  size="10" onkeypress="if($('#tipo_doc option:selected').text() == 'PAS'){return this}else{return isNumberKey(event,this)}" autocomplete="off" required/>   
       <strong style="color:red;">{{form.nro_doc.errors}}</strong> 
        <strong style="color:red;"> * </strong><strong>Sexo : </strong>
-       <select name="sexo_id" id="sexo_id" class="combolist"><option{{form.sexo_id}}</option></select>
+       <select name="sexo_id" id="sexo_id" class="combolist" required><option{{form.sexo_id}}</option></select>
     </p>
     <p><strong>Fecha Nacimiento:</strong>
-      <input type="text" name="fecha_nac" id="fecha_nac" value="{{personas.fecha_nac|date:"d/m/Y"}}"
+      <input type="text" name="fecha_nac" id="fecha_nac" size="8" value="{{personas.fecha_nac|date:"d/m/Y"}}" style="margin-left:12px"
        placeholder="dd/mm/aaaa" /> 
-      <input class="botoncalendar" button id="fnac" title="Fecha de Nacimiento"></button>
+      <input class="botoncalendar" button id="fnac" title="Fecha de Nacimiento" ></button>
        <!-- script que define y configura el calendario--> 
       <script type="text/javascript"> 
         Calendar.setup({ 
@@ -101,22 +109,13 @@
           button : "fnac" // el id del botón que lanzará el calendario 
         }); 
       </script> 
-      <strong>Estado Civil : </strong>
-       <select name="estado_civil" id="estado_civil" class="combolist"><option{{form.estado_civil}}</option></select>
-
+      <strong style="margin-left:52px">Estado Civil : </strong>
+       <select name="estado_civil" id="estado_civil" class="combolist" style="margin-left:54px"><option{{form.estado_civil}}</option></select>
+    <!--  <strong>Estudios Educativos : </strong>
+       <select name="estudios" id="estudios" class="combolist"><option{{form.estudios}}</option></select>-->
    
     </p>
-     <p><strong>Ocupacion :</strong> 
-       <select name="ocupacion" id="ocupacion" class="comboxs" style="margin-left:44px">
-          <option{{form.ocupacion}}</option>
-       </select>
-       <strong style="margin-left:25px">Cuit:</strong>
-       <input type="text" name="cuit" id="cuit" title="Ej.: 20345678904 sin puntos ni guiones" value="{{personas.cuit}}" 
-       onkeypress="return isNumberKey1(event,this)">
-       <strong>Celular:</strong>
-      <input type="text" name="celular" id="celular" placeholder="Cod. Area+Numero" value="{{personas.celular}}" 
-      onkeypress="return isNumberKey2(event,this)">
-    </p>
+    
     <p>  <strong>Pais de Nacimiento:</strong>
       <select name="pais_nac" id="pais" class="comboxs" tabindex="-1" >
         <option {{form.pais_nac}}</option></select>
@@ -145,6 +144,7 @@
         <select name="ciudad_res" id="ciudades_r" style="width: 165px;" tabindex="-1" >
          <option name="ciudades_r"></option>
        <option {{form.ciudad_res}}</option></select>
+        
          <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
          width="18px" title="Agregar Ciudad de Residencia"></a>
          
@@ -153,9 +153,48 @@
 
       {% endif %}
     </p>
+     <p><strong>Ocupacion :</strong> 
+       <select name="ocupacion" id="ocupacion" class="comboxs" style="margin-left:46px">
+          <option{{form.ocupacion}}</option>
+       </select>
+       <!--
+        <strong>Condiciones de Trabajo : <label for = "condicionlaboral" name="condicionlaboral" id = "condicionlaboral" 
+         class = "multi2"  checked="checked">  {{ form.condicionlaboral }} </label></strong>-->
+       
+    </p>
       <p>
-       <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias" {{form.alias}}
+       <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias"  style="margin-left:37px" {{form.alias}}
+        <strong style="margin-left:14px">Cuit:</strong>
+       <input type="text" name="cuit" id="cuit" title="Ej.: 20345678904 sin puntos ni guiones" value="{{personas.cuit}}" 
+       onkeypress="return isNumberKey1(event,this)">
+      <strong>Telefonos:</strong>
+      <input type="text" name="celular" id="celular" placeholder="Cod. Area+Numero" value="{{personas.celular}}" 
+      onkeypress="return isNumberKey2(event,this)">
       </p>
+      <!-- 
+       <p>
+
+       <strong>Emails :</strong><input type="text" id="emails" name="emails" onKeyUp="javascript:validateMail('emails')"
+          style="margin-left:68px;height:25px;" size="30" autocomplete="off"   value="{{personas.emails}}" 
+          title="Direccion de email incorrecto" pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$">
+        <strong style="margin-left:30px;" >Redes Sociales:</strong>
+       <input type="text" name="redsociales" id="redsociales" title="Ej. twitter " size="30" value="{{personas.redsociales}}">
+       
+      </p>
+       <p>
+       <strong>Domicilio Laboral :</strong><input type="text" id="domiciliolab" name="domiciliolab" 
+       style="margin-left:8px" size="30" autocomplete="off" value="{{personas.domiciliolab}}">
+        <strong style="margin-left:30px" >Horario Laboral:</strong>
+       <input type="text" name="horariolab" id="horariolab" size="30" value="{{personas.horariolab}}">
+       
+      </p>
+       <p>
+       <strong>Otras Actividades(deportivas,recreactivas):</strong><input type="text" id="otrasactividades" name="otrasactividades" 
+       style="margin-left:8px" size="30" autocomplete="off" value="{{personas.otrasactividades}}">
+        <strong style="margin-left:30px" >Hora/lugar:</strong>
+       <input type="text" name="horalugaractivi" id="horalugaractivi" size="30" value="{{personas.horalugaractivi}}">
+       
+      </p>-->
         <h6> Datos de los Padres</h6>
          <p>
   <strong>Hijo de :<strong>

@@ -26,8 +26,8 @@
           <fieldset style="border-radius: 5px; padding: 5px; min-height:60px;">
                 <legend><b> Buscar por : </b> </legend>
                     <br>
-                   <strong style="margin-left:10px;">DEPENDENCIAS POLICIALES</strong><input type="checkbox" id = "depes" name="depes" />
-                   <strong style="margin-left:30px;">CIUDADES</strong><input type="checkbox" id = "ciu" name="ciu" />
+                   <strong style="margin-left:10px;">DEPENDENCIAS POLICIALES</strong>&nbsp;&nbsp;&nbsp;<input type="checkbox" id = "depes" name="depes" />
+                   <strong style="margin-left:30px;">CIUDADES</strong>&nbsp;&nbsp;&nbsp;<input type="checkbox" id = "ciu" name="ciu" />
      
           </fieldset>
       
@@ -102,56 +102,75 @@
                 <p>
             <h1>Seleccione los Delitos a consultar</h1>
               <p>
-      <div  id="informacion"><blockquote style="font-size:11px;font-family: Georgia, "DroidSansMono", serif;"><h3><legend>   <img id="alert" src="{{STATIC_URL}}imagenes/preventivos/alert.png" style="border:0px solid #C0C0C0;text-align:justify;"/>&nbsp;&nbsp;<p><u>
+      <div  id="informacion"><div align="center"><blockquote style="font-size:11px;font-family: Georgia, "DroidSansMono", serif;">
+        <img id="alert" src="{{STATIC_URL}}imagenes/preventivos/alert.png" style="border:0px solid #C0C0C0;text-align:justify;"/>&nbsp;&nbsp;<p><u>
         <strong>Especifique los delitos a consultar su incidencia en el mapa</strong></u></p>
         <dd><p>Antes de buscar, cierre los delitos anteriores. [x Delitos].</p></dd>
         <dd><p>Para seleccionar uno o mas, realize la busqueda y seleccione haciendo click sobre el mismo.</p></dd>
             <dd><p>Luego seleccione la Fecha Desde y Hasta que se quiere consultar, luego Haga click en visualizar.- </p></dd>
               <dd><u><strong>En el caso que desee consultar todos los delitos cometidos en un determinada Fecha: </strong></u></dd>
                <dd>1- Cierre los delitos anteriores [x Delitos] y no seleccione ninguno.-</dd>
-               <dd>2- Ingrese el Fecha Desde y Hasta el mismo dia/mes/año que quiere consultar.- </dd></h3>
+               <dd>2- Ingrese el Fecha Desde y Hasta el mismo dia/mes/año que quiere consultar.- </dd>
            <div align="right">
               <input type="button" id="cerrarinfo" value="x" style="font-size:11px;cursor:pointer;background:transparent;border:0" align="right" />
            </div>
-        </blockquote>
+        </blockquote></div>
       </div></p>
       <p><strong>Seleccione Delitos :</strong>
-       <select id="delito" name="delito" multiple="multiple" class="combobox" style="font-size: 10px;width: 420px;  margin-top: -5px;" placeholder="Por Ej. ROBO">
-   
-           <option value="{{form.id}}" {{form.delito}}</option>
- 
-       </select> 
+          <select data-placeholder="Seleccione delitos" style="width:350px;" name="delito" id="delito" multiple class="search-choice" style="width:400px;">
+              <option value="{{form.id}}" {{form.delito}}</option>
+            </select>
+      
       
       </p><br><hr><br>
       <p><u><strong>PERIDOS DE FECHAS</STRONG></u></p>
-      <p>
-
-         <strong>Fecha Desde :</strong>
-      <input type="text" name="fecha_desde" size="9" id="fecha_desde"  placeholder="dd/mm/aaaa" />
-      <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha Desde">
-       <!-- script que define y configura el calendario--> 
+     <p>
+        <strong> Fecha de Autorizado : Desde :</strong>
+    <input type="text" id="fecha_desde" name="fecha_desde" autocomplete="off" size="9" value="{{fecha_desde | date:"d/m/Y"}}"
+     placeholder="dd/mm/aaaa" />
+      <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha de Carga Denuncia">
+      
       <script type="text/javascript"> 
         Calendar.setup({ 
           inputField : "fecha_desde", // id del campo de texto 
           ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
           button : "lanzador" // el id del botón que lanzará el calendario 
         }); 
-      </script> &nbsp;&nbsp;&nbsp;&nbsp;
-      <strong>Fecha Hasta :</strong>
-      <input type="text" name="fecha_hasta" size="9" id="fecha_hasta"  placeholder="dd/mm/aaaa" />
-      <input class="botoncalendar"  type="button" id="lanzadora" title="Seleccione Fecha Hasta">
-       <!-- script que define y configura el calendario--> 
+      </script> 
+
+    &nbsp;&nbsp;
+    <strong> Hasta :</strong>
+    <input type="text" id="fecha_hasta" name="fecha_hasta" autocomplete="off" size="9" 
+     placeholder="dd/mm/aaaa" />
+      <input class="botoncalendar"  type="button" id="lanzadora" title="Seleccione Fecha de Carga de Denuncia">
+    
       <script type="text/javascript"> 
         Calendar.setup({ 
           inputField : "fecha_hasta", // id del campo de texto 
           ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
           button : "lanzadora" // el id del botón que lanzará el calendario 
         }); 
-      </script> 
-     </p><br><hr><br>
+      </script>
+     </p>
+     <br><hr><br>
      <div align="center">
    
           <input class="new-aqua" type="submit" id="ver" name="ver" value="Visualizar"/></div>
 
       </form>
+      <script src="{{ STATIC_URL }}chosen_v1.3.0/chosen.jquery.js" type="text/javascript"></script>
+  <script src="{{ STATIC_URL }}chosen_v1.3.0/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+  </script>
+
 {% endblock %}

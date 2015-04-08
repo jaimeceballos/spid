@@ -41,12 +41,35 @@
     <div style="color:red;">{{form.anio.errors}}</div>
     </tr></td>
     <tr><td>
- 
+      <!--
+ <p>
+       <div id="datetimepicker" class="input-append date">
+        <strong>Fecha y Hora Carga Desde:</strong>
+    <input type="text" id="fecha_cargas" name="fecha_cargas" autocomplete="off" size="9" placeholder="dd/mm/aaaa h:m:s" />
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span> </div>
+     
+      <div id="datetimepicker1" class="input-append date">
+      <strong>Fecha y Hora Carga Hasta :</strong>
+      <input type="text" id="fecha_cargah" name="fecha_cargah" autocomplete="off" size="9" 
+     placeholder="dd/mm/aaaa h:m:s" />
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+<script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script>
+<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+</script></div></p>-->
+
     <strong> Fecha de Carga : Desde :</strong>
     <input type="text" id="fecha_cargas" name="fecha_cargas" autocomplete="off" size="9" value="{{fecha_carga | date:"d/m/Y"}}"
      placeholder="dd/mm/aaaa" />
       <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha de Carga Denuncia">
-       <!-- script que define y configura el calendario--> 
+      
       <script type="text/javascript"> 
         Calendar.setup({ 
           inputField : "fecha_cargas", // id del campo de texto 
@@ -60,7 +83,7 @@
     <input type="text" id="fecha_cargah" name="fecha_cargah" autocomplete="off" size="9" 
      placeholder="dd/mm/aaaa" />
       <input class="botoncalendar"  type="button" id="lanzadora" title="Seleccione Fecha de Carga de Denuncia">
-       <!-- script que define y configura el calendario--> 
+    
       <script type="text/javascript"> 
         Calendar.setup({ 
           inputField : "fecha_cargah", // id del campo de texto 

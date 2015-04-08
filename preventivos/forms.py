@@ -1,16 +1,20 @@
 #encoding:utf-8 
 from django.forms import ModelForm, TimeField
 from django import forms
+from datetime import datetime
 from django.contrib import admin
 from django.utils import timezone 
 from django.conf import settings
 from django.contrib.auth.models import  Group,Permission,User
 from django.contrib.admin import widgets
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.forms.widgets import CheckboxSelectMultiple
+from django.forms.widgets import CheckboxSelectMultiple,RadioSelect
 from preventivos.models import *
 from django.core.exceptions import ValidationError
+from django.utils.encoding import force_unicode
+from django.utils.safestring import mark_safe
 from django.db.models import Q
+
 
 class CambiarPassForm(forms.Form):
 	pass1 = forms.CharField(required=True, widget=forms.PasswordInput(),label='Ingresar una clave nueva')
@@ -251,14 +255,28 @@ class ActuantesForm(forms.ModelForm):
 	
 	class Meta:
 		model = Actuantes
+		
+
+class HorizRadioRenderer(forms.RadioSelect.renderer):
+	""" this overrides widget method to put radio buttons horizontally
+		instead of vertically.
+	"""
+	def render(self):
+			"""Outputs radios"""
+			return mark_safe(u'%s' % u'\n'.join([u'%s'  % force_unicode(w) for w in self]))
+
+
+laburo_opciones=(('1','ESTABLE'),('2','NO ESTABLE'))
 
 class PersonasForm(forms.ModelForm):
 	pais_res = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefPaises.objects.all(),required= False)
 	celular = forms.CharField(required= False)
+	"""
 	alias = forms.CharField(required= False)
 	cuit = forms.CharField(required= False)
-	
-   
+	emails=forms.CharField(required=False)
+	condicionlaboral=forms.ChoiceField(widget=forms.RadioSelect(renderer=HorizRadioRenderer),choices=laburo_opciones,initial='1',required=False)
+    """
 	def __init__(self, *args, **kwargs):
 		super(PersonasForm, self).__init__(*args, **kwargs)
 		# Making name required
@@ -266,14 +284,11 @@ class PersonasForm(forms.ModelForm):
 		#self.fields['estado_civil'].required = True
 		#self.fields['ocupacion'].required = True
 		self.fields['pais_res'].queryset= RefPaises.objects.all()
-   
-	
-
-
 	class Meta:
 		model = Personas
 		#fields = ('estado_civil','nro_doc','ciudad_res','ocupacion')
-		
+	
+
 
 class PersonalForm(forms.ModelForm):
 
@@ -305,7 +320,8 @@ class PrimerForm(forms.ModelForm):
 		if self.cleaned_data.get('fecha_denuncia') is not None:
 			fecha_denuncia = self.cleaned_data.get('fecha_denuncia')
 			#Obtenemos la fecha actual
-			fecha_actual = timezone.now().date()
+			
+			fecha_actual = timezone.now()
  
 			if fecha_denuncia > fecha_actual:
 			   raise forms.ValidationError("El Fecha de Denuncia no debe ser mayor al dia de hoy")
@@ -397,9 +413,9 @@ class FinForm(forms.ModelForm):
 class PreventivosForm(forms.ModelForm):
 	nro=forms.IntegerField(required=False)
 	anio=forms.IntegerField(required=False)
-	fecha_carga=forms.DateField(required=False)
-	fecha_autorizacion=forms.DateField(required=False)
-	fecha_cierre=forms.DateField(required=False)
+	fecha_carga=forms.DateTimeField(required=False)
+	fecha_autorizacion=forms.DateTimeField(required=False)
+	fecha_cierre=forms.DateTimeField(required=False)
 	dependencia=forms.IntegerField(required=False)
 	def __init__(self, *args, **kwargs):
 		super(PreventivosForm,self).__init__(*args,**kwargs)
@@ -467,7 +483,7 @@ class RefMotivosHechoForm(forms.ModelForm):
 class SearchPreveForm(forms.Form):
 	nro=forms.IntegerField(required=False)
 	anio=forms.IntegerField(required=False)
-	fecha_carga=forms.DateField(required=False)
+	fecha_carga=forms.DateTimeField(required=False)
 	caratula=forms.CharField(required=False)
 	unidades_regionales=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.exclude(descripcion__icontains='INVESTIGACION') &  UnidadesRegionales.objects.exclude(descripcion__icontains='AREA'))
 	#unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.filter(Q(descripcion__startswith="OPERA") | Q(descripcion__startswith="UNIDAD")))
@@ -526,12 +542,18 @@ class HechosDelitoForm(forms.ModelForm):
 	class Meta:
 		model = HechosDelito
 
+
 class PersInvolucradasForm(forms.ModelForm):
-	
+	roles=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= RefPeople.objects.all(),initial=1)
+
 	class Meta:
 		model = PersInvolucradas
 		exclude = ('persona','hechos')
-
+		widgets = {
+			'roles': forms.Select(attrs={'initial':1}),
+		 
+		}
+	   
 class DomiciliosForm(forms.ModelForm):
  
 	class Meta:
@@ -664,3 +686,49 @@ class AmpliacionForm(forms.ModelForm):
 		self.fields["autoridades"].help_text='Seleccione haciendo click sobre cada de las Autoridades a Informar.-'
 		self.fields["titulo"].widget.attrs = {'size':80,}
 		self.fields["descripcion"].widget = forms.Textarea(attrs={'cols': 80, 'rows': 20})
+
+"""
+nuevo=(('1','SI'),('0','NO'),)
+class ViolenciaFliarForm(forms.ModelForm):
+	fecha = forms.DateTimeField(required=False)
+	fecha_carga = forms.DateTimeField(required=False)
+	intervencionsavd=forms.ChoiceField(widget=forms.RadioSelect(renderer=HorizRadioRenderer), choices=nuevo,initial='0',)
+	intervencionotro=forms.ChoiceField(widget=forms.RadioSelect(renderer=HorizRadioRenderer), choices=nuevo,initial='0',)
+	#hechos=forms.IntegerField(required=False)
+	class Meta:
+		model = ViolenciaFliar
+		exclude = ('hechos','fecha','fecha_carga',)   
+	def __init__(self, *args, **kwargs):
+		super(ViolenciaFliarForm,self).__init__(*args, **kwargs)
+		self.fields["intervencioncual"].widget.attrs = {'size':42,}
+
+
+class PerInvolViolenfliarForm(forms.ModelForm):
+	roles=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= RefPeople.objects.filter(descripcion__in=['DENUNCIANTE','DENUNCIADO','VICTIMA']))
+	cgfconviven=forms.ChoiceField(widget=forms.RadioSelect(renderer=HorizRadioRenderer), choices=nuevo,initial='0',required=False)
+	vdconviven=forms.ChoiceField(widget=forms.RadioSelect(renderer=HorizRadioRenderer), choices=nuevo,initial='0',required=False)
+	pidereserva= forms.ChoiceField(widget=forms.RadioSelect(renderer=HorizRadioRenderer), choices=nuevo,initial='0',required=False)
+	juridica = forms.ChoiceField(widget=forms.RadioSelect(renderer=HorizRadioRenderer),choices=nuevo,initial='0',required=False)
+	razon_social = forms.CharField(widget=forms.TextInput(attrs={'size':'60'}),required=False)
+	cargo = forms.CharField(widget=forms.TextInput(attrs={'size':'60'}),required=False)
+	cargado_viol = forms.IntegerField(required=False)
+	teldomalternativos = forms.CharField(widget=forms.TextInput(attrs={'size':'120'}),required=False)
+	teldomfliaprimaria = forms.CharField(widget=forms.TextInput(attrs={'size':'120'}),required=False)
+	telconfigurasreferentes = forms.CharField(widget=forms.TextInput(attrs={'size':'120'}),required=False)
+	class Meta:
+		model = PerInvolViolenfliar
+		exclude = ('persona','violencia')
+		widgets = {
+			'roles': forms.Select(attrs={'initial':1}),
+			'composiciongrupofliar' : forms.TextInput(attrs={'size':50,}),
+			'vinculodenunciado' : forms.TextInput(attrs={'size':50,}),
+			'vinculovictima' : forms.TextInput(attrs={'size':60,}),
+			'teldomalternativos' : forms.TextInput(attrs={'size':120}),
+			'teldomfliaprimaria': forms.TextInput(attrs={'size':120}),
+			'telconfigurasreferentes': forms.TextInput(attrs={'size':120}),
+			
+		}
+
+	def __init__(self, *args, **kwargs):
+		super(PerInvolViolenfliarForm,self).__init__(*args, **kwargs)
+"""
