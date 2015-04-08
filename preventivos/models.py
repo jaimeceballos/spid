@@ -649,7 +649,7 @@ class Preventivos(models.Model):
 	nro = models.PositiveIntegerField(verbose_name='Nro. :',validators=[MinValueValidator(1),MaxValueValidator(9999999)])
 	anio = models.PositiveIntegerField(verbose_name='Año :',validators=[MinValueValidator(2012),MaxValueValidator(2025)])
 	caratula = models.CharField(max_length=250)
-	fecha_carga = models.DateField()
+	fecha_carga = models.DateTimeField()
 	fecha_denuncia = models.DateTimeField()
 	fecha_autorizacion = models.DateField(null=True)
 	fecha_cierre = models.DateField(null=True)
