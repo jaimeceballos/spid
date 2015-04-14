@@ -7578,7 +7578,7 @@ def seemaps(request):
 						 
 							if filtrorefd:
 								if ayer==hoy:
-									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__gte=hoy).values()
+									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__startswith=hoy).values()
 								else:
 									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__range=(hoy,ayer)).values()
 			 
@@ -7709,7 +7709,7 @@ def seemaps(request):
 											dp=crias['id']
 											
 											if ayer==hoy:
-												preventivos=Preventivos.objects.filter(dependencia=dp,fecha_autorizacion__gte=hoy).values()
+												preventivos=Preventivos.objects.filter(dependencia=dp,fecha_autorizacion__startswith=hoy).values()
 											else:
 												preventivos=Preventivos.objects.filter(dependencia=dp,fecha_autorizacion__range=[hoy,ayer]).values()
 			 
