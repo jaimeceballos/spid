@@ -12917,8 +12917,10 @@ def enviadop(request):
 	   fecha_cargad=request.POST.get('fecha_cargas')
 	   fecha_cargah=request.POST.get('fecha_cargah')
 	   if fecha_cargad and fecha_cargah:
-		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y").date()
-		ayer=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
+	   	hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
+	   	ayer=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+		#hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y").date()
+		#ayer=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
 		grabarfa = Preventivos.objects.filter(fecha_autorizacion__range=(hoy,ayer),fecha_autorizacion__isnull=False,sendwebservice=0)
 		#fecha_autorizacion=datetime.datetime.strptime(,"%d/%m/%Y").strftime('%Y-%m-%d'),sendwebservice=0)
 		#date.today())
@@ -12926,7 +12928,7 @@ def enviadop(request):
 		datosdict={}
 		cantpersonas=''
 		totenviados=0
-		print grabarfa
+		#print grabarfa
 		for hay in grabarfa:
 			
 			preventivo = Preventivos.objects.get(id=hay.id)
@@ -13378,7 +13380,7 @@ def enviadop(request):
 				'</soap:Envelope>'
 						
 				print xmls
-				"""
+				
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13427,7 +13429,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-				"""
+				
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
@@ -13449,8 +13451,8 @@ def enviadoa(request):
 	   fecha_cargad=request.POST.get('fecha_cargas')
 	   fecha_cargah=request.POST.get('fecha_cargah')
 	   if fecha_cargad and fecha_cargah:
-		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y").date()
-		ayer=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
+		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
+	   	ayer=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 		grabarfa = Ampliacion.objects.filter(fecha_autorizacion__range=(hoy,ayer),fecha_autorizacion__isnull=False,sendwebservice=0)
 		#fecha_autorizacion=datetime.datetime.strptime(,"%d/%m/%Y").strftime('%Y-%m-%d'),sendwebservice=0)
 		#date.today())
