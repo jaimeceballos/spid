@@ -41,7 +41,7 @@ from django.shortcuts import render, render_to_response,get_object_or_404
 from django.contrib.auth import authenticate, login,logout
 from django.contrib import auth
 #from reportlab.pdfgen import canvas
-from datetime import date
+from datetime import date,timedelta
 import datetime
 from time import strptime
 from decorators.auth import group_required
@@ -747,7 +747,9 @@ def obtener_datosfirst(request,idprev):
 				 delitos =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
 				 
 				 #if not hecho.descripcion:
-				 hecho.descripcion=request.POST.get('descrihecho')
+				
+				 hecho.descripcion=request.POST.get('descrihecho').encode('ascii', 'xmlcharrefreplace')
+				 print hecho.descripcion
 				 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
 						
 							hecho.save()
@@ -873,7 +875,7 @@ def control(request):
 	errors=[]
 	listacontrol=[]
 	control=False
-	lista = User.objects.all()
+	lista = UserProfile.objects.all()
 	user_groups = Group.objects.all()
 	form = GroupForm(request.POST)
 	return render(request,'./controluser.html',{'control':control,'listacontrol':listacontrol,'form':form,'user_groups':user_groups,'grupos':grupos,'lista':lista,'state':state, 'errors':errors,'destino': destino})
@@ -906,7 +908,7 @@ def reporactivity(request, user):
 					formnew = UserForm(instance=usuarios)
 					form = UserProfileForm(instance=idem)
 
-					lista = User.objects.filter(username=user)
+					lista = UserProfile.objects.filter(user=user)
 					datos=UserProfile.objects.get(user=ids)
 					listacontrol=Registrouser.objects.all().filter(user_id=usuarios.id).order_by('-fecha',)
 				 
@@ -915,7 +917,7 @@ def reporactivity(request, user):
 					#lista = User.objects.all()
 					return render_to_response('./controluser.html', {'control':control,'listacontrol':listacontrol,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 	else:
-		lista = User.objects.all()
+		lista = UserProfile.objects.all()
 		user_groups = Group.objects.all()
 		form = GroupForm(request.POST)
 		return render(request,'./controluser.html',{'control':control,'form':form,'user_groups':user_groups,'grupos':grupos,'lista':lista,'state':state, 'errors':errors,'destino': destino})
@@ -954,14 +956,14 @@ def ngrupos(request):
 											 return HttpResponseRedirect('../user/new/')   
 										 else:
 											 errors.append('El Grupo de Usuario que Ud. intenta grabar ya existe') 
-			lista = User.objects.all()
+			lista = UserProfile.objects.all()
 			user_groups = Group.objects.all()
 			form = GroupForm(request.POST)
 			return render(request,'./newuser.html',{'form':form,'user_groups':user_groups,'grupos':grupos,'lista':lista,'state':state, 'errors':errors,'destino': destino})
 	else:
 		 formp = UserForm()
 		 form  = GroupForm()
-		 lista = User.objects.all()
+		 lista = UserProfile.objects.all()
 		 user_groups = Group.objects.all()
 		 return render_to_response('./newuser.html',{'form':form,'formp':formp,'user_groups':user_groups,'grupos':grupos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
@@ -1017,7 +1019,7 @@ def new_user(request):
 					#ocupacion=usuarios.ocupacion.descripcion
 					formnew = UserForm(instance=usuarios)
 					#form = UserProfileForm()
-					lista = User.objects.all()
+					lista = UserProfile.objects.all()
 					form = UserProfileForm(instance=idem)
 					datos=UserProfile.objects.get(user=ids)
 					ure=datos.ureg
@@ -1062,7 +1064,7 @@ def new_user(request):
 						ocupa=""
 						formnew = UserForm()
 						form = UserProfileForm()
-						lista = User.objects.all()
+						lista = UserProfile.objects.all()
 						listap=[]
 						listaper = Personas.objects.all()
 					return render_to_response('./newuser.html', {'listaper':listaper,'listap':listap,'ocupacion':ocupacion,'apellidos':apellidos,'nombres':nombres,'dni':dnis,'estado':estado,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
@@ -1070,7 +1072,7 @@ def new_user(request):
 						 errors.append('Nro de Dni ingresado no es unico y/o no corresponde con una Persona')
 						 formnew = UserForm()
 						 form = UserProfileForm()
-						 lista = User.objects.all()
+						 lista = UserProfile.objects.all()
 					
 				return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'estado':estado,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
@@ -1107,7 +1109,7 @@ def new_user(request):
 						if not ureg:
 							 errors.append('Debe seleccionar un Destino laboral')
 							 form = UserProfileForm()
-							 lista = User.objects.all()
+							 lista = UserProfile.objects.all()
 							 return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request)) 
 		 
 						else:
@@ -1115,7 +1117,7 @@ def new_user(request):
 							if not email:
 									errors.append('Debe ingresar un email[Correo Electronico]') 
 									form = UserProfileForm()
-									lista = User.objects.all()
+									lista = UserProfile.objects.all()
 									return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 							else:  
@@ -1133,7 +1135,7 @@ def new_user(request):
 												if polis.name!='visita':
 													 errors.append('El Usuario no es personal policial para asignarle una funcion de usuario Policial')
 													 form = UserProfileForm()
-													 lista = User.objects.all()
+													 lista = UserProfile.objects.all()
 													 return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request)) 
 									 
 										user=formnew.save()
@@ -1196,7 +1198,7 @@ def new_user(request):
 
 										 errors.append(mensaje)
 										 form = UserProfileForm()
-										 lista = User.objects.all()
+										 lista = UserProfile.objects.all()
 										 return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 										except:
 											return render_to_response('./500.html')
@@ -1205,25 +1207,25 @@ def new_user(request):
 											errors.append('Verifique los datos esten completos')
 											formnew = UserForm()
 											form = UserProfileForm()
-											lista = User.objects.all()
+											lista = UserProfile.objects.all()
 											return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 							 else:
 								 errors.append('El email ingresado ya Existe.')
 								 formnew = UserForm()
 								 form = UserProfileForm()
-								 lista = User.objects.all()
+								 lista = UserProfile.objects.all()
 								 return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 	 
 				else:   
 					formnew = UserForm()
 					form = UserProfileForm()
-					lista = User.objects.all()
+					lista = UserProfile.objects.all()
 					return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 		else:
 
 			formnew = UserForm()
 			form = UserProfileForm()
-			lista = User.objects.all()
+			lista = UserProfile.objects.all()
 			listaper = Personas.objects.all()
 			return render_to_response('./newuser.html', {'listaper':listaper,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
@@ -1340,7 +1342,7 @@ def usuarios(request, iduser):
 					else:
 						 errors.append('Seleccione un rol de usuario')   
 						 form = UserProfileForm()
-						 lista = User.objects.all()
+						 lista = UserProfile.objects.all()
 						 return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request)) 
 
 
@@ -1367,7 +1369,7 @@ def usuarios(request, iduser):
 						 if not ureg:
 								errors.append('Debe seleccionar un Destino laboral')
 								form = UserProfileForm()
-								lista = User.objects.all()
+								lista = UserProfile.objects.all()
 								return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request)) 
 				 
 						 else:
@@ -1375,7 +1377,7 @@ def usuarios(request, iduser):
 								if not request.POST.get('email'):
 									 errors.append('Debe ingresar un email[Correo Electronico]') 
 									 form = UserProfileForm()
-									 lista = User.objects.all()
+									 lista = UserProfile.objects.all()
 									 return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 								else:  
@@ -1389,7 +1391,7 @@ def usuarios(request, iduser):
 										 if len(correo)>1:
 												errors.append('email[Correo Electronico] ya existe y no corresponde a este Usuario') 
 												form = UserProfileForm()
-												lista = User.objects.all()
+												lista = UserProfile.objects.all()
 												return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 										 else: 
@@ -1408,7 +1410,7 @@ def usuarios(request, iduser):
 														if polis.name!='visita':
 															 errors.append('El Usuario no es personal policial para asignarle una funcion de usuario Policial')
 															 form = UserProfileForm()
-															 lista = User.objects.all()
+															 lista = UserProfile.objects.all()
 															 return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request)) 
 											 
 												user=formnew.save()
@@ -1476,7 +1478,7 @@ def usuarios(request, iduser):
 
 												formnew = UserForm()
 												form = UserProfileForm()
-												lista = User.objects.all()
+												lista = UserProfile.objects.all()
 												return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 												"""except:
 													return render_to_response('./500.html')"""
@@ -1485,13 +1487,13 @@ def usuarios(request, iduser):
 													errors.append('Verifique los datos esten completos')
 													formnew = UserForm()
 													form = UserProfileForm()
-													lista = User.objects.all()
+													lista = UserProfile.objects.all()
 													return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 									else:
 											 errors.append('El email ingresado ya Existe y no corresponde a este usuario.')
 											 formnew = UserForm()
 											 form = UserProfileForm()
-											 lista = User.objects.all()
+											 lista = UserProfile.objects.all()
 											 return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 			 
 				 else: 
@@ -1545,7 +1547,7 @@ def usuarios(request, iduser):
 									 errors.append('Debe ingresar un email[Correo Electronico]') 
 									 formnew=UserForm()
 									 form = UserProfileForm()
-									 lista = User.objects.all()
+									 lista = UserProfile.objects.all()
 									 return render_to_response('./newuser.html', {'reenvio':reenvio,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 								if formnew.is_valid():
@@ -1609,7 +1611,7 @@ def usuarios(request, iduser):
 
 									formnew=UserForm()
 									form = UserProfileForm()
-									lista = User.objects.all()
+									lista = UserProfile.objects.all()
 									return render_to_response('./newuser.html', {'reenvio':reenvio,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 						 else:        
 									usuarios = User.objects.get(username=iduser)
@@ -1627,7 +1629,8 @@ def usuarios(request, iduser):
 									formnew = UserForm(instance=usuarios)
 									form = UserProfileForm(instance=idem)
 
-									lista = User.objects.all()
+									lista = UserProfile.objects.all()
+									listas=User.objects.all()
 									datos=UserProfile.objects.get(user=ids)
 									
 									ure=datos.ureg
@@ -1649,11 +1652,11 @@ def usuarios(request, iduser):
 										 name_lis=['visita']
 										 formnew.fields['groups'].queryset=Group.objects.filter(name__in=name_lis)
 										 
-									return render_to_response('./newuser.html', {'reenvio':reenvio,'ocupacion':ocupacion,'formd':formd,'apellidos':apellidos,'nombres':nombres,'dni':dnis,'usuarios':usuarios,'lista':lista,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
+									return render_to_response('./newuser.html', {'listas':listas,'reenvio':reenvio,'ocupacion':ocupacion,'formd':formd,'apellidos':apellidos,'nombres':nombres,'dni':dnis,'usuarios':usuarios,'lista':lista,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 	else:
 		formnew=UserForm()
 		form = UserProfileForm()
-		lista = User.objects.all()
+		lista = UserProfile.objects.all()
 
 		return render_to_response('./newuser.html', {'reenvio':reenvio,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
@@ -4683,6 +4686,8 @@ def verprev(request):
 	unidadregi=''
 	jurisdi=''
 	if request.POST.get('search')=="Buscar":
+		 from django.utils.dateparse import parse_datetime
+		 import pytz
 		 form=SearchPreveForm(request.POST, request.FILES)
 		 nro=request.POST.get('nro')
 		 anio=request.POST.get('anio')
@@ -4693,7 +4698,15 @@ def verprev(request):
 		 depe=request.POST.get('depe')
 		 unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
 		 jurisdi=unidadregi.ciudad.descripcion
-	 
+		 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+		 #fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+		 #fecha_cargas=str(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date())+' 00:00:01'
+		 #fecha_cargah=str(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date())+' 23:59:59'
+		 #fecha_cargas=datetime.datetime.strptime(fecha_cargas,'%Y-%m-%d %H:%M:%S')
+		 #fecha_cargah=datetime.datetime.strptime(fecha_cargah,'%Y-%m-%d %H:%M:%S')
+		 
+		
+		 
 		 if nro and not ureg and not depe:
 				if anio and not ureg and not depe:
 					if caratula:
@@ -4750,6 +4763,8 @@ def verprev(request):
 		 #depes=Dependencias.objects.filter(unidades_regionales=ureg)
 		 #genero un arreglo ej. prev[] hago un for depende in depes agrego a prev.append(preventivos.objects.filter(dependencia=depende))
 		 if ureg and not depe and not fecha_carga:
+			fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+			fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 			depes=Dependencias.objects.filter(unidades_regionales=ureg)
 			if nro:
 				 for son in depes:
@@ -4768,15 +4783,17 @@ def verprev(request):
 									 todos.append(Preventivos.objects.filter(dependencia=son).order_by('anio','nro','dependencia'))
 					 
 		 else:
+
 			if fecha_carga and fecha_cargah and ureg and not depe:
 				depes=Dependencias.objects.filter(unidades_regionales=ureg)
 				for son in depes:
-					todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date(),datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date())).order_by('anio','nro','dependencia'))
+					todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia'))
 			else:
 				if fecha_carga  and ureg and not depe:
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga = datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date()).order_by('anio','nro','dependencia'))
+							#print son
+							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__gte=fecha_cargas).order_by('anio','nro','dependencia'))
 
 		
 			
@@ -4786,12 +4803,12 @@ def verprev(request):
 			if fecha_carga and fecha_cargah:
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date(), datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date())).order_by('anio','nro','dependencia'))
+							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia'))
 			else: 
 			 if fecha_carga:
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date()).order_by('anio','nro','dependencia'))
+							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__gte=fecha_cargas).order_by('anio','nro','dependencia'))
 			 else:
 				if nro:
 					 todos.append(Preventivos.objects.filter(dependencia=depe,nro=nro).order_by('anio','nro','dependencia'))
@@ -4816,12 +4833,12 @@ def verprev(request):
 			 if fecha_carga and fecha_cargah:
 				 
 					 for son in depes:
-							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__range =(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date(),datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date())).order_by('anio','nro','dependencia')
+							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia')
 			 else:  
 				if fecha_carga:
 				 
 					 for son in depes:
-							fil=Preventivos.objects.filter(dependencia=son, fecha_carga=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date()).order_by('anio','nro','dependencia')
+							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__gte=fecha_cargas).order_by('anio','nro','dependencia')
 				else:
 				 if nro:
 					 for son in depes:
@@ -4855,8 +4872,73 @@ def verprev(request):
 		 #aqui hago filtro si viene fecha de carga con cualquier otro valor concatenar arreglos con append
 
 		 if fecha_carga and fecha_cargah and not ureg and not depe:
-				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date()
-				fecha_cargah=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
+				"""
+				s1 = datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+				#'2012-05-03 00:00:00' # start time
+				s2 = datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")
+				#'2012-05-03 23:59:59' # end time, together covers 1 day
+				la = pytz.timezone('America/Argentina/Buenos_Aires')
+				#n1 = parse_datetime(s1) # naive object
+				#n2 = parse_datetime(s2)
+				aware_start_time = la.localize(s1) # aware object n2
+				aware_end_time = la.localize(s2) # "n1"
+				#print s1,s2,aware_start_time,aware_end_time
+			
+				filtro=Preventivos.objects.all()
+				
+				for fl in filtro:
+					#print fl.fecha_carga
+					fecauto=''
+					feccie=''
+					fechcarga=''
+					timedenuncia=''
+					fechaauto=''
+					fechacierre=''
+					timcie=''
+					idpr=fl.id
+
+					fecddenuncia=fl.fecha_denuncia.date()
+					feccarga=fl.fecha_carga.date()
+					if fl.fecha_autorizacion:
+					   fecauto=fl.fecha_autorizacion.date()
+					   timauto=timezone.localtime(fl.fecha_autorizacion).strftime('%H:%M:%S')
+					if fl.fecha_cierre:
+						feccie=fl.fecha_cierre.date()
+						timcie=timezone.localtime(fl.fecha_cierre).strftime('%H:%M:%S')
+
+					timdenuncia=timezone.localtime(fl.fecha_denuncia).strftime('%H:%M:%S')
+					timcarga=timezone.localtime(fl.fecha_carga).strftime('%H:%M:%S')
+
+					fecha=''
+					#print fecddenuncia,timdenuncia,feccarga,timcarga
+					if fecddenuncia<=feccarga:
+					   if timcarga=='21:00:00' and timdenuncia=='21:00:00':
+						  fechcarga=str(feccarga)+' 05:00:05'
+						  timedenuncia=str(fecddenuncia)+' 05:00:00'
+						  Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
+					else:
+						  fechcarga=str(feccarga)+' 05:00:05'
+						  timedenuncia=str(fecddenuncia)+' 05:00:00'
+						  Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
+					if fecauto: 
+					   if timauto=='21:00:00':
+						   if timcarga=='21:00:00':
+							  fechaauto=str(fecauto)+' 06:00:00'
+						   else:
+							  fechaauto=str(fecauto)+' 23:59:59'
+							  
+						   Preventivos.objects.filter(id=fl.id).update(fecha_autorizacion=fechaauto)
+							
+					if feccie:
+					   if timcie=='21:00:00':
+						   fechacierre=str(feccie)+' 05:00:00'
+						   Preventivos.objects.filter(id=fl.id).update(fecha_cierre=fechacierre)
+
+				"""
+				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+
+				fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+				#print fecha_cargah
 				if nro:
 					 filnro=Preventivos.objects.filter(fecha_carga__range=[fecha_cargas,fecha_cargah],nro__exact=nro).order_by('anio','nro','dependencia')
 					 if filnro not in todos:
@@ -4878,16 +4960,15 @@ def verprev(request):
 							else:
 								todos.append(Preventivos.objects.all().filter(fecha_carga__range=[fecha_cargas,fecha_cargah]).order_by('anio','nro','dependencia'))
 								
+
+								
 								#'id','nro','anio','caratula','fecha_carga'))
+
 		 else:
 			 if fecha_carga and not ureg and not depe:
-				
-				#fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date()
-				#fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y %H:%M:%S")
+				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
 				fecha_cargah=datetime.datetime.now()
-				#print fecha_cargas
-
+			
 				if nro:
 					 filnro=Preventivos.objects.filter(fecha_carga__range=[fecha_cargas,fecha_cargah],nro__exact=nro).order_by('anio','nro','dependencia')
 					 if filnro not in todos:
@@ -7465,14 +7546,23 @@ def seemaps(request):
 			i=0
 			if (fechadesde and fechahasta and delitos and ureg and depes) or (fechadesde and fechahasta and delitos and ciudad) or (fechadesde and fechahasta and ureg and depes) or (fechadesde and fechahasta and ciudad):
 					#dias=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()-datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
-		 
-					hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
-					ayer=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()
+					#hoy=str(datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date())+' 00:00:01'
+					#ayer=str(datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date())+' 23:59:59'
+					#hoy=datetime.datetime.strptime(hoy,'%Y-%m-%d %H:%M:%S')
+					#ayer=datetime.datetime.strptime(ayer,'%Y-%m-%d %H:%M:%S')
+					#hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
+					#ayer=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()
 					#-dias
-
+					hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y")
+					ayer=(datetime.datetime.strptime(fechahasta,"%d/%m/%Y")+timedelta(days=1)).date()
+					#hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
+					#ayer=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()
 					ayerfue=ayer.strftime('%d/%m/%Y') 
 					hoyes=hoy.strftime('%d/%m/%Y')
 				 
+					#hoy=datetime.datetime(hoy.year, hoy.month, hoy.day)
+					#ayer=datetime.datetime(ayer.year, ayer.month, ayer.day)
+					
 					#print hoy,ayer
 					if not ciudad and not depes:
 						 ciudad=preventivo.ciudad.id
@@ -7549,7 +7639,7 @@ def seemaps(request):
 						 
 							if filtrorefd:
 								if ayer==hoy:
-									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion=hoy).values()
+									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__gte=hoy).values()
 								else:
 									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__range=(hoy,ayer)).values()
 			 
@@ -7680,7 +7770,7 @@ def seemaps(request):
 											dp=crias['id']
 											
 											if ayer==hoy:
-												preventivos=Preventivos.objects.filter(dependencia=dp,fecha_autorizacion=hoy).values()
+												preventivos=Preventivos.objects.filter(dependencia=dp,fecha_autorizacion__gte=hoy).values()
 											else:
 												preventivos=Preventivos.objects.filter(dependencia=dp,fecha_autorizacion__range=[hoy,ayer]).values()
 			 
@@ -11095,13 +11185,13 @@ def ampliacion(request,idprev):
 		ampliacion = AmpliacionForm(request.POST, request.FILES)
 		amp        = Ampliacion()
 		if ampliacion.is_valid():
-			amp.fecha         = date.today()
+			amp.fecha         = datetime.datetime.now()
 			amp.titulo        = ampliacion.cleaned_data['titulo']
 			amp.descripcion   = ampliacion.cleaned_data['descripcion']
 			amp.preventivo    = preventivo
 			amp.cierre_causa  = ampliacion.cleaned_data['cierre_causa']
 			if amp.cierre_causa:
-				preventivo.fecha_cierre = amp.fecha_cierre  = date.today()
+				preventivo.fecha_cierre = amp.fecha_cierre  = datetime.datetime.now()
 
 			amp.save()
 			for aut in ampliacion.cleaned_data['autoridades']:
@@ -12827,8 +12917,8 @@ def enviadop(request):
 	   fecha_cargad=request.POST.get('fecha_cargas')
 	   fecha_cargah=request.POST.get('fecha_cargah')
 	   if fecha_cargad and fecha_cargah:
-	   	hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y").date()
-	   	ayer=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
+		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y").date()
+		ayer=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
 		grabarfa = Preventivos.objects.filter(fecha_autorizacion__range=(hoy,ayer),fecha_autorizacion__isnull=False,sendwebservice=0)
 		#fecha_autorizacion=datetime.datetime.strptime(,"%d/%m/%Y").strftime('%Y-%m-%d'),sendwebservice=0)
 		#date.today())
@@ -12836,6 +12926,7 @@ def enviadop(request):
 		datosdict={}
 		cantpersonas=''
 		totenviados=0
+		print grabarfa
 		for hay in grabarfa:
 			
 			preventivo = Preventivos.objects.get(id=hay.id)
@@ -13286,8 +13377,8 @@ def enviadop(request):
 				'</soap:Body>'+\
 				'</soap:Envelope>'
 						
-				#print xmls
-			
+				print xmls
+				"""
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13336,7 +13427,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-			
+				"""
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
@@ -13358,8 +13449,8 @@ def enviadoa(request):
 	   fecha_cargad=request.POST.get('fecha_cargas')
 	   fecha_cargah=request.POST.get('fecha_cargah')
 	   if fecha_cargad and fecha_cargah:
-	   	hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y").date()
-	   	ayer=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
+		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y").date()
+		ayer=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
 		grabarfa = Ampliacion.objects.filter(fecha_autorizacion__range=(hoy,ayer),fecha_autorizacion__isnull=False,sendwebservice=0)
 		#fecha_autorizacion=datetime.datetime.strptime(,"%d/%m/%Y").strftime('%Y-%m-%d'),sendwebservice=0)
 		#date.today())

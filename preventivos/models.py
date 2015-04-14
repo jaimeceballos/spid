@@ -651,8 +651,8 @@ class Preventivos(models.Model):
 	caratula = models.CharField(max_length=250)
 	fecha_carga = models.DateTimeField()
 	fecha_denuncia = models.DateTimeField()
-	fecha_autorizacion = models.DateField(null=True)
-	fecha_cierre = models.DateField(null=True)
+	fecha_autorizacion = models.DateTimeField(null=True)
+	fecha_cierre = models.DateTimeField(null=True)
 	actuante = models.ForeignKey('Actuantes', verbose_name='Actuante', related_name='Actuante', on_delete=models.PROTECT)
 	preventor = models.ForeignKey('Actuantes', verbose_name='Preventor', related_name='Preventor', on_delete=models.PROTECT)
 	dependencia = models.ForeignKey('Dependencias',blank=True,null=True)
@@ -699,13 +699,13 @@ class RefMotivosHecho(models.Model):
 
 
 class Hechos(models.Model):
-	fecha_carga=models.DateField(blank=True,null=True)
+	fecha_carga=models.DateTimeField(blank=True,null=True)
 	descripcion=models.CharField(max_length=2000,blank=True,null=True)
 	preventivo=models.ForeignKey('Preventivos', unique=True, on_delete=models.PROTECT,related_name='hecho')
 	motivo=models.ForeignKey('RefMotivosHecho', null=False, on_delete=models.PROTECT)
 	fecha_desde=models.DateTimeField()
 	fecha_hasta=models.DateTimeField()
-	fecha_esclarecido=models.DateField(null=True)
+	fecha_esclarecido=models.DateTimeField(null=True)
    
 	def __unicode__(self):
 		return u'%s %s' % (self.preventivo,self.descripcion)
@@ -1091,9 +1091,9 @@ class Ampliacion(models.Model):
 	autoridades         = models.ManyToManyField('RefAutoridad',null=True,blank=True)
 	descripcion         = models.CharField(max_length=2000)
 	preventivo          = models.ForeignKey('Preventivos',related_name='ampli')
-	fecha_autorizacion  = models.DateField(null=True,blank=True)
+	fecha_autorizacion  = models.DateTimeField(null=True,blank=True)
 	cierre_causa        = models.BooleanField(default=False)
-	fecha_cierre        = models.DateField(blank=True,null=True)
+	fecha_cierre        = models.DateTimeField(blank=True,null=True)
 	fin_edicion         = models.BooleanField(default=False)
 	sendwebservice      = models.IntegerField(default=0)
 
@@ -1112,7 +1112,7 @@ class ViolenciaFliar(models.Model):
 	sino_opciones=(('1','SI'),('2','NO'),)
 	id=models.AutoField(primary_key=True)
 	fecha = models.DateTimeField()
-	fecha_carga=models.DateField()
+	fecha_carga=models.DateTimeField()
 	intervencionsavd= models.IntegerField()
 	intervencionotro= models.IntegerField()
 	intervencioncual=models.CharField(max_length=250,blank=True,null=True)

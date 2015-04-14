@@ -282,7 +282,15 @@
   </p>
   <p>
      <strong style="color:red;"> * </strong><strong>Ocupacion :</strong>&nbsp;&nbsp;&nbsp;<select class="comboxs" id="ocupacion" name="ocupacion" >
-       <option {{formp.ocupacion}}</option></select>
+       <option {{formp.ocupacion}}</option></select></p>
+        <p>
+
+       <strong>Apodo/Alia/s :</strong><input type="text" id="alias" name="alias" {{formp.alias}}
+       <strong>Telefonos:</strong>  &nbsp;&nbsp;
+      <input type="text" name="celular" id="celular" placeholder="Cod. Area+Numero" 
+      onkeypress="return isNumberKey2(event,this)" {{personas.celular}}
+      </p>
+        <!--
          <strong style="margin-left:20px;">Condiciones de Trabajo : <label for = "condicionlaboral" name="condicionlaboral" id = "condicionlaboral" 
          class = "multi2"  checked="checked">  {{ formp.condicionlaboral }} </label></strong>
        </p>
@@ -317,7 +325,7 @@
         <strong style="margin-left:30px" >Hora/lugar:</strong>
        <input type="text" name="horalugaractivi" id="horalugaractivi" size="30" {{formp.horalugaractivi}}
        
-      </p>
+      </p>-->
   </p>
    <h6>Datos de los Padres</h6>
      <p>

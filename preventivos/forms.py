@@ -276,7 +276,7 @@ class PersonasForm(forms.ModelForm):
 	cuit = forms.CharField(required= False)
 	emails=forms.CharField(required=False)
 	condicionlaboral=forms.ChoiceField(widget=forms.RadioSelect(renderer=HorizRadioRenderer),choices=laburo_opciones,initial='1',required=False)
-    """
+	"""
 	def __init__(self, *args, **kwargs):
 		super(PersonasForm, self).__init__(*args, **kwargs)
 		# Making name required
@@ -310,6 +310,7 @@ class PrimerForm(forms.ModelForm):
 	unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
 	nro = forms.IntegerField(required=False,validators=[MinValueValidator(1),MaxValueValidator(9999)])
 	anio = forms.IntegerField(required=False,validators=[MinValueValidator(2012),MaxValueValidator(2025)])
+
 	def clean(self):
 		cleaned_data = super(PrimerForm, self).clean()
 		#if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
@@ -338,6 +339,7 @@ class PrimerForm(forms.ModelForm):
 	class Meta:
 		model = Preventivos
 		fields = ('fecha_denuncia','caratula','dependencia')
+	
 	
 
 class SegundoForm(forms.ModelForm):

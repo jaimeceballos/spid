@@ -9,8 +9,10 @@
         <thead>
             <tr class="gradeC">
                <th >Nro/Año</th>
+             
                <th>Caratula</th>
                 <th>U.Regional/Dependencias</th>
+                  <th>Fecha Denuncia</th>
                <th>Carga</th> <th>Autorizado</th> <th>Cierre</th>
                <th>Ampliaciones</th>
                <th>Ver</th>
@@ -23,16 +25,18 @@
                  {%for datos in existen %}
                   <tr  class="gradeC"> 
                    {%if datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES'%}
-                   <td width="15%"><a href='{% url 'selectPrev' datos.id %}'>
+                   <td width="10%"><a href='{% url 'selectPrev' datos.id %}'>
                    {{ datos.nro }}/{{ datos.anio}}</a></td>
                    {%else%}
-                    <td width="15%"><strong>{{ datos.nro }}/{{ datos.anio}}</strong></td>
+                    <td width="10%"><strong>{{ datos.nro }}/{{ datos.anio}}</strong></td>
                    {%endif%}
+                  
                    <td width="50%">{{ datos.caratula}}</td>
                    <td width="25%">{{datos.dependencia.unidades_regionales.descripcion}} / {{ datos.dependencia.descripcion}}</td>
-                   <td width="10%">{{ datos.fecha_carga | date:"d/m/Y"}}</td>
-                   <td width="10%">{{ datos.fecha_autorizacion | date:"d/m/Y"}}</td>
-                   <td width="12%">{{ datos.fecha_cierre | date:"d/m/Y"}}</td>
+                      <td width="10%">{{ datos.fecha_denuncia|date:" d/m/Y"}}</td>
+                   <td width="10%">{{ datos.fecha_carga|date:" d/m/Y"}}</td>
+                   <td width="10%">{{ datos.fecha_autorizacion|date:" d/m/Y"}}</td>
+                   <td width="12%">{{ datos.fecha_cierre|date:" d/m/Y"}}</td>
          
                
                   {%if datos.fecha_autorizacion and datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and datos.fecha_autorizacion%}

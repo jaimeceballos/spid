@@ -31,6 +31,9 @@
                <th width="30px">Apellidos</th>
                <th width="30px">Nombres</th>
                <th width="20px">E-mail</th>
+                <th width="20px">Unidad Regional</th>
+               
+                 <th width="20px">Destino Actual</th>
                <th width="10px">Ultimo ingreso</th>
                <th width="10px">Ver Actividades</th>
             </tr>
@@ -39,12 +42,14 @@
              <tbody>
                  {% for listas in lista %}
                   <tr  class="gradeC"> 
-                    <td width="5%">{{ listas.username }}</td>
-                    <td width="20%">{{ listas.last_name}}</td>
-                      <td width="20%">{{ listas.first_name}}</td>
-                          <td width="20%">{{ listas.email}}</td>
-                            <td width="20%">{{ listas.last_login}}</td>
-                            <td width="20%"><a href="{% url 'reporactivity' listas.username %}"> [ + ] </a></td>
+                    <td width="5%">{{ listas.user.username }}</td>
+                    <td width="20%">{{ listas.user.last_name}}</td>
+                      <td width="20%">{{ listas.user.first_name}}</td>
+                          <td width="20%">{{ listas.user.email}}</td>
+                           <td width="20%">{{ listas.ureg.descripcion}}</td>
+                            <td width="20%">{{ listas.depe.descripcion}}</td>
+                            <td width="20%">{{ listas.user.last_login}}</td>
+                            <td width="20%"><a href="{% url 'reporactivity' listas.user.username %}"> [ + ] </a></td>
                  
                       </td>
                   </tr>
