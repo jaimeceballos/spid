@@ -4698,7 +4698,7 @@ def verprev(request):
 		 depe=request.POST.get('depe')
 		 unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
 		 jurisdi=unidadregi.ciudad.descripcion
-		 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+		 #fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y %H:%M:%S")
 		 #fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 		 #fecha_cargas=str(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date())+' 00:00:01'
 		 #fecha_cargah=str(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date())+' 23:59:59'
@@ -4872,69 +4872,8 @@ def verprev(request):
 		 #aqui hago filtro si viene fecha de carga con cualquier otro valor concatenar arreglos con append
 
 		 if fecha_carga and fecha_cargah and not ureg and not depe:
-				"""
-				s1 = datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-				#'2012-05-03 00:00:00' # start time
-				s2 = datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")
-				#'2012-05-03 23:59:59' # end time, together covers 1 day
-				la = pytz.timezone('America/Argentina/Buenos_Aires')
-				#n1 = parse_datetime(s1) # naive object
-				#n2 = parse_datetime(s2)
-				aware_start_time = la.localize(s1) # aware object n2
-				aware_end_time = la.localize(s2) # "n1"
-				#print s1,s2,aware_start_time,aware_end_time
-			
-				filtro=Preventivos.objects.all()
 				
-				for fl in filtro:
-					#print fl.fecha_carga
-					fecauto=''
-					feccie=''
-					fechcarga=''
-					timedenuncia=''
-					fechaauto=''
-					fechacierre=''
-					timcie=''
-					idpr=fl.id
-
-					fecddenuncia=fl.fecha_denuncia.date()
-					feccarga=fl.fecha_carga.date()
-					if fl.fecha_autorizacion:
-					   fecauto=fl.fecha_autorizacion.date()
-					   timauto=timezone.localtime(fl.fecha_autorizacion).strftime('%H:%M:%S')
-					if fl.fecha_cierre:
-						feccie=fl.fecha_cierre.date()
-						timcie=timezone.localtime(fl.fecha_cierre).strftime('%H:%M:%S')
-
-					timdenuncia=timezone.localtime(fl.fecha_denuncia).strftime('%H:%M:%S')
-					timcarga=timezone.localtime(fl.fecha_carga).strftime('%H:%M:%S')
-
-					fecha=''
-					#print fecddenuncia,timdenuncia,feccarga,timcarga
-					if fecddenuncia<=feccarga:
-					   if timcarga=='21:00:00' and timdenuncia=='21:00:00':
-						  fechcarga=str(feccarga)+' 05:00:05'
-						  timedenuncia=str(fecddenuncia)+' 05:00:00'
-						  Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
-					else:
-						  fechcarga=str(feccarga)+' 05:00:05'
-						  timedenuncia=str(fecddenuncia)+' 05:00:00'
-						  Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
-					if fecauto: 
-					   if timauto=='21:00:00':
-						   if timcarga=='21:00:00':
-							  fechaauto=str(fecauto)+' 06:00:00'
-						   else:
-							  fechaauto=str(fecauto)+' 23:59:59'
-							  
-						   Preventivos.objects.filter(id=fl.id).update(fecha_autorizacion=fechaauto)
-							
-					if feccie:
-					   if timcie=='21:00:00':
-						   fechacierre=str(feccie)+' 05:00:00'
-						   Preventivos.objects.filter(id=fl.id).update(fecha_cierre=fechacierre)
-
-				"""
+				
 				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
 
 				fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
@@ -6146,7 +6085,7 @@ def persinvo(request,idhec,idper):
 						 perso.horariolab = formp.cleaned_data['horariolab']
 						 perso.otrasactividades = formp.cleaned_data['otrasactividades']
 						 perso.horalugaractivi = formp.cleaned_data['horalugaractivi']
-						 """				 
+						 """                 
 						 #print request.POST.get('roles')
 
 						 perso.estado_civil = formp.cleaned_data['estado_civil']
@@ -12913,12 +12852,104 @@ def enviadop(request):
 	fecha_carga = datetime.datetime.now()
 	totenviados=0
 	errors=''
+	
+			
 	if request.POST.get('search')=='Informar':
 	   fecha_cargad=request.POST.get('fecha_cargas')
 	   fecha_cargah=request.POST.get('fecha_cargah')
+	   """
+	   from django.utils.dateparse import parse_datetime
+	   import pytz
+	   s1 = datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
+	   #'2012-05-03 00:00:00' # start time
+	   s2 = datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")
+	   #'2012-05-03 23:59:59' # end time, together covers 1 day
+	   la = pytz.timezone('America/Argentina/Buenos_Aires')
+	   #n1 = parse_datetime(s1) # naive object
+	   #n2 = parse_datetime(s2)
+	   aware_start_time = la.localize(s1) # aware object n2
+	   aware_end_time = la.localize(s2) # "n1"
+	   #print s1,s2,aware_start_time,aware_end_time
+	   filtro=Preventivos.objects.all()
+	   for fl in filtro:
+		#print fl.fecha_carga
+		fecauto=''
+		feccie=''
+		fechcarga=''
+		timedenuncia=''
+		fechaauto=''
+		fechacierre=''
+		timcie=''
+		idpr=fl.id
+		timedesde=''
+		timehasta=''
+		fecddenuncia=fl.fecha_denuncia.date()
+		feccarga=fl.fecha_carga.date()
+		hechoid=Hechos.objects.all().filter(preventivo_id=idpr)
+		for fe in hechoid:
+			a=fe.fecha_desde.date()
+			b=fe.fecha_hasta.date()
+			fdesde=fe.fecha_desde
+			fhasta=fe.fecha_hasta
+
+		timedesde=timezone.localtime(fdesde)
+		timehasta=timezone.localtime(fhasta)
+
+		#print a,b,timedesde,timehasta
+		if fl.fecha_autorizacion:
+		   fecauto=fl.fecha_autorizacion.date()
+		   timauto=timezone.localtime(fl.fecha_autorizacion).strftime('%H:%M:%S %Z')
+		if fl.fecha_cierre:
+		   feccie=fl.fecha_cierre.date()
+		   timcie=timezone.localtime(fl.fecha_cierre).strftime('%H:%M:%S %Z')
+
+		timdenuncia=timezone.localtime(fl.fecha_denuncia).strftime('%H:%M:%S %Z')
+		timcarga=timezone.localtime(fl.fecha_carga).strftime('%H:%M:%S %Z')
+
+		fecha=''
+		#print fecddenuncia,timdenuncia,feccarga,timcarga
+		print timcarga,timdenuncia
+		if fecddenuncia<=feccarga:
+			if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
+			   fechcarga=str(feccarga)+' 05:00:05'
+			   timedenuncia=str(fecddenuncia)+' 05:00:00'
+			   Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
+			#else:
+			   #fechcarga=str(feccarga)+' 05:00:05'
+			   #timedenuncia=str(fecddenuncia)+' 05:00:00'
+			   #Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
+
+			if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
+			
+			   if fecddenuncia<=b:
+				horas=timehasta+timedelta(hours=1)
+				hrs=horas.strftime("%H")
+						  
+				fechcarga=str(b)+' '+str(hrs)+':00:05'
+				timedenuncia=str(b)+' '+str(hrs)+':00:00'
+			  
+				Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
+			  
+			
+			if fecauto: 
+			   if timauto=='21:00:00':
+				   if timcarga=='21:00:00':
+					  fechaauto=str(fecauto)+' 06:00:00'
+				   else:
+					  fechaauto=str(fecauto)+' 23:59:59'
+				
+				   Preventivos.objects.filter(id=fl.id).update(fecha_autorizacion=fechaauto)
+							
+			if feccie:
+			   if timcie=='21:00:00':
+				   fechacierre=str(feccie)+' 05:00:00'
+				   Preventivos.objects.filter(id=fl.id).update(fecha_cierre=fechacierre)
+
+
+	   """
 	   if fecha_cargad and fecha_cargah:
-	   	hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
-	   	ayer=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
+		ayer=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 		#hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y").date()
 		#ayer=datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date()
 		grabarfa = Preventivos.objects.filter(fecha_autorizacion__range=(hoy,ayer),fecha_autorizacion__isnull=False,sendwebservice=0)
@@ -13145,7 +13176,7 @@ def enviadop(request):
 									
 									for la in Personas.objects.get(id=p.persona.id).padre.all():
 												
-											persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
+											persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 							   
 											domi={'IdBarrio':idBarrio,'IdCalle':idCalle,'Nro':altura,'DescripcionDomicilio':descridomi}
 											if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
@@ -13158,7 +13189,7 @@ def enviadop(request):
 											dictpersona.update(padys)
 							 else:
 														
-								 persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
+								 persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 								 domi={'IdBarrio':idBarrio,'IdCalle':idCalle,'Nro':altura,'DescripcionDomicilio':descridomi}
 								 padys={'Hijode':'no registra datos de los padres'}
 								 dictpersona=persona
@@ -13169,14 +13200,13 @@ def enviadop(request):
 					else:
 					
 						
-						persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'NroDocumento':p.persona.nro_doc,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
+						persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'NroDocumento':p.persona.nro_doc,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 						domi={'DescripcionDomicilio':'no registra domicilio'}
 						padys={'Hijode':'no registra datos de los padres'}
 
 						dictpersona=persona
 						dictpersona.update(domi)
 						dictpersona.update(padys)
-				
 					cantper=cantper+1 
 					#print dictpersona
 					personasxml=dicttoxml(dictpersona,attr_type=False,root='Personas')
@@ -13452,7 +13482,7 @@ def enviadoa(request):
 	   fecha_cargah=request.POST.get('fecha_cargah')
 	   if fecha_cargad and fecha_cargah:
 		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
-	   	ayer=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+		ayer=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 		grabarfa = Ampliacion.objects.filter(fecha_autorizacion__range=(hoy,ayer),fecha_autorizacion__isnull=False,sendwebservice=0)
 		#fecha_autorizacion=datetime.datetime.strptime(,"%d/%m/%Y").strftime('%Y-%m-%d'),sendwebservice=0)
 		#date.today())
@@ -13759,7 +13789,7 @@ def enviadoa(request):
 			#descripcion=html2text.html2text(str(amplia.descripcion),True)
 			descripcion=strip_tags(amplia.descripcion).replace('&nbsp;','')
 			descripcion=descripcion.replace('"','')
-			#print descripcion	
+			#print descripcion  
 			cierre_causa=amplia.cierre_causa
 			if cierre_causa==1:
 			   fecha_cierre=timezone.localtime(amplia.fecha_cierre).strftime("%d/%m/%Y %H:%m:%S")
@@ -14294,7 +14324,7 @@ def persinvovif(request,idhec,idper):
 						 perso.horariolab = formp.cleaned_data['horariolab']
 						 perso.otrasactividades = formp.cleaned_data['otrasactividades']
 						 perso.horalugaractivi = formp.cleaned_data['horalugaractivi']
-						 """			 
+						 """             
 						 #print request.POST.get('roles')
 
 						 perso.estado_civil = formp.cleaned_data['estado_civil']
