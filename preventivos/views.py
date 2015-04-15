@@ -4800,13 +4800,18 @@ def verprev(request):
 			
 
 		 if ureg and depe:
-			
+			#fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+			#fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 			if fecha_carga and fecha_cargah:
+					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+					 fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
 							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia'))
 			else: 
 			 if fecha_carga:
+					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+					 #fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
 							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
@@ -4830,7 +4835,8 @@ def verprev(request):
 		 else:
 			if ureg:
 			 depes=Dependencias.objects.filter(unidades_regionales=ureg)
- 
+			 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+			 fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 			 if fecha_carga and fecha_cargah:
 				 
 					 for son in depes:
@@ -13020,9 +13026,9 @@ def enviadop(request):
 									   timedenuncia=str(fecdenuncia)
 									else:
 									   if len(hrs)<2:
-									   	  hrs='0'+hrs
+										  hrs='0'+hrs
 									   else:
-									   	  hrs=' '+hrs
+										  hrs=' '+hrs
 									   print hrs
 									   naive = feccarga.strftime('%Y-%m-%d')+hrs+':00:03'
 									   timedenuncia=str(fecddenuncia)+hrs+':00:00'
@@ -13039,7 +13045,7 @@ def enviadop(request):
 						fechcarga=str(feccarga)+' 04:00:05'
 						timedenuncia=str(fecddenuncia)+' 04:00:00'
 						Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)	
-       """
+	   """
 	   if fecha_cargad and fecha_cargah:
 		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
 		ayer=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
