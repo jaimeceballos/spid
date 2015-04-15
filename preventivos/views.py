@@ -73,6 +73,8 @@ from wkhtmltopdf.views import PDFResponse, PDFTemplateView, PDFTemplateResponse
 from django.forms.util import ErrorList
 from xml.sax import make_parser, SAXException
 from xml.sax.handler import feature_namespaces
+from django.utils.dateparse import parse_datetime
+import pytz
 
 
 def normalize_query(query_string,
@@ -4686,8 +4688,7 @@ def verprev(request):
 	unidadregi=''
 	jurisdi=''
 	if request.POST.get('search')=="Buscar":
-		 from django.utils.dateparse import parse_datetime
-		 import pytz
+		
 		 form=SearchPreveForm(request.POST, request.FILES)
 		 nro=request.POST.get('nro')
 		 anio=request.POST.get('anio')
@@ -4793,7 +4794,7 @@ def verprev(request):
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
 							#print son
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__gte=fecha_cargas).order_by('anio','nro','dependencia'))
+							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
 
 		
 			
@@ -4808,7 +4809,7 @@ def verprev(request):
 			 if fecha_carga:
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__gte=fecha_cargas).order_by('anio','nro','dependencia'))
+							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
 			 else:
 				if nro:
 					 todos.append(Preventivos.objects.filter(dependencia=depe,nro=nro).order_by('anio','nro','dependencia'))
@@ -4838,7 +4839,7 @@ def verprev(request):
 				if fecha_carga:
 				 
 					 for son in depes:
-							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__gte=fecha_cargas).order_by('anio','nro','dependencia')
+							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia')
 				else:
 				 if nro:
 					 for son in depes:
@@ -7485,24 +7486,24 @@ def seemaps(request):
 			i=0
 			if (fechadesde and fechahasta and delitos and ureg and depes) or (fechadesde and fechahasta and delitos and ciudad) or (fechadesde and fechahasta and ureg and depes) or (fechadesde and fechahasta and ciudad):
 					#dias=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()-datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
-					#hoy=str(datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date())+' 00:00:01'
-					#ayer=str(datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date())+' 23:59:59'
-					#hoy=datetime.datetime.strptime(hoy,'%Y-%m-%d %H:%M:%S')
-					#ayer=datetime.datetime.strptime(ayer,'%Y-%m-%d %H:%M:%S')
+					hoy=str(datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date())+' 00:00:01'
+					ayer=str(datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date())+' 23:59:59'
+					hoy=datetime.datetime.strptime(hoy,'%Y-%m-%d %H:%M:%S')
+					ayer=datetime.datetime.strptime(ayer,'%Y-%m-%d %H:%M:%S')
 					#hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
 					#ayer=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()
 					#-dias
-					hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y")
-					ayer=(datetime.datetime.strptime(fechahasta,"%d/%m/%Y")+timedelta(days=1)).date()
+					#hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y")
+					#ayer=(datetime.datetime.strptime(fechahasta,"%d/%m/%Y")+timedelta(days=1)).date()
 					#hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
 					#ayer=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()
-					ayerfue=ayer.strftime('%d/%m/%Y') 
-					hoyes=hoy.strftime('%d/%m/%Y')
+					ayerfue=ayer.strftime('%d/%m/%Y %H:%M:%S') 
+					hoyes=hoy.strftime('%d/%m/%Y %H:%M:%S')
 				 
 					#hoy=datetime.datetime(hoy.year, hoy.month, hoy.day)
 					#ayer=datetime.datetime(ayer.year, ayer.month, ayer.day)
 					
-					#print hoy,ayer
+					print hoy,ayer
 					if not ciudad and not depes:
 						 ciudad=preventivo.ciudad.id
 
@@ -7582,7 +7583,7 @@ def seemaps(request):
 								else:
 									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__range=(hoy,ayer)).values()
 			 
-								#print preventivos
+								print preventivos
 								for desde in preventivos:
 									 idp=desde['id']
 								 
@@ -12857,20 +12858,9 @@ def enviadop(request):
 	if request.POST.get('search')=='Informar':
 	   fecha_cargad=request.POST.get('fecha_cargas')
 	   fecha_cargah=request.POST.get('fecha_cargah')
-	   """
-	   from django.utils.dateparse import parse_datetime
-	   import pytz
-	   s1 = datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
-	   #'2012-05-03 00:00:00' # start time
-	   s2 = datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")
-	   #'2012-05-03 23:59:59' # end time, together covers 1 day
-	   la = pytz.timezone('America/Argentina/Buenos_Aires')
-	   #n1 = parse_datetime(s1) # naive object
-	   #n2 = parse_datetime(s2)
-	   aware_start_time = la.localize(s1) # aware object n2
-	   aware_end_time = la.localize(s2) # "n1"
-	   #print s1,s2,aware_start_time,aware_end_time
-	   filtro=Preventivos.objects.all()
+	   """	   
+	   filtro=Preventivos.objects.all().order_by('fecha_carga')
+	   
 	   for fl in filtro:
 		#print fl.fecha_carga
 		fecauto=''
@@ -12883,70 +12873,173 @@ def enviadop(request):
 		idpr=fl.id
 		timedesde=''
 		timehasta=''
+		#print fl.fecha_denuncia.strftime('%d/%m/%Y %H:%M:%S %Z')
+		#fecddenuncia=datetime.datetime.strptime(fl.fecha_denuncia.strftime('%d/%m/%Y %H:%M:%S %Z'),'%d/%m/%Y %H:%M:%S %Z').date()
+		#print fecddenuncia
+		#feccarga=datetime.datetime.strptime(fl.fecha_carga.strftime('%d/%m/%Y %H:%M:%S %Z'),'%d/%m/%Y %H:%M:%S %Z').date()
 		fecddenuncia=fl.fecha_denuncia.date()
 		feccarga=fl.fecha_carga.date()
+		timcarga=''
 		hechoid=Hechos.objects.all().filter(preventivo_id=idpr)
-		for fe in hechoid:
-			a=fe.fecha_desde.date()
-			b=fe.fecha_hasta.date()
-			fdesde=fe.fecha_desde
-			fhasta=fe.fecha_hasta
+		timdenuncia=timezone.localtime(fl.fecha_denuncia).strftime('%H:%M:%S')
+		timcarga=timezone.localtime(fl.fecha_carga).strftime('%H:%M:%S')
+		print 'Id Preventivos',fl.id,fecddenuncia,feccarga,timdenuncia,timcarga	
+		if hechoid:
+			for fe in hechoid:
+				a=fe.fecha_desde.date()
+				b=fe.fecha_hasta.date()
+				fdesde=fe.fecha_desde
+				fhasta=fe.fecha_hasta
 
-		timedesde=timezone.localtime(fdesde)
-		timehasta=timezone.localtime(fhasta)
+			timedesde=timezone.localtime(fdesde)
+			timehasta=timezone.localtime(fhasta)
+			if fl.fecha_autorizacion:
+				fecauto=fl.fecha_autorizacion.date()
+				timauto=timezone.localtime(fl.fecha_autorizacion).strftime('%H:%M:%S')
+				if fl.fecha_cierre:
+					feccie=fl.fecha_cierre.date()
+					timcie=timezone.localtime(fl.fecha_cierre).strftime('%H:%M:%S')
+					fecha=''
+					#print fecddenuncia,timdenuncia,feccarga,timcarga
+					#print timcarga,timdenuncia
+					if feccie<=fecauto and fecauto<=fecddenuncia and fecddenuncia<=feccarga:
+						print 'cuatro fechas iguales'
+						if timcarga=='21:00:00' and timdenuncia=='21:00:00' and timauto=='21:00:00' and  timcie=='21:00:00 ART':
+							fechcarga=str(feccarga)+' 04:00:05'
+							timedenuncia=str(fecddenuncia)+' 04:00:00'
+							fecauto=str(fecauto)+' 05:00:00'
+							feccie=str(feccie)+' 05:00:05'
+							Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto,fecha_cierre=feccie)
+						else:
+							if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART' and timauto=='21:00:00 ART':
+								horaauto=timcie-timedelta(hours=1)
+								hrs=horaauto.strftime("%H")
+								if hrs=='00':
+								   fecdenuncia=timehasta+timedelta(days=1)
+								   fecarga=timehasta+timedelta(days=1)
+								   fecauto=timehasta+timedelta(days=1)
+								   fechcarga=str(fecarga)
+								   timedenuncia=str(fecdenuncia)
+								   fecauto=str(fecauto)
+								else:
+									fechcarga=str(feccarga)+' '+str(hrs)+':00:05'
+									timedenuncia=str(fecddenuncia)+' '+str(hrs)+':00:00'
+									fecauto=str(fecauto)+' '+str(hrs)+':00:10'
 
-		#print a,b,timedesde,timehasta
-		if fl.fecha_autorizacion:
-		   fecauto=fl.fecha_autorizacion.date()
-		   timauto=timezone.localtime(fl.fecha_autorizacion).strftime('%H:%M:%S %Z')
-		if fl.fecha_cierre:
-		   feccie=fl.fecha_cierre.date()
-		   timcie=timezone.localtime(fl.fecha_cierre).strftime('%H:%M:%S %Z')
+								Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto)
+							else:
+								if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
+									horaauto=timauto-timedelta(hours=1)
+									hrs=horaauto.strftime("%H")
+									if hrs=='00':
+									   fecdenuncia=timehasta+timedelta(days=1)
+									   fecarga=timehasta+timedelta(days=1)
+									else:	
+										fechcarga=str(feccarga)+' '+str(hrs)+':00:03'
+										timedenuncia=str(fecddenuncia)+' '+str(hrs)+':00:00'
+									Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
+					else:
+						if fecauto<=feccarga and fecddenuncia==feccarga:
+							if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART' and timauto=='21:00:00 ART':
+								fechcarga=str(feccarga)+' 04:00:05'
+								timedenuncia=str(fecddenuncia)+' 04:00:00'
+								fecauto=str(fecauto)+' 05:00:00'
+								
+								Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto)
+						else:
 
-		timdenuncia=timezone.localtime(fl.fecha_denuncia).strftime('%H:%M:%S %Z')
-		timcarga=timezone.localtime(fl.fecha_carga).strftime('%H:%M:%S %Z')
+								if fecddenuncia<=feccarga:
+									if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
+										fechcarga=str(feccarga)+' 04:00:05'
+										timedenuncia=str(fecddenuncia)+' 04:00:00'
+										Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
+								else:
+									if fecauto>fecddenuncia and fecauto>feccarga and feccarga>fecddenuncia:
+										if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART' and timauto=='21:00:00 ART':
+											fechcarga=str(feccarga)+' 05:00:00'
+											timedenuncia=str(fecddenuncia)+' 05:00:00'
+											fecauto=str(fecauto)+' 05:00:00'
+											Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto)
+									else:
+										if fecauto>feccarga and fecauto>fecddenuncia and feccarga==fecddenuncia:
+										 if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART' and timauto=='21:00:00 ART':
+											fechcarga=str(feccarga)+' 05:00:05'
+											timedenuncia=str(fecddenuncia)+' 05:00:00'
+											fecauto=str(fecauto)+' 05:00:00'
+											Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto)
+											print hola
+										else:
+											if feccie>fecauto and fecauto>feccarga and feccarga>fecddenuncia:
+												if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART' and timauto=='21:00:00 ART' and  timcie=='21:00:00 ART':
+													fechcarga=str(feccarga)+' 05:00:00'
+													timedenuncia=str(fecddenuncia)+' 05:00:00'
+													fecauto=str(fecauto)+' 05:00:00'
+													feccie=str(feccie)+' 05:00:00'
+													Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto,fecha_cierre=feccie)
+											
+									
+				else:
+						if fecauto<=fecddenuncia and fecddenuncia<=feccarga:
+							if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART' and timauto=='21:00:00 ART':
+								fechcarga=str(feccarga)+' 04:00:05'
+								timedenuncia=str(fecddenuncia)+' 04:00:00'
+								fecauto=str(fecauto)+' 05:00:00'
+								Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto)
+							else:
+								if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
+									horaauto=timauto-timedelta(hours=1)
+									hrs=horaauto.strftime("%H")
+									if hrs=='00':
+									   fecdenuncia=timehasta+timedelta(days=1)
+									   fecarga=timehasta+timedelta(days=1)
+									   fechcarga=str(fecarga)
+									   timedenuncia=str(fecdenuncia)
+									else:
+										fechcarga=str(feccarga)+' '+str(hrs)+':00:03'
+										timedenuncia=str(fecddenuncia)+' '+str(hrs)+':00:00'
+									Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
+						else:
+							if fecddenuncia<=feccarga:
+								if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
+									fechcarga=str(feccarga)+' 04:00:05'
+									timedenuncia=str(fecddenuncia)+' 04:00:00'
+									fecauto=str(fecauto)+' 04:00:10'
+									Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto)			
+			else:
+						
+						if fecddenuncia<=feccarga:
+								
+								if timcarga=='21:00:00' and timdenuncia=='21:00:00':
+									horaauto=fhasta+timedelta(hours=1)
+									hrs=horaauto.strftime("%H")
+									print feccarga
+									if hrs=='00':
+									   fecdenuncia=timehasta+timedelta(days=1)
+									   fecarga=timehasta+timedelta(days=1)
+									   fechcarga=str(fecarga)
+									   timedenuncia=str(fecdenuncia)
+									else:
+									   if len(hrs)<2:
+									   	  hrs='0'+hrs
+									   else:
+									   	  hrs=' '+hrs
+									   print hrs
+									   naive = feccarga.strftime('%Y-%m-%d')+hrs+':00:03'
+									   timedenuncia=str(fecddenuncia)+hrs+':00:00'
+									
+									print type(fechcarga)
+									Preventivos.objects.filter(id=fl.id).update(fecha_carga=naive,fecha_denuncia=timedenuncia)
+									print hola
+					   
 
-		fecha=''
-		#print fecddenuncia,timdenuncia,feccarga,timcarga
-		print timcarga,timdenuncia
-		if fecddenuncia<=feccarga:
-			if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
-			   fechcarga=str(feccarga)+' 05:00:05'
-			   timedenuncia=str(fecddenuncia)+' 05:00:00'
-			   Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
-			#else:
-			   #fechcarga=str(feccarga)+' 05:00:05'
-			   #timedenuncia=str(fecddenuncia)+' 05:00:00'
-			   #Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
-
-			if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
 			
-			   if fecddenuncia<=b:
-				horas=timehasta+timedelta(hours=1)
-				hrs=horas.strftime("%H")
-						  
-				fechcarga=str(b)+' '+str(hrs)+':00:05'
-				timedenuncia=str(b)+' '+str(hrs)+':00:00'
-			  
-				Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
-			  
-			
-			if fecauto: 
-			   if timauto=='21:00:00':
-				   if timcarga=='21:00:00':
-					  fechaauto=str(fecauto)+' 06:00:00'
-				   else:
-					  fechaauto=str(fecauto)+' 23:59:59'
-				
-				   Preventivos.objects.filter(id=fl.id).update(fecha_autorizacion=fechaauto)
-							
-			if feccie:
-			   if timcie=='21:00:00':
-				   fechacierre=str(feccie)+' 05:00:00'
-				   Preventivos.objects.filter(id=fl.id).update(fecha_cierre=fechacierre)
-
-
-	   """
+		else:
+			if fecddenuncia<=feccarga:
+				if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
+						fechcarga=str(feccarga)+' 04:00:05'
+						timedenuncia=str(fecddenuncia)+' 04:00:00'
+						Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)	
+       """
 	   if fecha_cargad and fecha_cargah:
 		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
 		ayer=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
@@ -13089,10 +13182,10 @@ def enviadop(request):
 					domi=Personas.objects.get(id=p.persona.id).persodom.all()
 					if p.juridica=='no':
 					   pf='FISICA'
-					   pf=0
-					else:
-					   pf='JURIDICA'
 					   pf=1
+					else:
+					   #pf='JURIDICA'
+					   pf=0
 					if p.menor=='':
 					   p.menor="NO"
 					
@@ -13409,7 +13502,7 @@ def enviadop(request):
 				'</soap:Body>'+\
 				'</soap:Envelope>'
 						
-				print xmls
+				#print xmls
 				
 				user='policia-test'
 				password='policia-test'
