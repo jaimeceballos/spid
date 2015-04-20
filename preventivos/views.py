@@ -4764,8 +4764,8 @@ def verprev(request):
 		 #depes=Dependencias.objects.filter(unidades_regionales=ureg)
 		 #genero un arreglo ej. prev[] hago un for depende in depes agrego a prev.append(preventivos.objects.filter(dependencia=depende))
 		 if ureg and not depe and not fecha_carga:
-			fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-			fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+			#fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+			#fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 			depes=Dependencias.objects.filter(unidades_regionales=ureg)
 			if nro:
 				 for son in depes:
@@ -4835,15 +4835,15 @@ def verprev(request):
 		 else:
 			if ureg:
 			 depes=Dependencias.objects.filter(unidades_regionales=ureg)
-			 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-			 fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 			 if fecha_carga and fecha_cargah:
-				 
-					 for son in depes:
+					fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
+					fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+		
+					for son in depes:
 							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia')
 			 else:  
 				if fecha_carga:
-				 
+					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
 					 for son in depes:
 							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia')
 				else:
@@ -5254,7 +5254,7 @@ def pdfs(request,idprev):
 
 									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
 									if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-										 padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'   
+										 padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'   
 									else:
 										 padys='<dd>no registra datos de los padres'+'<br></dd>'    
 									datosgral=roles+persona+domi+str(padys)
@@ -6869,9 +6869,9 @@ def informe(request,idhec,idprev):
 										 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 									#persona='<dd>'+str(p)+', '+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+',  Estado Civil :'+' '+str(p.persona.estado_civil)+'<br><dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'<br></dd>'
-									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'<br></dd>'
+									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
 									if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-											padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
+											padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+'  y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
 									else:
 											padys='<dd>no registra datos de los padres'+'<br><br></dd>'    
 									datosgral=roles+persona+domi+padys
@@ -6989,8 +6989,8 @@ def informe(request,idhec,idprev):
 		datos=Preventivos.objects.get(id=idprev)
 		nro=datos.nro
 		anio=datos.anio
-		fecha_denuncia=datos.fecha_denuncia
-		fecha_carga=datos.fecha_carga
+		fecha_denuncia=str(timezone.localtime(datos.fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S"))
+		fecha_carga=str(timezone.localtime(datos.fecha_carga).strftime("%d/%m/%Y %H:%M:%S"))
 		caratula=datos.caratula
 		actuante=datos.actuante
 		preventor=datos.preventor
@@ -7029,7 +7029,7 @@ def informe(request,idhec,idprev):
  
 		titulo =str('<u>'+'Preventivo Nro : '+str(nro)+'/'+str(anio)+'</u>')
 		tresto='--Dependencia : '+str(depe)+' Ciudad de : '+str(ciudad)+'</u><br>'
-		titulo1=str('Fecha de Denuncia : '+str(fecha_denuncia.strftime("%d/%m/%Y"))+'<br>'+'Fecha de Carga: '+str(fecha_carga.strftime("%d/%m/%Y"))+'<br>'+'Caratula :'+str(caratula.encode("utf8"))+'<br>'+'Actuante : '+str(jerarqui_a)+' '+str(actuante)+' --- '+' Preventor :'+str(jerarqui_p)+' '+str(preventor)+'<br>'+'Autoridades a informar :'+'<br><dd>'+str(autoridad)+'</dd><hr>')
+		titulo1=str('Fecha de Denuncia : '+str(timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S"))+'<br>'+'Fecha de Carga: '+str(timezone.localtime(fecha_carga).strftime("%d/%m/%Y %H:%M:%S"))+'<br>'+'Caratula :'+str(caratula.encode("utf8"))+'<br>'+'Actuante : '+str(jerarqui_a)+' '+str(actuante)+' --- '+' Preventor :'+str(jerarqui_p)+' '+str(preventor)+'<br>'+'Autoridades a informar :'+'<br><dd>'+str(autoridad)+'<br><dd><hr>')
 		titulo2=str(hechodelitos)+'<hr>'+'Personas Involucradas'+'<hr>'+str(datosper)+'<hr>'
 		
 		#ubicacion
@@ -11481,7 +11481,7 @@ def reporampli(request,idprev,idamp):
 
 									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
 									if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-										 padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
+										 padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
 									else:
 										 padys='<dd>no registra datos de los padres'+'<br></dd>'    
 									datosgral=roles+persona+domi+padys
@@ -12622,7 +12622,7 @@ def enviar(request,idprev,idamp):
 
 									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
 									if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-										 padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' -- '+'y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
+										 padys='<dd> Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
 									else:
 										 padys='<dd>no registra datos de los padres'+'<br></dd>'    
 									datosgral=roles+persona+domi+padys
@@ -13508,8 +13508,8 @@ def enviadop(request):
 				'</soap:Body>'+\
 				'</soap:Envelope>'
 						
-				#print xmls
-				
+				print xmls
+				"""
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13558,7 +13558,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-				
+				"""
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"

@@ -2,9 +2,10 @@
 <html>
 {%load static%}
 <head>
-<META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Informacion Delictual -- SPID </title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">  
+<META httpequiv="ContentType" content="text/html; charset=UTF-8">  
 <style>
 h1.salto{
 PAGE-BREAK-AFTER: always
@@ -160,8 +161,10 @@ p#P a:hover {
    function imprimir(){
     
      document.getElementById('boton').style.visibility="hidden";
+      document.getElementById('botons').style.visibility="hidden";
      window.print();
-  
+     document.getElementById('boton').style.visibility="visible";
+  document.getElementById('botons').style.visibility="visible";
 }
  function imprSelec(nombre)
 {
@@ -172,22 +175,25 @@ p#P a:hover {
   ventimp.print( );
   ventimp.close();
 }
+
 </script> 
 </script>
 </head>
 <body >
  <center>
- <a href="javascript:window.print()"><img src="{{STATIC_URL}}imagenes/preventivos/prints.png" width="" height="" alt="" /></a>
-<input type="button" value="Imprimir solo Texto" style="height:22px;text-transform:uppercase;"  
+ <a href='javascript:imprimir();' id="boton" title="Imprimir Preventivo Completo con Mapa"><img src="{{STATIC_URL}}imagenes/preventivos/prints.png" width="" height="" alt="" /></a>
+<!--<input type="button" value="Imprimir" style="height:22px;text-transform:uppercase;"  
+onclick="imprSelec('preve')" title="Imprimir Preventivo Completo con Mapa"/> &nbsp;&nbsp;-->
+<input type="button"  id="botons" name="botons" value="Imprimir solo Texto" style="height:22px;text-transform:uppercase;"  title="Imprimir Preventivo Completo solo Texto" 
 onclick="imprSelec('onlytext')"/> 
   </center>
-  
- <br>  {%include "header.html"%}<br><hr>
+<div id="preve">
+ <br>  {%include "header.html"%}<hr>
 
     <p> <strong>Unidad Regional / Dependencia : {{unireg}} / {{depe}} -- Ciudad de : {{ciudad}}</strong></p>
     <p> <strong>Preventivo Nro : </strong>{{nro}}/{{anio}}&nbsp;&nbsp;
-    <strong>Fecha de Denuncia : </strong>{{fecha_denuncia|date:"d/m/Y" }}&nbsp;&nbsp;
-    <strong>Fecha de Carga:</strong> {{fecha_carga|date:"d/m/Y"}}</p>
+    <strong>Fecha de Denuncia : </strong>{{fecha_denuncia|date:"SHORT_DATETIME_FORMAT" }} Hrs.&nbsp;&nbsp;
+    <strong>Fecha de Carga:</strong> {{fecha_carga|date:"SHORT_DATETIME_FORMAT"}} Hrs.</p>
  
 
     <p>   
@@ -216,8 +222,8 @@ onclick="imprSelec('onlytext')"/>
        
          <p><strong>Motivo : &nbsp;&nbsp;</strong>{{value.motivo}}&nbsp;&nbsp;&nbsp;&nbsp;</p>
          <p>
-         <strong>Fecha y Hora Inicio :&nbsp;&nbsp;</strong>{{value.fecha_desde|date:"d/m/Y H:i" }} Hs.&nbsp;&nbsp;
-         <strong>Fecha y Hora Final :&nbsp;&nbsp;</strong>{{value.fecha_hasta|date:"d/m/Y H:i" }} Hs.</p>
+         <strong>Fecha y Hora Inicio :&nbsp;&nbsp;</strong>{{value.fecha_desde|date:"d/m/Y H:i" }} Hrs.&nbsp;&nbsp;
+         <strong>Fecha y Hora Final :&nbsp;&nbsp;</strong>{{value.fecha_hasta|date:"d/m/Y H:i" }} Hrs.</p>
          <div><strong>Descripcion del Hecho :</strong>{{value.descripcion|striptags|safe}}</div>
        {%endfor%}
    
@@ -245,8 +251,9 @@ onclick="imprSelec('onlytext')"/>
    <strong><dd>Lote : {{lugar.lote}} &nbsp;Manzana: {{lugar.manzana}} &nbsp;Sector: {{lugar.sector}}</strong></dd>
    <strong><dd>Edificio : {{lugar.edificio}} &nbsp;Escalera: {{lugar.escalera}} &nbsp;Departamento: {{lugar.departamento}}&nbsp;Piso: {{lugar.piso}}
    </strong></dd></p>
-  
   <p>
+  {%if condiciones%}
+  
           <strong>Condiciones Climaticas del lugar:</strong>
             {% for d in condiciones %}
                <ul>
@@ -255,14 +262,14 @@ onclick="imprSelec('onlytext')"/>
            </li>
         </ul>      
      {% endfor%}      
-
+   {%endif%}
     <hr>
   
    <strong style="margin-left:20%;">Ubicación : {{lugar.calle}} &nbsp;&nbsp;Nro. &nbsp;{{lugar.altura}}</strong>
         
            <div id="map" style="margin-left:20%;width:400px;height:250px;border:1px solid black;"></div>
               <div style="margin-left:35%;border:0px solid black;"> 
-                <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/powered-by-google-on-white.png" width="25" height="18"></div>
+                <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/powered-by-google-on-white.png" width="25" height="16"></div>
          </p>      
   <p>
 
@@ -380,19 +387,20 @@ onclick="imprSelec('onlytext')"/>
   
     
   
-  </div>
+
 {%else%}  
   <div id="rot">PREVENTIVO NO VÁLIDO</div>
 
   <strong>Es un Preventivo incompleto</strong> {%endif%}
+  </div>
 <div style="display:none;">
 <div id="onlytext">
    <br>  {%include "header.html"%}<br><hr>
 
     <p> <strong>Unidad Regional / Dependencia : {{unireg}} / {{depe}} -- Ciudad de : {{ciudad}}</strong></p>
     <p> <strong>Preventivo Nro : </strong>{{nro}}/{{anio}}&nbsp;&nbsp;
-    <strong>Fecha de Denuncia : </strong>{{fecha_denuncia|date:"d/m/Y" }}&nbsp;&nbsp;
-    <strong>Fecha de Carga:</strong> {{fecha_carga|date:"d/m/Y"}}</p>
+    <strong>Fecha de Denuncia : </strong>{{fecha_denuncia|date:"SHORT_DATETIME_FORMAT" }} Hrs.&nbsp;&nbsp;
+    <strong>Fecha de Carga:</strong> {{fecha_carga|date:"SHORT_DATETIME_FORMAT"}} Hrs.</p>
     <p>   
      <strong>Caratula Policial :</strong> {{caratula}}  
     <!-- <p>   
@@ -401,11 +409,15 @@ onclick="imprSelec('onlytext')"/>
       </p>-->
       <p><strong> Autoridades a Informar </strong></p> 
      {% for y in autoridades %}
-          <strong> {{y}}</strong>
+              <ul>
+           <li>
+               {{y}}
+           </li>
+        </ul>      
     
      {% endfor%}        
  
-
+  <hr>
 
   {%if tienehecho%}
  
@@ -439,7 +451,7 @@ onclick="imprSelec('onlytext')"/>
    <strong><dd>Lote : {{lugar.lote}} &nbsp;Manzana: {{lugar.manzana}} &nbsp;Sector: {{lugar.sector}}</strong></dd>
    <strong><dd>Edificio : {{lugar.edificio}} &nbsp;Escalera: {{lugar.escalera}} &nbsp;Departamento: {{lugar.departamento}}&nbsp;Piso: {{lugar.piso}}
    </strong></dd>
-  
+  {%if condiciones%}
   <p>
           <strong>Condiciones Climaticas del lugar:</strong>
             {% for d in condiciones %}
@@ -452,7 +464,7 @@ onclick="imprSelec('onlytext')"/>
    
  
 </p>
-
+{%endif%}
 {%else%}
 <hr>
   <strong>No Existe Lugar o referencia geografica del Hecho</strong>
@@ -495,7 +507,7 @@ onclick="imprSelec('onlytext')"/>
  {% for value in form1 %} 
        
         
-         <div><strong>Descripcion del Hecho :</strong>{{value.descripcion|striptags}}</div>
+         <div><strong>Descripcion del Hecho :</strong>{{value.descripcion|striptags|safe}}</div>
        {%endfor%}
   <p><br><br></p>
 
@@ -512,6 +524,7 @@ onclick="imprSelec('onlytext')"/>
 
   <strong>Es un Preventivo incompleto</strong> {%endif%}
 
+</div>
 </div>
 </div>
 </body>
