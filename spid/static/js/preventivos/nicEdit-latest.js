@@ -18,7 +18,7 @@ var nicEditorConfig = bkClass.extend({
 		'center' : {name : __('Alinear Centro'), command : 'justifycenter', noActive : true},
 		'right' : {name : __('Alinear derecha'), command : 'justifyright', noActive : true},
 		'justify' : {name : __('Justificado Texto'), command : 'justifyfull', noActive : true},
-		'ol' : {name : __('Insertar Lista Ordenada'), command : 'insertorderedlist', tags : ['OL']},
+		/*'ol' : {name : __('Insertar Lista Ordenada'), command : 'insertorderedlist', tags : ['OL']},
 		'ul' : 	{name : __('Insertar Lista desordenada'), command : 'insertunorderedlist', tags : ['UL']},
 		'subscript' : {name : __('Click to Subscript'), command : 'subscript', tags : ['SUB']},
 		'superscript' : {name : __('Click to Superscript'), command : 'superscript', tags : ['SUP']},
@@ -26,10 +26,11 @@ var nicEditorConfig = bkClass.extend({
 		'removeformat' : {name : __('Remove Formatting'), command : 'removeformat', noActive : true},
 		'indent' : {name : __('Texto alineado'), command : 'indent', noActive : true},
 		'outdent' : {name : __('Remover alineado'), command : 'outdent', noActive : true},
-		'hr' : {name : __('Horizontal Rule'), command : 'insertHorizontalRule', noActive : true}
+		'hr' : {name : __('Horizontal Rule'), command : 'insertHorizontalRule', noActive : true}*/
 	},
 	iconsPath : '/static/imagenes/preventivos/nicEditorIcons.gif',
-	buttonList : ['save','bold','italic','underline','left','center','right','justify','ol','ul','fontSize','fontFamily','fontFormat','indent','outdent','image','upload','link','unlink','forecolor','bgcolor'],
+	buttonList : ['save','bold','italic','underline','left','center','right','justify','fontSize',],
+	/*,'ol','ul','fontSize','fontFamily','fontFormat','indent','outdent','image','upload','link','unlink','forecolor','bgcolor'],*/
 	iconList : {"bold":1,"center":2,"hr":3,"indent":4,"italic":5,"justify":6,"left":7,"ol":8,"outdent":9,"removeformat":10,"right":11,"save":12,"strikethrough":13,"subscript":14,"superscript":15,"ul":16,"underline":17,"close":18,"arrow":19}
 
 });

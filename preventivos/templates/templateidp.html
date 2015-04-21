@@ -104,7 +104,7 @@
         <p>Fecha y Hora Inicio :<strong>{{form.fecha_desde|date:"SHORT_DATETIME_FORMAT"}}</strong>
         &nbsp;&nbsp;Fecha y Hora Final : <strong>{{form.fecha_hasta|date:"SHORT_DATETIME_FORMAT"}}</strong> </p>
        <h6>Breve Descripcion </h6>
-        <textarea type="text" style="width: 100%;" disabled="disabled"> {{form.descripcion}} </textarea>
+        <textarea type="text" style="width: 100%;" disabled="disabled"> {{form.descripcion|safe}} </textarea>
        <p>
           <h6>Delito/s Cometido/s</h6>
                {% for y in delitos %}

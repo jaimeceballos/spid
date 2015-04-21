@@ -751,6 +751,8 @@ def obtener_datosfirst(request,idprev):
 				 #if not hecho.descripcion:
 				
 				 hecho.descripcion=request.POST.get('descrihecho').encode('ascii', 'xmlcharrefreplace')
+				 #hecho.descripcion=strip_tags(hecho.descripcion)
+				 hecho.descripcion=hecho.descripcion.replace('&nbsp','')
 				 print hecho.descripcion
 				 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
 						
@@ -7029,7 +7031,7 @@ def informe(request,idhec,idprev):
  
 		titulo =str('<u>'+'Preventivo Nro : '+str(nro)+'/'+str(anio)+'</u>')
 		tresto='--Dependencia : '+str(depe)+' Ciudad de : '+str(ciudad)+'</u><br>'
-		titulo1=str('Fecha de Denuncia : '+str(timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S"))+'<br>'+'Fecha de Carga: '+str(timezone.localtime(fecha_carga).strftime("%d/%m/%Y %H:%M:%S"))+'<br>'+'Caratula :'+str(caratula.encode("utf8"))+'<br>'+'Actuante : '+str(jerarqui_a)+' '+str(actuante)+' --- '+' Preventor :'+str(jerarqui_p)+' '+str(preventor)+'<br>'+'Autoridades a informar :'+'<br><dd>'+str(autoridad)+'<br><dd><hr>')
+		titulo1=str('Fecha de Denuncia : '+fecha_denuncia+'<br>'+'Fecha de Carga: '+fecha_carga+'<br>'+'Caratula :'+str(caratula.encode("utf8"))+'<br>'+'Actuante : '+str(jerarqui_a)+' '+str(actuante)+' --- '+' Preventor :'+str(jerarqui_p)+' '+str(preventor)+'<br>'+'Autoridades a informar :'+'<br><dd>'+str(autoridad)+'<br><dd><hr>')
 		titulo2=str(hechodelitos)+'<hr>'+'Personas Involucradas'+'<hr>'+str(datosper)+'<hr>'
 		
 		#ubicacion
@@ -13344,7 +13346,8 @@ def enviadop(request):
 							tituvehiculos='Detalle Vehiculo : '+str(extrav.idmarca)+',Modelo : '+str(extrav.modelo)+',Dominio : '+str(extrav.dominio)+',Año : '+str(extrav.anio)+' Tipos : '+str(extrav.tipov)+',Nro Chasis : '+str(extrav.nchasis)+',Nro. Motor : '+str(extrav.nmotor)+',Propietario : '+str(extrav.nro_doc)+'-'+str(extrav.propietario)
 				 
 					obse=html2text.html2text(eles.descripcion)
-					obse=strip_tags(eles.descripcion).replace('&nbsp;','')
+					obse=strip_tags(eles.descripcion)
+					obse=obse.replace('&nbsp;','')
 					obser=obse.replace('"','')
 				
 					rubros={'IdRelacionElemento':unicode(str(eles.tipo.id),'utf-8'),'RelacionElemento':unicode(str(eles.tipo.descripcion),'utf-8'),'DescripcionElemento':unicode(str(eles.rubro),'UTF-8')+'-'+unicode(str(eles.categoria),'UTF-8')+'-'+obser+'-'+str(eles.unidadmed)+'='+str(eles.cantidad),'TitularArmas':unicode(str(tituarmas),'utf-8'),'TitularVehiculo':unicode(str(tituvehiculos),'UTF-8')}
@@ -13403,8 +13406,10 @@ def enviadop(request):
 
 				   
 					denuncia=html2text.html2text(descripcion,True)
-				   
-					denuncia=strip_tags(descripcion).replace('&nbsp;','')
+					denuncia=denuncia.encode('ascii', 'xmlcharrefreplace')
+					denuncia=strip_tags(denuncia)
+					#.replace('&nbsp;','')
+					denuncia=denuncia.replace('&nbsp;','')
 					denuncia=denuncia.replace('"','')
 				
 					motivo=str(value.motivo)
@@ -13440,7 +13445,7 @@ def enviadop(request):
 					
 					domihecho=sector+departamento+piso+escalera
 					hecho={'NroHecho':str(lugar.altura),'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':unicode(str(lugar.barrio),'UTF-8'),'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
-					denuncia={'Denuncia':denuncia.strip()}
+					denuncia={'Denuncia':denuncia}
 					
 			  
 
@@ -13509,7 +13514,7 @@ def enviadop(request):
 				'</soap:Envelope>'
 						
 				print xmls
-				"""
+			
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13558,7 +13563,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-				"""
+		
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
@@ -13840,8 +13845,10 @@ def enviadoa(request):
 					 for extrav in obdatav:
 						tituvehiculos='Detalle Vehiculo : '+str(extrav.idmarca)+',Modelo : '+str(extrav.modelo)+',Dominio : '+str(extrav.dominio)+',Año : '+str(extrav.anio)+' Tipos : '+str(extrav.tipov)+',Nro Chasis : '+str(extrav.nchasis)+',Nro. Motor : '+str(extrav.nmotor)+',Propietario : '+str(extrav.nro_doc)+'-'+str(extrav.propietario)
 				 
-				obse=html2text.html2text(eles.descripcion)
-				obse=strip_tags(eles.descripcion).replace('&nbsp;','')
+				obse=html2text.html2text(eles.descripcion,True)
+				obse=obse.encode('ascii', 'xmlcharrefreplace')
+				obse=strip_tags(obse)
+				obse=strip_tags(obse).replace('&nbsp;','')
 				obser=obse.replace('"','')
 				
 				rubros={'IdRelacionElemento':unicode(str(eles.tipo.id),'utf-8'),'RelacionElemento':unicode(str(eles.tipo.descripcion),'utf-8'),'DescripcionElemento':unicode(str(eles.rubro),'UTF-8')+'-'+unicode(str(eles.categoria),'UTF-8')+'-'+obser+'-'+str(eles.unidadmed)+'='+str(eles.cantidad),'TitularArmas':unicode(str(tituarmas),'utf-8'),'TitularVehiculo':unicode(str(tituvehiculos),'UTF-8')}
