@@ -7536,7 +7536,7 @@ def seemaps(request):
 					#hoy=datetime.datetime(hoy.year, hoy.month, hoy.day)
 					#ayer=datetime.datetime(ayer.year, ayer.month, ayer.day)
 					
-					print hoy,ayer
+					#print hoy,ayer
 					if not ciudad and not depes:
 						 ciudad=preventivo.ciudad.id
 
@@ -7616,7 +7616,7 @@ def seemaps(request):
 								else:
 									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__range=(hoy,ayer)).values()
 			 
-								print preventivos
+								#print preventivos
 								for desde in preventivos:
 									 idp=desde['id']
 								 
@@ -13518,8 +13518,8 @@ def enviadop(request):
 
 					
 					domihecho=sector+departamento+piso+escalera
-					print lugar.altura
-					print 'sector',sector,'dpto',departamento,'pso',piso,'esc',escalera
+					#print lugar.altura
+					#print 'sector',sector,'dpto',departamento,'pso',piso,'esc',escalera
 					hecho={'AlturaHecho':str(lugar.altura),'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':unicode(str(lugar.barrio),'UTF-8'),'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
 					denuncia={'Denuncia':denuncia}
 					
@@ -13589,8 +13589,8 @@ def enviadop(request):
 				'</soap:Body>'+\
 				'</soap:Envelope>'
 						
-				print xmls
-				"""
+				#print xmls
+				
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13612,7 +13612,7 @@ def enviadop(request):
 				valorweb=0
 				if ref.status==200:
 				   data = ref.read()
-				   print data,ref.status
+				   #print data,ref.status
 				   #aqui actualizar el campo sendwebservice en preventivo a 1
 				   user = User.objects.get(username='23140893')
 				   prev = Preventivos.objects.get(id=hay.id)
@@ -13639,7 +13639,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-				"""
+				
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"

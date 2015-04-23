@@ -59,7 +59,7 @@ def hoyhora():
 #Signals
 #Registro de LOG conforme a Procesos 
 def registro_post_save(sender, instance, created, **kwargs):
-    print created
+    #print created
     if created==True:
         accion='AGREGAR'
     else:
@@ -83,7 +83,7 @@ def registro_post_save(sender, instance, created, **kwargs):
     log_pk={}
     log_pk['valor']=''
     log_pk['pk']=''
-    print op.__class__._meta.fields
+    #print op.__class__._meta.fields
     for f in op.__class__._meta.fields:
         #print user.username
         valor_nuevo=getattr(op,'username')
