@@ -547,7 +547,7 @@ class HechosDelitoForm(forms.ModelForm):
 
 class PersInvolucradasForm(forms.ModelForm):
 	roles=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= RefPeople.objects.all(),initial=1)
-	cuit=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), required=False, queryset= RefTipoDocumento.objects.filter(descripcion='CUIT'),initial=8)
+	cuit=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), required=False, queryset= RefTipoDocumento.objects.filter(descripcion__contains='CUI'),initial=8)
 	nrocuit = forms.CharField(required= False)
 	class Meta:
 		model = PersInvolucradas
