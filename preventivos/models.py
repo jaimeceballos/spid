@@ -753,6 +753,8 @@ class PersInvolucradas(models.Model):
 	fechahoralibertad=models.DateTimeField(null=True,blank=True)
 	cargado_prev=models.BooleanField(default=False)
 	ampliacion=models.ForeignKey('Ampliacion',blank=True,null=True)
+	cuit=models.ForeignKey('RefTipoDocumento', verbose_name='cuit',null=True,blank=True)
+	nrocuit=models.CharField(max_length=11,default=0,unique=True)
 
 	def __unicode__(self):
 		return u'%s' % (self.persona)
@@ -794,7 +796,7 @@ class Detenidos(models.Model):
 	persona = models.ForeignKey(Personas)
 	fechahoradetencion=models.DateTimeField(null=True,blank=True)
 	fechahoralibertad=models.DateTimeField(null=True,blank=True)
-	#libertad=models.CharField(max_length=1,null=True, blank=True)
+	libertad=models.CharField(max_length=1,null=True, blank=True)
 	hechos = models.ForeignKey(Hechos)
 	observaciones= models.CharField(max_length=800,null=True,blank=True)
 	borrado = models.CharField(max_length=1,null=True, blank=True)

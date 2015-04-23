@@ -108,66 +108,82 @@
         </select> </p>
       <p><strong>Apellido: </strong>{{persona.apellidos}} <strong> Nombre: </strong>{{persona.nombres}} <strong> Tipo Documento: </strong>{{persona.tipo_doc}} <strong> Numero: </strong>{{persona.nro_doc}}</p>
       {% if 'DETENIDO' == persoinv.roles.descripcion or 'APREHENDIDO' == persoinv.roles.descripcion %}
-          <p><strong>Hora de detencion: </strong>
+          <p><strong>Fecha y Hora de detencion: </strong>
           {% if persoinv.fechahoradetencion %}
               {{persoinv.fechahoradetencion}}
           {% else %} 
-            <input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
-            {{persoinvform.fechahoradetencion}} 
-            <input class="botoncalendar" button id="fecha_desde1" ></button>
-            <strong style="color:red;">{{persoinvform.fechahoradetencion.errors}}</strong> 
-            <!-- script que define y configura el calendario--> 
-            <script type="text/javascript" charset="utf-8">
-            
-             var cal = Calendar1.setup({onSelect: function(cal) {
-             cal.hide() },showTime: 12,});
-             cal.manageFields('fecha_desde1','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
+          <div id="datetimepicker" class="input-append date">
+            <input type="text"  name="fechahoradetencion" id="fechahoradetencion" readonly="readonly"  {{persoinvform.fechahoradetencion}} 
+              
+              <span class="add-on">
+                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+              </span> 
+           
+             <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+        <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+        <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+        <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+        </script>
+        <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+        </script></div>
 
-            </script>&nbsp; 
           {% endif %} 
           
-          <strong> Hora Libertad: </strong>
+          <strong style="color:red;margin-left:15px;"> Fecha y Hora de Libertad: </strong>
           {% if persoinv.fechahoralibertad %}
               {{persoinv.fechahoralibertad}}
           {% else %} 
-          <input type="text" size="15" name="fechahoralibertad" id="fechahoralibertad" readonly="readonly" 
+          <div id="datetimepicker1" class="input-append date">
+          <input type="text" name="fechahoralibertad" id="fechahoralibertad" readonly="readonly" style="margin-left:14px;"
           {{persoinvform.fechahoralibertad}} 
-          <input class="botoncalendar" button id="fecha_hasta1" ></button>
-          <strong style="color:red;">{{persoinvform.fechahoralibertad.errors}}</strong> 
-          <!-- script que define y configura el calendario--> 
-          <script type="text/javascript" charset="utf-8">
-        
-          var cal = Calendar1.setup({onSelect: function(cal) {
-          cal.hide() },showTime: 12,});
-          cal.manageFields('fecha_hasta1','fechahoralibertad', "%d/%m/%Y %k:%M:%S");
-
-          </script>&nbsp;</p>
+          <span class="add-on">
+                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+              </span> 
+           
+             <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+        <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+        <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+        <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+        </script>
+        <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+        </script></div>
+       
+          </p>
           {% endif %}
     {% else %}
        <div id="detenidos" style="display:none;">
-          <p><strong>Hora de detencion: </strong><input type="text" size="15" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+        <div id="datetimepicker" class="input-append date">
+          <p><strong>Fecha y Hora de detencion: </strong>
+            <input type="text"  name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
         {{persoinvform.fechahoradetencion}} 
-        <input class="botoncalendar" button id="fecha_desde1" ></button>
-        <strong style="color:red;">{{persoinvform.fechahoradetencion.errors}}</strong> 
-        <!-- script que define y configura el calendario--> 
-        <script type="text/javascript" charset="utf-8">
-        
-         var cal = Calendar1.setup({onSelect: function(cal) {
-         cal.hide() },showTime: 12,});
-         cal.manageFields('fecha_desde1','fechahoradetencion', "%d/%m/%Y %k:%M:%S");
+             <span class="add-on">
+                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+              </span> 
+           
+             <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+        <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+        <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+        <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+        </script>
+        <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+        </script></div>
+        <div id="datetimepicker1" class="input-append date">
 
-       </script>&nbsp;  <strong> Hora Libertad: </strong><input type="text" size="15" name="fechahoralibertad" id="fechahoralibertad" readonly="readonly" 
+         <strong style="margin-left:5px;"> Fecha y Hora de Libertad: </strong><input type="text" name="fechahoralibertad" id="fechahoralibertad" readonly="readonly" style="margin-left:14px;"
         {{persoinvform.fechahoralibertad}} 
-        <input class="botoncalendar" button id="fecha_hasta1" ></button>
-        <strong style="color:red;">{{persoinvform.fechahoralibertad.errors}}</strong> 
-        <!-- script que define y configura el calendario--> 
-        <script type="text/javascript" charset="utf-8">
-        
-         var cal = Calendar1.setup({onSelect: function(cal) {
-         cal.hide() },showTime: 12,});
-         cal.manageFields('fecha_hasta1','fechahoralibertad', "%d/%m/%Y %k:%M:%S");
-
-       </script>&nbsp;</p>
+ <span class="add-on">
+                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+              </span> 
+           
+             <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
+        <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
+        <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+        <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+        </script>
+        <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+        </script></div>
+       
+     </p>
        </div>
       {% endif %}
 
@@ -229,11 +245,18 @@
     
       <strong >Persona Juridica :</strong>
       
-         <select class="combodni" id="juridcia" name="juridica">
+         <select class="combodni" id="juridica" name="juridica">
           <option name="juridica"{{formr.juridica}}</option></select>
 
-      <strong >Descripcion :</strong><input type="text" id="razon_social" name="razon_social"
-       size="45" value="{{rol.razon_social}}" autocomplete="off">
+      <strong >Descripcion :</strong>
+      <input type="text" id="razon_social" name="razon_social"
+       size="45"  autocomplete="off" disabled required {{formr.razon_social}}
+ <strong >Tipo Doc :</strong>
+           <select class="combodni" id="cuit" name="cuit" disabled>
+            <option name="cuit"{{formr.cuit}}</option></select>
+            <strong>Nro.:</strong>
+        <input type="text" name ="nrocuit" id ="nrocuit"  size="10" disabled onkeypress="return isNumberKey1(event,this)" 
+        autocomplete="off" required   {{formr.nrocuit}}
      </div>
   </p>
   <hr>
@@ -264,8 +287,18 @@
        <option {{formp.pais_nac}}</option></select>&nbsp;
         <strong style="color:red;margin-left:7px"> * </strong> <strong>Ciudad de Nac. :</strong><select style="width:158px;" id="ciudad_nac" name="ciudad_nac"  >
        <option {{formp.ciudad_nac}}</option></select>
-        <strong style="color:red;margin-left:87px"> * </strong> <strong>Fecha Nac :</strong><input type="text" id="fecha_nac" name="fecha_nac" size="8"  style="margin-left:10px" {{formp.fecha_nac}}
-    
+        <strong style="color:red;margin-left:87px"> * </strong> <strong>Fecha Nac :</strong>
+        <input type="text" id="fecha_nac" name="fecha_nac" size="8"  style="margin-left:10px" readonly="readonly" {{formp.fecha_nac}}
+       
+        <input class="botoncalendar" button id="fnac" title="Fecha de Nacimiento"></button>
+        <!-- script que define y configura el calendario--> 
+        <script type="text/javascript"> 
+          Calendar.setup({ 
+            inputField : "fecha_nac", // id del campo de texto 
+            ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
+            button : "fnac" // el id del botón que lanzará el calendario 
+          }); 
+        </script> 
   </p>
    <p>
      <strong style="color:red;"> * </strong>  <strong>Pais de Res. :</strong>

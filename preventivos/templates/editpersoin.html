@@ -165,11 +165,18 @@
    
       <strong >Persona Juridica :</strong>
       
-         <select class="combodni" id="juridcia" name="juridica">
+         <select class="combodni" id="juridica" name="juridica">
           <option name="juridica"{{formr.juridica}}</option></select>
 
       <strong >Descripcion :</strong>
-      <input type="text" id="razon_social" name="razon_social"  size="45" {{formr.razon_social}}
+      <input type="text" id="razon_social" name="razon_social"  size="45" required disabled {{formr.razon_social}}
+    
+        <strong >Tipo Doc :</strong>
+           <select class="combodni" id="cuit" name="cuit" disabled>
+            <option name="cuit"{{formr.cuit}}</option></select>
+            <strong>Nro.:</strong>
+        <input type="text" name ="nrocuit" id ="nrocuit"  size="10" disabled onkeypress="return isNumberKey1(event,this)" 
+        autocomplete="off" required   {{formr.nrocuit}}
   </div>
        </p> 
      <div id="detenidos" style="display:none;">

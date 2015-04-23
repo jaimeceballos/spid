@@ -185,9 +185,12 @@
      <div align="right">
     {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
      <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>
+    {%if delito%}
+    
 
          <a class="btn1 btn-success"  href="{% url 'persinvol' idhec 0%}"> <label title="Permite Agregar otra Persona Involucrada" >
          Involucrados</label></a>
+        {%endif%}
     {%else%}
         {%if fecha_autorizacion %}
           <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y H:i:s"}} Hrs.</strong>

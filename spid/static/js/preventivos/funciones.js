@@ -4,6 +4,29 @@
        content:"Programadores : Cabo 1° Ceballos Jaime A. Cabo Dorado Fernando E.",
         type:"info"});
       } 
+      function validaCuit(sCUIT){    
+        var aMult = '5432765432';
+        var aMult = aMult.split('');
+        if (sCUIT && sCUIT.length == 11)
+       {
+        aCUIT = sCUIT.split('');
+        var iResult = 0;
+        for(i = 0; i <= 9; i++)
+        {
+            iResult += aCUIT[i] * aMult[i];
+        }
+        iResult = (iResult % 11);
+        iResult = 11 - iResult;
+        if (iResult == 11) iResult = 0;
+        if (iResult == 10) iResult = 9;
+        if (iResult == aCUIT[10])
+        {
+            return true;
+        }
+        }    
+        return false;
+       }
+
       function format(input){
          var num = input.value.replace(/\./g,'');
          if(!isNaN(num)){
@@ -70,7 +93,7 @@
         
          if (charCode > 31 && (charCode < 48 || charCode > 57))
             return false;
-         if(num.length>10 ){
+         if(num.length>11){
                alert('Ingrese el Nro de Cuit sin puntos ni guiones y hasta 11 digitos)');
                return false;
          }
@@ -655,6 +678,23 @@ $(document).ready(function() {
                   "aaSorting": [[ 1 , "asc" ]]
                   } );
         $("[rel='tooltip']").tooltip();
+        $("#juridica").click(function(event){
+          var esjuridica= $(this).find(":selected").text();
+         
+          if (esjuridica=='SI'){
+
+                 $("#razon_social").val('')     
+                 $("#razon_social").attr('disabled',false);
+                 $("#cuit").attr('disabled',false);
+                 $("#nrocuit").attr('disabled',false);
+          }else{
+               $("#razon_social").val('')     
+                 $("#razon_social").attr('disabled',true);
+                 $("#cuit").attr('disabled',true);
+                 $("#nrocuit").attr('disabled',true);     
+          }
+        });
+
 
         $('#roles').change(function(event){
            var options= $(this).find(":selected").text();
@@ -998,9 +1038,7 @@ $(document).ready(function() {
                   }
            });
        
-       
-
-      
+          
         $('#tipodel').change(function(event){
                     $('#delitoe').html('<option value="">Seleccione Tipos de Delitos</option>');
                     var idtd= $('#tipodel').val();
@@ -1322,8 +1360,7 @@ $(document).ready(function() {
           alert(address)
           initializes(address);
         });
-
-
-
+ 
+       
             });
  

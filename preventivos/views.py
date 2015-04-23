@@ -6029,243 +6029,261 @@ def persinvo(request,idhec,idper):
 				 #print idper
 				 #fecha_detencion=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
 				 #print request.POST.get('fechahoradetencion')
+				 menoris=request.POST.get('menor')
+				 
+				 anionac=datetime.datetime.strptime(request.POST.get('fecha_nac'),'%d/%m/%Y').strftime('%Y')
+				 anioactual=datetime.datetime.now()
+				 aniohoy=anioactual.today().year
+				 if anionac>=1900:
+				  dife=aniohoy-int(anionac)
+				  if dife>=18 and menoris=='no':
+				
+					 if request.POST.get('fechahoradetencion'):
+							fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
+							fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'), '%d/%m/%y').strftime('%d/%m/%Y')
+							fd = time.strptime(fecha_denuncia, "%d/%m/%Y")
+							fdet = time.strptime(fechadete, "%d/%m/%Y")
+							if fdet<fd:
+									errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
+									mostrar="no"
+									estadete="no"
+					 if idper!='0':
 
-				 if request.POST.get('fechahoradetencion'):
-						fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
-						fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'), '%d/%m/%y').strftime('%d/%m/%Y')
-						fd = time.strptime(fecha_denuncia, "%d/%m/%Y")
-						fdet = time.strptime(fechadete, "%d/%m/%Y")
-						if fdet<fd:
-								errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
-								mostrar="no"
-								estadete="si"
-				 if idper!='0':
-
-					 perso=Personas.objects.get(id=idper)
-					 fil=Padres.objects.filter(persona=perso.id)
-					 if fil:
-							papis= Padres.objects.get(persona = perso.id)
-							formpa = PadresForm(instance=papis)
+						 perso=Personas.objects.get(id=idper)
+						 fil=Padres.objects.filter(persona=perso.id)
+						 if fil:
+								papis= Padres.objects.get(persona = perso.id)
+								formpa = PadresForm(instance=papis)
+						 else:
+								formpa=PadresForm()  
+								papis=Padres()
+						 #buscar en personal
+						 findpoli=Personal.objects.filter(persona_id=perso.id)
+						 if findpoli:
+								siexistepoli=True   
 					 else:
-							formpa=PadresForm()  
-							papis=Padres()
-					 #buscar en personal
-					 findpoli=Personal.objects.filter(persona_id=perso.id)
-					 if findpoli:
-							siexistepoli=True   
-				 else:
-				 
-					 perso=Personas()   
-					 papis=Padres()
-				
-					 iddom='1'  
-
-				 if len(Domicilios.objects.filter(personas = idper)) > 0:
-					 domicilios = Domicilios.objects.filter(personas = idper)[0]
-					 iddom=domicilios.id
-				 else:
-					 iddom='1'  
-					 domicilios=Domicilios() 
-			
-				 
-				 
-				 if formp.is_valid() or idper!='0':
 					 
-						if formp.is_valid(): 
-						 
-						 perso.apellidos  = formp.cleaned_data['apellidos']
-						 perso.nombres    = formp.cleaned_data['nombres']
-						 perso.tipo_doc   = formp.cleaned_data['tipo_doc']
-						 perso.nro_doc    = formp.cleaned_data['nro_doc']
-						 perso.fecha_nac  = formp.cleaned_data['fecha_nac']
-						 perso.sexo_id    = formp.cleaned_data['sexo_id']
-						 perso.pais_nac   = formp.cleaned_data['pais_nac']
-						 perso.ciudad_nac = formp.cleaned_data['ciudad_nac']
-						 perso.pais_res   = formp.cleaned_data['pais_res']
-						 perso.ciudad_res = formp.cleaned_data['ciudad_res']
-						 perso.ocupacion  = formp.cleaned_data['ocupacion']
-						 perso.alias      = formp.cleaned_data['alias']
-						 """
-						 perso.estudios = formp.cleaned_data['estudios']
-						 perso.condicionlaboral = formp.cleaned_data['condicionlaboral']
-						 perso.emails = formp.cleaned_data['emails']
-						 perso.redsociales = formp.cleaned_data['redsociales']
-						 perso.domiciliolab = formp.cleaned_data['domiciliolab']
-						 perso.horariolab = formp.cleaned_data['horariolab']
-						 perso.otrasactividades = formp.cleaned_data['otrasactividades']
-						 perso.horalugaractivi = formp.cleaned_data['horalugaractivi']
-						 """                 
-						 #print request.POST.get('roles')
+						 perso=Personas()   
+						 papis=Padres()
+					
+						 iddom='1'  
 
-						 perso.estado_civil = formp.cleaned_data['estado_civil']
-						 idpoli=formp.cleaned_data['ocupacion']
-						 refpoli=RefOcupacion()
-						 if idpoli:
-							refpoli=RefOcupacion.objects.get(descripcion=idpoli)
-
-
-						else:
-							 
-							 #print request.POST.get('ocupacion')
-							 if request.POST.get('ocupacion')=='None' or request.POST.get('ocupacion')=='':
-								 refpoli=RefOcupacion.objects.get(descripcion='EMPLEADO')
-								 texto='EMPLEADO'
-							 else:
-								 idpoli=request.POST.get('ocupacion')
-								 refpoli=RefOcupacion.objects.get(id=idpoli)
-								 texto=refpoli.descripcion
-						
-						if dom.is_valid(): 
+					 if len(Domicilios.objects.filter(personas = idper)) > 0:
+						 domicilios = Domicilios.objects.filter(personas = idper)[0]
+						 iddom=domicilios.id
+					 else:
+						 iddom='1'  
+						 domicilios=Domicilios() 
 				
-								 
-								 domicilios.barrio_codigo        = dom.cleaned_data['barrio_codigo']
-								 domicilios.calle                = dom.cleaned_data['calle']
-								 domicilios.altura               = dom.cleaned_data['altura']
-								 domicilios.entre                = dom.cleaned_data['entre']
-								 domicilios.fecha_desde          = dom.cleaned_data['fecha_desde']
-								 domicilios.fecha_hasta          = dom.cleaned_data['fecha_hasta']
-								 domicilios.fecha_actualizacion  = dom.cleaned_data['fecha_actualizacion']
-								 domicilios.tipos_domicilio      = dom.cleaned_data['tipos_domicilio']
-								 domicilios.ref_zona             = dom.cleaned_data['ref_zona']
-								 domicilios.departamento         = dom.cleaned_data['departamento']
-								 domicilios.piso                 = dom.cleaned_data['piso']
-								 domicilios.lote                 = dom.cleaned_data['lote']
-								 domicilios.sector               = dom.cleaned_data['sector']
-								 domicilios.manzana              = dom.cleaned_data['manzana']
-						 
-								 
-								 if idper!='0':
-										persom=Personas.objects.get(id=idper)
-
-											 
-										if formp.is_valid() or idper!='0':
-											persom.ciudad_res = formp.cleaned_data['ciudad_res']
-											persom.ocupacion  = formp.cleaned_data['ocupacion']
-											persom.alias      = formp.cleaned_data['alias']
-											persom.estado_civil = formp.cleaned_data['estado_civil']
-											try:
-											#print idper
-										
-												persom.save()
-
-											except IntegrityError:
-												errors.append('')  
-										else:
-
-											 mostrar='si'
-											 errors.append(formp.errors.as_text)
-												 
-								 else:    
-										 
-										 perso.save()
-								 
-								 
-									
-
-								 if idper!='0':
-
-												 idpersu=Personas.objects.get(id=idper)
-												
-												 personas=idpersu
-								 else:
-												 idpersu=Personas.objects.get(id=perso.id)
-												 
-												 personas=idpersu
-								
-								 domicilios.personas             = personas
-								 domicilios.ref_ciudades         = formp.cleaned_data['ciudad_res']
-									 
-								 domicilios.save()
- 
-								 if refpoli:
-									if refpoli.descripcion.find('POLICI')>=0:
-												policia=Personal()
-												policia.persona_id = personas
-												policia.credencial=0
-												try:
-													policia.save()
-												except IntegrityError:
-													errors.append('')
-									else:
-											 if siexistepoli:
-													#borro esa persona en personal
-													borrar=Personal.objects.get(persona_id=personas).delete()
-
-								 papis.persona=personas  
-								 papis.padre_apellidos=request.POST.get('padre_apellidos')
-								 papis.padre_nombres=request.POST.get('padre_nombres')
-								 papis.madre_apellidos=request.POST.get('madre_apellidos')
-								 papis.madre_nombres=request.POST.get('madre_nombres')
-								 try:
-										papis.save()
-								 except IntegrityError:
-									 errors.append('Datos existente en Padres')
-								 
-								 if formr.is_valid():
-	
-									 persoin=PersInvolucradas()
-									 detenidos = Detenidos()
-									
-										
-									 
-									 persoin.persona=personas
-									 detenidos.persona = personas
-									 persoin.hechos=hechos
-									 
-									 persoin.roles = formr.cleaned_data['roles']
-									 persoin.menor = formr.cleaned_data['menor']
-									 persoin.detenido = formr.cleaned_data['detenido']
-									 persoin.cargado_prev=True
-									 if persoin.detenido=='si':
-										
-										 if 'no' in estadete:
-											 detenidos.hechos  = hechos
-											 detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
-											 persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
-											 try:
-												 detenidos.save()
-											 except IntegrityError:
-												errors.append('Datos existente en Detenidos')
-											
-
-									 persoin.infraganti = formr.cleaned_data['infraganti'] 
-									 persoin.juridica = formr.cleaned_data['juridica']   
-									 if persoin.juridica=='si':
-											persoin.razon_social = formr.cleaned_data['razon_social'] 
-									 else:
-											persoin.razon_social = 'SIN DESCRIPCION'  
-		
-										
-									 try:
-
-											
-												mostrar='0'
-												persoin.save()
-
-									 except IntegrityError:
-										 errors.append('Datos inexistente en Carateristicas segun el Rol')
-									 
-									 
+					 
+					 
+					 if formp.is_valid() or idper!='0':
 							
-									 #mostrar='0'
+							if formp.is_valid(): 
+							 
+							 perso.apellidos  = formp.cleaned_data['apellidos']
+							 perso.nombres    = formp.cleaned_data['nombres']
+							 perso.tipo_doc   = formp.cleaned_data['tipo_doc']
+							 perso.nro_doc    = formp.cleaned_data['nro_doc']
+							 perso.fecha_nac  = formp.cleaned_data['fecha_nac']
+							 perso.sexo_id    = formp.cleaned_data['sexo_id']
+							 perso.pais_nac   = formp.cleaned_data['pais_nac']
+							 perso.ciudad_nac = formp.cleaned_data['ciudad_nac']
+							 perso.pais_res   = formp.cleaned_data['pais_res']
+							 perso.ciudad_res = formp.cleaned_data['ciudad_res']
+							 perso.ocupacion  = formp.cleaned_data['ocupacion']
+							 perso.alias      = formp.cleaned_data['alias']
+							 """
+							 perso.estudios = formp.cleaned_data['estudios']
+							 perso.condicionlaboral = formp.cleaned_data['condicionlaboral']
+							 perso.emails = formp.cleaned_data['emails']
+							 perso.redsociales = formp.cleaned_data['redsociales']
+							 perso.domiciliolab = formp.cleaned_data['domiciliolab']
+							 perso.horariolab = formp.cleaned_data['horariolab']
+							 perso.otrasactividades = formp.cleaned_data['otrasactividades']
+							 perso.horalugaractivi = formp.cleaned_data['horalugaractivi']
+							 """                 
+							 #print request.POST.get('roles')
+
+							 perso.estado_civil = formp.cleaned_data['estado_civil']
+							 idpoli=formp.cleaned_data['ocupacion']
+							 refpoli=RefOcupacion()
+							 if idpoli:
+								refpoli=RefOcupacion.objects.get(descripcion=idpoli)
+
+
+							else:
+								 
+								 #print request.POST.get('ocupacion')
+								 if request.POST.get('ocupacion')=='None' or request.POST.get('ocupacion')=='':
+									 refpoli=RefOcupacion.objects.get(descripcion='EMPLEADO')
+									 texto='EMPLEADO'
 								 else:
-									 #persi=Personas.objects.get(id=idper)
-									 #formp=PersonasForm(instance=persi)
-									 #print formr.errros.as_text
-									 errors.append('Error faltan datos en seccion de Rol de la Persona')
-									 #return HttpResponseRedirect('./',)
-									 #mostrar='es'  
-									 #print personas.id
-									 filtros=Personas.objects.filter(id = personas.id)     
-									 if filtros not in todos:
-										 todos.append(filtros)
+									 idpoli=request.POST.get('ocupacion')
+									 refpoli=RefOcupacion.objects.get(id=idpoli)
+									 texto=refpoli.descripcion
+							
+							if dom.is_valid(): 
+					
+							
+									 domicilios.barrio_codigo        = dom.cleaned_data['barrio_codigo']
+									 domicilios.calle                = dom.cleaned_data['calle']
+									 domicilios.altura               = dom.cleaned_data['altura']
+									 domicilios.entre                = dom.cleaned_data['entre']
+									 domicilios.fecha_desde          = dom.cleaned_data['fecha_desde']
+									 domicilios.fecha_hasta          = dom.cleaned_data['fecha_hasta']
+									 domicilios.fecha_actualizacion  = dom.cleaned_data['fecha_actualizacion']
+									 domicilios.tipos_domicilio      = dom.cleaned_data['tipos_domicilio']
+									 domicilios.ref_zona             = dom.cleaned_data['ref_zona']
+									 domicilios.departamento         = dom.cleaned_data['departamento']
+									 domicilios.piso                 = dom.cleaned_data['piso']
+									 domicilios.lote                 = dom.cleaned_data['lote']
+									 domicilios.sector               = dom.cleaned_data['sector']
+									 domicilios.manzana              = dom.cleaned_data['manzana']
+							 
+									 
+									 if idper!='0':
+											persom=Personas.objects.get(id=idper)
+
+												 
+											if formp.is_valid() or idper!='0':
+												persom.ciudad_res = formp.cleaned_data['ciudad_res']
+												persom.ocupacion  = formp.cleaned_data['ocupacion']
+												persom.alias      = formp.cleaned_data['alias']
+												persom.estado_civil = formp.cleaned_data['estado_civil']
+												try:
+												#print idper
+											
+													persom.save()
+
+												except IntegrityError:
+													errors.append('')  
+											else:
+
+												 mostrar='si'
+												 errors.append(formp.errors.as_text)
+													 
+									 else:    
+											 
+											 perso.save()
+									 
+									 
+										
+
+									 if idper!='0':
+
+													 idpersu=Personas.objects.get(id=idper)
+													
+													 personas=idpersu
+									 else:
+													 idpersu=Personas.objects.get(id=perso.id)
+													 
+													 personas=idpersu
 									
-						else:
-									 mostrar='no'     
-				
-						
+									 domicilios.personas             = personas
+									 domicilios.ref_ciudades         = formp.cleaned_data['ciudad_res']
+										 
+									 domicilios.save()
+	 
+									 if refpoli:
+										if refpoli.descripcion.find('POLICI')>=0:
+													policia=Personal()
+													policia.persona_id = personas
+													policia.credencial=0
+													try:
+														policia.save()
+													except IntegrityError:
+														errors.append('')
+										else:
+												 if siexistepoli:
+														#borro esa persona en personal
+														borrar=Personal.objects.get(persona_id=personas).delete()
+
+									 papis.persona=personas  
+									 papis.padre_apellidos=request.POST.get('padre_apellidos')
+									 papis.padre_nombres=request.POST.get('padre_nombres')
+									 papis.madre_apellidos=request.POST.get('madre_apellidos')
+									 papis.madre_nombres=request.POST.get('madre_nombres')
+									 try:
+											papis.save()
+									 except IntegrityError:
+										 errors.append('Datos existente en Padres')
+								
+									 if formr.is_valid():
+		
+										 persoin=PersInvolucradas()
+										 detenidos = Detenidos()
+										
+											
+										 
+										 persoin.persona=personas
+										 detenidos.persona = personas
+										 persoin.hechos=hechos
+										 
+										 persoin.roles = formr.cleaned_data['roles']
+										 persoin.menor = formr.cleaned_data['menor']
+										 if 'APREHENDIDO' in persoin.roles.descripcion or  'APRENDIDO' in persoin.roles.descripcion or 'DETENIDO' in persoin.roles.descripcion:
+											 persoin.detenido = formr.cleaned_data['detenido']
+										 else:
+											 persoin.detenido='no'
+
+										 persoin.cargado_prev=True
+										 if persoin.detenido=='si':
+											#
+											# if 'no' in estadete:
+											detenidos.hechos  = hechos
+											detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
+											persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
+											try:
+											 detenidos.save()
+											except IntegrityError:
+											 errors.append('Datos existente en Detenidos')
+												
+
+										 persoin.infraganti = formr.cleaned_data['infraganti'] 
+										 persoin.juridica = formr.cleaned_data['juridica']   
+										 if persoin.juridica=='si':
+												persoin.razon_social = formr.cleaned_data['razon_social'] 
+												persoin.cuit = formr.cleaned_data['cuit']
+												persoin.nrocuit = formr.cleaned_data['nrocuit']
+										 else:
+												persoin.razon_social = 'SIN DESCRIPCION'  
+			
+										 try:
+											mostrar='0'
+											persoin.save()
+
+										 except IntegrityError:
+											errors.append('Datos inexistente en Carateristicas segun el Rol')
+										
+								
+										 #mostrar='0'
+									 else:
+										 #persi=Personas.objects.get(id=idper)
+										 #formp=PersonasForm(instance=persi)
+										 #print formr.errros.as_text
+										 errors.append('Error faltan datos en seccion de Rol de la Persona')
+										 #return HttpResponseRedirect('./',)
+										 #mostrar='es'  
+										 #print personas.id
+										 filtros=Personas.objects.filter(id = personas.id)     
+										 if filtros not in todos:
+											 todos.append(filtros)
+										
+							else:
+										 mostrar='no'     
+					
+							
+					 else:
+						mostrar='no'   
+				  else:
+					mostrar='no'
+					errors.append('La Persona es Menor de Edad')
 				 else:
-					mostrar='no'   
+
+					mostrar='no'
+					errors.append('Año de Nacimiento debe ser mayor a 1900')
+					
 	"""
 	if request.POST.get('roles'):
 					roles=RefPeople.objects.get(id=request.POST.get('roles'))
@@ -6321,10 +6339,10 @@ def persinvo(request,idhec,idper):
 	'tienePersonas':tienePersonas,'tienelugar':tienelugar,'formd':formd,'formpr':formpr,'formc':formc,
 	'state':state,'delito':delito,'descripcion':descripcion,'formpa':formpa,'depe':depe,'unidadreg':unidadreg,'dependencia':dependencia,
 	'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,'preventivo':datos,'noposee':noposee,}
-	if request.POST.get('grabar')=="Guardar":   
-		 return HttpResponseRedirect(reverse('persinvol',args=[idhec,0]))
-	else:
-		 return render_to_response('./personasin.html',info,context_instance=RequestContext(request))
+	#if request.POST.get('grabar')=="Guardar":   
+	#	 return HttpResponseRedirect(reverse('persinvol',args=[idhec,0]))
+	#else:
+	return render_to_response('./personasin.html',info,context_instance=RequestContext(request))
 
 @login_required   
 @transaction.commit_on_success
@@ -6402,7 +6420,7 @@ def persinvom(request,idhec,idper):
 		dom = DomiciliosForm()
 
 		detenido=PersInvolucradas.objects.get(id=idpin, hechos_id=idhec)
-		if 'APR' in detenido.roles.descripcion or 'DETE' in detenido.roles.descripcion:
+		if 'APRE' in detenido.roles.descripcion or 'DETE' in detenido.roles.descripcion:
 			 estadetenido=True
 		else:
 			if 'SOS' not in detenido.roles.descripcion:
@@ -6454,9 +6472,10 @@ def persinvom(request,idhec,idper):
 								   detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
 								   detenidos.libertad=''
 								
-								persoin.juridica=''
-								persoin.razon_social=''
-								persoin.detenido = formr.cleaned_data['detenido']
+								persoin.juridica='no'
+								persoin.razon_social='SIN DESCRIPCION'
+								
+								persoin.detenido = 'si'
 								persoin.tentativa = formr.cleaned_data['tentativa']
 								persoin.infraganti = formr.cleaned_data['infraganti']
 								persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
@@ -6474,12 +6493,18 @@ def persinvom(request,idhec,idper):
 							 persoin.infraganti='no'
 							 nulo='01/01/1900 00:00:0'
 							 persoin.fechahoradetencion=datetime.datetime.strptime(nulo, '%d/%m/%Y %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
-							 Detenidos.objects.filter(persona = perso).update(fechahoradetencion=datetime.datetime.strptime(nulo, '%d/%m/%Y %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S'),libertad='S',borrado='S',observaciones=request.user.username+'se equivoco a asignarle el rol')
+							 Detenidos.objects.filter(persona = perso).update(libertad='S',borrado='S',observaciones=request.user.username+'se equivoco a asignarle el rol')
 							 PersInvolucradas.objects.filter(persona = perso).update(detenido=persoin.detenido)
-							 persoin.juridica = formr.cleaned_data['juridica']   
-							 persoin.razon_social = formr.cleaned_data['razon_social'] 
-					
-						
+							 persoin.juridica = formr.cleaned_data['juridica']  
+							 if persoin.juridica=='si':
+								persoin.razon_social = formr.cleaned_data['razon_social'] 
+								persoin.cuit = formr.cleaned_data['cuit']
+								persoin.nrocuit = formr.cleaned_data['nrocuit']
+							 else:
+								persoin.juridica='no'
+								persoin.razon_social='SIN DESCRIPCION'
+								persoin.cuit=formr.cleaned_data['cuit']
+								persoin.nrocuit=formr.cleaned_data['nrocuit']
 							
 
 						try: 
@@ -11132,6 +11157,7 @@ def ampliacion(request,idprev):
 	if request.POST.get('grabar') == 'Grabar':
 		ampliacion = AmpliacionForm(request.POST, request.FILES)
 		amp        = Ampliacion()
+
 		if ampliacion.is_valid():
 			amp.fecha         = datetime.datetime.now()
 			amp.titulo        = ampliacion.cleaned_data['titulo']
@@ -12164,14 +12190,27 @@ def amplia_pers(request,idprev,idamp):
 		if persinv.is_valid():
 			personainv                  = PersInvolucradas.objects.get(id=request.POST.get('idinv'))
 			per                         = PersInvolucradas()
+			
+			
 			if personainv.ampliacion_id and not Ampliacion.objects.get(id=idamp).fin_edicion:
 			 
 				personainv.roles                   = persinv.cleaned_data['roles']
+				
+				
 				if not personainv.fechahoradetencion:
 					personainv.fechahoradetencion    = persinv.cleaned_data['fechahoradetencion']  
 				if persinv.cleaned_data['fechahoralibertad'] :
 					personainv.fechahoralibertad     = persinv.cleaned_data['fechahoralibertad']
-					personainv.detenido              = 'NO'
+					personainv.detenido              = 'no'
+					dete=Detenidos.objects.filter(persona = personainv.persona.id)
+					if dete:
+					   Detenidos.objects.filter(persona = personainv.persona.id).update(fechahoradetencion=formr.cleaned_data['fechahoradetencion'],libertad='N',borrado='',observaciones=request.user.username+'se equivoco a asignarle el rol')
+					else:
+					   detenidos.persona=persona
+					   detenidos.hechos  = hechos
+					   detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
+					   detenidos.libertad=''
+					   detenidos.save()
 				personainv.save()
 			elif not personainv.ampliacion_id and not Ampliacion.objects.get(id=idamp).fin_edicion:
 				per.hechos                  = Hechos.objects.get(id=personainv.hechos.id)
@@ -12179,20 +12218,34 @@ def amplia_pers(request,idprev,idamp):
 				per.persona                 = personainv.persona
 				per.juridica                = personainv.juridica
 				per.razon_social            = personainv.razon_social
+				per.cuit                    = personainv.cuit
+				per.nrocuit                 = personainv.nrocuit
 				per.menor                   = personainv.menor
 				per.infraganti              =  personainv.infraganti
-				if not personainv.fechahoradetencion:
-					per.fechahoradetencion    = persinv.cleaned_data['fechahoradetencion']
-				else:
-					per.fechahoradetencion    = personainv.fechahoradetencion
+
+				
+				
+				per.fechahoradetencion    = persinv.cleaned_data['fechahoradetencion']
+
 				if persinv.cleaned_data['fechahoralibertad'] :
 					per.fechahoralibertad     = persinv.cleaned_data['fechahoralibertad']
-					per.detenido              = 'NO'
+					per.detenido              = 'si'
 				else:
 					per.fechahoralibertad     = personainv.fechahoralibertad
 					per.detenido              = personainv.detenido
 				per.cargado_prev            = personainv.cargado_prev
 				per.ampliacion              = Ampliacion.objects.get(id=idamp)
+				dete=Detenidos.objects.filter(persona = personainv.persona.id)
+				
+				if dete:
+				   Detenidos.objects.filter(persona = personainv.persona.id).update(fechahoradetencion=persinv.cleaned_data['fechahoradetencion'],libertad='N',borrado='',observaciones=request.user.username+'se cambio el rol en ampliacion')
+				else:
+				   detenidos.persona=persi.persona
+				   detenidos.hechos  = hechos
+				   detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
+				   detenidos.libertad=''
+				   detenidos.save()
+
 				per.save()
 	if request.POST.get('search')=="Buscar":
 		texto=request.POST.get('texto')
@@ -12267,7 +12320,7 @@ def amplia_per(request,idprev,idamp,idper):
 			if fdet<fd:
 					errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
 					mostrar="no"
-					estadete="si"
+					estadete="no"
 	 if idper!='0':
 		 perso=Personas.objects.get(id=idper)
 		 fil=Padres.objects.filter(persona=perso.id)
@@ -12455,6 +12508,8 @@ def amplia_per(request,idprev,idamp,idper):
 						 persoin.juridica = formr.cleaned_data['juridica']   
 						 if persoin.juridica=='si':
 								persoin.razon_social = formr.cleaned_data['razon_social'] 
+								persoin.cuit = formr.cleaned_data['cuit']
+								persoin.nrocuit = formr.cleaned_data['nrocuit']
 						 else:
 								persoin.razon_social = 'SIN DESCRIPCION'  
 
@@ -13117,8 +13172,15 @@ def enviadop(request):
 
 				localcria=Localidad.objects.get(descripcion__icontains=depes)
 				localcria=int(localcria.idLocalidad)
-				callelugar=str(lugar.calle).strip()
-				barriolugar=str(lugar.barrio).replace('Bº','').strip()
+				if lugar.calle:
+				   callelugar=str(lugar.calle).strip()
+				   if lugar.barrio:
+					  barriolugar=str(lugar.barrio).replace('Bº','').strip()
+				   else:
+					  barriolugar=''
+				else:
+				   callelugar=''
+
 				idComisaria=0
 				idCalleHecho=0
 				idBarrioHecho=0
@@ -13174,10 +13236,10 @@ def enviadop(request):
 						   idRolPersona=int(str(rolesper))
 
 					if 'si' in p.detenido:
-					   detenidos=detenidos+1
-					  
+					   #detenidos=detenidos+1
+					   detenidos=1
 					else:
-					   detenidos=0 
+					   detenidos=0
 					
 					if 'si' in p.tentativa:
 						 tentativa=1
@@ -13252,12 +13314,16 @@ def enviadop(request):
 							 tieneper=True
 							 if p.persona.ciudad_res!=None:
 							   ciudad_res=p.persona.ciudad_res
-							 if l.calle!=None:
-							   calle=l.calle
-
-							 if str(l.altura)!='0':
-							   altura=l.altura
-							   
+							   if l.calle!=None:
+								  calle=l.calle
+								  if str(l.altura)!='0':
+									 altura=l.altura
+								  else:
+									 altura=''
+							   else:
+								  calle=''
+							 else:
+								ciudad_res=''
 							 descridomi=str(ciudad_res)+unicode(str(calle),'UTF-8')+str(altura)
 							 if l.calle:
 								calledom=str(l.calle).strip()
@@ -13396,7 +13462,7 @@ def enviadop(request):
 				unidadreg=preventivo.dependencia.unidades_regionales.descripcion
 			 
 				for a in autoridades:
-					autoridad=autoridad+str(a)+'-'
+					autoridad=autoridad+str(a)+'|'
 				
 				jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=actuante).values('jerarquia_id'))
 				jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=preventor).values('jerarquia_id'))
@@ -13435,16 +13501,26 @@ def enviadop(request):
 
 					if lugar.sector!=None:
 					   sector=lugar.sector
+					   if lugar.departamento!=None:
+						  departamento=lugar.departamento
+					   else:
+						  departamento=''
+						  if lugar.piso!=0:
+							 piso=lugar.piso
+						  else:
+							 piso=''
+							 if lugar.escalera!=None:
+								escalera=lugar.escalera
+							 else:
+								escalera=''
+					else:
+						sector=''
 
-					if lugar.departamento!=None:
-					   departamento=lugar.departamento
-					if lugar.piso!=0:
-					   piso=lugar.piso
-					if lugar.escalera!=None:
-					   escalera=lugar.escalera
 					
 					domihecho=sector+departamento+piso+escalera
-					hecho={'NroHecho':str(lugar.altura),'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':unicode(str(lugar.barrio),'UTF-8'),'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
+					print lugar.altura
+					print 'sector',sector,'dpto',departamento,'pso',piso,'esc',escalera
+					hecho={'AlturaHecho':str(lugar.altura),'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':unicode(str(lugar.barrio),'UTF-8'),'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
 					denuncia={'Denuncia':denuncia}
 					
 			  
@@ -13458,7 +13534,7 @@ def enviadop(request):
 				#hechodeli=hechodeli.replace("º",'')
 				
 				subject  ={'IdTipoPreventivo':1,'IdComisaria':int(idComisaria),'Numero':int(nro),'Anio':int(anio),'FechaCarga':fecha_carga,'FechaAutorizacion':fecha_autorizacion,'FechaEnvio':fecha_autorizacion,'FechaDenuncia':fecha_denuncia}
-				subject1 ={'Caratula':caratula,'DelitoCometidos':hechodeli.strip(),'DescripcionActuante':str(jerarqui_a)+'-'+actuante,'DescripcionResponsable':str(jerarqui_p)+'-'+preventor,'Destinatarios':autoridad,'DescripcionLocalidadHecho':localidad,'LatLocalidad':float(lati),'LngLocalidad':float(longi),}
+				subject1 ={'Caratula':caratula,'delitosCometidos':hechodeli.strip(),'DescripcionActuante':str(jerarqui_a)+'-'+actuante,'DescripcionResponsable':str(jerarqui_p)+'-'+preventor,'Destinatarios':autoridad,'DescripcionLocalidadHecho':localidad,'LatLocalidad':float(lati),'LngLocalidad':float(longi),}
 			
 				datosp = subject
 				datosp.update(subject1)
@@ -13486,7 +13562,7 @@ def enviadop(request):
 				#<Preventivos>'''+"\n"+preventivosxml+"\n"+'</Preventivos>'
 				xmlspre=preventivosxml
 				
-				
+				#print xmlspre
 			   
 				xmls='<?xml version="1.0" encoding="utf-8"?>'+\
 				'<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+\
@@ -13514,7 +13590,7 @@ def enviadop(request):
 				'</soap:Envelope>'
 						
 				print xmls
-			
+				"""
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13563,7 +13639,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-		
+				"""
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"

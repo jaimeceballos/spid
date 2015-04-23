@@ -10,6 +10,7 @@ from django.middleware import threadlocals
 from preventivos.models import *
 from django.utils.dates import MONTHS
 from django.utils import timezone 
+from django.utils.encoding import smart_str, smart_unicode
 #import datetime
 from datetime import datetime, date
 import csv
@@ -82,8 +83,10 @@ def registro_post_save(sender, instance, created, **kwargs):
     log_pk={}
     log_pk['valor']=''
     log_pk['pk']=''
+    print op.__class__._meta.fields
     for f in op.__class__._meta.fields:
-        valor_nuevo=getattr(op,f.name)
+        #print user.username
+        valor_nuevo=getattr(op,'username')
         #print valor_nuevo
         #log_reg[f.name]=str(valor_nuevo)
         valor=str(valor_nuevo)
@@ -132,7 +135,7 @@ def registro_post_delete(sender, instance, **kwargs):
     log_pk['valor']=''
     log_pk['pk']=''
     for f in op.__class__._meta.fields:
-        valor_nuevo=getattr(op,f.name)
+        valor_nuevo=getattr(op,'username')
         log_reg[f.name]=str(valor_nuevo)
         valor=str(valor_nuevo)
         if len(valor)<=48:

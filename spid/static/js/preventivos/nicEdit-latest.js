@@ -29,7 +29,8 @@ var nicEditorConfig = bkClass.extend({
 		'hr' : {name : __('Horizontal Rule'), command : 'insertHorizontalRule', noActive : true}*/
 	},
 	iconsPath : '/static/imagenes/preventivos/nicEditorIcons.gif',
-	buttonList : ['save','bold','italic','underline','left','center','right','justify','fontSize',],
+	buttonList : ['save','bold','italic','underline','fontSize',],
+	/*'left','center','right','justify','fontSize',],*/
 	/*,'ol','ul','fontSize','fontFamily','fontFormat','indent','outdent','image','upload','link','unlink','forecolor','bgcolor'],*/
 	iconList : {"bold":1,"center":2,"hr":3,"indent":4,"italic":5,"justify":6,"left":7,"ol":8,"outdent":9,"removeformat":10,"right":11,"save":12,"strikethrough":13,"subscript":14,"superscript":15,"ul":16,"underline":17,"close":18,"arrow":19}
 

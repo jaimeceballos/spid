@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.encoding import smart_text
 from django.contrib.auth import logout
 from io import BytesIO
+from django.utils.encoding import smart_str, smart_unicode
 #from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from django.template import Context, loader
@@ -113,7 +114,7 @@ def login_user(request):
                 #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")<=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
                 if user.get_profile().last_login:
                    changePass = 'si'
-               
+              
                 auth.login(request, user)
                 userp=user.get_profile()
                 profiles = user.get_profile()
@@ -156,6 +157,7 @@ def login_user(request):
                 #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")!=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
                 if user.get_profile().last_login:
                    changePass = 'si'
+              
                 auth.login(request, user)
                 userp=user.get_profile()
                 profiles = user.get_profile()

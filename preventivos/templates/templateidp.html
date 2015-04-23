@@ -31,9 +31,9 @@
      <input type="text" name="nro" id="id_nro"  value="{{nro}}/{{anio}}" readonly="readonly"/> 
     
      Fecha de Denuncia :
-     <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/Y H:i:s"}}" readonly="readonly"/>
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" size="28" value="{{fecha_denuncia|date:"d/m/Y H:i:s"}} Hrs." readonly="readonly"/>
          Fecha de Carga :
-     <input type="text" name="fecha_carga" id="fecha_carga" value="{{fecha_carga|date:"d/m/Y H:i:s"}}" readonly="readonly"/>
+     <input type="text" name="fecha_carga" id="fecha_carga" size="28" value="{{fecha_carga|date:"d/m/Y H:i:s"}} Hrs." readonly="readonly"/>
   </p>
   
   <p>   
@@ -302,6 +302,7 @@
  <!--   <input type="hidden" id="id" name="id" value="{{idhec}}"/>-->
  
    {%if 'si' in continua %} 
+    {%if delitos%}
     <strong><u>Delitos seleccionados</u></strong>
 
      {% for cometieron in delitos %}
@@ -327,10 +328,12 @@
            <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
       </div> 
   {%endif%}-->
+  
     <div align="right">
          <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
            <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
       </div> 
+    {%endif%}
    {%else%} 
     {%if 'si' in grabo %}
 
