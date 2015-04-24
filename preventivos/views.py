@@ -4799,10 +4799,7 @@ def verprev(request):
 					 #fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
-							#print son
-							existen=Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia')
-							if existen:
-							   todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
+							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
 
 		
 			
