@@ -206,7 +206,8 @@ onclick="imprSelec('onlytext')"/>
  
 
     <p>   
-     <strong>Caratula Policial :</strong> {{caratula}}  
+     <strong>Caratula Policial :</strong> </p>
+     <p>{{caratula}}  </p>
      <p>   
      <strong>Actuante :</strong> {{actuante}}&nbsp;&nbsp;
      <strong>Preventor :</strong> {{preventor}}
@@ -415,7 +416,8 @@ onclick="imprSelec('onlytext')"/>
     <strong>Fecha de Denuncia : </strong>{{fecha_denuncia|date:"SHORT_DATETIME_FORMAT" }} Hrs.&nbsp;&nbsp;
     <strong>Fecha de Carga:</strong> {{fecha_carga|date:"SHORT_DATETIME_FORMAT"}} Hrs.</p>
     <p>   
-     <strong>Caratula Policial :</strong> {{caratula}}  
+     <strong>Caratula Policial :</strong> </p>
+     <p>{{caratula}}  </p>
     <!-- <p>   
      <strong>Actuante :</strong> {{actuante}}&nbsp;&nbsp;
      <strong>Preventor :</strong> {{preventor}}
@@ -438,7 +440,8 @@ onclick="imprSelec('onlytext')"/>
       
        {% for value in form1 %} 
        
-         <p><strong>Motivo : &nbsp;&nbsp;</strong>{{value.motivo}}&nbsp;&nbsp;
+         <p><strong>Motivo : &nbsp;&nbsp;</strong>{{value.motivo}}&nbsp;&nbsp;</p>
+         <p>
          
          <strong>Fecha y Hora Inicio :&nbsp;&nbsp;</strong>{{value.fecha_desde|date:"d/m/Y H:i" }} Hs.&nbsp;&nbsp;
          <strong>Fecha y Hora Final :&nbsp;&nbsp;</strong>{{value.fecha_hasta|date:"d/m/Y H:i" }} Hs.</p>
