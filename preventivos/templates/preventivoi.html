@@ -199,7 +199,8 @@ onclick="imprSelec('onlytext')"/>
 <div id="preve">
  <br>  {%include "header.html"%}<hr>
 
-    <p> <strong>Unidad Regional / Dependencia : {{unireg}} / {{depe}} -- Ciudad de : {{ciudad}}</strong></p>
+    <p> <strong>Unidad Regional / Dependencia : {{unireg}} / {{depe}} </strong></p>
+    <p><strong>Ciudad de : {{ciudad}}</strong></p>
     <p> <strong>Preventivo Nro : </strong>{{nro}}/{{anio}}&nbsp;&nbsp;
     <strong>Fecha de Denuncia : </strong>{{fecha_denuncia|date:"d/m/Y H:i:s"}} Hrs.&nbsp;&nbsp;
     <strong>Fecha de Carga:</strong> {{fecha_carga|date:"d/m/Y H:i:s"}} Hrs.</p>
@@ -411,7 +412,8 @@ onclick="imprSelec('onlytext')"/>
 <div id="onlytext">
    <br>  {%include "header.html"%}<hr>
 
-    <p> <strong>Unidad Regional / Dependencia : {{unireg}} / {{depe}} -- Ciudad de : {{ciudad}}</strong></p>
+    <p> <strong>Unidad Regional / Dependencia : {{unireg}} / {{depe}} </strong></p>
+    <p><strong> Ciudad de : {{ciudad}}</strong></p>
     <p> <strong>Preventivo Nro : </strong>{{nro}}/{{anio}}&nbsp;&nbsp;
     <strong>Fecha de Denuncia : </strong>{{fecha_denuncia|date:"SHORT_DATETIME_FORMAT" }} Hrs.&nbsp;&nbsp;
     <strong>Fecha de Carga:</strong> {{fecha_carga|date:"SHORT_DATETIME_FORMAT"}} Hrs.</p>
