@@ -137,7 +137,10 @@ def registro_post_delete(sender, instance, **kwargs):
     log_pk['valor']=''
     log_pk['pk']=''
     for f in op.__class__._meta.fields:
-        valor_nuevo=getattr(op,'username')
+        if 'username' in f.name:
+           valor_nuevo=getattr(op,'username')
+        else:
+           valor_nuevo=getattr(op,f.name)
         log_reg[f.name]=str(valor_nuevo)
         valor=str(valor_nuevo)
         if len(valor)<=48:

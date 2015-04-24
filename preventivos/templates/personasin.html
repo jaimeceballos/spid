@@ -65,9 +65,9 @@
        <input type="text" name="nro" id="id_nro" value="{{nro}}/{{anio}}" readonly="readonly"/> 
         
        Fecha de Denuncia :
-     <input type="text" name="fecha_denuncia" id="fecha_denuncia" size="25" value="{{fecha_denuncia|date:"SHORT_DATETIME_FORMAT"}} Hrs." readonly="readonly"/>
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" size="25" value="{{fecha_denuncia|date:'d/m/Y H:i:s'}}" Hrs. readonly="readonly"/>
        Fecha de Carga :
-     <input type="text" name="fecha_carga" id="fecha_carga" size="25" value="{{fecha_carga|date:"SHORT_DATETIME_FORMAT"}} Hrs." readonly="readonly"/>
+     <input type="text" name="fecha_carga" id="fecha_carga" size="25" value="{{fecha_carga|date:'d/m/Y H:i:s'}}" Hrs. readonly="readonly"/>
     </p>
     
     <p>   

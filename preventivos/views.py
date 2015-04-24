@@ -6040,8 +6040,9 @@ def persinvo(request,idhec,idper):
 				
 					 if request.POST.get('fechahoradetencion'):
 							fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
-							fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'), '%d/%m/%y').strftime('%d/%m/%Y')
-							fd = time.strptime(fecha_denuncia, "%d/%m/%Y")
+
+							fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y %H:%M:%S')
+							fd = time.strptime(fecha_denuncia, "%d/%m/%Y %H:%M:%S")
 							fdet = time.strptime(fechadete, "%d/%m/%Y")
 							if fdet<fd:
 									errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
@@ -6234,6 +6235,7 @@ def persinvo(request,idhec,idper):
 											detenidos.hechos  = hechos
 											detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
 											persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
+											print detenidos
 											try:
 											 detenidos.save()
 											except IntegrityError:
@@ -6489,6 +6491,7 @@ def persinvom(request,idhec,idper):
 										persoin.tentativa = formr.cleaned_data['tentativa']
 										persoin.infraganti = formr.cleaned_data['infraganti']
 										persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
+
 										try:
 										 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:   
 											 if fde>=fd:
