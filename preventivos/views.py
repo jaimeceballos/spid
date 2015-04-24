@@ -4796,7 +4796,7 @@ def verprev(request):
 			else:
 				if fecha_carga  and ureg and not depe:
 					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					 fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+					 #fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
 							#print son
