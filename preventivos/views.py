@@ -4800,7 +4800,9 @@ def verprev(request):
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
 							#print son
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
+							existen=Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia')
+							if existen:
+							   todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
 
 		
 			
