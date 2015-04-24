@@ -163,11 +163,14 @@
        <!-- <tr
           <td>-->
              {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
-             <ul>
-                  
+            <ul>
             <button type="submit" name="borrar" id="borrar" class="borrarde"
-              value="{{cometieron.id}}" onclick=(this.value) title="Permite borrar un delito"/></button>{%endif%}
-              <strong >  {{cometieron}} </strong>
+              value="{{cometieron.id}}" onclick=(this.value) title="Permite borrar un delito"/></button>
+              <strong >  {{cometieron}} </strong></ul>
+            {%else%}
+             <ul> <li><strong >  {{cometieron}} </strong></li></ul>
+            {%endif%}
+              
       
           </ul>
           <!--</td>

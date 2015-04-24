@@ -307,9 +307,9 @@
 
      {% for cometieron in delitos %}
        
-      <p> <button type="submit" name="borrar" id="borrar" class="borrarde"
+      <p> <ul><li><button type="submit" name="borrar" id="borrar" class="borrarde"
               value="{{cometieron.id}}" onclick=(this.value) title="Permite borrar un delito"/></button>
-              <strong style="color:midnigthblue;"> *  {{cometieron|upper}} &nbsp;&nbsp;</strong></p>
+              <strong style="color:midnigthblue;"> *  {{cometieron|upper}} &nbsp;&nbsp;</strong></li></ul></p>
          
       {%endfor%}
 <br>
