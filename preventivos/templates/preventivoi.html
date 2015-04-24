@@ -7,9 +7,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">  
 <META httpequiv="ContentType" content="text/html; charset=UTF-8">  
 <style>
-h1.salto{
-PAGE-BREAK-AFTER: always
+@media all {
+   div.salto{
+      display: none;
+   }
 }
+   
+@media print{
+   div.salto{
+      display:block;
+      page-break-before:always;
+   }
+} 
 body {
   background-color:#fff;
 }
@@ -41,7 +50,7 @@ body {
     font-size:48px;
 }
 strong{
-  font-size:11px;
+  font-size:12px;
     font-family: "DroidSansMono";
 }
 #B2 {
@@ -78,13 +87,13 @@ img {
   padding:5px;
 }
 p {
-  font-size:11px;
+  font-size:12px;
   padding:3px;
   padding-top: 0px;
   color:black;
 
   text-align:justify;
-  line-height: -2px;
+  line-height: -1px;
   font-family: "DroidSansMono";
 }
 div{
@@ -203,7 +212,7 @@ onclick="imprSelec('onlytext')"/>
      <strong>Preventor :</strong> {{preventor}}
       </p>
    <p></p>
-    <p><strong> Autoridades a Informar </strong></p> </p>
+    <p><strong> Autoridades a Informar </strong></p>
      {% for y in autoridades %}
         <ul>
            <li>
@@ -224,23 +233,27 @@ onclick="imprSelec('onlytext')"/>
          <p>
          <strong>Fecha y Hora Inicio :&nbsp;&nbsp;</strong>{{value.fecha_desde|date:"d/m/Y H:i" }} Hrs.&nbsp;&nbsp;
          <strong>Fecha y Hora Final :&nbsp;&nbsp;</strong>{{value.fecha_hasta|date:"d/m/Y H:i" }} Hrs.</p>
-         <div><strong>Descripcion del Hecho :</strong>{{value.descripcion|safe}}</div>
+         <p><strong> Delitos cometidos </strong></p>
+           {% for d in delito %}
+              <ul>
+                 <li>
+                     {{d}} -- {%if d.refmodoshecho %}
+                                   Modalidad {{d.refmodoshecho}} {%else%} Sin Modalidad {%endif%}
+                   
+                 </li>
+              </ul>      
+           {% endfor%}      
+        <p></p>  <hr>
+        <div><strong>Descripcion del Hecho :</strong>{{value.descripcion|safe}}</div>
        {%endfor%}
    
+    <hr>
     
-    <p><strong> Delitos cometidos </strong></p>
-     {% for d in delito %}
-        <ul>
-           <li>
-               {{d}} -- {%if d.refmodoshecho %}
-                             Modalidad {{d.refmodoshecho}} {%else%} Sin Modalidad {%endif%}
-             
-           </li>
-        </ul>      
-     {% endfor%}      
-     <p></p>  
-  <hr>
-  {%if tienelugar%}
+   {%if tienelugar%}
+   <div class='salto'> </div><br>  
+
+{%include "header.html"%}<hr>
+
   <p><strong> Ubicación Geografica y caracteristicas del Lugar del Hecho </strong></p><hr>
    
    <p><strong>Ciudad : {{ciudad}}</strong> &nbsp;&nbsp;
@@ -267,7 +280,7 @@ onclick="imprSelec('onlytext')"/>
   
    <strong style="margin-left:20%;">Ubicación : {{lugar.calle}} &nbsp;&nbsp;Nro. &nbsp;{{lugar.altura}}</strong>
         
-           <div id="map" style="margin-left:20%;width:400px;height:250px;border:1px solid black;"></div>
+           <div id="map" style="margin-left:20%;width:500px;height:450px;border:1px solid black;"></div>
               <div style="margin-left:35%;border:0px solid black;"> 
                 <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/powered-by-google-on-white.png" width="25" height="16"></div>
          </p>      
@@ -328,7 +341,7 @@ onclick="imprSelec('onlytext')"/>
  
      {%if datosper%}
  
-    <h1 class='salto'> </h1><br>  
+    <div class='salto'> </div><br>  
 
 {%include "header.html"%}<hr>
 
@@ -380,7 +393,7 @@ onclick="imprSelec('onlytext')"/>
 {%endif%}
   <p><br><br><br><br><br></p>
 
-<p style="padding: 0px; margin: 0px; height: 10.6mm; overflow: hidden;">
+<p style="padding: 0px; margin: 0px; height: 4.0mm; overflow: hidden;">
 <span style="font-size: 96pt; page-break-inside: avoid;"></span>
 <div>
    {%include "footer.html"%}</div>
@@ -395,7 +408,7 @@ onclick="imprSelec('onlytext')"/>
   </div>
 <div style="display:none;">
 <div id="onlytext">
-   <br>  {%include "header.html"%}<br><hr>
+   <br>  {%include "header.html"%}<hr>
 
     <p> <strong>Unidad Regional / Dependencia : {{unireg}} / {{depe}} -- Ciudad de : {{ciudad}}</strong></p>
     <p> <strong>Preventivo Nro : </strong>{{nro}}/{{anio}}&nbsp;&nbsp;
@@ -476,7 +489,7 @@ onclick="imprSelec('onlytext')"/>
  
      {%if datosper%}
  
-    <h1 class='salto'> </h1>
+    <div class='salto'> </div>
 
 
 
@@ -493,6 +506,7 @@ onclick="imprSelec('onlytext')"/>
 
 
  {%if tieneelementos%}
+
 <!--  <h1 class='salto'> </h1><br>  
 
 {%include "header.html"%}<hr>-->
@@ -504,14 +518,16 @@ onclick="imprSelec('onlytext')"/>
   <strong>No Existen Elementos</strong>
 {%endif%}
 <hr>
+
+
  {% for value in form1 %} 
-       
-        
+        <div class='salto'> <div>  
+
          <div><strong>Descripcion del Hecho :</strong>{{value.descripcion|striptags|safe}}</div>
        {%endfor%}
   <p><br><br></p>
 
-<p style="padding: 0px; margin: 0px; height: 10.6mm; overflow: hidden;">
+<p style="padding: 0px; margin: 0px; height: 4.0mm; overflow: hidden;">
 <span style="font-size: 96pt; page-break-inside: avoid;"></span>
 <div>
    {%include "footer.html"%}</div>
