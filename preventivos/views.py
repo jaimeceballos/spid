@@ -4795,12 +4795,14 @@ def verprev(request):
 					todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia'))
 			else:
 				if fecha_carga  and ureg and not depe:
+					
 					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					 #fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+					 fecha_cargal=(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")+timedelta(days=1)).date()
+					 
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
-
+							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargal)).order_by('anio','nro','dependencia'))
+					 
 		
 			
 
@@ -6458,13 +6460,13 @@ def persinvom(request,idhec,idper):
 						persoin.menor = formr.cleaned_data['menor']
 						menoris=persoin.menor 
 						
-				 	 	anionac=datetime.datetime.strptime(fecha_nac,'%d/%m/%Y').strftime('%Y')
-				 		anioactual=datetime.datetime.now()
-				 		aniohoy=anioactual.today().year
-				 		
-				 		if anionac>=1900:
-				  			dife=aniohoy-int(anionac)
-				  			if (dife>=18 and menoris=='no') or  (dife<=17 and menoris=='si'):
+						anionac=datetime.datetime.strptime(fecha_nac,'%d/%m/%Y').strftime('%Y')
+						anioactual=datetime.datetime.now()
+						aniohoy=anioactual.today().year
+						
+						if anionac>=1900:
+							dife=aniohoy-int(anionac)
+							if (dife>=18 and menoris=='no') or  (dife<=17 and menoris=='si'):
 								if 'APREHENDIDO' in persoin.roles.descripcion or  'APRENDIDO' in persoin.roles.descripcion or 'DETENIDO' in persoin.roles.descripcion:
 									
 									 fechadete=formr.cleaned_data['fechahoradetencion'].strftime('%d/%m/%Y %H:%M ')

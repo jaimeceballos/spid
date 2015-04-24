@@ -33,10 +33,10 @@
                   
                    <td width="50%">{{ datos.caratula}}</td>
                    <td width="25%">{{datos.dependencia.unidades_regionales.descripcion}} / {{ datos.dependencia.descripcion}}</td>
-                      <td width="10%">{{ datos.fecha_denuncia|date:"d/m/Y"}}</td>
-                   <td width="10%">{{ datos.fecha_carga|date:"d/m/Y"}}</td>
-                   <td width="10%">{{ datos.fecha_autorizacion|date:"d/m/Y"}}</td>
-                   <td width="12%">{{ datos.fecha_cierre|date:"d/m/Y"}}</td>
+                      <td width="10%">{{ datos.fecha_denuncia|date:" d/m/Y"}}</td>
+                   <td width="10%">{{ datos.fecha_carga|date:" d/m/Y"}}</td>
+                   <td width="10%">{{ datos.fecha_autorizacion|date:" d/m/Y"}}</td>
+                   <td width="12%">{{ datos.fecha_cierre|date:" d/m/Y"}}</td>
          
                
                   {%if datos.fecha_autorizacion and datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and datos.fecha_autorizacion%}
