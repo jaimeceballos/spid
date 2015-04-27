@@ -37,7 +37,7 @@
      <input type="text" name="nro" id="id_nro" value="{{nro}}/{{anio}}"/> 
  
      Fecha de Denuncia :
-     <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/y"}}"/>
+     <input type="text" name="fecha_denuncia" id="fecha_denuncia" value="{{fecha_denuncia|date:"d/m/Y H:i:s"}}"/>
   </p>
   
   <p>   
@@ -285,7 +285,7 @@
                  <input  class="new-aqua" type="submit" name = "button" id = "button" value="Guardar" /> 
               {%else%}
                 {%if fecha_autorizacion%}
-                    <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
+                    <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/Y H:i:s"}}</strong>
                 {%endif%}
               {%endif%}
    
