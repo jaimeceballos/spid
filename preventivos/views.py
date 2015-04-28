@@ -12699,10 +12699,12 @@ def enviar(request,idprev,idamp):
 	state= request.session.get('state')
 	destino= request.session.get('destino')
 	preventivo = Preventivos.objects.get(id = idprev)
+	depe = preventivo.dependencia
 	hecho = Hechos.objects.get(preventivo_id=preventivo.id)
 	ampliaciones = preventivo.ampli.all()
 	ampli = Ampliacion.objects.get(id=idamp)
 	ampliacion = AmpliacionForm(instance=ampli)
+	id_ciudad=Dependencias.objects.filter(descripcion__exact=depe).values('ciudad')
 	fecha_autorizacion=ampli.fecha_autorizacion
 	grabarfa = Ampliacion.objects.filter(id = idamp).update(fecha_autorizacion=date.today())
 	if len(Ampliacion.objects.filter(id=idamp))>0:
@@ -12968,7 +12970,14 @@ def enviar(request,idprev,idamp):
 				
 	
 	finaliza=False
+	ampliacion.fields['autoridades'].queryset=RefCiudades.objects.get(id=id_ciudad).ciu_autori.all()
+	autoridades= preventivo.autoridades.all()
+	autoridad=[]
+	for seleccion in autoridades:
+		ids=int(RefAutoridad.objects.get(descripcion=seleccion).id)
+		autoridad.append(ids)
 	
+	ampliacion.fields['autoridades'].initial=autoridad
 	values={'finaliza':finaliza,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion}
 	#if envio<1:
 	return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))   
