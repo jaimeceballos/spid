@@ -750,10 +750,12 @@ def obtener_datosfirst(request,idprev):
 				 
 				 #if not hecho.descripcion:
 				
-				 hecho.descripcion=request.POST.get('descrihecho').encode('ascii', 'xmlcharrefreplace')
-				 #hecho.descripcion=strip_tags(hecho.descripcion)
+				 hecho.descripcion=request.POST.get('descrihecho').encode('utf-8', 'xmlcharrefreplace')
+				 hecho.descripcion=strip_tags(hecho.descripcion)
 				 hecho.descripcion=hecho.descripcion.replace('&nbsp','')
-				 print hecho.descripcion
+				 hecho.descripcion=hecho.descripcion.strip()
+				 hecho.descripcion=request.POST.get('descrihecho').strip()
+				 #print hecho.descripcion
 				 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
 						
 							hecho.save()
@@ -4844,10 +4846,10 @@ def verprev(request):
 			 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 			 if fecha_carga and fecha_cargah:
 					fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+					fecha_cargag=(datetime.datetime.strptime(request.POST.get('fecha_cargah'),"%d/%m/%Y")+timedelta(days=1)).date()
 		
 					for son in depes:
-							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia')
+							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargag)).order_by('anio','nro','dependencia')
 			 else:  
 				if fecha_carga:
 					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
@@ -5243,7 +5245,7 @@ def pdfs(request,idprev):
 					 domi=Personas.objects.get(id=p.persona.id).persodom.all()
 					 if domi:
 						for l in Personas.objects.get(id=p.persona.id).persodom.all():
-						 #datosgral=str(p.roles)+'-'+str(p)+' '+str(p.persona.tipo_doc)+' :'+str(p.persona.nro_doc)
+						 #datosgral=str(p.roles)+' - '+str(p)+' '+str(p.persona.tipo_doc)+' :'+str(p.persona.nro_doc)
 						 dad=Personas.objects.get(id=p.persona.id).padre.all()
 					
 						 if dad:
@@ -5600,6 +5602,7 @@ def updatehechos(request,idprev):
 					 #fecha_has=datetime.datetime.strptime(request.POST.get('fecha_hasta'), '%d/%m/%Y %H:%M:%S')
 					 #print type(fd),type(fde),type(fha)
 					 #print fd,fde,fha
+					
 					 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
 							if hecho.fecha_desde.date() > ids.fecha_denuncia or hecho.fecha_hasta.date() > ids.fecha_denuncia:
 								errors.append('La Fecha de Denuncia nunca puede ser menor a la Fecha y Hora del Hecho sucedido')
@@ -13136,7 +13139,7 @@ def enviadop(request):
 		datosdict={}
 		cantpersonas=''
 		totenviados=0
-		#print grabarfa
+		
 		for hay in grabarfa:
 			
 			preventivo = Preventivos.objects.get(id=hay.id)
@@ -13156,6 +13159,7 @@ def enviadop(request):
 				eleinvo=Elementos.objects.filter(hechos=hecho.id,ampliacion_id__isnull=True,borrado__isnull=True).all()
 				cometidos=[]
 				hechodeli=""
+				modus=""
 				depes=preventivo.dependencia.ciudad_id
 				depes=RefCiudades.objects.get(id=depes)
 			   
@@ -13166,10 +13170,14 @@ def enviadop(request):
 
 				for i in cometidos:
 
-					if i.refmodoshecho:
-						 hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')+' Modalidad :'+unicode(str(i.refmodoshecho),'UTF-8')+'|'
-					else:
-						 hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')+' Sin Modalidad'+'|'
+					#if i.refmodoshecho:
+					hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')+'|'
+					#+' Modalidad :'+unicode(str(i.refmodoshecho),'UTF-8')+'|'
+					#else:
+					#hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')
+					#+' Sin Modalidad'+'|'
+					if i.refmodoshecho!=None:
+					   modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+'|'
 
 
 				#print hechodeli
@@ -13216,6 +13224,7 @@ def enviadop(request):
 				piso=''
 				escalera=''
 				ocupacion=''
+				lugarbarrio=''
 				try:
 				  for cal in  Calles.objects.filter(idLocalidad=localcria,descripcion__icontains=callelugar):
 					 idCalleHecho=cal.idCalle
@@ -13241,7 +13250,7 @@ def enviadop(request):
 				ciudad_res=''
 				calle=''
 				altura=''
-
+				perjuridica=''
 				for p in Hechos.objects.get(id=hecho.id).involu.all():
 					#aqui comprobar que datos son null de personas
 				
@@ -13277,9 +13286,16 @@ def enviadop(request):
 					else:
 					   #pf='JURIDICA'
 					   pf=0
+					   if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null':
+					      perjuridica=str(RefTipoDocumento.objects.get(id=p.cuit_id))
+					   if p.razon_social!=None:
+					   	  perjuridica=perjuridica+'-'+str(p.razon_social)
+					   if p.nrocuit!=0:
+					   	  perjuridica=perjuridica+'-'+str(p.nrocuit)
+
 					if p.menor=='':
 					   p.menor="NO"
-					
+					   
 
 					
 					if p.persona.ocupacion!=None:
@@ -13345,7 +13361,7 @@ def enviadop(request):
 								  calle=''
 							 else:
 								ciudad_res=''
-							 descridomi=str(ciudad_res)+unicode(str(calle),'UTF-8')+str(altura)
+							 descridomi=str(ciudad_res)+'-'+unicode(str(calle),'UTF-8').strip()+'-'+str(altura)
 							 if l.calle:
 								calledom=str(l.calle).strip()
 								try:
@@ -13364,7 +13380,7 @@ def enviadop(request):
 									
 									for la in Personas.objects.get(id=p.persona.id).padre.all():
 												
-											persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+											persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 							   
 											domi={'IdBarrio':idBarrio,'IdCalle':idCalle,'Nro':altura,'DescripcionDomicilio':descridomi}
 											if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
@@ -13377,7 +13393,7 @@ def enviadop(request):
 											dictpersona.update(padys)
 							 else:
 														
-								 persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+								 persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 								 domi={'IdBarrio':idBarrio,'IdCalle':idCalle,'Nro':altura,'DescripcionDomicilio':descridomi}
 								 padys={'Hijode':'no registra datos de los padres'}
 								 dictpersona=persona
@@ -13388,7 +13404,7 @@ def enviadop(request):
 					else:
 					
 						
-						persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'NroDocumento':p.persona.nro_doc,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+						persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'NroDocumento':p.persona.nro_doc,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 						domi={'DescripcionDomicilio':'no registra domicilio'}
 						padys={'Hijode':'no registra datos de los padres'}
 
@@ -13493,12 +13509,13 @@ def enviadop(request):
 
 				   
 					denuncia=html2text.html2text(descripcion,True)
-					denuncia=denuncia.encode('ascii', 'xmlcharrefreplace')
+					denuncia=denuncia.encode('utf-8', 'xmlcharrefreplace')
 					denuncia=strip_tags(denuncia)
 					#.replace('&nbsp;','')
 					denuncia=denuncia.replace('&nbsp;','')
 					denuncia=denuncia.replace('"','')
-				
+					#denuncia=unicode(str(descripcion),'UTF-8')
+					#print denuncia
 					motivo=str(value.motivo)
 					fecha_carga=fecha_carga.strftime("%d/%m/%Y %H:%m:%S")
 					#.strftime("%d/%m/%Y")
@@ -13522,26 +13539,30 @@ def enviadop(request):
 
 					if lugar.sector!=None:
 					   sector=lugar.sector
-					   if lugar.departamento!=None:
-						  departamento=lugar.departamento
-					   else:
-						  departamento=''
-						  if lugar.piso!=0:
-							 piso=lugar.piso
-						  else:
-							 piso=''
-							 if lugar.escalera!=None:
-								escalera=lugar.escalera
-							 else:
-								escalera=''
-					else:
-						sector=''
-
+					   domihecho=sector
+										   
+					if lugar.departamento!=None:
+					   departamento=lugar.departamento
+					   domihecho=domihecho+'-'+departamento
+											  
+					if lugar.piso!=0:
+					   piso=lugar.piso
+					   domihecho=domihecho+'-'+piso
+										
+					if lugar.escalera!=None:
+					   escalera=lugar.escalera
+					   domihecho=domihecho+'-'+escalera
 					
-					domihecho=sector+departamento+piso+escalera
+					
 					#print lugar.altura
 					#print 'sector',sector,'dpto',departamento,'pso',piso,'esc',escalera
-					hecho={'AlturaHecho':str(lugar.altura),'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':unicode(str(lugar.barrio),'UTF-8'),'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
+					
+					if lugar.barrio==None:
+					   lugarbarrio=''
+					else:
+						lugarbarrio=unicode(str(lugar.barrio),'UTF-8')
+
+					hecho={'AlturaHecho':str(lugar.altura),'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':lugarbarrio,'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
 					denuncia={'Denuncia':denuncia}
 					
 			  
@@ -13555,7 +13576,7 @@ def enviadop(request):
 				#hechodeli=hechodeli.replace("º",'')
 				
 				subject  ={'IdTipoPreventivo':1,'IdComisaria':int(idComisaria),'Numero':int(nro),'Anio':int(anio),'FechaCarga':fecha_carga,'FechaAutorizacion':fecha_autorizacion,'FechaEnvio':fecha_autorizacion,'FechaDenuncia':fecha_denuncia}
-				subject1 ={'Caratula':caratula,'delitosCometidos':hechodeli.strip(),'DescripcionActuante':str(jerarqui_a)+'-'+actuante,'DescripcionResponsable':str(jerarqui_p)+'-'+preventor,'Destinatarios':autoridad,'DescripcionLocalidadHecho':localidad,'LatLocalidad':float(lati),'LngLocalidad':float(longi),}
+				subject1 ={'Caratula':caratula,'DelitosCometidos':hechodeli.strip(),'ModusOperandi':modus.strip(),'DescripcionActuante':str(jerarqui_a)+'-'+actuante,'DescripcionResponsable':str(jerarqui_p)+'-'+preventor,'Destinatarios':autoridad,'DescripcionLocalidadHecho':localidad,'LatLocalidad':float(lati),'LngLocalidad':float(longi),}
 			
 				datosp = subject
 				datosp.update(subject1)
@@ -13610,8 +13631,8 @@ def enviadop(request):
 				'</soap:Body>'+\
 				'</soap:Envelope>'
 						
-				#print xmls
-				
+				print xmls
+				"""
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13660,7 +13681,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-				
+				"""
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
@@ -13933,7 +13954,7 @@ def enviadoa(request):
 					 idar = Elementosarmas.objects.filter(idelemento=eles.id).values('idarma')
 					 obdata=Armas.objects.filter(id=idar) 
 					 for extra in obdata:
-						tituarmas='Detalle Armas :'+str(extra.subtipos)+',Tipo/s : '+str(extra.tipos)+',Sistema de Disparo : '+str(extra.sistema_disparo)+',Marcas : '+str(extra.marcas)+',Calibre : '+str(extra.calibre)+',Modelo : '+str(extra.modelo)+',Nro Serie : '+str(extra.nro_arma)+',Propietario : '+str(extra.nro_doc)+'-'+str(extra.propietario)
+						tituarmas='Detalle Armas :'+str(extra.subtipos)+',Tipo/s : '+str(extra.tipos)+',Sistema de Disparo : '+str(extra.sistema_disparo)+',Marcas : '+str(extra.marcas)+',Calibre : '+str(extra.calibre)+',Modelo : '+str(extra.modelo)+',Nro Serie : '+str(extra.nro_arma)+',Propietario : '+str(extra.nro_doc)+' - '+str(extra.propietario)
 						   
 
 				if len(Elementoscars.objects.filter(idelemento=eles.id))>0:
@@ -14002,11 +14023,10 @@ def enviadoa(request):
 
 			autoridada= amplia.autoridades.values_list('descripcion',flat=True)
 			#for a in autoridades:
-				#autoridad=autoridad+str(a)+'-'
+				#autoridad=autoridad+str(a)+' - '
 			
 			for a in autoridada:
 				autoridad=autoridad+str(a)+'-'
-			
 			jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=actuante).values('jerarquia_id'))
 			jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=preventor).values('jerarquia_id'))
 				

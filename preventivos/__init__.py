@@ -91,12 +91,12 @@ def registro_post_save(sender, instance, created, **kwargs):
            valor_nuevo=getattr(op,f.name)
         #print valor_nuevo
         #log_reg[f.name]=str(valor_nuevo)
-        valor=str(valor_nuevo)
-        if len(valor)<=48:
-          ref=valor
-        else:
-          ref=user
-        
+        #valor=str(valor_nuevo)
+        #if len(valor)<=48:
+        #  ref=valor
+        #else:
+        #  ref=user
+        ref=user.username
         if f.primary_key==True:
             log_pk['pk']=f.name
             log_pk['valor']=str(valor_nuevo)
@@ -115,7 +115,7 @@ def registro_post_save(sender, instance, created, **kwargs):
     log.tablas=tabla.replace('class','')
     #log.MALG_PK=log_pk['pk']
     log.link='Id Nro: '+str(log_pk['valor'])
-    log.session='Ref : '+str(ref)
+    log.session='Ususario : '+str(ref)
     log.action=str(accion)
     log.fecha=timezone.now()
     log.save()
