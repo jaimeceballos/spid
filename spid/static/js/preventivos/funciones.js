@@ -708,7 +708,7 @@ $(document).ready(function() {
             
            }else{
              if (options=='DENUNCIANTE'){
-                $('#razon').fadeIn(50);
+                $('#razon').fadeOut(50);
                 $('#detenidos').fadeOut(50);
                 $('#menores').fadeOut(50);
                 $('#esdetenido').fadeOut(50);

@@ -4820,10 +4820,10 @@ def verprev(request):
 			else: 
 			 if fecha_carga:
 					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					 #fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
+					 fecha_cargat=(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")+timedelta(days=1)).date()
 					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
 					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia'))
+							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargat)).order_by('anio','nro','dependencia'))
 			 else:
 				if nro:
 					 todos.append(Preventivos.objects.filter(dependencia=depe,nro=nro).order_by('anio','nro','dependencia'))
@@ -5225,8 +5225,7 @@ def pdfs(request,idprev):
 			lati=''
 			longi=''
 			condiciones=''
-			#Datos del lugar del hecho
-
+			perjuridica=''
 			if len(Lugar.objects.filter(hecho=idhec))>0:
 				tienelugar=True
 				lugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]
@@ -5241,7 +5240,17 @@ def pdfs(request,idprev):
 				 for p in Hechos.objects.get(id=hecho.id).involu.all():
 					 
 					 bandera,personai = funverifica(p.persona.id)
-				 
+					 if p.menor=='':
+						p.menor="NO"
+					 if p.juridica=='si':
+						if p.razon_social!=None:
+						  perjuridica=str(p.razon_social)
+						
+						if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null':
+						  perjuridica=perjuridica+'-'+str(RefTipoDocumento.objects.get(id=p.cuit_id))
+					   
+						if p.nrocuit!=0:
+						  perjuridica=perjuridica+'-'+str(p.nrocuit)
 					 domi=Personas.objects.get(id=p.persona.id).persodom.all()
 					 if domi:
 						for l in Personas.objects.get(id=p.persona.id).persodom.all():
@@ -5252,14 +5261,19 @@ def pdfs(request,idprev):
 
 								for la in Personas.objects.get(id=p.persona.id).padre.all():
 									#print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
-									if p.menor=='':
-										 p.menor="NO"
-
+									
+									
 									roles='<u>'+str(p.roles)+'</u>'+' : '
 									if bandera:
-										 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+										if p.juridica=='si':
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+										else:
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 									else:
-										persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+										if p.juridica=='si':
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+('<dd>'+'Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+										else:
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
 									if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
@@ -5269,12 +5283,17 @@ def pdfs(request,idprev):
 									datosgral=roles+persona+domi+str(padys)
 						 else:
 								 roles='<u>'+str(p.roles)+'</u>'+' : '
-								 if p.menor=='':
-										 p.menor="NO"
+								 
 								 if bandera:
-										 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+										if p.juridica=='si':
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+										else:
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 								 else:
-										persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+										if p.juridica=='si':
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+('<dd>'+'Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+										else:
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 								 #persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 								 domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
@@ -5282,13 +5301,18 @@ def pdfs(request,idprev):
 								 datosgral=roles+persona+domi+str(padys)
 						 involuscra.append(datosgral)      
 					 else:
-						if p.menor=='':
-							 p.menor="NO"
+					
 						roles='<u>'+str(p.roles)+'</u>'+' : '
 						if bandera:
-							 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+							if p.juridica=='si':
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+							else:
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 						else:
-							 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+							if p.juridica=='si':
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+('<dd>'+'Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+							else:
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 						#persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 						domi='<dd>no registra domicilio'+'</dd>'
@@ -5300,6 +5324,7 @@ def pdfs(request,idprev):
 					 datosper=datosper+i
 		 
 					#datosper.append(persona)
+				 print datosper
 				 datosgral=''
 				 obdata=[]
 				 obdatav=[]
@@ -6350,7 +6375,7 @@ def persinvo(request,idhec,idper):
 	'state':state,'delito':delito,'descripcion':descripcion,'formpa':formpa,'depe':depe,'unidadreg':unidadreg,'dependencia':dependencia,
 	'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,'preventivo':datos,'noposee':noposee,}
 	#if request.POST.get('grabar')=="Guardar":   
-	#	 return HttpResponseRedirect(reverse('persinvol',args=[idhec,0]))
+	#    return HttpResponseRedirect(reverse('persinvol',args=[idhec,0]))
 	#else:
 	return render_to_response('./personasin.html',info,context_instance=RequestContext(request))
 
@@ -6518,6 +6543,7 @@ def persinvom(request,idhec,idper):
 									 PersInvolucradas.objects.filter(persona = perso).update(detenido=persoin.detenido)
 									 persoin.juridica = formr.cleaned_data['juridica']  
 									 if persoin.juridica=='si':
+
 										persoin.razon_social = formr.cleaned_data['razon_social'] 
 										persoin.cuit = formr.cleaned_data['cuit']
 										persoin.nrocuit = formr.cleaned_data['nrocuit']
@@ -6901,6 +6927,15 @@ def informe(request,idhec,idprev):
 		for p in Hechos.objects.get(id=hecho.id).involu.all():
 			#aqui comprobar que datos son null de personas
 			bandera,personai=funverifica(p.persona.id)
+			if p.menor=='':
+				p.menor="NO"
+			if p.juridica=='si':
+				if p.razon_social!=None:
+				  perjuridica=str(p.razon_social)
+				if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null':
+				  perjuridica=perjuridica+'-'+str(RefTipoDocumento.objects.get(id=p.cuit_id))
+				if p.nrocuit!=0:
+				  perjuridica=perjuridica+'-'+str(p.nrocuit)
 			domi=Personas.objects.get(id=p.persona.id).persodom.all()
 			if domi:
 				for l in Personas.objects.get(id=p.persona.id).persodom.all():
@@ -6911,13 +6946,18 @@ def informe(request,idhec,idprev):
 
 							for la in Personas.objects.get(id=p.persona.id).padre.all():
 									#print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
-									if p.menor=='':
-										 p.menor="NO"
+									
 									roles='<u>'+str(p.roles)+'</u><br><br>'
 									if bandera:
-										 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+										if p.juridica=='si':
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+										else:
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 									else:
-										 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+										if p.juridica=='si':
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+'<dd>Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))
+										else:
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 									#persona='<dd>'+str(p)+', '+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+',  Estado Civil :'+' '+str(p.persona.estado_civil)+'<br><dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'<br></dd>'
 									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
@@ -6927,12 +6967,17 @@ def informe(request,idhec,idprev):
 											padys='<dd>no registra datos de los padres'+'<br><br></dd>'    
 									datosgral=roles+persona+domi+padys
 					 else:
-						 if p.menor=='':
-								p.menor="NO"
+						 
 						 roles='<u>'+str(p.roles)+'</u><br><br>'
 						 if bandera:
+							if p.juridica=='si':
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+							else:
 								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 						 else:
+							if p.juridica=='si':
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+'<dd>Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))
+							else:
 								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 						 #persona='<dd>'+str(p)+', '+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+'<br><dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'<br></dd>'
@@ -6941,13 +6986,17 @@ def informe(request,idhec,idprev):
 						 datosgral=roles+persona+domi+padys  
 				involuscra.append(datosgral)      
 			else:
-				if p.menor=='':
-					 p.menor="NO"
 				roles='<u>'+str(p.roles)+'</u><br><br>'
 				if bandera:
-					 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+					if p.juridica=='si':
+						persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('</dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+					else:
+						persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 				else:
-					 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+					if p.juridica=='si':
+						persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+'<dd>Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))
+					else:
+						persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 				#persona='<dd>'+str(p)+', '+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+'<br><dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'<br></dd>'
 				domi='<dd>no registra domicilio'+'<br></dd>'
@@ -12672,6 +12721,7 @@ def enviar(request,idprev,idamp):
 			lati=''
 			longi=''
 			condiciones=''
+			perjuridica=''
 			#Datos del lugar del hecho
 
 		 
@@ -12682,7 +12732,16 @@ def enviar(request,idprev,idamp):
 				 for p in PersInvolucradas.objects.filter(ampliacion=amplia.id).all():
 					 
 					 bandera,personai = funverifica(p.persona.id)
-				 
+					 if p.menor=='':
+						p.menor="NO"
+					 if p.juridica=='si':
+						if p.razon_social!=None:
+						  perjuridica=str(p.razon_social)
+						
+						if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null':
+						  perjuridica=perjuridica+'-'+str(RefTipoDocumento.objects.get(id=p.cuit_id))
+						if p.nrocuit!=0:
+						  perjuridica=perjuridica+'-'+str(p.nrocuit)
 					 domi=Personas.objects.get(id=p.persona.id).persodom.all()
 					 if domi:
 						for l in Personas.objects.get(id=p.persona.id).persodom.all():
@@ -12693,13 +12752,19 @@ def enviar(request,idprev,idamp):
 
 								for la in Personas.objects.get(id=p.persona.id).padre.all():
 									#print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
-									if p.menor=='':
-										 p.menor="NO"
+									
+										
 									roles='<u>'+str(p.roles)+'</u>'+' : '
 									if bandera:
-										 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+										if p.juridica=='si':
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+										else:
+											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 									else:
-										persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+										if p.juridica=='si':
+										   persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+'<dd>Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))
+										else:
+										   persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+' , Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
 									if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
@@ -12708,12 +12773,17 @@ def enviar(request,idprev,idamp):
 										 padys='<dd>no registra datos de los padres'+'<br></dd>'    
 									datosgral=roles+persona+domi+padys
 						 else:
-								 if p.menor=='':
-										 p.menor="NO"
+								 
 								 roles='<u>'+str(p.roles)+'</u>'+' : '
 								 if bandera:
-										 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+									if p.juridica=='si':
+										persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+									else:
+										persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 								 else:
+									if p.juridica=='si':
+										persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+'<dd>Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))
+									else:
 										persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 								 #persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
@@ -12722,13 +12792,18 @@ def enviar(request,idprev,idamp):
 								 datosgral=roles+persona+domi+padys  
 						 involuscra.append(datosgral)      
 					 else:
-						if p.menor=='':
-										 p.menor="NO"
+						
 						roles='<u>'+str(p.roles)+'</u>'+' : '
 						if bandera:
-							 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+							if p.juridica=='si':
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+							else:
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
 						else:
-							 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
+							if p.juridica=='si':
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+'<dd>Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))
+							else:
+								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
 						#persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 						domi='<dd>no registra domicilio'+'</dd>'
@@ -12945,7 +13020,7 @@ def enviadop(request):
 	if request.POST.get('search')=='Informar':
 	   fecha_cargad=request.POST.get('fecha_cargas')
 	   fecha_cargah=request.POST.get('fecha_cargah')
-	   """	   
+	   """     
 	   filtro=Preventivos.objects.all().order_by('fecha_carga')
 	   
 	   for fl in filtro:
@@ -12970,7 +13045,7 @@ def enviadop(request):
 		hechoid=Hechos.objects.all().filter(preventivo_id=idpr)
 		timdenuncia=timezone.localtime(fl.fecha_denuncia).strftime('%H:%M:%S')
 		timcarga=timezone.localtime(fl.fecha_carga).strftime('%H:%M:%S')
-		print 'Id Preventivos',fl.id,fecddenuncia,feccarga,timdenuncia,timcarga	
+		print 'Id Preventivos',fl.id,fecddenuncia,feccarga,timdenuncia,timcarga 
 		if hechoid:
 			for fe in hechoid:
 				a=fe.fecha_desde.date()
@@ -13021,7 +13096,7 @@ def enviadop(request):
 									if hrs=='00':
 									   fecdenuncia=timehasta+timedelta(days=1)
 									   fecarga=timehasta+timedelta(days=1)
-									else:	
+									else:   
 										fechcarga=str(feccarga)+' '+str(hrs)+':00:03'
 										timedenuncia=str(fecddenuncia)+' '+str(hrs)+':00:00'
 									Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)
@@ -13091,7 +13166,7 @@ def enviadop(request):
 									fechcarga=str(feccarga)+' 04:00:05'
 									timedenuncia=str(fecddenuncia)+' 04:00:00'
 									fecauto=str(fecauto)+' 04:00:10'
-									Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto)			
+									Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia,fecha_autorizacion=fecauto)           
 			else:
 						
 						if fecddenuncia<=feccarga:
@@ -13125,7 +13200,7 @@ def enviadop(request):
 				if timcarga=='21:00:00 ART' and timdenuncia=='21:00:00 ART':
 						fechcarga=str(feccarga)+' 04:00:05'
 						timedenuncia=str(fecddenuncia)+' 04:00:00'
-						Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)	
+						Preventivos.objects.filter(id=fl.id).update(fecha_carga=fechcarga,fecha_denuncia=timedenuncia)  
 	   """
 	   if fecha_cargad and fecha_cargah:
 		hoy=datetime.datetime.strptime(fecha_cargad,"%d/%m/%Y")
@@ -13286,12 +13361,13 @@ def enviadop(request):
 					else:
 					   #pf='JURIDICA'
 					   pf=0
-					   if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null':
-					      perjuridica=str(RefTipoDocumento.objects.get(id=p.cuit_id))
 					   if p.razon_social!=None:
-					   	  perjuridica=perjuridica+'-'+str(p.razon_social)
+						  perjuridica=str(p.razon_social)
+						
+					   if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null':
+						  perjuridica=perjuridica+'-'+str(RefTipoDocumento.objects.get(id=p.cuit_id))
 					   if p.nrocuit!=0:
-					   	  perjuridica=perjuridica+'-'+str(p.nrocuit)
+						  perjuridica=perjuridica+'-'+str(p.nrocuit)
 
 					if p.menor=='':
 					   p.menor="NO"
@@ -13379,8 +13455,10 @@ def enviadop(request):
 							 if dad: 
 									
 									for la in Personas.objects.get(id=p.persona.id).padre.all():
-												
-											persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+											if p.juridica=='si':
+												persona={'ApellidoyNombres':p.razon_social,'IdTipoDocumento':str(p.cuit_id),'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),'NroDocumento':p.nrocuit,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+											else:
+												persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 							   
 											domi={'IdBarrio':idBarrio,'IdCalle':idCalle,'Nro':altura,'DescripcionDomicilio':descridomi}
 											if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
@@ -13392,8 +13470,11 @@ def enviadop(request):
 											dictpersona.update(domi)
 											dictpersona.update(padys)
 							 else:
-														
-								 persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+								 if p.juridica=='si':
+									persona={'ApellidoyNombres':p.razon_social,'IdTipoDocumento':str(p.cuit_id),'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),'NroDocumento':p.nrocuit,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+								 else:                      
+									persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+								 
 								 domi={'IdBarrio':idBarrio,'IdCalle':idCalle,'Nro':altura,'DescripcionDomicilio':descridomi}
 								 padys={'Hijode':'no registra datos de los padres'}
 								 dictpersona=persona
@@ -13403,8 +13484,11 @@ def enviadop(request):
 							  
 					else:
 					
+						if p.juridica=='si':
+							persona={'ApellidoyNombres':p.razon_social,'IdTipoDocumento':str(p.cuit_id),'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),'NroDocumento':p.nrocuit,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+						else:
+							persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'NroDocumento':p.persona.nro_doc,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 						
-						persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'NroDocumento':p.persona.nro_doc,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 						domi={'DescripcionDomicilio':'no registra domicilio'}
 						padys={'Hijode':'no registra datos de los padres'}
 
@@ -13631,8 +13715,8 @@ def enviadop(request):
 				'</soap:Body>'+\
 				'</soap:Envelope>'
 						
-				#print xmls
-				
+				print xmls
+				"""
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13681,7 +13765,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-				
+				"""
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
@@ -13811,10 +13895,19 @@ def enviadoa(request):
 					 
 					 if p.juridica=='no':
 					   pf='FISICA'
-					   pf=0
-					 else:
-					   pf='JURIDICA'
 					   pf=1
+					 else:
+					   #pf='JURIDICA'
+					   pf=0
+					   if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null':
+						  perjuridica=str(RefTipoDocumento.objects.get(id=p.cuit_id))
+					   if p.razon_social!=None:
+						  perjuridica=perjuridica+'-'+str(p.razon_social)
+					   if p.nrocuit!=0:
+						  perjuridica=perjuridica+'-'+str(p.nrocuit)
+
+
+
 					 if p.menor=='':
 					   p.menor="NO"
 					
@@ -13897,8 +13990,10 @@ def enviadoa(request):
 							 if dad: 
 									
 									for la in Personas.objects.get(id=p.persona.id).padre.all():
-												
-											persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
+											if p.juridica=='si':
+												persona={'ApellidoyNombres':p.razon_social,'IdTipoDocumento':str(p.cuit_id),'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),'NroDocumento':p.nrocuit,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+											else:   
+												persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
 							   
 											domi={'IdBarrio':idBarrio,'IdCalle':idCalle,'Nro':altura,'DescripcionDomicilio':descridomi}
 											if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
@@ -13910,8 +14005,10 @@ def enviadoa(request):
 											dictpersona.update(domi)
 											dictpersona.update(padys)
 							 else:
-														
-								 persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
+								 if p.juridica=='si':
+									persona={'ApellidoyNombres':p.razon_social,'IdTipoDocumento':str(p.cuit_id),'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),'NroDocumento':p.nrocuit,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+								 else:                      
+									persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
 								 domi={'IdBarrio':idBarrio,'IdCalle':idCalle,'Nro':altura,'DescripcionDomicilio':descridomi}
 								 padys={'Hijode':'no registra datos de los padres'}
 								 dictpersona=persona
@@ -13921,8 +14018,10 @@ def enviadoa(request):
 							  
 					 else:
 					
-						
-						persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'NroDocumento':p.persona.nro_doc,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
+						if p.juridica=='si':
+							persona={'ApellidoyNombres':p.razon_social,'IdTipoDocumento':str(p.cuit_id),'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),'NroDocumento':p.nrocuit,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+						else:
+							persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'NroDocumento':p.persona.nro_doc,'PersonaFisica':str(pf),'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+str(p.persona.ciudad_nac),'IdNacionalidad':naciona}
 						domi={'DescripcionDomicilio':'no registra domicilio'}
 						padys={'Hijode':'no registra datos de los padres'}
 
