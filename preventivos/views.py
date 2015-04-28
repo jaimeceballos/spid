@@ -13660,7 +13660,7 @@ def enviadop(request):
 				#hechodeli=hechodeli.replace("º",'')
 				
 				subject  ={'IdTipoPreventivo':1,'IdComisaria':int(idComisaria),'Numero':int(nro),'Anio':int(anio),'FechaCarga':fecha_carga,'FechaAutorizacion':fecha_autorizacion,'FechaEnvio':fecha_autorizacion,'FechaDenuncia':fecha_denuncia}
-				subject1 ={'Caratula':caratula,'DelitosCometidos':hechodeli.strip(),'ModusOperandi':modus.strip(),'DescripcionActuante':str(jerarqui_a)+'-'+actuante,'DescripcionResponsable':str(jerarqui_p)+'-'+preventor,'Destinatarios':autoridad,'DescripcionLocalidadHecho':localidad,'LatLocalidad':float(lati),'LngLocalidad':float(longi),}
+				subject1 ={'Caratula':caratula,'DelitosCometidos':hechodeli.strip(),'ModusOperandi':modus.strip(),'DescripcionActuante':str(jerarqui_a)+' - '+actuante,'DescripcionResponsable':str(jerarqui_p)+' - '+preventor,'Destinatarios':autoridad,'DescripcionLocalidadHecho':localidad,'LatLocalidad':float(lati),'LngLocalidad':float(longi),}
 			
 				datosp = subject
 				datosp.update(subject1)
