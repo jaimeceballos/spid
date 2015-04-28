@@ -13631,8 +13631,8 @@ def enviadop(request):
 				'</soap:Body>'+\
 				'</soap:Envelope>'
 						
-				print xmls
-				"""
+				#print xmls
+				
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13681,7 +13681,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-				"""
+				
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
