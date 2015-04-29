@@ -13232,7 +13232,7 @@ def enviadop(request):
 		datosdict={}
 		cantpersonas=''
 		totenviados=0
-		
+		alturalugar=''
 		for hay in grabarfa:
 			
 			preventivo = Preventivos.objects.get(id=hay.id)
@@ -13658,13 +13658,17 @@ def enviadop(request):
 					
 					#print lugar.altura
 					#print 'sector',sector,'dpto',departamento,'pso',piso,'esc',escalera
-					
+					if lugar.altura==None:
+					   alturalugar=''
+					else:
+					   altrualugar=str(lugar.altura)
+
 					if lugar.barrio==None:
 					   lugarbarrio=''
 					else:
 						lugarbarrio=unicode(str(lugar.barrio),'UTF-8')
 
-					hecho={'AlturaHecho':str(lugar.altura),'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':lugarbarrio,'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
+					hecho={'AlturaHecho':alturalugar,'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':lugarbarrio,'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
 					denuncia={'Denuncia':denuncia}
 					
 			  

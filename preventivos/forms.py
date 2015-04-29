@@ -599,6 +599,7 @@ class PadresForm(forms.ModelForm):
 
 class LugarForm(forms.ModelForm):
 	nuevo_barrio = forms.CharField(required=False)
+	altura=forms.IntegerField(initial=0,required=False)
 	callen = forms.CharField(widget=forms.HiddenInput())
 	def clean_nuevo_barrio(self):
 		cleaned_data = super(LugarForm, self).clean()

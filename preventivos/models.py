@@ -841,7 +841,7 @@ class Domicilios(models.Model):
 
 class Lugar(models.Model):
 	calle = models.ForeignKey(RefCalles,related_name='calle_hecho',on_delete=models.PROTECT,blank=True,null = True)
-	altura = models.IntegerField(default='',blank=True,null = True)
+	altura = models.IntegerField(default='0',blank=True,null = True)
 	latitud = models.CharField(max_length=50)
 	longitud = models.CharField(max_length=50)
 	barrio = models.ForeignKey('RefBarrios',on_delete = models.PROTECT,blank = True, null = True)
