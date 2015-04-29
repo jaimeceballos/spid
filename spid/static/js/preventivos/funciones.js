@@ -696,7 +696,7 @@ $(document).ready(function() {
         });
 
 
-        $('#roles').change(function(event){
+        $('#roles').click(function(event){
            var options= $(this).find(":selected").text();
           
            if (options=='APREHENDIDO' || options=='APRENDIDO' || options=='DETENIDO'){

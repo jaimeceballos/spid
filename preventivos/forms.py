@@ -544,16 +544,18 @@ class HechosDelitoForm(forms.ModelForm):
 	class Meta:
 		model = HechosDelito
 
-
+nuevo=(('si','SI'),('no','NO'),)
 class PersInvolucradasForm(forms.ModelForm):
-	roles=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= RefPeople.objects.all(),initial=1)
+	roles=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= RefPeople.objects.all(),initial=5)
+	detenido=forms.ChoiceField(widget=forms.Select(attrs={'size':'13'}), choices=nuevo,initial='si',)
+	#juridica=forms.ChoiceField(widget=forms.Select(attrs={'size':'13'}), required=False,choices=nuevo,initial='si',)
 	cuit=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), required=False, queryset= RefTipoDocumento.objects.filter(descripcion__contains='CUI'),initial=8)
 	nrocuit = forms.CharField(required= False)
 	class Meta:
 		model = PersInvolucradas
 		exclude = ('persona','hechos')
 		widgets = {
-			'roles': forms.Select(attrs={'initial':1}),
+			'roles': forms.Select(attrs={'initial':5}),
 		    'cuit': forms.Select(attrs={'initial':8}),
 		}
 	   

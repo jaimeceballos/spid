@@ -6268,7 +6268,7 @@ def persinvo(request,idhec,idper):
 											detenidos.hechos  = hechos
 											detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
 											persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
-											print detenidos
+											
 											try:
 											 detenidos.save()
 											except IntegrityError:
@@ -6400,6 +6400,7 @@ def persinvom(request,idhec,idper):
 	detenido=''
 	estadetenido=False
 	personas=''
+	razon=False
 	otros=False
 	#gaba domicilio
  
@@ -6455,11 +6456,15 @@ def persinvom(request,idhec,idper):
 		dom = DomiciliosForm()
 
 		detenido=PersInvolucradas.objects.get(id=idpin, hechos_id=idhec)
+
 		if 'APRE' in detenido.roles.descripcion or 'DETE' in detenido.roles.descripcion:
 			 estadetenido=True
 		else:
-			if 'SOS' not in detenido.roles.descripcion:
-				otros=True
+			if 'DENUNCIADO' in detenido.roles.descripcion or 'VICTIMA' in detenido.roles.descripcion:
+			    razon=True
+			else:
+				if 'SOS' not in detenido.roles.descripcion:
+					otros=True
 		
 		formr = PersInvolucradasForm(instance=idpersi)
 		#formr.fields['roles'].queryset=RefPeople.objects.filter(descripcion=idpersi.roles)
@@ -6482,6 +6487,7 @@ def persinvom(request,idhec,idper):
 				 formpa = PadresForm()
 				 perso=Personas.objects.get(id=request.POST.get('idper'))
 				 fecha_nac=request.POST.get('fecha_nac')
+
 				 if formr.is_valid():
 						persoin=PersInvolucradas.objects.get(persona=perso.id,hechos_id=idhec)
 						persoin.roles = formr.cleaned_data['roles']
@@ -6497,47 +6503,50 @@ def persinvom(request,idhec,idper):
 							if (dife>=18 and menoris=='no') or  (dife<=17 and menoris=='si'):
 								if 'APREHENDIDO' in persoin.roles.descripcion or  'APRENDIDO' in persoin.roles.descripcion or 'DETENIDO' in persoin.roles.descripcion:
 									
-									 fechadete=formr.cleaned_data['fechahoradetencion'].strftime('%d/%m/%Y %H:%M ')
-								
-									 fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'), '%d/%m/%Y').strftime('%d/%m/%Y')
-									 fecha_dete=datetime.datetime.strptime(fechadete, '%d/%m/%Y %H:%M ').strftime('%d/%m/%Y')
+									 if formr.cleaned_data['fechahoradetencion']:
+										 fechadete=formr.cleaned_data['fechahoradetencion'].strftime('%d/%m/%Y %H:%M:%S')
+										 fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'),'%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
+										 fecha_dete=datetime.datetime.strptime(fechadete, '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y %H:%M:%S')
 							 
-									 fd = time.strptime(fecha_denuncia, "%d/%m/%Y")
-									 fde = time.strptime(fecha_dete, "%d/%m/%Y")
-									 if fde<fd:
-												errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
-									 else:
-										detenidos = Detenidos()
-										dete=Detenidos.objects.filter(persona = perso)
-										if dete:
-										   Detenidos.objects.filter(persona = perso).update(fechahoradetencion=formr.cleaned_data['fechahoradetencion'],libertad='N',borrado='',observaciones=request.user.username+'se equivoco a asignarle el rol')
-										else:
-										   detenidos.persona=perso
-										   detenidos.hechos  = hechos
-										   detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
-										   detenidos.libertad=''
-										
-										persoin.juridica='no'
-										persoin.razon_social='SIN DESCRIPCION'
-										
-										persoin.detenido = 'si'
-										persoin.tentativa = formr.cleaned_data['tentativa']
-										persoin.infraganti = formr.cleaned_data['infraganti']
-										persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
-
-										try:
-										 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:   
-											 if fde>=fd:
-													detenidos.save()
+										 fd = time.strptime(fecha_denuncia, "%d/%m/%Y")
+										 fde = time.strptime(fecha_dete, "%d/%m/%Y %H:%M:%S")
+										 if fde<fd:
+													errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
 										 else:
-											 errors.append('No se puede modificar preventivos de otras dependencias.')
-										except IntegrityError:
-										 errors.append('Datos Existentes en detenidos') 
+											detenidos = Detenidos()
+											dete=Detenidos.objects.filter(persona = perso)
+											if dete:
+											   Detenidos.objects.filter(persona = perso).update(fechahoradetencion=formr.cleaned_data['fechahoradetencion'],libertad='N',borrado='',observaciones=request.user.username+'se equivoco a asignarle el rol')
+											else:
+											   detenidos.persona=perso
+											   detenidos.hechos  = hechos
+											   detenidos.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
+											   detenidos.libertad=''
+											
+											persoin.juridica='no'
+											persoin.razon_social='SIN DESCRIPCION'
+											
+											persoin.detenido = 'si'
+											persoin.tentativa = formr.cleaned_data['tentativa']
+											persoin.infraganti = formr.cleaned_data['infraganti']
+											persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
+
+											try:
+											 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:   
+												 if fde>=fd:
+														detenidos.save()
+											 else:
+												 errors.append('No se puede modificar preventivos de otras dependencias.')
+											except IntegrityError:
+											 errors.append('La Persona Detenida ya registra antecedentes') 
+									 else:
+									 	mostrar='no'
+										errors.append('Faltan Datos necesarios en Persona Detenida y/o Aprehendida. Verifique.- ') 
 								else:     
 									 persoin.detenido ='no'
 									 persoin.tentativa='no'
 									 persoin.infraganti='no'
-									 nulo='01/01/1900 00:00:0'
+									 nulo='01/01/1900 00:00:00'
 									 persoin.fechahoradetencion=datetime.datetime.strptime(nulo, '%d/%m/%Y %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 									 Detenidos.objects.filter(persona = perso).update(libertad='S',borrado='S',observaciones=request.user.username+'se equivoco a asignarle el rol')
 									 PersInvolucradas.objects.filter(persona = perso).update(detenido=persoin.detenido)
@@ -6641,7 +6650,7 @@ def persinvom(request,idhec,idper):
 	'autoridades':autoridades,'formp':formp,'dom':dom,'roles':roles,'formciu':formciu,'estadetenido':estadetenido,'otros':otros,
 	'errors': errors,'motivo':motivo,'todos':todos,'comb':comb,'idciu':idciu,'formpa':formpa,'unidadreg':unidadreg,'dependencia':dependencia,
 	'state':state,'delito':delito,'descripcion':descripcion,'idper':idper,'detenido':detenido,'depe':depe,'personas':personas,
-	'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,}
+	'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,'razon':razon,}
 	return render_to_response('./editpersoin.html',info,context_instance=RequestContext(request))
 
 @login_required   

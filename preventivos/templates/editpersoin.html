@@ -24,6 +24,17 @@
               
              
     {% endif %}
+    {%if errors%}
+       {%for derror in errors%}
+                <div id="fade" class="overlay"  style="display: block;"></div>
+                <div id="light" class="modals" style="display: block;">
+                <p style="color: red;" > {{ derror}}.- &nbsp;&nbsp;</p>
+ <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </div>
+       {%endfor%}
+  {%endif%}
+
+
 <div id="invalidoe"  name="invalidoe" style='display:none;'>
                <div id="fade" class="overlay"  style="display: block;"></div>
                      <div id="light" class="modals" style="display: block;">
@@ -159,26 +170,7 @@
  
      <div id="detenidos" >
     {%else%}
-      <p>
-
-     <div id="razon" >
-   
-      <strong >Persona Juridica :</strong>
-      
-         <select class="combodni" id="juridica" name="juridica">
-          <option name="juridica"{{formr.juridica}}</option></select>
-
-      <strong >Descripcion :</strong>
-      <input type="text" id="razon_social" name="razon_social"  size="45" required disabled {{formr.razon_social}}
-    
-        <strong >Tipo Doc :</strong>
-           <select class="combodni" id="cuit" name="cuit" disabled>
-            <option name="cuit"{{formr.cuit}}</option></select>
-            <strong>Nro.:</strong>
-        <input type="text" name ="nrocuit" id ="nrocuit"  size="10" disabled onkeypress="return isNumberKey1(event,this)" 
-        autocomplete="off" required   {{formr.nrocuit}}
-  </div>
-       </p> 
+     
      <div id="detenidos" style="display:none;">
 
     {%endif%}
@@ -189,7 +181,7 @@
        </select>
 
   <strong style="color:red;margin-left:15px;"> * </strong><strong>Fecha y Hora Ingreso:</strong>
-      <input type="text" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" 
+      <input type="text" name="fechahoradetencion" id="fechahoradetencion" readonly="readonly" required
      {{formr.fechahoradetencion}} 
       <span class="add-on">
         <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -212,7 +204,46 @@
        <option {{formr.infraganti}}</option>
        </select></div></div>
 
+ <p>
+  {%if razon %}
+     <div id="razon" >
+   
+      <strong >Persona Juridica :</strong>
+      
+         <select class="combodni" id="juridica" name="juridica">
+          <option name="juridica"{{formr.juridica}}</option></select>
 
+      <strong >Descripcion :</strong>
+      <input type="text" id="razon_social" name="razon_social"  size="45" required disabled {{formr.razon_social}}
+    
+        <strong >Tipo Doc :</strong>
+           <select class="combodni" id="cuit" name="cuit" disabled>
+            <option name="cuit"{{formr.cuit}}</option></select>
+            <strong>Nro.:</strong>
+        <input type="text" name ="nrocuit" id ="nrocuit"  size="10" disabled onkeypress="return isNumberKey1(event,this)" 
+        autocomplete="off" required   {{formr.nrocuit}}
+  </div>
+       </p> 
+  {%else%}
+   <div id="razon" style="display:none;">
+   
+      <strong >Persona Juridica :</strong>
+      
+         <select class="combodni" id="juridica" name="juridica">
+          <option name="juridica"{{formr.juridica}}</option></select>
+
+      <strong >Descripcion :</strong>
+      <input type="text" id="razon_social" name="razon_social"  size="45" required disabled {{formr.razon_social}}
+    
+        <strong >Tipo Doc :</strong>
+           <select class="combodni" id="cuit" name="cuit" disabled>
+            <option name="cuit"{{formr.cuit}}</option></select>
+            <strong>Nro.:</strong>
+        <input type="text" name ="nrocuit" id ="nrocuit"  size="10" disabled onkeypress="return isNumberKey1(event,this)" 
+        autocomplete="off" required   {{formr.nrocuit}}
+  </div>
+       </p> 
+       {%endif%}
     
 
 
