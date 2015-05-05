@@ -13738,7 +13738,7 @@ def enviadop(request):
 				'</soap:Envelope>'
 						
 				print xmls
-				"""
+			
 				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -13760,7 +13760,7 @@ def enviadop(request):
 				valorweb=0
 				if ref.status==200:
 				   data = ref.read()
-				   #print data,ref.status
+				   print data,ref.status
 				   #aqui actualizar el campo sendwebservice en preventivo a 1
 				   user = User.objects.get(username='23140893')
 				   prev = Preventivos.objects.get(id=hay.id)
@@ -13787,7 +13787,7 @@ def enviadop(request):
 				   judi.save()
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
-				"""
+			
 				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
