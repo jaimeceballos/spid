@@ -6062,16 +6062,16 @@ def persinvo(request,idhec,idper):
 				 #print idper
 				 #fecha_detencion=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
 				 #print request.POST.get('fechahoradetencion')
-				 menoris=request.POST.get('menor')
+				 #menoris=request.POST.get('menor')
 				 
 				 anionac=datetime.datetime.strptime(request.POST.get('fecha_nac'),'%d/%m/%Y').strftime('%Y')
 				 anioactual=datetime.datetime.now()
 				 aniohoy=anioactual.today().year
 				 if anionac>=1900:
 				  dife=aniohoy-int(anionac)
-				  if (dife>=18 and menoris=='no') or  (dife<=17 and menoris=='si'):
-				
-					 if request.POST.get('fechahoradetencion'):
+				  #if (dife>=18 and menoris=='no') or  (dife<=17 and menoris=='si'):
+				  #if (dife>=18) or  (dife<=17):
+				  if request.POST.get('fechahoradetencion'):
 							fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
 
 							fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y %H:%M:%S')
@@ -6081,7 +6081,7 @@ def persinvo(request,idhec,idper):
 									errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
 									mostrar="no"
 									estadete="no"
-					 if idper!='0':
+				  if idper!='0':
 
 						 perso=Personas.objects.get(id=idper)
 						 fil=Padres.objects.filter(persona=perso.id)
@@ -6095,23 +6095,23 @@ def persinvo(request,idhec,idper):
 						 findpoli=Personal.objects.filter(persona_id=perso.id)
 						 if findpoli:
 								siexistepoli=True   
-					 else:
+				  else:
 					 
 						 perso=Personas()   
 						 papis=Padres()
 					
 						 iddom='1'  
 
-					 if len(Domicilios.objects.filter(personas = idper)) > 0:
+				  if len(Domicilios.objects.filter(personas = idper)) > 0:
 						 domicilios = Domicilios.objects.filter(personas = idper)[0]
 						 iddom=domicilios.id
-					 else:
+				  else:
 						 iddom='1'  
 						 domicilios=Domicilios() 
 				
 					 
 					 
-					 if formp.is_valid() or idper!='0':
+				  if formp.is_valid() or idper!='0':
 							
 							if formp.is_valid(): 
 							 
@@ -6255,7 +6255,11 @@ def persinvo(request,idhec,idper):
 										 persoin.hechos=hechos
 										 
 										 persoin.roles = formr.cleaned_data['roles']
-										 persoin.menor = formr.cleaned_data['menor']
+										 if dife>=18:
+											persoin.menor = 'no'
+										 else:
+											persoin.menor = 'si'
+											#formr.cleaned_data['menor']
 										 if 'APREHENDIDO' in persoin.roles.descripcion or  'APRENDIDO' in persoin.roles.descripcion or 'DETENIDO' in persoin.roles.descripcion:
 											 persoin.detenido = formr.cleaned_data['detenido']
 										 else:
@@ -6309,11 +6313,11 @@ def persinvo(request,idhec,idper):
 										 mostrar='no'     
 					
 							
-					 else:
-						mostrar='no'   
 				  else:
-					mostrar='no'
-					errors.append('La Persona es Menor de Edad')
+					mostrar='no'   
+				  #else:
+					#mostrar='no'
+					#errors.append('La Persona es Menor de Edad')
 				 else:
 
 					mostrar='no'
@@ -6461,7 +6465,7 @@ def persinvom(request,idhec,idper):
 			 estadetenido=True
 		else:
 			if 'DENUNCIADO' in detenido.roles.descripcion or 'VICTIMA' in detenido.roles.descripcion:
-			    razon=True
+				razon=True
 			else:
 				if 'SOS' not in detenido.roles.descripcion:
 					otros=True
@@ -6491,8 +6495,8 @@ def persinvom(request,idhec,idper):
 				 if formr.is_valid():
 						persoin=PersInvolucradas.objects.get(persona=perso.id,hechos_id=idhec)
 						persoin.roles = formr.cleaned_data['roles']
-						persoin.menor = formr.cleaned_data['menor']
-						menoris=persoin.menor 
+						#persoin.menor = formr.cleaned_data['menor']
+						#menoris=persoin.menor 
 						
 						anionac=datetime.datetime.strptime(fecha_nac,'%d/%m/%Y').strftime('%Y')
 						anioactual=datetime.datetime.now()
@@ -6500,8 +6504,8 @@ def persinvom(request,idhec,idper):
 						
 						if anionac>=1900:
 							dife=aniohoy-int(anionac)
-							if (dife>=18 and menoris=='no') or  (dife<=17 and menoris=='si'):
-								if 'APREHENDIDO' in persoin.roles.descripcion or  'APRENDIDO' in persoin.roles.descripcion or 'DETENIDO' in persoin.roles.descripcion:
+							#if (dife>=18 and menoris=='no') or  (dife<=17 and menoris=='si'):
+							if 'APREHENDIDO' in persoin.roles.descripcion or  'APRENDIDO' in persoin.roles.descripcion or 'DETENIDO' in persoin.roles.descripcion:
 									
 									 if formr.cleaned_data['fechahoradetencion']:
 										 fechadete=formr.cleaned_data['fechahoradetencion'].strftime('%d/%m/%Y %H:%M:%S')
@@ -6540,9 +6544,9 @@ def persinvom(request,idhec,idper):
 											except IntegrityError:
 											 errors.append('La Persona Detenida ya registra antecedentes') 
 									 else:
-									 	mostrar='no'
+										mostrar='no'
 										errors.append('Faltan Datos necesarios en Persona Detenida y/o Aprehendida. Verifique.- ') 
-								else:     
+							else:     
 									 persoin.detenido ='no'
 									 persoin.tentativa='no'
 									 persoin.infraganti='no'
@@ -6562,14 +6566,18 @@ def persinvom(request,idhec,idper):
 										persoin.cuit=formr.cleaned_data['cuit']
 										persoin.nrocuit=formr.cleaned_data['nrocuit']
 									
-
-								try: 
-									persoin.save()
-								except IntegrityError:
-									errors.append('Datos existente en Personas Involucradas')
+							if dife>=18:
+								persoin.menor = 'no'
 							else:
-								mostrar='0'
-								errors.append('La Persona es Menor de Edad')
+								persoin.menor = 'si'
+
+							try: 
+								persoin.save()
+							except IntegrityError:
+								errors.append('Datos existente en Personas Involucradas')
+							#else:
+							#	mostrar='0'
+							#	errors.append('La Persona es Menor de Edad')
 				 else:
 
 						mostrar="no"
@@ -12392,7 +12400,12 @@ def amplia_per(request,idprev,idamp,idper):
 
 	 #fecha_detencion=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
 	 #print request.POST.get('fechahoradetencion')
-	 if request.POST.get('fechahoradetencion'):
+	 anionac=datetime.datetime.strptime(request.POST.get('fecha_nac'),'%d/%m/%Y').strftime('%Y')
+	 anioactual=datetime.datetime.now()
+	 aniohoy=anioactual.today().year
+	 if anionac>=1900:
+	  dife=aniohoy-int(anionac)
+	  if request.POST.get('fechahoradetencion'):
 			fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
 			fecha_denuncia=preventivo.fecha_denuncia
 			fd = time.strptime(str(fecha_denuncia), "%Y-%m-%d")
@@ -12403,7 +12416,7 @@ def amplia_per(request,idprev,idamp,idper):
 					errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
 					mostrar="no"
 					estadete="no"
-	 if idper!='0':
+	  if idper!='0':
 		 perso=Personas.objects.get(id=idper)
 		 fil=Padres.objects.filter(persona=perso.id)
 		 if fil:
@@ -12416,22 +12429,22 @@ def amplia_per(request,idprev,idamp,idper):
 		 findpoli=Personal.objects.filter(persona_id=perso.id)
 		 if findpoli:
 				siexistepoli=True   
-	 else:
+	  else:
 	 
 		 perso=Personas()   
 		 papis=Padres()
 	
 		 iddom='1'  
-	 if len(Domicilios.objects.filter(personas = idper)) > 0:
+	  if len(Domicilios.objects.filter(personas = idper)) > 0:
 		 domicilios = Domicilios.objects.filter(personas = idper)[0]
 		 iddom=domicilios.id
-	 else:
+	  else:
 		 iddom='1'  
 		 domicilios=Domicilios() 
 
 	 
 	 
-	 if formp.is_valid() or idper!='0':
+	  if formp.is_valid() or idper!='0':
 			if formp.is_valid(): 
 			 
 			 perso.apellidos  = formp.cleaned_data['apellidos']
@@ -12574,10 +12587,15 @@ def amplia_per(request,idprev,idamp,idper):
 						 persoin.hechos=hechos
 						 
 						 persoin.roles = formr.cleaned_data['roles']
-						 persoin.menor = formr.cleaned_data['menor']
+						 #persoin.menor = formr.cleaned_data['menor']
+						 if dife>=18:
+							persoin.menor='no'
+						 else:
+							persoin.menor='si'
 						 persoin.detenido = formr.cleaned_data['detenido']
 						 persoin.cargado_prev = False
 						 persoin.ampliacion = Ampliacion.objects.get(id=idamp)
+
 						 if persoin.detenido=='si':
 							
 							 
@@ -12624,13 +12642,14 @@ def amplia_per(request,idprev,idamp,idper):
 						 mostrar='no'     
 	
 			
-	 else:
+	  else:
 		mostrar='no' 
 
 
-
+	 else:
+		mostrar='no' 
 	 return HttpResponseRedirect('../')        
-	if idper != '0':
+	 if idper != '0':
 		personas = Personas.objects.get(id=idper)
 		formp = PersonasForm(instance=personas)
 		domicilios = Domicilios()
@@ -12653,7 +12672,7 @@ def amplia_per(request,idprev,idamp,idper):
 	 
 		 dom.fields['barrio_codigo'].queryset = RefBarrios.objects.filter(ciudad=personas.ciudad_res)
 		 dom.fields['calle'].queryset = dom.fields['entre'].queryset= RefCalles.objects.filter(ciudad=personas.ciudad_res)
-	values={'destino'       :      destino,
+	 values={'destino'       :      destino,
 					'state'         :      state,
 					'preventivo'    :      preventivo,
 					'involucrados'  :      involucrados,
@@ -12672,7 +12691,7 @@ def amplia_per(request,idprev,idamp,idper):
 					}
 
 	
-	return render_to_response('./amplipers.html',values,context_instance=RequestContext(request)) 
+	 return render_to_response('./amplipers.html',values,context_instance=RequestContext(request)) 
 
 @login_required   
 @group_required(["policia","investigaciones","radio"])
