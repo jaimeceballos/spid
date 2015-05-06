@@ -12386,6 +12386,7 @@ def amplia_per(request,idprev,idamp,idper):
 	hechos = preventivo.hecho.all()[0]   
 	errors=[]
 	siexistepoli=""
+
 	if request.POST.get('dele'):
 		personainv = PersInvolucradas.objects.get(id=request.POST.get('dele'))
 		try:
@@ -12581,7 +12582,7 @@ def amplia_per(request,idprev,idamp,idper):
 						 detenidos = Detenidos()
 						
 							
-						 
+						 #print persoin.detenido
 						 persoin.persona=personas
 						 detenidos.persona = personas
 						 persoin.hechos=hechos
@@ -12648,8 +12649,9 @@ def amplia_per(request,idprev,idamp,idper):
 
 	 else:
 		mostrar='no' 
-	 return HttpResponseRedirect('../')        
-	 if idper != '0':
+	 return HttpResponseRedirect('../') 
+	#print idper       
+	if idper != '0':
 		personas = Personas.objects.get(id=idper)
 		formp = PersonasForm(instance=personas)
 		domicilios = Domicilios()
@@ -12672,7 +12674,7 @@ def amplia_per(request,idprev,idamp,idper):
 	 
 		 dom.fields['barrio_codigo'].queryset = RefBarrios.objects.filter(ciudad=personas.ciudad_res)
 		 dom.fields['calle'].queryset = dom.fields['entre'].queryset= RefCalles.objects.filter(ciudad=personas.ciudad_res)
-	 values={'destino'       :      destino,
+		values={'destino'       :      destino,
 					'state'         :      state,
 					'preventivo'    :      preventivo,
 					'involucrados'  :      involucrados,
@@ -12691,7 +12693,7 @@ def amplia_per(request,idprev,idamp,idper):
 					}
 
 	
-	 return render_to_response('./amplipers.html',values,context_instance=RequestContext(request)) 
+	return render_to_response('./amplipers.html',values,context_instance=RequestContext(request)) 
 
 @login_required   
 @group_required(["policia","investigaciones","radio"])
