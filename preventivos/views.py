@@ -12277,6 +12277,7 @@ def amplia_pers(request,idprev,idamp):
 		persoinvform = PersInvolucradasForm(instance=personainv)
 	if request.POST.get('modificar') == 'Modificar':
 		persinv = PersInvolucradasForm(request.POST, request.FILES)
+		print persinv.errors.as_text
 		if persinv.is_valid():
 			personainv                  = PersInvolucradas.objects.get(id=request.POST.get('idinv'))
 			per                         = PersInvolucradas()
@@ -12294,7 +12295,7 @@ def amplia_pers(request,idprev,idamp):
 					personainv.detenido              = 'no'
 					dete=Detenidos.objects.filter(persona = personainv.persona.id)
 					if dete:
-					   Detenidos.objects.filter(persona = personainv.persona.id).update(fechahoradetencion=formr.cleaned_data['fechahoradetencion'],libertad='N',borrado='',observaciones=request.user.username+'se equivoco a asignarle el rol')
+					   Detenidos.objects.filter(persona = personainv.persona.id).update(libertad='S',borrado='',observaciones=request.user.username+'asigna fecha de libertad')
 					else:
 					   detenidos.persona=persona
 					   detenidos.hechos  = hechos
@@ -12386,7 +12387,7 @@ def amplia_per(request,idprev,idamp,idper):
 	hechos = preventivo.hecho.all()[0]   
 	errors=[]
 	siexistepoli=""
-
+	estadetes=True
 	if request.POST.get('dele'):
 		personainv = PersInvolucradas.objects.get(id=request.POST.get('dele'))
 		try:
@@ -12408,15 +12409,49 @@ def amplia_per(request,idprev,idamp,idper):
 	  dife=aniohoy-int(anionac)
 	  if request.POST.get('fechahoradetencion'):
 			fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
-			fecha_denuncia=preventivo.fecha_denuncia
-			fd = time.strptime(str(fecha_denuncia), "%Y-%m-%d")
-
-			fdet = time.strptime(fechadete, "%d/%m/%Y")
+			fecha_denuncia=preventivo.fecha_denuncia.strftime('%d/%m/%Y')
+			#print fecha_denuncia,fechadete
+			#fd = timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S")
+			#print fd
+			#fd = time.strptime(fd, "%d/%m/%Y")
+			#fd = time.strptime(str(fecha_denuncia), "%Y-%m-%d")
+			#fdet = time.strptime(fechadete, "%d/%m/%Y")
+			print fechadete,fecha_denuncia
 			#print 'fecha detencion',fdet,'--------------','fecha_denuncia',fd
-			if fdet<fd:
+			#if fechadete<fecha_denuncia:
+			
+			fd = time.strptime(fecha_denuncia, "%d/%m/%Y")
+			fdet = time.strptime(fechadete, "%d/%m/%Y")
+			
+			if fechadete<fecha_denuncia:
 					errors.append('La Fecha y hora de Detencion nunca debe ser menor a la de Denuncia del Hecho sucedido')
 					mostrar="no"
 					estadete="no"
+					#persona=Personas.objects.get(id=idper)
+					personas = Personas.objects.get(id=idper)
+					formp = PersonasForm(instance=personas)
+					formr = PersInvolucradasForm()
+					valuesi={'destino'       :      destino,
+					'state'         :      state,
+					'preventivo'    :      preventivo,
+					'involucrados'  :      involucrados,
+					'persona'       :      persona,
+					#'persoinv'      :      personainv,
+					#'persoinvform'  :      persoinvform,
+					'enprev'        :      enprev,
+					'modif_amp'     :      modif_amp,
+					'enamp'         :      enamp,
+					'idamp'         :      idamp,
+					#'filtro'        :      filtro,
+					'formp'         :      formp,
+					'dom'           :      dom,
+					'formr'         :      formr,
+					'formpa'        :      formpa,
+					'errors'		: errors,
+					'idper'			: idper
+					}
+					return render_to_response('./amplipers.html',valuesi,context_instance=RequestContext(request))  
+						
 	  if idper!='0':
 		 perso=Personas.objects.get(id=idper)
 		 fil=Padres.objects.filter(persona=perso.id)
@@ -12593,7 +12628,11 @@ def amplia_per(request,idprev,idamp,idper):
 							persoin.menor='no'
 						 else:
 							persoin.menor='si'
-						 persoin.detenido = formr.cleaned_data['detenido']
+
+						 if 'APREHENDIDO' in persoin.roles.descripcion or  'APRENDIDO' in persoin.roles.descripcion or 'DETENIDO' in persoin.roles.descripcion:
+							 persoin.detenido = formr.cleaned_data['detenido']
+						 else:
+							 persoin.detenido='no'
 						 persoin.cargado_prev = False
 						 persoin.ampliacion = Ampliacion.objects.get(id=idamp)
 

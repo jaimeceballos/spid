@@ -2,6 +2,15 @@
 {% block main %}
 
  <form id="form" action="." method="post">{% csrf_token %} 
+    {%if errors%}
+       {%for derror in errors%}
+                <div id="fade" class="overlay"  style="display: block;"></div>
+                <div id="light" class="modals" style="display: block;">
+                <p style="color: red;" > {{ derror}}.- &nbsp;&nbsp;</p>
+ <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                       </div>
+       {%endfor%}
+  {%endif%}
    <h1>Personas involucradas en el preventivo {{preventivo.nro}}/{{preventivo.anio}} {{preventivo.dependencia.descripcion}} - {{preventivo.dependencia.unidades_regionales.descripcion}}</h1>
       <input type="hidden" name="id_nro" id="id_nro" value="{{preventivo.nro}}/{{preventivo.anio}}"/>
       <input type="hidden" name="dependencia" id="dependencia" value="{{preventivo.dependencia.id}}"/>
@@ -126,15 +135,15 @@
         </script>
         <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
         </script></div>
-
+      </p>
           {% endif %} 
-          
-          <strong style="color:red;margin-left:15px;"> Fecha y Hora de Libertad: </strong>
+          <p>        
+          <strong style="color:red;"> Fecha y Hora de Libertad: </strong>
           {% if persoinv.fechahoralibertad %}
               {{persoinv.fechahoralibertad}}
           {% else %} 
           <div id="datetimepicker1" class="input-append date">
-          <input type="text" name="fechahoralibertad" id="fechahoralibertad" readonly="readonly" style="margin-left:14px;"
+          <input type="text" name="fechahoralibertad" id="fechahoralibertad" readonly="readonly" style=""
           {{persoinvform.fechahoralibertad}} 
           <span class="add-on">
                 <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -187,7 +196,7 @@
        </div>
       {% endif %}
 
-      <p> <input class="new-aqua" type="submit" name="modificar" value="Modificar"/></p>
+      <p align="right"> <input class="new-aqua" type="submit" name="modificar" value="Modificar"/></p>
     {% endif %}
 
     {% if formr %}<p>
