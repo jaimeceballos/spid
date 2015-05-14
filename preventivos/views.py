@@ -5188,7 +5188,7 @@ def verprev(request):
 		   celda.value=" Elementos recopilados desde la Base de Datos para Estadísticas "
 		   celda = hoja.cell("B3")
 		   celda.value=" Tabla con datos obtenidos de Preventivos Enviados e Informados"
-		   rango_celdas = hoja.range("B4:U4")
+		   rango_celdas = hoja.range("B4:W4")
 		   # se crea una tupla con los nombres de los campos
 		   nombre_campos = "BARRIOHECHO","CARATULA","DELITOS","DENUNCIA","DEPENDENCIA","DIA DEL HECHO","ELEMENTOS","FECHA DENUNCIA","FECHA DESDE","FECHA HASTA","FRAGANTI","INVOLUCRADOS","LATITUD","LOCALIDAD","LONGITUD","LUGAR","LUGARHECHO","MOTIVO","PREVENTIVO NRO","TENTATIVA","UNIDAD REGIONAL","ZONA"
 		   # ahora, se asigna cada nombre de campo a cada celda
@@ -5199,7 +5199,7 @@ def verprev(request):
 						celda.value = nombre_campos[indice]
 						indice += 1
 		   longitud=ii
-		   celdas_datos = hoja.range("B5:S{0}".format(longitud))
+		   celdas_datos = hoja.range("B5:W{0}".format(longitud))
 		   # ahora vamos a dar los valores a las celdas con los datos
 		
 		   fila=0
