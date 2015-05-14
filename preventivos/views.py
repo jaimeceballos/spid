@@ -4691,7 +4691,7 @@ def verprev(request):
 	errors=[]
 	unidadregi=''
 	jurisdi=''
-	if request.POST.get('search')=="Buscar":
+	if request.POST.get('search')=="Buscar" or request.POST.get('searchs')=="Exportar Datos":
 		
 		 form=SearchPreveForm(request.POST, request.FILES)
 		 nro=request.POST.get('nro')
@@ -4709,8 +4709,7 @@ def verprev(request):
 		 #fecha_cargah=str(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date())+' 23:59:59'
 		 #fecha_cargas=datetime.datetime.strptime(fecha_cargas,'%Y-%m-%d %H:%M:%S')
 		 #fecha_cargah=datetime.datetime.strptime(fecha_cargah,'%Y-%m-%d %H:%M:%S')
-		 
-		
+			 
 		 
 		 if nro and not ureg and not depe:
 				if anio and not ureg and not depe:
@@ -4946,8 +4945,282 @@ def verprev(request):
 								
 								todos.append(Preventivos.objects.all().filter(fecha_carga__range=[fecha_cargas,fecha_cargah]).order_by('anio','nro','dependencia'))
 								#'id','nro','anio','caratula','fecha_carga'))
+		 
+		 if request.POST.get('searchs')=="Exportar Datos":
+		   filadata={}
+		   filahecho={}
+		   filadelitos={}
+		   filalugar={}
+		   filaperin={}
+		   filaele={}
+		   denuncia=''
+		   allgral=[]
+		   filagral={}
+		   ii=4
+		   fila2=[]
+		   fila3=[]
+		   iil=[]
+		   for ins in todos:
+			for datas in ins:
+			  if datas.sendwebservice==1:
+				preventivo = Preventivos.objects.get(id = datas.id)
+				ciudad= preventivo.dependencia.ciudad
+				depe=preventivo.dependencia
+				unireg=depe.unidades_regionales.descripcion
+				filadata={'Preventivo Nro.':str(datas.nro)+'/'+str(datas.anio),'Unidad Regional':str(datas.dependencia.unidades_regionales),'Dependencia':str(datas.dependencia),'Localidad':str(ciudad),'Caratula':str(datas.caratula.encode("utf8")),'Fecha Denuncia':str(timezone.localtime(datas.fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S"))}
+				filagral=filadata
+				datahechos=Preventivos.objects.get(id=datas.id).hecho.all()
+				if datahechos:
+				 for dhecho in datahechos:
+				
+					if dhecho.descripcion==None or dhecho.descripcion=='':
+						denuncia="SIN DESCRIPCION"
+					else:
+						denuncia=html2text.html2text(dhecho.descripcion,True)
+						denuncia=denuncia.encode('utf-8', 'xmlcharrefreplace')
+						denuncia=strip_tags(denuncia)
+						#.replace('&nbsp;','')
+						denuncia=denuncia.replace('&nbsp;','')
+						denuncia=denuncia.replace('"','')
+						denuncia=denuncia[:200]+'...'
 
-												 
+					if dhecho.motivo.descripcion==None or dhecho.motivo.descripcion=='':
+					   motivo='SIN MOTIVO'
+					else:
+					   motivo=str(dhecho.motivo.descripcion)
+					#print str(timezone.localtime(dhecho.fecha_desde).strftime("%A"))
+					#print denuncia,motivo,str(timezone.localtime(dhecho.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")),str(timezone.localtime(dhecho.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S"))
+					filahecho={'Motivo Preventivo':motivo,'Denuncia':denuncia,"Dia Hecho":str(timezone.localtime(dhecho.fecha_desde).strftime("%A")),"Fecha Desde":str(timezone.localtime(dhecho.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")),'Fecha Hasta':str(timezone.localtime(dhecho.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S"))}
+					filagral.update(filahecho)
+					idhec=dhecho.id
+					delito =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
+					cometidos=[]
+					hechodeli=""
+					for d in delito:
+						cometidos.append(d)
+					
+					hechodeli=''
+					modus=' SIN MODALIDAD  '
+					for i in cometidos:
+						if hechodeli:
+							hechodeli=hechodeli+'-'+unicode(str(i).strip(),'UTF-8')
+						else:
+							hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')
+						
+						if i.refmodoshecho!=None:
+							modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+' - '
+
+						filadelitos={'Delitos':hechodeli.strip()+modus}
+
+					filagral.update(filadelitos)
+
+				 involuscra=[]
+				 eleminvo=[]
+				 datosper=""
+				 elementos=""
+				 involus=Hechos.objects.get(id=idhec).involu.all()
+				 eleinvo=Elementos.objects.filter(hechos=idhec,ampliacion_id__isnull=True,borrado__isnull=True).all()
+				else:
+					motivo='SIN MOTIVO'
+					denuncia='SIN DESCRIPCION'
+					delis='SIN DELITOS'
+					moduss='SIN MODO OPERANDI'
+					fechadesde='SIN FECHA'
+					fechahasta="SIN FECHA"
+					filahecho={'Motivo Preventivo':motivo,'Denuncia':denuncia,'Fecha Desde':fechadesde,'Fecha Hasta':fechahasta}
+					filagral.update(filahecho)
+
+					filadelitos={'Delitos':delis+moduss}
+
+					filagral.update(filadelitos)
+				
+				
+				
+				datosgral=""
+				lugar=''
+				lati=''
+				longi=''
+				condiciones=''
+				perjuridica=''
+				involucrados=0
+				if len(Lugar.objects.filter(hecho=idhec))>0:
+					tienelugar=True
+					idlugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]
+					lugar=Hechos.objects.get(id=idhec).lugar_hecho.all()[0]
+					if idlugar.altura==None:
+					   idlugar.altura=0
+
+					lugarhecho={'Lugar':str(idlugar.tipo_lugar),"Zona":str(idlugar.zona),'LugarHecho':str(idlugar.calle)+' Nro.: '+str(idlugar.altura)}
+					tienelugar = True
+					if idlugar.barrio==None:
+					   lugarbarrio='SIN DESCRIPCION'
+					else:
+						lugarbarrio=unicode(str(idlugar.barrio),'UTF-8')
+
+					barrio={'BarrioHecho':lugarbarrio}
+					#condiciones= lugar.cond_climaticas.values_list('descripcion',flat=True)
+					laticiudad = RefCiudades.objects.get(id=datas.dependencia.ciudad_id)
+
+					lati=laticiudad.lat
+					longi=laticiudad.longi
+					filacoorde={'Latitud':str(lati),'Longitud':str(longi)}
+					
+					
+				filagral.update(lugarhecho)
+				filagral.update(barrio)
+				filagral.update(filacoorde)
+
+				if len(Hechos.objects.get(id=idhec).involu.all())>0:
+					 tienePersonas=True
+					 countinvolus=Hechos.objects.get(id=idhec).involu.all().count()
+					 rolins=''
+					 for p in Hechos.objects.get(id=idhec).involu.all():
+						bandera=True
+						tienepersona=True
+						rolins=rolins+p.roles.descripcion+'-'
+						#involucrados=involucrados+1
+						perinvocondi={'Franganti':p.infraganti.upper(),'Tentativa':p.tentativa.upper()}
+						filagral.update(perinvocondi)
+					 
+					 perinvo={'Involucrados':rolins}
+					 filagral.update(perinvo)
+				else:
+					sinrol='SIN DESCRIPCION'
+					fraganti='NO'
+					tentativa='NO'
+					perinvo={'Involucrados':sinrol,'Franganti':fraganti,'Tentativa':tentativa}
+					perinvo.update(perinvo)
+					filagral.update(perinvo)
+
+				rotulo='CantidadElementos '+str(len(eleinvo))
+				datosgral=''
+				obdata=[]
+				obdatav=[]
+				deta=''
+				detav=''
+				eleme=''
+				hay=[]
+				i=1
+				obse=''
+				for eles in eleinvo:
+						tieneelementos=True
+						obdata=[]
+						obdatav=[]
+						deta=''
+						detav=''
+				
+						if len(Elementosarmas.objects.filter(idelemento=eles.id))>0:
+							 
+							 idar = Elementosarmas.objects.filter(idelemento=eles.id).values('idarma')
+							 tieneelementos=True
+							 obdata=Armas.objects.filter(id=idar)
+							 for extra in obdata:
+								titu=' Carateristicas Generales : '
+								tabla=str(extra.subtipos)+'- Tipo/s : '+str(extra.tipos)+'- Sistema de Disparo : '+str(extra.sistema_disparo)+'- Marcas : '+str(extra.marcas)
+								tipos='Calibre : '+str(extra.calibre)+'- Modelo : '+str(extra.modelo)+'- Nro Serie : '+str(extra.nro_arma)+'- Propietario : '+str(extra.nro_doc)+'-'+str(extra.propietario)
+								deta=titu+tabla+tipos
+
+						if len(Elementoscars.objects.filter(idelemento=eles.id))>0:
+							 tieneelementos=True
+							 idarv = Elementoscars.objects.filter(idelemento=eles.id).values('idvehiculo')
+						
+							 obdatav=Vehiculos.objects.filter(id=idarv)
+							 for extrav in obdatav:
+								tituv=' Carateristicas Generales : '
+								tablav=' Marca/s : '+str(extrav.idmarca)+'- Modelo : '+str(extrav.modelo)+'- Dominio : '+str(extrav.dominio)+'- Año : '+str(extrav.anio)
+								tiposv=' Tipo/s : '+str(extrav.tipov)+'- Nro Chasis : '+str(extrav.nchasis)+'- Nro. Motor : '+str(extrav.nmotor)+'- Propietario : '+str(extrav.nro_doc)+' - '+str(extrav.propietario)
+								detav=tituv+tablav+tiposv
+					 
+	 
+						
+						tipo=str(eles.tipo)
+						ampli=''
+						rubro='Elemento/s '+str(eles.tipo)
+						rubros='Rubro y Categoria : '+str(eles.rubro)+'-'+str(eles.categoria)
+						canti='Cantidad : '+str(eles.cantidad)+'-'+str(eles.unidadmed)
+						if eles.descripcion.strip():
+							obse='Observaciones : '+str(eles.descripcion.encode("utf8"))
+							obse=obse.replace('&NBSP;','') 
+						
+						if deta:
+							 if detav:
+								 eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+detav+' | '
+							 else:
+								 eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+deta+' | '
+						
+						else:
+							 if detav:
+								 eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+detav+' | '
+							 else:
+								 eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+deta+' | '
+				 
+						eleminvo.append(eleme) 
+						i=i+1
+				elementos=''
+				for ja in eleminvo:
+					elementos=elementos+ja
+
+				if elementos:	
+				   elementos={'Elementos':elementos}
+				else:
+				   contiene='SIN ELEMENTOS'
+				   elementos={'Elementos':contiene}
+
+				filagral.update(elementos)
+				fila4=[]
+				for key,value in sorted(filagral.items()):
+					print key
+					fila4.append(value)
+				
+				f=fila4
+				fila3.append(f)
+				ii+=1
+				iil.append(ii)
+		 
+
+		   libro = Workbook()
+		   hoja = libro.get_active_sheet()
+		   hoja.title = "Informe Gral"
+	 
+		   # Ahora, se obtiene las celdas en la cuál se colocará el nombre
+		   # del campo. como son 8 campos, se necesita 8 celdas
+		   celda = hoja.cell("B1")
+		   celda.value=" Elementos recopilados desde la Base de Datos para Estadísticas "
+		   celda = hoja.cell("B3")
+		   celda.value=" Tabla con datos obtenidos de Preventivos Enviados e Informados"
+		   rango_celdas = hoja.range("B4:S4")
+		   # se crea una tupla con los nombres de los campos
+		   nombre_campos = "BARRIOHECHO","CARATULA","DELITOS","DENUNCIA","DEPENDENCIA","DIA DEL HECHO","ELEMENTOS","FECHA DENUNCIA","FECHA DESDE","FECHA HASTA","FRAGANTI","INVOLUCRADOS","LATITUD","LOCALIDAD","LONGITUD","LUGAR","LUGARHECHO","MOTIVO","PREVENTIVO NRO","TENTATIVA","UNIDAD REGIONAL","ZONA"
+		   # ahora, se asigna cada nombre de campo a cada celda
+	 
+		   for campo in rango_celdas:
+				indice = 0  # se crea un contador para acceder a la tupla
+				for celda in campo:
+						celda.value = nombre_campos[indice]
+						indice += 1
+		   longitud=ii
+		   celdas_datos = hoja.range("B5:S{0}".format(longitud))
+		   # ahora vamos a dar los valores a las celdas con los datos
+		
+		   fila=0
+		 
+		   for valuex in fila3:
+				indice1=0
+				for celda in celdas_datos[fila]:
+					celda.value = valuex[indice1] 
+					indice1+=1
+				fila += 1     
+
+
+				
+		   response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+		   nombre_archivo = "informe.xlsx"
+		   contenido = "attachment; filename={0}".format(nombre_archivo)
+		   response["Content-Disposition"] = contenido
+		   libro.save(response)
+		   return response
+		   
+		 
 	else: 
 		if request.POST.get('reset')=="Limpiar": 
 			 todos=''
@@ -5324,7 +5597,7 @@ def pdfs(request,idprev):
 					 datosper=datosper+i
 		 
 					#datosper.append(persona)
-				 print datosper
+				 #print datosper
 				 datosgral=''
 				 obdata=[]
 				 obdatav=[]
@@ -14304,9 +14577,6 @@ def enviadoa(request):
 	fecha_carga=datetime.datetime.now()
 	values={'errors':errors,'destino': destino,'state':state,'fecha_carga':fecha_carga,'lista':lista,'totenviados':totenviados,}
 	return render_to_response('./enviowebamp.html',values,context_instance=RequestContext(request))
-
-	
-	
 
 @login_required
 @permission_required('user.is_staff')

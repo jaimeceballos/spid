@@ -14,8 +14,8 @@
                 <th>U.Regional/Dependencias</th>
                   <th>Fecha Denuncia</th>
                <th>Carga</th> <th>Autorizado</th> <th>Cierre</th>
-               <th>Ampliaciones</th>
-               <th>Ver</th>
+               <th>Ampliar</th>
+               <th>Opcion</th>
              </tr>
         </thead>
             <tbody>
@@ -43,14 +43,16 @@
                     <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
                   {%else%}
 
-                       <td width="12%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="Para generar una Ampliacion debe estar Autorizado/Enviado el Preventivo" rel='tooltip' /></a></center></td>
+                       <td width="10%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="Para generar una Ampliacion debe estar Autorizado/Enviado el Preventivo" rel='tooltip' /></a></center></td>
                   {%endif%}
-
+                 <td width="12%">
                   {%if datos.dependencia.ciudad.descripcion != jurisdi%}
-                   <td width="12%"><center><a href="{% url 'reportes' datos.id %}" target="_blank" > <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" title="Solo puede ver el preventivo en modo vista preeliminar" rel='tooltip' /> </a></center></td>
+                  <a href="{% url 'reportes' datos.id %}" target="_blank" > <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" title="Solo puede ver el preventivo en modo vista preeliminar" rel='tooltip' /> </a>
                   {%else%}
-                       <td width="12%"><center>---</center></td>
+                    <strong><center>---</center></strong>
                   {%endif%}
+                 
+                  </td>
                  </tr>
                  {% endfor %}
                 {%endfor%}
