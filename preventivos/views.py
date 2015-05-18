@@ -5900,9 +5900,9 @@ def updatehechos(request,idprev):
 					 #fecha_has=datetime.datetime.strptime(request.POST.get('fecha_hasta'), '%d/%m/%Y %H:%M:%S')
 					 #print type(fd),type(fde),type(fha)
 					 #print fd,fde,fha
-					
+					 #print type(hecho.fecha_hasta),type(ids.fecha_denuncia)
 					 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
-							if hecho.fecha_desde.date() > ids.fecha_denuncia or hecho.fecha_hasta.date() > ids.fecha_denuncia:
+							if hecho.fecha_desde > ids.fecha_denuncia or hecho.fecha_hasta > ids.fecha_denuncia:
 								errors.append('La Fecha de Denuncia nunca puede ser menor a la Fecha y Hora del Hecho sucedido')
 							else: 
 								hecho.save()
