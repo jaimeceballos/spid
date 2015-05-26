@@ -4691,7 +4691,7 @@ def verprev(request):
 	errors=[]
 	unidadregi=''
 	jurisdi=''
-	if request.POST.get('search')=="Buscar" or request.POST.get('searchs')=="Exportar Datos":
+	if request.POST.get('search')=="Buscar" or request.POST.get('searchs')=="Exportar":
 		
 		 form=SearchPreveForm(request.POST, request.FILES)
 		 nro=request.POST.get('nro')
@@ -4946,7 +4946,7 @@ def verprev(request):
 								todos.append(Preventivos.objects.all().filter(fecha_carga__range=[fecha_cargas,fecha_cargah]).order_by('anio','nro','dependencia'))
 								#'id','nro','anio','caratula','fecha_carga'))
 		 
-		 if request.POST.get('searchs')=="Exportar Datos":
+		 if request.POST.get('searchs')=="Exportar":
 		   filadata={}
 		   filahecho={}
 		   filadelitos={}
