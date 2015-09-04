@@ -13783,7 +13783,7 @@ def enviadop(request):
 								  if str(l.altura)!='0':
 									 altura=l.altura
 								  else:
-									 altura=''
+									 altura=0
 							   else:
 								  calle=''
 							 else:
@@ -13994,7 +13994,7 @@ def enviadop(request):
 					if lugar.altura==None:
 					   alturalugar=''
 					else:
-					   altrualugar=str(lugar.altura)
+					   alturalugar=str(lugar.altura)
 
 					if lugar.barrio==None:
 					   lugarbarrio=''
