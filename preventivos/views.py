@@ -13675,7 +13675,7 @@ def enviadop(request):
 				detenidos=0
 				ciudad_res=''
 				calle=''
-				altura=''
+				altura=0
 				perjuridica=''
 				for p in Hechos.objects.get(id=hecho.id).involu.all():
 					#aqui comprobar que datos son null de personas
@@ -13707,7 +13707,7 @@ def enviadop(request):
 						infraganti=0     
 					domi=Personas.objects.get(id=p.persona.id).persodom.all()
 					if p.juridica=='no':
-					   pf='FISICA'
+					   #pf='FISICA'
 					   pf=1
 					else:
 					   #pf='JURIDICA'
@@ -13962,9 +13962,12 @@ def enviadop(request):
 					fechahasta=value.fecha_hasta.strftime("%d/%m/%Y")
 					horahasta=value.fecha_hasta.strftime("%H:%m:%S")
 					"""
-					fechadesde=timezone.localtime(value.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")
-					fechahasta=timezone.localtime(value.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S")
-					fecha_denuncia=timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S")
+					fechadesde=timezone.localtime(value.fecha_desde).strftime("%d/%m/%Y")
+					horadesde=timezone.localtime(value.fecha_desde).strftime("%H:%M")
+					fechahasta=timezone.localtime(value.fecha_hasta).strftime("%d/%m/%Y")
+					horahasta=timezone.localtime(value.fecha_hasta).strftime("%H:%M")
+					hora_denuncia= timezone.localtime(fecha_denuncia).strftime("%H:%M")
+					fecha_denuncia=timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y")
 					idhecho=value.id
 					if value.fecha_esclarecido:
 						 esclarecido=1
@@ -13992,7 +13995,7 @@ def enviadop(request):
 					#print lugar.altura
 					#print 'sector',sector,'dpto',departamento,'pso',piso,'esc',escalera
 					if lugar.altura==None:
-					   alturalugar=''
+					   alturalugar=0
 					else:
 					   alturalugar=str(lugar.altura)
 
@@ -14001,7 +14004,7 @@ def enviadop(request):
 					else:
 						lugarbarrio=unicode(str(lugar.barrio),'UTF-8')
 
-					hecho={'AlturaHecho':alturalugar,'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':lugarbarrio,'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
+					hecho={'NroHecho':alturalugar,'Lat':lugar.latitud[0:10],'Lng':lugar.longitud[0:10],'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'),'IdCalleHecho':idCalleHecho,'IdBarrioHecho':idBarrioHecho,'DescripcionBarrioHecho':lugarbarrio,'DescripcionProvinciaHecho':'CHUBUT','DescripcionDomicilioHecho':domihecho,'MotivoDenuncia':motivo,'FechaHechoDesde':fechadesde,'FechaHechoHasta':fechahasta,'HoraDesde':horadesde,'HoraHasta':horahasta,'Esclarecido':esclarecido,'Tentativa':tentativa,'Detenidos':detenidos,'Flagrancia':infraganti}
 					denuncia={'Denuncia':denuncia}
 					
 			  
@@ -14072,7 +14075,7 @@ def enviadop(request):
 						
 				print xmls
 			
-				user='policia-test'
+				"""user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
 				headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
@@ -14121,14 +14124,708 @@ def enviadop(request):
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
 			
-				datosdict={}
+				datosdict={}"""
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
-	lista=EnvioPreJudicial.objects.all()
+	lista= Preventivos.objects.filter(sendwebservice=0) #EnvioPreJudicial.objects.all()
 	fecha_carga=datetime.datetime.now()
 	values={'errors':errors,'destino': destino,'state':state,'fecha_carga':fecha_carga,'lista':lista,'totenviados':totenviados,}
 	return render_to_response('./enviowebservice.html',values,context_instance=RequestContext(request))
 
+
+@login_required   
+@group_required(["administrador"])
+def enviarp(request,idprev):
+	state= request.session.get('state')
+	destino= request.session.get('destino')
+	preventivo = Preventivos.objects.get(id=idprev) 							# obtengo el preventivo a enviar
+	ciudad= preventivo.dependencia.ciudad 										# reservo la ciudad
+	depe=preventivo.dependencia 												# reservo la dependencia
+	#Datos del Hecho delicitivo atraves del nro de preventivo
+	if Hechos.objects.filter(preventivo=preventivo.id): 						# si el preventivo tiene un hecho cargado
+		hecho = Hechos.objects.get(preventivo=preventivo.id) 					# obtengo el hecho
+		form=HechosForm(instance=hecho) 										# instancio un formulario de hechos
+		ftiposdelitos=DelitoForm() 												# instancio un formulario de delitos
+		motivo= hecho.motivo.descripcion 										# obtengo el motivo de la denuncia
+		modos=RefModosHechoForm(instance=hecho) 								# instancio un formulario de modos
+		descripcion=hecho.descripcion 											# obtengo y reservo la descripcion del hecho
+		idhec=hecho.id 															# obtengo y reservo el id del hecho
+		delito =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True) # obtengo y reservo los delitos correspondientes al hecho
+		modalidad='' 																# instancio la modalidad en vacio	
+		eleinvo=Elementos.objects.filter(hechos=hecho.id,ampliacion_id__isnull=True,borrado__isnull=True).all() # obtengo y reservo los elementos involucrados en el hecho
+		cometidos=[] 															# creo un arreglo de hechos cometidos
+		hechodeli="" 															# una cadena de delitos
+		modus="" 																# una cadena de modus
+		depes=preventivo.dependencia.ciudad_id 									# obtengo el id de la ciudad
+		depes=RefCiudades.objects.get(id=depes)									# instancio una ciudad
+	   
+		
+		for d in delito: 														# para cada delito en delito
+			tienehecho=True 													# pongo en true tienehecho
+			cometidos.append(d) 												# agrego el delito al arreglo de cometidos
+
+		for i in cometidos: 													# por cada delito en cometidos
+
+			#if i.refmodoshecho:
+			hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')+'|' 			# en la cadena hechodeli los concateno con formato utf-8 
+			#+' Modalidad :'+unicode(str(i.refmodoshecho),'UTF-8')+'|'
+			#else:
+			#hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')
+			#+' Sin Modalidad'+'|'
+			if i.refmodoshecho!=None: 											# si el hecho tiene modus operandi
+			   modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+'|' 			# lo concateno en modus en formato utf-8
+
+
+		#print hechodeli
+		#Datos de las Personas involucradas en el hecho
+		involuscra=[] 															# creo un arreglo de involucrados
+		datosper="" 															# creo una cadena datosper
+		titempo="" 																# creo una cadena titempo
+		involus=Hechos.objects.get(id=hecho.id).involu.all() 					# obtengo a todas las personas involucradas en el hecho
+		datosgral="" 															# creo una cadena datosgral
+		eleminvo=[] 															# creo un arreglo eleminvo
+		#Datos del lugar del hecho
+		lugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0] 				# obtengo el lugar del hecho	
+		laticiudad = RefCiudades.objects.get(id=preventivo.dependencia.ciudad_id) # obtengo la ciudad de la dependencia donde se genero el preventivo
+		localidad=laticiudad.descripcion 										# Obtengo el nombre de la ciudad
+		lati=laticiudad.lat 													# obtengo la latitud de la ciudad
+		longi=laticiudad.longi 													# obtengo la longitud de la ciudad
+		tienelugar=True 														# genero una bandera que indique que el hecho tiene lugar
+		tienepersona=False 														# genero una bandera que indique que el hecho tiene persona
+		involucrados=0 															# genero un contador de personas involucradas
+		#hacer el mapeo de comisarias,calles,barrios del lugar del hecho y de la personas involucradas
+
+		localcria=Localidad.objects.get(descripcion__icontains=depes)			# obtengo la localidad
+		localcria=int(localcria.idLocalidad) 									# obtengo el id en formato entero de la localidad
+		if lugar.calle: 														# si el lugar tiene calle
+		   callelugar=str(lugar.calle).strip() 									# obtengo el nombre de la calle
+		   if lugar.barrio: 													# si el lugar tiene barrio
+			  barriolugar=str(lugar.barrio).replace('Bº','').strip() 			# obtengo el nombre del barrio
+		   else: 			
+			  barriolugar='' 													# sino tiene barrio envio el nombre vacio
+		else:
+		   callelugar='' 														# sino tiene calle envio el nombre vacio
+
+		idComisaria=0															# |
+		idCalleHecho=0															#  \
+		idBarrioHecho=0															#   \
+		idBarrio=0																#    \
+		idCalle=0																#     \ 
+		idRolPersona=0															#      \
+		idTipoOcupacion=0														#       \ 
+		idEstadocivil=0															#        |==> Inicializo los id con 0 y otras variables con vacio
+		naciona=0																#       /
+		sector=''																#      /
+		departamento=''															#     /
+		piso=''																	#    /
+		escalera=''																#   /
+		ocupacion=''															#  /
+		lugarbarrio=''															# |
+		try:
+		  for cal in  Calles.objects.filter(idLocalidad=localcria,descripcion__icontains=callelugar): # para cada calle que coincida con la del lugar
+			 idCalleHecho=cal.idCalle 											#obtengo su id
+		except ObjectDoesNotExist: 												# si no existe
+			 idCalleHecho=0 													# lo dejo en cero	
+
+		try:
+		  for barr in Barrio.objects.filter(idLocalidad=localcria,descripcion__icontains=barriolugar):  # para cada barrio que conicida con el del lugar
+			 idBarrioHecho=barr.idBarrio 										# obtengo el id
+		except ObjectDoesNotExist: 												# si  no existe ninguno
+			 idBarrioHecho=0 													# lo dejo en cero
+
+		for crias in Comisarias.objects.filter(idLocalidad=localcria): 			# para cada comisaria que coincida con la indicada
+			depen=str(depe) 													# obtengo su nombre
+			criasdepe=crias.descripcion.upper()[-7:] 							# obtengo el nombre en mayusculas
+			
+			if criasdepe in depen:												# si la comisaria y la dependencia son iguales								
+				idComisaria=crias.idorganismo 									# obtengo el numero de organismo asignado por el poder judicial
+		#print callelugar,barriolugar,idComisaria,idBarrioHecho,idCalleHecho
+		cantper=0 																# cantidad de personas a cero
+		cantpersonas='' 														# cantidad de personas vacio
+		detenidos=0 															# detenidos a cero
+		ciudad_res='' 															# ciudad de residencia vacio
+		calle='' 																# calle vacio
+		altura=0 																# altura a cero
+		perjuridica='' 															# persona juridica vacio
+		for p in Hechos.objects.get(id=hecho.id).involu.all(): 					# para cada persona involucrada en el hecho
+			#aqui comprobar que datos son null de personas
+		
+			bandera=True 														# bandera a True
+			tienepersona=True  													# tiene persona a True
+			involucrados=involucrados+1 										# sumo un involucrado
+			rolin=str(p.roles)[2:].lower() 										# obtengo el rol de la persona
+			rolper=RolPersonas.objects.all() 									# obtengo un listado de roles
+			for rolesper in rolper: 											# para cada rol en rolper
+				rp=rolesper.descripcion[2:] 									# obtengo su descripcion segun el poder judicial
+				
+				if rolin==rp: 													# si coincide con el que policial
+				   idRolPersona=int(str(rolesper)) 								# obtengo su id judicial
+
+			if 'si' in p.detenido:												# Si la persona esta detenida
+			   #detenidos=detenidos+1
+			   detenidos=1 														# incremento un detenido
+			else:
+			   detenidos=0 														# sino lo dejo en cero
+			
+			if 'si' in p.tentativa: 											# si el hecho fue en tentativa
+				 tentativa=1 													# indico un uno en la bandera de tentativa
+			else: 
+				 tentativa=0 													# sino lo dejo en cero
+			if 'si' in p.infraganti: 											# si el hecho fue en flagrancia
+				infraganti=1 													# pongo la bandera en 1
+			else:
+				infraganti=0      												# sino la dejo en cero
+			domi=Personas.objects.get(id=p.persona.id).persodom.all() 			# obtengo los domicilios de la persona
+			if p.juridica=='no': 												# si no es persona juridica
+			   #pf='FISICA'
+			   pf=1 															# pongo la bandera persona fisica en 1
+			else:
+			   #pf='JURIDICA' 
+			   pf=0 															# sino la dejo en cero
+			   if p.razon_social!=None: 										# y si la razon social tiene dato
+				  perjuridica=str(p.razon_social) 								# obtengo el nombre de la persona juridica
+				
+			   if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null': 			# si tiene cargado el cuit
+				  perjuridica=perjuridica+'-'+str(RefTipoDocumento.objects.get(id=p.cuit_id)) 	# al nombre de la persona juridica le agrego su cuit
+			   if p.nrocuit!=0: 												# si el numero de cuit esta cargado
+				  perjuridica=perjuridica+'-'+str(p.nrocuit) 					# lo agrego a la razon social
+
+			if p.menor=='': 													# si la persona no es menor
+			   p.menor="NO" 													# marco que no lo es
+			   
+
+			
+			if p.persona.ocupacion!=None: 										# si la ocupacion esta cargada
+			   ocupacion=unicode(str(p.persona.ocupacion),'utf8') 				# obtengo su descripcion
+			else:
+			   ocupacion='' 													# si no la dejo vacia
+		
+			estadociv=str(p.persona.estado_civil).lower().capitalize() 			# obtengo el estado civil
+			a=Estadocivil.objects.all() 										# obtengo todos los estados civil del poder judicial
+			for civil in a: 													# para cada uno de ellos
+				civ=civil.descripcion.lower() 									# obtengo su descripcion
+				if civ==civ: 							
+					idEstadocivil=civil.idEstadoCivil 							# obtengo el id del estado civil segun el poder judicial
+
+			b=TipoOcupacion.objects.all() 										# obtengo todas las ocupaciones segun el poder judicial
+			ocupac=ocupacion.lower() 											
+			for ocu in b: 														# para cada ocupacion en la lista
+				ocupa=ocu.descripcion.lower()									# obtengo su descripcion
+				if ocupac==ocupa: 								 				# si coincide con la de la persona
+					idTipoOcupacion=ocu.idtipoocupacion 						# obtengo el id segun el poder judicial
+
+			if p.persona.pais_nac_id: 											# si tiene cargada la nacionalidad
+				nacion=RefPaises.objects.get(id=p.persona.pais_nac_id) 			# obtengo el id del pais
+			else:
+				nacion='Descripcion' 											# sino lo cargo con descripcion
+
+			naci=Nacionalidad.objects.all() 									# obtengo un listado de nacionalidades segun el poder judicial
+			for nac in naci: 													# para cada una de ellas
+				nacio=nac.descripcion 											# obtengo su descripcion
+				if nacion==nacio: 												# si es igual a la nacionalidad en la persona
+					 naciona=nac.id 											# obtengo el id
+
+			tipo_doc=str(p.persona.tipo_doc)[:3] 								# obtengo el tipo de documento de la persona
+			doc=Tipodocumentos.objects.all() 									# obtengo un listado de los tipos de documentos segun el poder judicial
+			tp_doc='INDOC' 														# cargo tp_doc con INDOC
+			for doc_tipo in doc: 												# para cada tipo de documento 
+				tip=str(doc_tipo.idtipodocumento)[:3] 							# obtengo la descripcion
+				
+				if tipo_doc==tip: 												# si conincide con el de la persona
+				   tp_doc=tip 													# obtengo el id
+				
+				   
+			if len(p.persona.nro_doc)<=8: 										# si el documento tiene hasta 8 digitos
+			   tipo_doc=p.persona.tipo_doc 										# obtengo el tipo de documento
+			   nro_doc=p.persona.nro_doc 										# obtengo en numero de documento
+
+			   tipo_doc='N/T' 													# tipo doc N/T
+			   nro_doc='0' 														# nro doc 0
+			
+			if domi: 															# si tiene domicilio
+				for l in Personas.objects.get(id=p.persona.id).persodom.all(): 	# para cada domicilio en el listado
+					 dad=Personas.objects.get(id=p.persona.id).padre.all() 		# obtengo los padres de la persona
+					 tieneper=True 												# pongo la bandera de persona en verdadero
+					 if p.persona.ciudad_res!=None: 							# si la ciudad de residencia esta cargada
+					   ciudad_res=p.persona.ciudad_res 							# obtengo la ciudad de residencia
+					   if l.calle!=None:										# si tiene calle
+						  calle=l.calle 										# obtengo la calle
+						  if str(l.altura)!='0': 								# si tiene altura 
+							 altura=l.altura 									# la obtengo
+						  else:
+							 altura=0 											# sino la dejo en vacio
+					   else:
+						  calle='' 												# sino tiene calle la dejo vacia
+					 else:
+						ciudad_res='' 											# sino tiene ciudad de residencia la dejo vacia
+					 descridomi=str(ciudad_res)+'-'+unicode(str(calle),'UTF-8').strip()+'-'+str(altura) # genero la descripcion del domicilio
+					 if l.calle: 												# si el lugar tiene calle	
+						calledom=str(l.calle).strip() 							# obtengo la calle
+						try: 
+							for cal in Calles.objects.filter(idLocalidad=localcria,descripcion__icontains=calledom): # obtengo las calles segun el poder judicial
+								 idCalle=cal.idCalle 							# obtengo su id
+						except ObjectDoesNotExist:
+								 idCalle=0 										# sino lo dejo en cero
+					 if l.barrio_codigo: 										# si el lugar tiene codigo de barrio
+						barriodom=str(l.barrio_codigo).replace('Bº','').strip() # obtengo el barrio	
+						try:
+							for barr in Barrio.objects.filter(idLocalidad=localcria,descripcion__icontains=barriodom): 	# obtengo el barrio segun el poder judicial
+								 idBarrio=barr.idBarrio 						# obtengo su id
+						except ObjectDoesNotExist:
+								 idBarrio=0 									# sino lo dejo en cero
+					 if dad: 													# si tiene datos de los padres
+							
+							for la in Personas.objects.get(id=p.persona.id).padre.all(): # para cada uno
+									if p.juridica=='si': 						# si es persona juridica		
+										persona={								# genero el objeto persona
+												'ApellidoyNombres':p.razon_social,	#agrego la razon social
+												'IdTipoDocumento':str(p.cuit_id), 	#agrego el cuit
+												'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),	# agrego el tipo de documento
+												'NroDocumento':p.nrocuit,			# agrego el numero de cuit
+												'Alias':p.persona.alias, 			# agrego el alias			
+												'IdTipoOcupacion':idTipoOcupacion, 	# agrego la ocupacion
+												'IdEstadoCivil':idEstadocivil,		# agrego el estado civil
+												'PersonaFisica':str(pf), 			# agrego la bandera persona fisica
+												'DescripcionPersonaJuridica':perjuridica, 	# agrego la bandera persona juridica
+												'IdRolPersona':idRolPersona, 		# agrego el id del rol de la persona	
+												'DescripcionRol':str(p.roles),		# agrego la descripcion del rol de la persona	
+												'Telefonos':p.persona.celular,		# agrego el telefono
+												'Ocupacion':ocupacion, 				# agrego la ocupacion de la persona
+												'DescripcionEstadoCivil':str(p.persona.estado_civil), 	# agrego la descripcion del estado civil
+												'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),	# agrego la fecha de nacimiento
+												'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'), # agrego el lugar de nacimiento
+												'IdNacionalidad':naciona 			# agrego la nacionalidad
+												}
+									else: 										# si no es persona juridica
+										persona={
+												'Apellido':p.persona.apellidos,		# agrego el apellido
+												'Nombre':p.persona.nombres,			# agrego el nombre
+												'IdTipoDocumento':tp_doc,			# agrego el tipo de documento
+												'DescripcionTipoDoc':str(p.persona.tipo_doc), 	# agrego la descripcion del tipo de documento
+												'NroDocumento':p.persona.nro_doc, 	# agrego el numero de documento		
+												'Alias':p.persona.alias, 			# agrego el alias
+												'IdTipoOcupacion':idTipoOcupacion,	# agrego el id de la ocupacion
+												'IdEstadoCivil':idEstadocivil,		# agrego el id del estado civil
+												'PersonaFisica':str(pf), 			# agrego la bandera persona fisica
+												'DescripcionPersonaJuridica':perjuridica, 	# agrego la descripcion de persona juridica
+												'IdRolPersona':idRolPersona, 		# agrego el rol de la persona
+												'DescripcionRol':str(p.roles),		# agrego el rol de la persona
+												'Telefonos':p.persona.celular, 		# agrego el celular de la persona
+												'Ocupacion':ocupacion,				# agrego la ocupacion
+												'DescripcionEstadoCivil':str(p.persona.estado_civil),	# agrego la descripcion del estado civil
+												'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"), # agrego la fecha de nacimiento
+												'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'), # agrego el lugar de nacimiento
+												'IdNacionalidad':naciona 			# agrego la nacionalidad
+												}
+					   
+									domi={ 											# genero el objeto domicilio
+										'IdBarrio':idBarrio,						# agrego el id de barrio
+										'IdCalle':idCalle,							# agrego el id de calle
+										'Nro':altura,								# agrego la altura del domicilio
+										'DescripcionDomicilio':descridomi 			# agrego la descripcion del domicilio
+										}
+									if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres: # si tengo cargo el dato de alguno de los padres
+											padys={									# genero el objeto de padres
+												'Hijode':la.padre_apellidos+','		# agrego el apellido del padre
+												+la.padre_nombres+'-'				# agrego el nombre del padre
+												+la.madre_apellidos+',' 			# agrego el apellido de la madre
+												+la.madre_nombres					# agrego el nombre de la madre
+												}
+									else:
+											padys={									# si no tiene datos de los padres	
+												'Hijode':'no registra datos de los padres' # indico que no los tiene
+												}
+								
+									dictpersona=persona 							# creo un diccionario de persona
+									dictpersona.update(domi) 						# le agrego el domicilio
+									dictpersona.update(padys) 						# le agrego los padres	
+					 else:
+						 if p.juridica=='si':
+							persona={
+									'ApellidoyNombres':p.razon_social,
+									'IdTipoDocumento':str(p.cuit_id),
+									'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),
+									'NroDocumento':p.nrocuit,
+									'Alias':p.persona.alias,
+									'IdTipoOcupacion':idTipoOcupacion,
+									'IdEstadoCivil':idEstadocivil,
+									'PersonaFisica':str(pf),
+									'DescripcionPersonaJuridica':perjuridica,
+									'IdRolPersona':idRolPersona,
+									'DescripcionRol':str(p.roles),
+									'Telefonos':p.persona.celular,
+									'Ocupacion':ocupacion,
+									'DescripcionEstadoCivil':str(p.persona.estado_civil),
+									'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),
+									'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),
+									'IdNacionalidad':naciona
+									}
+						 else:                      
+							persona={
+									'Apellido':p.persona.apellidos,
+									'Nombre':p.persona.nombres,
+									'IdTipoDocumento':tp_doc,
+									'DescripcionTipoDoc':str(p.persona.tipo_doc),
+									'NroDocumento':p.persona.nro_doc,
+									'Alias':p.persona.alias,
+									'IdTipoOcupacion':idTipoOcupacion,
+									'IdEstadoCivil':idEstadocivil,
+									'PersonaFisica':str(pf),
+									'DescripcionPersonaJuridica':perjuridica,
+									'IdRolPersona':idRolPersona,
+									'DescripcionRol':str(p.roles),
+									'Telefonos':p.persona.celular,
+									'Ocupacion':str(p.persona.ocupacion),
+									'DescripcionEstadoCivil':str(p.persona.estado_civil),
+									'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),
+									'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),
+									'IdNacionalidad':naciona
+									}
+						 
+						 domi={
+						 		'IdBarrio':idBarrio,
+						 		'IdCalle':idCalle,
+						 		'Nro':altura,
+						 		'DescripcionDomicilio':descridomi
+						 		}
+						 padys={
+						 		'Hijode':'no registra datos de los padres'
+						 		}
+						 dictpersona=persona
+						 dictpersona.update(domi)
+						 dictpersona.update(padys)
+
+					  
+			else:
+			
+				if p.juridica=='si':
+					persona={
+							'ApellidoyNombres':p.razon_social,
+							'IdTipoDocumento':str(p.cuit_id),
+							'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),
+							'NroDocumento':p.nrocuit,
+							'Alias':p.persona.alias,
+							'IdTipoOcupacion':idTipoOcupacion,
+							'IdEstadoCivil':idEstadocivil,
+							'PersonaFisica':str(pf),
+							'DescripcionPersonaJuridica':perjuridica,
+							'IdRolPersona':idRolPersona,
+							'DescripcionRol':str(p.roles),
+							'Telefonos':p.persona.celular,
+							'Ocupacion':ocupacion,
+							'DescripcionEstadoCivil':str(p.persona.estado_civil),
+							'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),
+							'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),
+							'IdNacionalidad':naciona
+							}
+				else:
+					persona={
+							'Apellido':p.persona.apellidos,
+							'Nombre':p.persona.nombres,
+							'IdTipoDocumento':tp_doc,
+							'DescripcionTipoDoc':str(p.persona.tipo_doc),
+							'Alias':p.persona.alias,
+							'IdTipoOcupacion':idTipoOcupacion,
+							'IdEstadoCivil':idEstadocivil,
+							'NroDocumento':p.persona.nro_doc,
+							'PersonaFisica':str(pf),
+							'DescripcionPersonaJuridica':perjuridica,
+							'IdRolPersona':idRolPersona,
+							'DescripcionRol':str(p.roles),
+							'Telefonos':p.persona.celular,
+							'Ocupacion':str(p.persona.ocupacion),
+							'DescripcionEstadoCivil':str(p.persona.estado_civil),
+							'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),
+							'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),
+							'IdNacionalidad':naciona
+							}
+				
+				domi={
+						'DescripcionDomicilio':'no registra domicilio'
+					}
+				padys={
+						'Hijode':'no registra datos de los padres'
+						}
+
+				dictpersona=persona
+				dictpersona.update(domi)
+				dictpersona.update(padys)
+			cantper=cantper+1  							# sumo uno a la cantidad de personas
+			#print dictpersona
+			personasxml=dicttoxml(dictpersona,attr_type=False,root='Personas')	# genero un XML con el diccionario de persona
+			xmlsper='<Persona>'+personasxml+'</Persona>'		# encierro el XML generado en los tags Persona
+			cantpersonas=cantpersonas+xmlsper 					# agrego a cantersonas la persona generada	
+			
+		xmlsper='<PersonasPreventivo length='+'"'+str(cantper)+'"'+'>'+cantpersonas+'</PersonasPreventivo>' # genero un tag PersonasPreventivo y le agrego las personas generadas y la cantidad
+
+		# COMIENZO CON LOS ELEMENTOS
+
+		rotulo='CantidadElementos '+str(len(eleinvo))  					# Obtengo la cantidad de elementos
+		tituarmas=''													# pongo tituarmas en vacion
+		tituvehiculos=''												# pongo tituvehiculos en vacio	
+		objectele={}													# genero un diccionario objectele
+		elements=[] 													# genero un arrego de elementos
+		elementos=''													# genero una cadena elementos
+		obji=[] 												
+		nrositems=0 													# genero un indicador de numero de elemento
+		cantelemens='' 													# genero una variable para guardar la cantidad de elementos
+		for eles in eleinvo: 											# para cada elemento involucrado
+			obdata=[] 													# genero una arreglo de los datos del elemento
+			obdatav=[] 													
+			if len(Elementosarmas.objects.filter(idelemento=eles.id))>0: # si tiene armas
+				 
+				 idar = Elementosarmas.objects.filter(idelemento=eles.id).values('idarma') # obtengo el id del arma
+				 obdata=Armas.objects.filter(id=idar)  					# obtengo el arma
+
+				 for extra in obdata: 									# Genero todos los datos del arma
+					tituarmas='Detalle Armas :'+str(extra.subtipos)+',Tipo/s : '+str(extra.tipos)+',Sistema de Disparo : '+str(extra.sistema_disparo)+',Marcas : '+str(extra.marcas)+',Calibre : '+str(extra.calibre)+',Modelo : '+str(extra.modelo)+',Nro Serie : '+str(extra.nro_arma)+',Propietario : '+str(extra.nro_doc)+'-'+str(extra.propietario)
+				   
+
+			if len(Elementoscars.objects.filter(idelemento=eles.id))>0: # si tiene vehiculos involucrados
+				 
+				 idarv = Elementoscars.objects.filter(idelemento=eles.id).values('idvehiculo') # obtengo el id
+			
+				 obdatav=Vehiculos.objects.filter(id=idarv) 		# obtengo el vehiculo
+				 for extrav in obdatav: 							# genero todos los datos del vehiculo
+					tituvehiculos='Detalle Vehiculo : '+str(extrav.idmarca)+',Modelo : '+str(extrav.modelo)+',Dominio : '+str(extrav.dominio)+',Año : '+str(extrav.anio)+' Tipos : '+str(extrav.tipov)+',Nro Chasis : '+str(extrav.nchasis)+',Nro. Motor : '+str(extrav.nmotor)+',Propietario : '+str(extrav.nro_doc)+'-'+str(extrav.propietario)
+		 
+			obse=html2text.html2text(eles.descripcion) 						# obtengo la descripcion de los elementos convertida en texto plano
+			obse=strip_tags(eles.descripcion) 								# quito todos los tags html
+			obse=obse.replace('&nbsp;','') 									# genero los espacios
+			obser=obse.replace('"','')										# reemplazo las comillas por vacio
+		
+			rubros={
+					'IdRelacionElemento':unicode(str(eles.tipo.id),'utf-8'),
+					'RelacionElemento':unicode(str(eles.tipo.descripcion),'utf-8'),
+					'DescripcionElemento':unicode(str(eles.rubro),'UTF-8')+'-'+unicode(str(eles.categoria),'UTF-8')+'-'+obser+'-'+str(eles.unidadmed)+'='+str(eles.cantidad),
+					'TitularArmas':unicode(str(tituarmas),'utf-8'),
+					'TitularVehiculo':unicode(str(tituvehiculos),'UTF-8')
+					}
+			#por cada elemento hacer un tag para el xml
+			nrositems=nrositems+1 											# sumo uno a la cantidad de elementos
+			#ide={'IdItem_'+'nro_'+str(nrositems):str(eles.id)}
+			#rubrosi={'Descripcion':rubros}
+			#ide.update(rubrosi)
+			objetosxml=dicttoxml(rubros,attr_type=False,root='Elementos')	# genero un objeto XML con el elemento generado
+			xmlsobj='<Elemento>'+objetosxml+'</Elemento>'					# agrego los tag elemento
+			cantelemens=cantelemens+xmlsobj 								# agrego el objeto a cantelemens
+			
+		if nrositems>0:														# si hay mas de un elemento
+		   xmlsobj='<Elementos length='+'"'+str(nrositems)+'"'+'>'+cantelemens+'</Elementos>' 	# genero el tag elementos con todos los elementos y la cantidad
+		else:
+		   xmlsobj='<Elementos length="0"></Elementos>' 					# sino genero el tag vacio
+			
+
+			#elements.append(rubrosi)
+	
+		#for e in elements:
+		#   obji.append(e)
+			
+		#objis = {rotulo:obji}
+		  
+		#objectele.update(objis)
+
+		infor=''															# genero una varible infor
+		autoridad=''														# genero una variable autoridad
+		#datos=Preventivos.objects.get(id=hay.id)
+		#print datos
+		nro=preventivo.nro 													# obtengo el numero de preventivo
+		anio=preventivo.anio 												# obtengo el año del preventivo
+		fecha_denuncia=preventivo.fecha_denuncia 							# obtengo la fecha de denuncia
+		fecha_carga=preventivo.fecha_carga 									# obtengo la fecha de carga
+		fecha_autorizacion=preventivo.fecha_autorizacion 					# obtengo la fecha de autorizacion
+		caratula=preventivo.caratula 										# obtengo la caratula
+		actuante=preventivo.actuante 										# obtengo el actuante
+		actuante=unicode(str(actuante), 'utf-8').strip() 					# convierto el formato del texto del actuante
+		preventor=preventivo.preventor 										# obtengo el preventor
+		preventor=unicode(str(preventor), 'utf-8').strip() 					# convierto el formato del texto del preventor
+
+		today = datetime.datetime.now() 									# obtengo la fecha actual	
+		autoridades=preventivo.autoridades.values_list('descripcion',flat=True) 	# obtengo el listado de autoridades a informar
+		dependencia=preventivo.dependencia.descripcion 						# obtengo la dependencia
+		unidadreg=preventivo.dependencia.unidades_regionales.descripcion 	# obtengo la unidad regional
+	 
+		for a in autoridades:												# para cada una de las autoridades
+			autoridad=autoridad+str(a)+'|' 									# las agrego a una cadena de autoridades	
+		
+		jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=actuante).values('jerarquia_id')) # obtengo la jerarquia del actuante
+		jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=preventor).values('jerarquia_id')) # obtengo la jerarquia del preventor
+		form1=Hechos.objects.filter(preventivo=preventivo.id) 				# obtengo el hecho del preventivo
+	   
+		for value in form1: 												# para cada hecho 
+
+		   
+			denuncia=html2text.html2text(descripcion,True) 					# obtengo la descripcion del hecho transformada en texto plano
+			denuncia=denuncia.encode('utf-8', 'xmlcharrefreplace') 			# lo codifico en utf-8	
+			denuncia=strip_tags(denuncia) 									# le quito los tags html
+			#.replace('&nbsp;','')
+			denuncia=denuncia.replace('&nbsp;','') 							# quito los espacios
+			denuncia=denuncia.replace('"','') 								# reemplazo las comillas dobles por vacio
+			#denuncia=unicode(str(descripcion),'UTF-8')
+			#print denuncia
+			motivo=str(value.motivo) 										# obtengo el motivo de la denuncia
+			fecha_carga=fecha_carga.strftime("%d/%m/%Y %H:%m:%S") 			# obtengo la fecha de carga del preventivo
+			#.strftime("%d/%m/%Y")
+			fecha_autorizacion=fecha_autorizacion.strftime("%d/%m/%Y %H:%m:%S") # obtengo la fecha de autorizacion
+			#.strftime("%d/%m/%Y")
+			"""
+			fechadesde=value.fecha_desde.strftime("%d/%m/%Y")
+			horadesde=value.fecha_desde.strftime("%H:%m:%S")
+			fechahasta=value.fecha_hasta.strftime("%d/%m/%Y")
+			horahasta=value.fecha_hasta.strftime("%H:%m:%S")
+			"""
+			fechadesde=timezone.localtime(value.fecha_desde).strftime("%d/%m/%Y") 	# obtengo la fecha desde
+			horadesde=timezone.localtime(value.fecha_desde).strftime("%H:%M")		# obtengo la hora desde
+			fechahasta=timezone.localtime(value.fecha_hasta).strftime("%d/%m/%Y")	# obtengo la fecha hasta
+			horahasta=timezone.localtime(value.fecha_hasta).strftime("%H:%M") 		# obtengo la hora hasta	
+			hora_denuncia= timezone.localtime(fecha_denuncia).strftime("%H:%M") 	# obtengo la hora de denuncia	
+			fecha_denuncia=timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y")	# obtengo la fecha de denuncia
+			idhecho=value.id 												# obtengo el id del hecho
+			if value.fecha_esclarecido: 									# si el hecho esta esclarecido
+				 esclarecido=1 												# pongo la bandera de esclarecido en uno
+			else:
+				 esclarecido=0   											# sino la pongo a cero
+			#'HoraDesde':horadesde,'HoraHasta':horahasta,
+
+			if lugar.sector!=None: 											# si el lugar tiene sector
+			   sector=lugar.sector 											# obtengo el sector
+			   domihecho=sector 											# agrego el sector al domicilio del hecho
+								   
+			if lugar.departamento!=None: 									# si el lugar tiene departamento
+			   departamento=lugar.departamento 								# obtengo el departamento
+			   domihecho=domihecho+'-'+departamento 						# lo agrego al domicilio del hecho
+									  
+			if lugar.piso!=0: 												# si el lugar tiene piso
+			   piso=lugar.piso 												# lo obtengo
+			   domihecho=domihecho+'-'+piso 								# lo agrego al domicilio del hecho
+								
+			if lugar.escalera!=None: 										# si el lugar tiene escalera
+			   escalera=lugar.escalera 										# obtengo la escalera
+			   domihecho=domihecho+'-'+escalera 							# la agrego al domicilio del echo	
+			
+			
+			#print lugar.altura
+			#print 'sector',sector,'dpto',departamento,'pso',piso,'esc',escalera
+			if lugar.altura==None: 											# si el lugar no tiene altura
+			   alturalugar=0												# pongo cero en la altura
+			else:
+			   alturalugar=str(lugar.altura) 								# sino obtengo la altura
+
+			if lugar.barrio==None: 											# si el lugar no tiene barrio
+			   lugarbarrio='' 												# dejo vacio el barrio
+			else:
+				lugarbarrio=unicode(str(lugar.barrio),'UTF-8') 				# sino lo obtengo
+
+			hecho={															# genero el objeto de hecho
+					'NroHecho':alturalugar, 								# agrego la altura del lugar
+					'Lat':lugar.latitud[0:10],								# agrego la latitud
+					'Lng':lugar.longitud[0:10],								# agrego la longitud
+					'DescripcionCalleHecho':unicode(str(lugar.calle),'UTF-8'), 	# agrego la descripcion de la calle
+					'IdCalleHecho':idCalleHecho, 							# agrego el id de la calle
+					'IdBarrioHecho':idBarrioHecho,							# agrego el id del barrio
+					'DescripcionBarrioHecho':lugarbarrio, 					# agrego la descripcion del barrio	
+					'DescripcionProvinciaHecho':'CHUBUT', 					# agrego la descripcion de la provincia
+					'DescripcionDomicilioHecho':domihecho,	 				# agrego la descripcion del domicilio del hecho
+					'MotivoDenuncia':motivo, 								# agrego el motivo de denuncia
+					'FechaHechoDesde':fechadesde, 							# agrego la fecha desde
+					'FechaHechoHasta':fechahasta, 							# agrego la fecha hasta
+					'HoraDesde':horadesde, 									# agrego la hora desde
+					'HoraHasta':horahasta, 									# agrego la hora hasta
+					'Esclarecido':esclarecido, 								# agrego el esclarecido
+					'Tentativa':tentativa, 									# agrego la tentativa
+					'Detenidos':detenidos, 									# agrego los detenidos
+					'Flagrancia':infraganti 								# agrego la flagrancia
+					}
+			denuncia={														# genero el objeto de denuncia
+						'Denuncia':denuncia 								# agrego la denuncia
+						}
+			
+	  
+
+		#dicto={'preventivos': [{'formats': [{'hecho': hecho},{'denuncia':denuncia}]}]}
+		#print dicto
+		#print 'carga'+fecha_carga,'hecho'+fechadesde,'autorizo'+fecha_autorizacion,'denuncia'+fecha_denuncia
+		dichechos = hecho 													# genero el diccionario de hechos
+		dichechos.update(denuncia) 											# le agrego la denuncia
+		
+		#hechodeli=hechodeli.replace("º",'')
+		
+		subject  ={															# genero el objeto asunto
+					'IdTipoPreventivo':1, 									# agrego el tipo de preventivo
+					'IdComisaria':int(idComisaria), 						# agrego el id de la comisaria	
+					'Numero':int(nro), 										# agrego el numero de preventivo
+					'Anio':int(anio), 										# agrego el año
+					'FechaCarga':fecha_carga, 								# agrego la fecha de carga	
+					'FechaAutorizacion':fecha_autorizacion, 				# agrego la fecha de autorizacion
+					'FechaEnvio':fecha_autorizacion, 						# agrego la fecha de envio
+					'FechaDenuncia':fecha_denuncia 							# agrego la fecha de denuncia
+					}
+		subject1 ={															# genero un objeto asunto 1
+					'Caratula':caratula,									# agrego la caratula
+					'DelitosCometidos':hechodeli.strip(), 					# agrego los delitos
+					'ModusOperandi':modus.strip(), 							# agrego el modus
+					'DescripcionActuante':str(jerarqui_a)+' - '+actuante,	# agrego al actuante
+					'DescripcionResponsable':str(jerarqui_p)+' - '+preventor, 	# agrego el preventor
+					'Destinatarios':autoridad, 								# agrego los destinatarios
+					'DescripcionLocalidadHecho':localidad, 					# agrego la localidad del hecho
+					'LatLocalidad':float(lati), 							# agrego la latitud de la localidad
+					'LngLocalidad':float(longi), 							# agrego la longitud de la localidad
+					}
+	
+		datosp = subject 													# genero un diccionario de datos del preventivo con el asunto
+		datosp.update(subject1) 											# agrego el asunto 1
+		
+		"""
+		if tienepersona:
+		   datosp.update(dictpersona)
+		   datosp.update(dichechos)
+ 
+		if eleinvo:
+		   datosp.update(objectele)
+		   datosp.update(dichechos)
+	   
+		"""
+		datosp.update(dichechos) 										 	# le agrego el diccionario de hechos
+		
+		preventivosxml = dicttoxml(datosp,attr_type=False,root=False) 		# Lo convierto en XML
+		#from xml.dom.minidom import parseString
+		#dom = parseString(preventivosxml)
+		#print(dom.toprettyxml())
+		
+		coddestino='coironrw-test' 											# seteo el destino
+		fechahoy=datetime.datetime.now() 									# obtengo la fecha actual
+		#xmlspre='''
+		#<Preventivos>'''+"\n"+preventivosxml+"\n"+'</Preventivos>'
+		xmlspre=preventivosxml  											
+		asunto = 'Preventivo '+str(preventivo.nro)+'/'+str(preventivo.anio)+' - '+ preventivo.dependencia.ciudad.descripcion +' - '+ preventivo.dependencia.descripcion
+		#print xmlspre
+	   # COMIENZO CON LA GENERACION DEL XML
+		xmls='<?xml version="1.0" encoding="utf-8"?>'+\
+		'<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+\
+		'<soap:Header>'+\
+		'<LoginInfo xmlns="http://sij.juschubut.gov.ar">'+\
+		'<_usuario>policia-test</_usuario>'+\
+		'<_password>policia-test</_password>'+\
+		'<Usuario>policia-test</Usuario>'+\
+		'<Password>policia-test</Password>'+\
+		'</LoginInfo>'+\
+		'</soap:Header>'+\
+		'<soap:Body>'+\
+		'<EnviarMensaje xmlns="http://sij.juschubut.gov.ar">'+\
+		'<msg>'+\
+		'<IdNodo>1</IdNodo>'+\
+		'<Asunto>'+asunto+'</Asunto>'+\
+		'<Cuerpo>'+\
+		'<![CDATA[<?xml version="1.0" encoding="utf-8"?><MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, MensajeroPreventivo.Tranfer" message-version="1">'+xmlspre+xmlsper+xmlsobj+'</MensajePreventivo>'+']]>'+'</Cuerpo>'+\
+		'<CodigoRemitente>policia-test</CodigoRemitente>'+\
+		'<DescripcionRemitente>Prueba Policia</DescripcionRemitente>'+\
+		'<CodigoDestino>coironrw-test</CodigoDestino>'+\
+		'</msg>'+\
+		'</EnviarMensaje>'+\
+		'</soap:Body>'+\
+		'</soap:Envelope>'
+				
+		print xmls
 
 @login_required   
 @group_required(["administrador"])

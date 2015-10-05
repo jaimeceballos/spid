@@ -98,8 +98,8 @@
                <th>Id Preventivo</th>
                 <th>Fecha Autorizado</th>
              
-               <th>Usuario</th>
-               <th>Envio Webservice</th>
+               <th>Enviar</th>
+               <!--th>Envio Webservice</th-->
             </tr>
         </thead>
       
@@ -107,16 +107,17 @@
                  {% for listas in lista %}
                   <tr  class="gradeC"> 
                     <td width="5%"><a href=''>{{ listas.id }}</a></td>
-                    <td width="10%">{{ listas.fecha_envio|date:"d/m/Y"}}</td>
-                    <td width="50%">{{ listas.preventivo.caratula }}</td>
-                      <td width="10%">{{ listas.preventivo.fecha_autorizacion|date:"d/m/Y"}}</td>
-                       <td width="50%">{{ listas.user.first_name }},{{ listas.user.last_name }}</td>
-                    {%if '0' in listas.enviado%}</td>}
+                    <td width="10%">{{ listas.fecha_carga|date:"d/m/Y"}}</td>
+                    <td width="50%">{{ listas.caratula }}</td>
+                      <td width="10%">{{ listas.fecha_autorizacion|date:"d/m/Y"}}</td>
+                      <td>{% if listas.fecha_autorizacion %} <a href="{% url 'enviarws' listas.id %}">enviar</a> {% else %} <a href="">autorizar y enviar</a> {% endif %}</td>
+                       <!--td width="50%">{{ listas.user.first_name }},{{ listas.user.last_name }}</td>
+                    {%if '0' in listas.sendwebservice%}</td>}
                       <td width="8%">NO</td>
                     {%else%}
                       <td width="8%">SI</td>
                     {%endif%}
-                      
+                      -->
                   </a>
                       </td>
                   </tr>
