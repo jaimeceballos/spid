@@ -14036,6 +14036,7 @@ def enviadop(request):
 				datosp.update(dichechos)
 				
 				preventivosxml = dicttoxml(datosp,attr_type=False,root=False)
+
 				#from xml.dom.minidom import parseString
 				#dom = parseString(preventivosxml)
 				#print(dom.toprettyxml())
@@ -14064,7 +14065,10 @@ def enviadop(request):
 				'<IdNodo>1</IdNodo>'+\
 				'<Asunto>Info de Preventivos Spid</Asunto>'+\
 				'<Cuerpo>'+\
-				'<![CDATA[<?xml version="1.0" encoding="utf-8"?><MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, MensajeroPreventivo.Tranfer" message-version="1">'+xmlspre+xmlsper+xmlsobj+'</MensajePreventivo>'+']]>'+'</Cuerpo>'+\
+				'<![CDATA[<?xml version="1.0" encoding="utf-8"?>'+\
+				'<MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" '+\
+				'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, '+\
+				'MensajeroPreventivo.Tranfer" message-version="1">'+xmlspre+xmlsper+xmlsobj+'</MensajePreventivo>'+']]>'+'</Cuerpo>'+\
 				'<CodigoRemitente>policia-test</CodigoRemitente>'+\
 				'<DescripcionRemitente>Prueba Policia</DescripcionRemitente>'+\
 				'<CodigoDestino>coironrw-test</CodigoDestino>'+\
@@ -14166,17 +14170,13 @@ def enviarp(request,idprev):
 
 		for i in cometidos: 													# por cada delito en cometidos
 
-			#if i.refmodoshecho:
-			hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')+'|' 			# en la cadena hechodeli los concateno con formato utf-8 
-			#+' Modalidad :'+unicode(str(i.refmodoshecho),'UTF-8')+'|'
-			#else:
-			#hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')
-			#+' Sin Modalidad'+'|'
+			hechodeli=hechodeli+str(i).strip()+'|' 			# en la cadena hechodeli los concateno con formato utf-8 
 			if i.refmodoshecho!=None: 											# si el hecho tiene modus operandi
 			   modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+'|' 			# lo concateno en modus en formato utf-8
 
+		hechodeli = hechodeli.rstrip('|')
+		modus = modus.rstrip('|')
 
-		#print hechodeli
 		#Datos de las Personas involucradas en el hecho
 		involuscra=[] 															# creo un arreglo de involucrados
 		datosper="" 															# creo una cadena datosper
@@ -14262,7 +14262,6 @@ def enviarp(request,idprev):
 				   idRolPersona=int(str(rolesper)) 								# obtengo su id judicial
 
 			if 'si' in p.detenido:												# Si la persona esta detenida
-			   #detenidos=detenidos+1
 			   detenidos=1 														# incremento un detenido
 			else:
 			   detenidos=0 														# sino lo dejo en cero
@@ -14277,10 +14276,8 @@ def enviarp(request,idprev):
 				infraganti=0      												# sino la dejo en cero
 			domi=Personas.objects.get(id=p.persona.id).persodom.all() 			# obtengo los domicilios de la persona
 			if p.juridica=='no': 												# si no es persona juridica
-			   #pf='FISICA'
 			   pf=1 															# pongo la bandera persona fisica en 1
 			else:
-			   #pf='JURIDICA' 
 			   pf=0 															# sino la dejo en cero
 			   if p.razon_social!=None: 										# y si la razon social tiene dato
 				  perjuridica=str(p.razon_social) 								# obtengo el nombre de la persona juridica
@@ -14551,7 +14548,6 @@ def enviarp(request,idprev):
 				dictpersona.update(domi)
 				dictpersona.update(padys)
 			cantper=cantper+1  							# sumo uno a la cantidad de personas
-			#print dictpersona
 			personasxml=dicttoxml(dictpersona,attr_type=False,root='Personas')	# genero un XML con el diccionario de persona
 			xmlsper='<Persona>'+personasxml+'</Persona>'		# encierro el XML generado en los tags Persona
 			cantpersonas=cantpersonas+xmlsper 					# agrego a cantersonas la persona generada	
@@ -14603,9 +14599,6 @@ def enviarp(request,idprev):
 					}
 			#por cada elemento hacer un tag para el xml
 			nrositems=nrositems+1 											# sumo uno a la cantidad de elementos
-			#ide={'IdItem_'+'nro_'+str(nrositems):str(eles.id)}
-			#rubrosi={'Descripcion':rubros}
-			#ide.update(rubrosi)
 			objetosxml=dicttoxml(rubros,attr_type=False,root='Elementos')	# genero un objeto XML con el elemento generado
 			xmlsobj='<Elemento>'+objetosxml+'</Elemento>'					# agrego los tag elemento
 			cantelemens=cantelemens+xmlsobj 								# agrego el objeto a cantelemens
@@ -14616,19 +14609,9 @@ def enviarp(request,idprev):
 		   xmlsobj='<Elementos length="0"></Elementos>' 					# sino genero el tag vacio
 			
 
-			#elements.append(rubrosi)
-	
-		#for e in elements:
-		#   obji.append(e)
 			
-		#objis = {rotulo:obji}
-		  
-		#objectele.update(objis)
-
 		infor=''															# genero una varible infor
 		autoridad=''														# genero una variable autoridad
-		#datos=Preventivos.objects.get(id=hay.id)
-		#print datos
 		nro=preventivo.nro 													# obtengo el numero de preventivo
 		anio=preventivo.anio 												# obtengo el año del preventivo
 		fecha_denuncia=preventivo.fecha_denuncia 							# obtengo la fecha de denuncia
@@ -14647,7 +14630,7 @@ def enviarp(request,idprev):
 	 
 		for a in autoridades:												# para cada una de las autoridades
 			autoridad=autoridad+str(a)+'|' 									# las agrego a una cadena de autoridades	
-		
+		autoridad = autoridad.rstrip('|')
 		jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=actuante).values('jerarquia_id')) # obtengo la jerarquia del actuante
 		jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=preventor).values('jerarquia_id')) # obtengo la jerarquia del preventor
 		form1=Hechos.objects.filter(preventivo=preventivo.id) 				# obtengo el hecho del preventivo
@@ -14658,22 +14641,11 @@ def enviarp(request,idprev):
 			denuncia=html2text.html2text(descripcion,True) 					# obtengo la descripcion del hecho transformada en texto plano
 			denuncia=denuncia.encode('utf-8', 'xmlcharrefreplace') 			# lo codifico en utf-8	
 			denuncia=strip_tags(denuncia) 									# le quito los tags html
-			#.replace('&nbsp;','')
 			denuncia=denuncia.replace('&nbsp;','') 							# quito los espacios
 			denuncia=denuncia.replace('"','') 								# reemplazo las comillas dobles por vacio
-			#denuncia=unicode(str(descripcion),'UTF-8')
-			#print denuncia
 			motivo=str(value.motivo) 										# obtengo el motivo de la denuncia
 			fecha_carga=fecha_carga.strftime("%d/%m/%Y %H:%m:%S") 			# obtengo la fecha de carga del preventivo
-			#.strftime("%d/%m/%Y")
 			fecha_autorizacion=fecha_autorizacion.strftime("%d/%m/%Y %H:%m:%S") # obtengo la fecha de autorizacion
-			#.strftime("%d/%m/%Y")
-			"""
-			fechadesde=value.fecha_desde.strftime("%d/%m/%Y")
-			horadesde=value.fecha_desde.strftime("%H:%m:%S")
-			fechahasta=value.fecha_hasta.strftime("%d/%m/%Y")
-			horahasta=value.fecha_hasta.strftime("%H:%m:%S")
-			"""
 			fechadesde=timezone.localtime(value.fecha_desde).strftime("%d/%m/%Y") 	# obtengo la fecha desde
 			horadesde=timezone.localtime(value.fecha_desde).strftime("%H:%M")		# obtengo la hora desde
 			fechahasta=timezone.localtime(value.fecha_hasta).strftime("%d/%m/%Y")	# obtengo la fecha hasta
@@ -14681,12 +14653,12 @@ def enviarp(request,idprev):
 			hora_denuncia= timezone.localtime(fecha_denuncia).strftime("%H:%M") 	# obtengo la hora de denuncia	
 			fecha_denuncia=timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y")	# obtengo la fecha de denuncia
 			idhecho=value.id 												# obtengo el id del hecho
+			
 			if value.fecha_esclarecido: 									# si el hecho esta esclarecido
 				 esclarecido=1 												# pongo la bandera de esclarecido en uno
 			else:
 				 esclarecido=0   											# sino la pongo a cero
-			#'HoraDesde':horadesde,'HoraHasta':horahasta,
-
+			
 			if lugar.sector!=None: 											# si el lugar tiene sector
 			   sector=lugar.sector 											# obtengo el sector
 			   domihecho=sector 											# agrego el sector al domicilio del hecho
@@ -14704,8 +14676,6 @@ def enviarp(request,idprev):
 			   domihecho=domihecho+'-'+escalera 							# la agrego al domicilio del echo	
 			
 			
-			#print lugar.altura
-			#print 'sector',sector,'dpto',departamento,'pso',piso,'esc',escalera
 			if lugar.altura==None: 											# si el lugar no tiene altura
 			   alturalugar=0												# pongo cero en la altura
 			else:
@@ -14742,13 +14712,8 @@ def enviarp(request,idprev):
 			
 	  
 
-		#dicto={'preventivos': [{'formats': [{'hecho': hecho},{'denuncia':denuncia}]}]}
-		#print dicto
-		#print 'carga'+fecha_carga,'hecho'+fechadesde,'autorizo'+fecha_autorizacion,'denuncia'+fecha_denuncia
 		dichechos = hecho 													# genero el diccionario de hechos
 		dichechos.update(denuncia) 											# le agrego la denuncia
-		
-		#hechodeli=hechodeli.replace("º",'')
 		
 		subject  ={															# genero el objeto asunto
 					'IdTipoPreventivo':1, 									# agrego el tipo de preventivo
@@ -14775,57 +14740,52 @@ def enviarp(request,idprev):
 		datosp = subject 													# genero un diccionario de datos del preventivo con el asunto
 		datosp.update(subject1) 											# agrego el asunto 1
 		
-		"""
-		if tienepersona:
-		   datosp.update(dictpersona)
-		   datosp.update(dichechos)
- 
-		if eleinvo:
-		   datosp.update(objectele)
-		   datosp.update(dichechos)
-	   
-		"""
 		datosp.update(dichechos) 										 	# le agrego el diccionario de hechos
 		
 		preventivosxml = dicttoxml(datosp,attr_type=False,root=False) 		# Lo convierto en XML
-		#from xml.dom.minidom import parseString
-		#dom = parseString(preventivosxml)
-		#print(dom.toprettyxml())
-		
+
 		coddestino='coironrw-test' 											# seteo el destino
 		fechahoy=datetime.datetime.now() 									# obtengo la fecha actual
-		#xmlspre='''
-		#<Preventivos>'''+"\n"+preventivosxml+"\n"+'</Preventivos>'
-		xmlspre=preventivosxml  											
-		asunto = 'Preventivo '+str(preventivo.nro)+'/'+str(preventivo.anio)+' - '+ preventivo.dependencia.ciudad.descripcion +' - '+ preventivo.dependencia.descripcion
-		#print xmlspre
-	   # COMIENZO CON LA GENERACION DEL XML
+		xmlspre=preventivosxml.decode('utf8')
+		asunto = 'Preventivo '+str(preventivo.nro)+\
+				 '/'+str(preventivo.anio)+' - '+\
+				 preventivo.dependencia.ciudad.descripcion +' - '+\
+				 preventivo.dependencia.descripcion
+		
+		# COMIENZO CON LA GENERACION DEL XML
 		xmls='<?xml version="1.0" encoding="utf-8"?>'+\
-		'<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+\
-		'<soap:Header>'+\
-		'<LoginInfo xmlns="http://sij.juschubut.gov.ar">'+\
-		'<_usuario>policia-test</_usuario>'+\
-		'<_password>policia-test</_password>'+\
-		'<Usuario>policia-test</Usuario>'+\
-		'<Password>policia-test</Password>'+\
-		'</LoginInfo>'+\
-		'</soap:Header>'+\
-		'<soap:Body>'+\
-		'<EnviarMensaje xmlns="http://sij.juschubut.gov.ar">'+\
-		'<msg>'+\
-		'<IdNodo>1</IdNodo>'+\
-		'<Asunto>'+asunto+'</Asunto>'+\
-		'<Cuerpo>'+\
-		'<![CDATA[<?xml version="1.0" encoding="utf-8"?><MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, MensajeroPreventivo.Tranfer" message-version="1">'+xmlspre+xmlsper+xmlsobj+'</MensajePreventivo>'+']]>'+'</Cuerpo>'+\
-		'<CodigoRemitente>policia-test</CodigoRemitente>'+\
-		'<DescripcionRemitente>Prueba Policia</DescripcionRemitente>'+\
-		'<CodigoDestino>coironrw-test</CodigoDestino>'+\
-		'</msg>'+\
-		'</EnviarMensaje>'+\
-		'</soap:Body>'+\
-		'</soap:Envelope>'
+			 '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '+\
+			 'xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+\
+			 '<soap:Header>'+\
+			 '<LoginInfo xmlns="http://sij.juschubut.gov.ar">'+\
+			 '<_usuario>policia-test</_usuario>'+\
+			 '<_password>policia-test</_password>'+\
+			 '<Usuario>policia-test</Usuario>'+\
+			 '<Password>policia-test</Password>'+\
+			 '</LoginInfo>'+\
+			 '</soap:Header>'+\
+			 '<soap:Body>'+\
+			 '<EnviarMensaje xmlns="http://sij.juschubut.gov.ar">'+\
+			 '<msg>'+\
+			 '<IdNodo>1</IdNodo>'+\
+			 '<Asunto>'+asunto.decode('utf8')+'</Asunto>'+\
+			 '<Cuerpo>'+\
+			 '<![CDATA[<?xml version="1.0" encoding="utf-8"?>'+\
+			 '<MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" '+\
+			 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '+\
+			 'message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, MensajeroPreventivo.Tranfer" message-version="1">'+\
+			 xmlspre+xmlsper.decode('utf8')+xmlsobj.decode('utf8')+'</MensajePreventivo>'+']]>'+'</Cuerpo>'+\
+			 '<CodigoRemitente>policia-test</CodigoRemitente>'+\
+			 '<DescripcionRemitente>Prueba Policia</DescripcionRemitente>'+\
+			 '<CodigoDestino>coironrw-test</CodigoDestino>'+\
+			 '</msg>'+\
+			 '</EnviarMensaje>'+\
+			 '</soap:Body>'+\
+			 '</soap:Envelope>'
 				
 		print xmls
+	return HttpResponseRedirect(reverse('pwebservice'))
+
 
 @login_required   
 @group_required(["administrador"])
