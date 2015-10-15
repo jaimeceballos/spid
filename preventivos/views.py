@@ -4794,6 +4794,7 @@ def verprev(request):
 				depes=Dependencias.objects.filter(unidades_regionales=ureg)
 				for son in depes:
 					todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia'))
+					
 			else:
 				if fecha_carga  and ureg and not depe:
 					
@@ -4962,7 +4963,7 @@ def verprev(request):
 		   iil=[]
 		   for ins in todos:
 			for datas in ins:
-			  if datas.sendwebservice==1:
+			  #if datas.sendwebservice==1:
 				preventivo = Preventivos.objects.get(id = datas.id)
 				ciudad= preventivo.dependencia.ciudad
 				depe=preventivo.dependencia
