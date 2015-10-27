@@ -14770,12 +14770,11 @@ def enviarp(request,idprev):
 			 '<msg>'+\
 			 '<IdNodo>1</IdNodo>'+\
 			 '<Asunto>'+asunto.decode('utf8')+'</Asunto>'+\
-			 '<Cuerpo>'+\
-			 '<![CDATA[<?xml version="1.0" encoding="utf-8"?>'+\
-			 '<MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" '+\
-			 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '+\
-			 'message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, MensajeroPreventivo.Tranfer" message-version="1">'+\
-			 xmlspre+xmlsper.decode('utf8')+xmlsobj.decode('utf8')+'</MensajePreventivo>'+']]>'+'</Cuerpo>'+\
+			 '<Cuerpo><![CDATA['+\
+			 '<?xml version="1.0" encoding="utf-8"?>'+\
+			 '<MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, MensajeroPreventivo.Tranfer" message-version="1">'+\
+			 xmlspre+xmlsper.decode('utf8')+xmlsobj.decode('utf8')+'</MensajePreventivo>'+\
+			 ']]></Cuerpo>'+\
 			 '<CodigoRemitente>policia-test</CodigoRemitente>'+\
 			 '<DescripcionRemitente>Prueba Policia</DescripcionRemitente>'+\
 			 '<CodigoDestino>coironrw-test</CodigoDestino>'+\
@@ -14783,8 +14782,56 @@ def enviarp(request,idprev):
 			 '</EnviarMensaje>'+\
 			 '</soap:Body>'+\
 			 '</soap:Envelope>'
-				
-		print xmls
+			
+		user='policia-test'
+		password='policia-test'
+		params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
+		headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
+		webservice = urllib2.Request('http://listas.juschubut.gov.ar/mensajero/mensajes.asmx') 
+		webservice = httplib.HTTPConnection('209.13.117.104',80)
+		webservice.putrequest("POST", "http://listas.juschubut.gov.ar/mensajero/mensajes.asmx", params, headers)
+		webservice.putheader("Host", "listas.juschubut.gov.ar")
+		webservice.putheader("User-Agent", "Python Post")
+		webservice.putheader("Content-type", "text/xml; charset=\"UTF-8\"")
+		webservice.putheader("Content-length", "%d" % len(xmls))
+		webservice.putheader("SOAPAction", "\"http://sij.juschubut.gov.ar/EnviarMensaje\"")
+		webservice.endheaders()
+		ref=webservice.getresponse()
+		refer=str(ref.status)+'-'+str(ref.reason)
+		valorweb=0
+		print ref.reason
+		if ref.status==200:
+		   data = ref.read()
+		   print data,ref.status
+		   #aqui actualizar el campo sendwebservice en preventivo a 1
+		   user = User.objects.get(username='23140893')
+		   prev = Preventivos.objects.get(id=idprev)
+		   judi=EnvioPreJudicial()
+		   judi.preventivo=prev
+		   judi.fecha_autorizacion=preventivo.fecha_autorizacion
+		   judi.user=user
+		   judi.enviado=1
+		   judi.save()
+		   
+		   valorweb=1 
+		   repla=Preventivos.objects.filter(id=hay.id).update(sendwebservice=valorweb)
+		   lista=EnvioPreJudicial.objects.all()
+		   webservice.close()
+		   #return render(request, './enviowebservice.html',{'refer':refer,})
+		else:
+		   user = User.objects.get(username='23140893')
+		   prev = Preventivos.objects.get(id=idprev)
+		   judi=EnvioPreJudicial()
+		   judi.preventivo=prev
+		   judi.fecha_autorizacion=preventivo.fecha_autorizacion
+		   judi.user=user
+		   judi.enviado=0
+		   judi.save()
+		   lista=EnvioPreJudicial.objects.all()
+		   #return render(request, './errorHTTP.html',{'refer':refer,})
+	
+		datosdict={}
+
 	return HttpResponseRedirect(reverse('pwebservice'))
 
 
