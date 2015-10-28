@@ -14078,9 +14078,8 @@ def enviadop(request):
 				'</soap:Body>'+\
 				'</soap:Envelope>'
 						
-				print xmls
-			
-				"""user='policia-test'
+				
+				user='policia-test'
 				password='policia-test'
 				params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
 				headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
@@ -14099,6 +14098,8 @@ def enviadop(request):
 				#print ref.status,ref.reason,ref.read()
 				refer=str(ref.status)+'-'+str(ref.reason)
 				valorweb=0
+				print ref
+				request.session['reason'] = refer
 				if ref.status==200:
 				   data = ref.read()
 				   print data,ref.status
@@ -14129,12 +14130,15 @@ def enviadop(request):
 				   lista=EnvioPreJudicial.objects.all()
 				   #return render(request, './errorHTTP.html',{'refer':refer,})
 			
-				datosdict={}"""
+				datosdict={}
 	   else:
 		  errors="Ingrese Fecha Desde-Hasta"
+	reason = 'None'
+	if request.session.get('reason'):
+		reason = request.session.get('reason')
 	lista= Preventivos.objects.filter(sendwebservice=0) #EnvioPreJudicial.objects.all()
 	fecha_carga=datetime.datetime.now()
-	values={'errors':errors,'destino': destino,'state':state,'fecha_carga':fecha_carga,'lista':lista,'totenviados':totenviados,}
+	values={'errors':errors,'destino': destino,'state':state,'fecha_carga':fecha_carga,'lista':lista,'totenviados':totenviados,'reason':reason}
 	return render_to_response('./enviowebservice.html',values,context_instance=RequestContext(request))
 
 
@@ -14799,7 +14803,9 @@ def enviarp(request,idprev):
 		ref=webservice.getresponse()
 		refer=str(ref.status)+'-'+str(ref.reason)
 		valorweb=0
-		print ref.reason
+		#print ref.reason
+		request.session['reason'] = ref.reason
+		#print request.session.get('reason')
 		if ref.status==200:
 		   data = ref.read()
 		   print data,ref.status
