@@ -14733,7 +14733,7 @@ def enviarp(request,idprev):
 					}
 		subject1 ={															# genero un objeto asunto 1
 					'Caratula':caratula,									# agrego la caratula
-					'DelitosCometidos':hechodeli.strip(), 					# agrego los delitos
+					'DelitosCometidos':unicode(str(hechodeli.strip()),'UTF-8'), 					# agrego los delitos
 					'ModusOperandi':modus.strip(), 							# agrego el modus
 					'DescripcionActuante':str(jerarqui_a)+' - '+actuante,	# agrego al actuante
 					'DescripcionResponsable':str(jerarqui_p)+' - '+preventor, 	# agrego el preventor
@@ -14752,42 +14752,42 @@ def enviarp(request,idprev):
 
 		coddestino='coironrw-test' 											# seteo el destino
 		fechahoy=datetime.datetime.now() 									# obtengo la fecha actual
-		xmlspre=preventivosxml.decode('utf8')
+		xmlspre=preventivosxml
 		asunto = 'Preventivo '+str(preventivo.nro)+\
 				 '/'+str(preventivo.anio)+' - '+\
 				 preventivo.dependencia.ciudad.descripcion +' - '+\
 				 preventivo.dependencia.descripcion
-		
+		print asunto
+		print xmlspre
 		# COMIENZO CON LA GENERACION DEL XML
 		xmls='<?xml version="1.0" encoding="utf-8"?>'+\
-			 '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '+\
-			 'xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+\
-			 '<soap:Header>'+\
-			 '<LoginInfo xmlns="http://sij.juschubut.gov.ar">'+\
-			 '<_usuario>policia-test</_usuario>'+\
-			 '<_password>policia-test</_password>'+\
-			 '<Usuario>policia-test</Usuario>'+\
-			 '<Password>policia-test</Password>'+\
-			 '</LoginInfo>'+\
-			 '</soap:Header>'+\
-			 '<soap:Body>'+\
-			 '<EnviarMensaje xmlns="http://sij.juschubut.gov.ar">'+\
-			 '<msg>'+\
-			 '<IdNodo>1</IdNodo>'+\
-			 '<Asunto>'+asunto.decode('utf8')+'</Asunto>'+\
-			 '<Cuerpo><![CDATA['+\
-			 '<?xml version="1.0" encoding="utf-8"?>'+\
-			 '<MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, MensajeroPreventivo.Tranfer" message-version="1">'+\
-			 xmlspre+xmlsper.decode('utf8')+xmlsobj.decode('utf8')+'</MensajePreventivo>'+\
-			 ']]></Cuerpo>'+\
-			 '<CodigoRemitente>policia-test</CodigoRemitente>'+\
-			 '<DescripcionRemitente>Prueba Policia</DescripcionRemitente>'+\
-			 '<CodigoDestino>coironrw-test</CodigoDestino>'+\
-			 '</msg>'+\
-			 '</EnviarMensaje>'+\
-			 '</soap:Body>'+\
-			 '</soap:Envelope>'
-			
+				'<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+\
+				'<soap:Header>'+\
+				'<LoginInfo xmlns="http://sij.juschubut.gov.ar">'+\
+				'<_usuario>policia-test</_usuario>'+\
+				'<_password>policia-test</_password>'+\
+				'<Usuario>policia-test</Usuario>'+\
+				'<Password>policia-test</Password>'+\
+				'</LoginInfo>'+\
+				'</soap:Header>'+\
+				'<soap:Body>'+\
+				'<EnviarMensaje xmlns="http://sij.juschubut.gov.ar">'+\
+				'<msg>'+\
+				'<IdNodo>1</IdNodo>'+\
+				'<Asunto>Info de Preventivos Spid</Asunto>'+\
+				'<Cuerpo>'+\
+				'<![CDATA[<?xml version="1.0" encoding="utf-8"?>'+\
+				'<MensajePreventivo xmlns:xsd="http://www.w3.org/2001/XMLSchema" '+\
+				'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" message-type="MensajeroPreventivo.Tranfer.MensajePreventivo, '+\
+				'MensajeroPreventivo.Tranfer" message-version="1">'+xmlspre+xmlsper+xmlsobj+'</MensajePreventivo>'+']]>'+'</Cuerpo>'+\
+				'<CodigoRemitente>policia-test</CodigoRemitente>'+\
+				'<DescripcionRemitente>Prueba Policia</DescripcionRemitente>'+\
+				'<CodigoDestino>coironrw-test</CodigoDestino>'+\
+				'</msg>'+\
+				'</EnviarMensaje>'+\
+				'</soap:Body>'+\
+				'</soap:Envelope>'
+		print xmls	
 		user='policia-test'
 		password='policia-test'
 		params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -14801,15 +14801,12 @@ def enviarp(request,idprev):
 		webservice.putheader("Content-length", "%d" % len(xmls))
 		webservice.putheader("SOAPAction", "\"http://sij.juschubut.gov.ar/EnviarMensaje\"")
 		webservice.endheaders()
+		webservice.send(xmls)
 		ref=webservice.getresponse()
 		refer=str(ref.status)+'-'+str(ref.reason)
 		valorweb=0
-		#print ref.reason
-		request.session['reason'] = ref.reason
-		#print request.session.get('reason')
 		if ref.status==200:
 		   data = ref.read()
-		   print data,ref.status
 		   #aqui actualizar el campo sendwebservice en preventivo a 1
 		   user = User.objects.get(username='23140893')
 		   prev = Preventivos.objects.get(id=idprev)
@@ -14821,7 +14818,9 @@ def enviarp(request,idprev):
 		   judi.save()
 		   
 		   valorweb=1 
-		   repla=Preventivos.objects.filter(id=hay.id).update(sendwebservice=valorweb)
+		   repla=Preventivos.objects.get(id=preventivo.id)
+		   repla.sendwebservice = valorweb
+		   repla.save()
 		   lista=EnvioPreJudicial.objects.all()
 		   webservice.close()
 		   #return render(request, './enviowebservice.html',{'refer':refer,})
