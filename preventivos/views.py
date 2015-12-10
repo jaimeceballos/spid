@@ -14395,7 +14395,7 @@ def enviarp(request,idprev):
 												'Telefonos':p.persona.celular,		# agrego el telefono
 												'Ocupacion':ocupacion, 				# agrego la ocupacion de la persona
 												'DescripcionEstadoCivil':str(p.persona.estado_civil), 	# agrego la descripcion del estado civil
-												'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),	# agrego la fecha de nacimiento
+												'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%M:%S"),	# agrego la fecha de nacimiento
 												'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'), # agrego el lugar de nacimiento
 												'IdNacionalidad':naciona 			# agrego la nacionalidad
 												}
@@ -14416,7 +14416,7 @@ def enviarp(request,idprev):
 												'Telefonos':p.persona.celular, 		# agrego el celular de la persona
 												'Ocupacion':ocupacion,				# agrego la ocupacion
 												'DescripcionEstadoCivil':str(p.persona.estado_civil),	# agrego la descripcion del estado civil
-												'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"), # agrego la fecha de nacimiento
+												'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%M:%S"), # agrego la fecha de nacimiento
 												'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'), # agrego el lugar de nacimiento
 												'IdNacionalidad':naciona 			# agrego la nacionalidad
 												}
@@ -14459,7 +14459,7 @@ def enviarp(request,idprev):
 									'Telefonos':p.persona.celular,
 									'Ocupacion':ocupacion,
 									'DescripcionEstadoCivil':str(p.persona.estado_civil),
-									'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),
+									'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%M:%S"),
 									'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),
 									'IdNacionalidad':naciona
 									}
@@ -14480,7 +14480,7 @@ def enviarp(request,idprev):
 									'Telefonos':p.persona.celular,
 									'Ocupacion':str(p.persona.ocupacion),
 									'DescripcionEstadoCivil':str(p.persona.estado_civil),
-									'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),
+									'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%M:%S"),
 									'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),
 									'IdNacionalidad':naciona
 									}
@@ -14517,7 +14517,7 @@ def enviarp(request,idprev):
 							'Telefonos':p.persona.celular,
 							'Ocupacion':ocupacion,
 							'DescripcionEstadoCivil':str(p.persona.estado_civil),
-							'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),
+							'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%M:%S"),
 							'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),
 							'IdNacionalidad':naciona
 							}
@@ -14538,7 +14538,7 @@ def enviarp(request,idprev):
 							'Telefonos':p.persona.celular,
 							'Ocupacion':str(p.persona.ocupacion),
 							'DescripcionEstadoCivil':str(p.persona.estado_civil),
-							'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y"),
+							'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%M:%S"),
 							'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),
 							'IdNacionalidad':naciona
 							}
@@ -14652,12 +14652,12 @@ def enviarp(request,idprev):
 			motivo=str(value.motivo) 										# obtengo el motivo de la denuncia
 			fecha_carga=fecha_carga.strftime("%d/%m/%Y %H:%m:%S") 			# obtengo la fecha de carga del preventivo
 			fecha_autorizacion=fecha_autorizacion.strftime("%d/%m/%Y %H:%m:%S") # obtengo la fecha de autorizacion
-			fechadesde=timezone.localtime(value.fecha_desde).strftime("%d/%m/%Y") 	# obtengo la fecha desde
-			horadesde=timezone.localtime(value.fecha_desde).strftime("%H:%M")		# obtengo la hora desde
-			fechahasta=timezone.localtime(value.fecha_hasta).strftime("%d/%m/%Y")	# obtengo la fecha hasta
-			horahasta=timezone.localtime(value.fecha_hasta).strftime("%H:%M") 		# obtengo la hora hasta	
-			hora_denuncia= timezone.localtime(fecha_denuncia).strftime("%H:%M") 	# obtengo la hora de denuncia	
-			fecha_denuncia=timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y")	# obtengo la fecha de denuncia
+			fechadesde=timezone.localtime(value.fecha_desde).strftime("%d/%m/%Y %H:%M:%S") 	# obtengo la fecha desde
+			horadesde=timezone.localtime(value.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")		# obtengo la hora desde
+			fechahasta=timezone.localtime(value.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S")	# obtengo la fecha hasta
+			horahasta=timezone.localtime(value.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S") 		# obtengo la hora hasta	
+			hora_denuncia= timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S") 	# obtengo la hora de denuncia	
+			fecha_denuncia=timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S")	# obtengo la fecha de denuncia
 			idhecho=value.id 												# obtengo el id del hecho
 			
 			if value.fecha_esclarecido: 									# si el hecho esta esclarecido
@@ -14825,7 +14825,7 @@ def enviarp(request,idprev):
 		   webservice.close()
 		   #return render(request, './enviowebservice.html',{'refer':refer,})
 		else:
-		   user = User.objects.get(username='23140893')
+		   user = User.objects.get(username='29260319')
 		   prev = Preventivos.objects.get(id=idprev)
 		   judi=EnvioPreJudicial()
 		   judi.preventivo=prev
