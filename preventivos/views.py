@@ -238,13 +238,12 @@ class preventivos(SessionWizardView):
 				### realizar el paso en caso de que el usuario sea de investigaciones
 				#depe=self.request.user.get_profile().depe
 				if step == "actores":
-							#print self.get_cleaned_data_for_step('nro')['dependencia']
+							
 							if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in self.request.user.get_profile().depe.descripcion:
 							 
 								depe = self.get_cleaned_data_for_step('nro')['dependencia']
 								nro = self.get_cleaned_data_for_step('nro')['nro']
 								anio= self.get_cleaned_data_for_step('nro')['anio']
-								#print nro,anio,dependencia
 								existen= Preventivos.objects.filter(dependencia__exact=depe.id,nro__exact=nro,anio__exact=anio).values('nro')
 								if existen:
 									 form.errors['__all__'] = form.error_class(["Preventivo Existente. regrese a la pantalla anterior."])
@@ -355,7 +354,7 @@ class preventivos(SessionWizardView):
 					dependencia = self.get_cleaned_data_for_step('nro')['dependencia']
 					nro = self.get_cleaned_data_for_step('nro')['nro']
 					anio= self.get_cleaned_data_for_step('nro')['anio']
-					#print nro,anio,dependencia
+					
 					existen= Preventivos.objects.filter(dependencia__exact=dependencia.id,nro__exact=nro,anio__exact=anio).values('nro')
 					if existen:
 						 form.errors['__all__'] = form.error_class(["Preventivo Existente. regrese a la pantalla inicial de carga de preventivo."])
@@ -566,7 +565,6 @@ def obtener_datosfirst(request,idprev):
 				 fde=request.POST.get('fecha_desde')
 				 fha=request.POST.get('fecha_hasta')
 
-				 #print fd,fde,fha
 				 if fde>fd or fha>fd:
 					errors.append('La Fecha de Denuncia nunca puede ser menor a la Fecha y Hora del Hecho sucedido')
 					continua="no" 
@@ -756,7 +754,6 @@ def obtener_datosfirst(request,idprev):
 				 hecho.descripcion=hecho.descripcion.replace('&nbsp','')
 				 hecho.descripcion=hecho.descripcion.strip()
 				 hecho.descripcion=request.POST.get('descrihecho').strip()
-				 #print hecho.descripcion
 				 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
 						
 							hecho.save()
@@ -1622,7 +1619,6 @@ def usuarios(request, iduser):
 									return render_to_response('./newuser.html', {'reenvio':reenvio,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 						 else:        
 									usuarios = User.objects.get(username=iduser)
-									#print usuarios  
 									usua = User.objects.filter(username=iduser).values()
 									idem = usuarios.get_profile()
 									dnis = usuarios.username
@@ -3957,7 +3953,6 @@ def autoridad(request,idaut):
 
 def validateEmail(email):
 		if len(email) > 6:
-				#print re.match(r'\b[\w.-]+@[\w.-]+.\w{2,4}\b', email)
 				if re.match(r'\b[\w.-]+@[\w.-]+.\w{2,4}\b', email) != None:
 					 
 						return 1
@@ -4140,8 +4135,6 @@ def personas(request):
  
 												 else:
 															errors.append('La ciudad que UD. desea Guardar ya Existe. Verifique')
-	#print request.user.username
-	#print request.user.get_all_permissions()
 	#if request.user.get_all_permissions('preventivos.add_personas' or 'preventivos.change_personas'):
 	if request.POST.get('grabar') == 'Grabar':
 			form      = PersonasForm(request.POST, request.FILES)
@@ -4310,7 +4303,6 @@ def newperso(request):
 										else:
 										 #if request.user.has_perm('add_personas' or 'change_personas'):
 									"""
-				#print form.errors.as_text 
 				if form.is_valid():
 					 form.save()
 					 lista = Personas.objects.all()
@@ -4894,7 +4886,6 @@ def verprev(request):
 				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
 
 				fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
-				#print fecha_cargah
 				if nro:
 					 filnro=Preventivos.objects.filter(fecha_carga__range=[fecha_cargas,fecha_cargah],nro__exact=nro).order_by('anio','nro','dependencia')
 					 if filnro not in todos:
@@ -4990,8 +4981,6 @@ def verprev(request):
 					   motivo='SIN MOTIVO'
 					else:
 					   motivo=str(dhecho.motivo.descripcion)
-					#print str(timezone.localtime(dhecho.fecha_desde).strftime("%A"))
-					#print denuncia,motivo,str(timezone.localtime(dhecho.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")),str(timezone.localtime(dhecho.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S"))
 					filahecho={'Motivo Preventivo':motivo,'Denuncia':denuncia,"Dia Hecho":str(timezone.localtime(dhecho.fecha_desde).strftime("%A")),"Fecha Desde":str(timezone.localtime(dhecho.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")),'Fecha Hasta':str(timezone.localtime(dhecho.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S"))}
 					filagral.update(filahecho)
 					idhec=dhecho.id
@@ -5171,7 +5160,6 @@ def verprev(request):
 				filagral.update(elementos)
 				fila4=[]
 				for key,value in sorted(filagral.items()):
-					print key
 					fila4.append(value)
 				
 				f=fila4
@@ -5321,7 +5309,6 @@ def verhechos(request):
 							entry_query = get_query(query_string, ['descripcion',])
 								
 					 filtro=Hechos.objects.all().filter(entry_query).order_by('fecha_carga',)
-					 #print filtro
 					 if filtro:
 						for regs in filtro:
 							autorizados=Preventivos.objects.all().filter(id=regs.preventivo_id,fecha_autorizacion__isnull=False)
@@ -5535,7 +5522,7 @@ def pdfs(request,idprev):
 						 if dad:
 
 								for la in Personas.objects.get(id=p.persona.id).padre.all():
-									#print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
+									
 									
 									
 									roles='<u>'+str(p.roles)+'</u>'+' : '
@@ -5599,7 +5586,6 @@ def pdfs(request,idprev):
 					 datosper=datosper+i
 		 
 					#datosper.append(persona)
-				 #print datosper
 				 datosgral=''
 				 obdata=[]
 				 obdatav=[]
@@ -5838,7 +5824,7 @@ def updatehechos(request,idprev):
 	descripcionhecho=''
 	idprev=idprev
 	#envio de datos al template updatehechos.html
-	#print fecha_autorizacion,depe
+	
 
 
 	if request.POST.get('continua')=="Agregar": 
@@ -5886,11 +5872,8 @@ def updatehechos(request,idprev):
 				 fecha_has=datetime.datetime.strptime(request.POST.get('fecha_hasta'), '%d/%m/%Y %H:%M:%S')
 				 fd = fecha_denuncia.date()
 				 fde = fecha_des.date()
-				 fha = fecha_has.date()
-				 print type(fd),type(fde),type(fha)
-				 print fd,fde,fha"""
+				 fha = fecha_has.date()"""
 			
-				 #print form.errors.as_text()
 				 if form.is_valid():
 
 					 hecho.descripcion=form.cleaned_data['descripcion']
@@ -5900,9 +5883,6 @@ def updatehechos(request,idprev):
 					 #fecha_denuncia=datetime.datetime.strptime(request.POST.get('fecha_denuncia'), '%d/%m/%y')
 					 #fecha_des=datetime.datetime.strptime(request.POST.get('fecha_desde'), '%d/%m/%Y %H:%M:%S')
 					 #fecha_has=datetime.datetime.strptime(request.POST.get('fecha_hasta'), '%d/%m/%Y %H:%M:%S')
-					 #print type(fd),type(fde),type(fha)
-					 #print fd,fde,fha
-					 #print type(hecho.fecha_hasta),type(ids.fecha_denuncia)
 					 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion: 
 							if hecho.fecha_desde > ids.fecha_denuncia or hecho.fecha_hasta > ids.fecha_denuncia:
 								errors.append('La Fecha de Denuncia nunca puede ser menor a la Fecha y Hora del Hecho sucedido')
@@ -5929,7 +5909,6 @@ def updatehechos(request,idprev):
 				
 						si = Hechos()
 						form=HechosForm(instance=hecho)  
-						#print form
 						#mostrar datos del hecho cargado para modificar o imprimir
 						existe= Hechos.objects.filter(preventivo=idprev)
 						
@@ -6066,7 +6045,6 @@ def selectPrev(request,prev):
 					autoridad.append(ids)
 			form.fields['autoridades'].initial=autoridad
 			form.fields['autoridades'].widget.attrs["onclick"] = False
-			#print form
 			return render_to_response('./updateprev.html',{'boton':boton,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'fecha_autorizacion':fecha_autorizacion,'unireg':unireg,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,},context_instance=RequestContext(request))  
 	 
 	 form = PreventivosForm(instance = preventivo)
@@ -6121,9 +6099,7 @@ def persinvo(request,idhec,idper):
 	formd = DepartamentosForm()
 	formpr = ProvinciasForm()
 	personas=''
-	#print ids.id
-	#graba ciudad
-
+	
 	if request.POST.get('grabarciu')=="Grabar": 
 		 formc = CiudadesForm(request.POST, request.FILES)
 		 descripcion = request.POST.get('descripcion')
@@ -6327,17 +6303,13 @@ def persinvo(request,idhec,idper):
 			else:
 						errors.append('No se existe persona involucrada.')  
 			mostrar="0"     
-		#print  request.POST.get('grabar')
 		if request.POST.get('grabar')=="Guardar": 
 				 
 				 formp = PersonasForm(request.POST, request.FILES)          #obtiene los datos de la persona en un formulario persona
 				 dom = DomiciliosForm(request.POST,request.FILES)           #obtiene los datos del domicilio en un formulario domicilio
 				 formr = PersInvolucradasForm(request.POST,request.FILES)   #obtiene los datos de persona involucrada en un formulario persona involucrada
 				 formpa = PadresForm(request.POST,request.FILES)
-				 #print idper
-				 #fecha_detencion=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
-				 #print request.POST.get('fechahoradetencion')
-				 #menoris=request.POST.get('menor')
+				 
 				 
 				 anionac=datetime.datetime.strptime(request.POST.get('fecha_nac'),'%d/%m/%Y').strftime('%Y')
 				 anioactual=datetime.datetime.now()
@@ -6412,8 +6384,7 @@ def persinvo(request,idhec,idper):
 							 perso.otrasactividades = formp.cleaned_data['otrasactividades']
 							 perso.horalugaractivi = formp.cleaned_data['horalugaractivi']
 							 """                 
-							 #print request.POST.get('roles')
-
+							 
 							 perso.estado_civil = formp.cleaned_data['estado_civil']
 							 idpoli=formp.cleaned_data['ocupacion']
 							 refpoli=RefOcupacion()
@@ -6423,7 +6394,6 @@ def persinvo(request,idhec,idper):
 
 							else:
 								 
-								 #print request.POST.get('ocupacion')
 								 if request.POST.get('ocupacion')=='None' or request.POST.get('ocupacion')=='':
 									 refpoli=RefOcupacion.objects.get(descripcion='EMPLEADO')
 									 texto='EMPLEADO'
@@ -6461,8 +6431,7 @@ def persinvo(request,idhec,idper):
 												persom.alias      = formp.cleaned_data['alias']
 												persom.estado_civil = formp.cleaned_data['estado_civil']
 												try:
-												#print idper
-											
+												
 													persom.save()
 
 												except IntegrityError:
@@ -6571,15 +6540,9 @@ def persinvo(request,idhec,idper):
 											errors.append('Datos inexistente en Carateristicas segun el Rol')
 										
 								
-										 #mostrar='0'
+										 
 									 else:
-										 #persi=Personas.objects.get(id=idper)
-										 #formp=PersonasForm(instance=persi)
-										 #print formr.errros.as_text
 										 errors.append('Error faltan datos en seccion de Rol de la Persona')
-										 #return HttpResponseRedirect('./',)
-										 #mostrar='es'  
-										 #print personas.id
 										 filtros=Personas.objects.filter(id = personas.id)     
 										 if filtros not in todos:
 											 todos.append(filtros)
@@ -6590,27 +6553,17 @@ def persinvo(request,idhec,idper):
 							
 				  else:
 					mostrar='no'   
-				  #else:
-					#mostrar='no'
-					#errors.append('La Persona es Menor de Edad')
+				  
 				 else:
 
 					mostrar='no'
 					errors.append('Año de Nacimiento debe ser mayor a 1900')
 					
-	"""
-	if request.POST.get('roles'):
-					roles=RefPeople.objects.get(id=request.POST.get('roles'))
-					if roles.descripcion.find('APRE')>=0 or roles.descripcion.find('DETE')>=0:
-						 comb="detenido"
-						 roles=RefPeople.objects.filter(id=request.POST.get('roles')).values()
-	"""
 	try:
 		noposee = Personas.objects.get(id=idper).tipo_doc.descripcion
 	except Exception, e:
 		noposee=""
 	
-	#print noposee
 	datosinvo=hechos.involu.all()
 	hec = Hechos.objects.get(id = idhec)
 	datos = Preventivos.objects.get(id = ids.id)
@@ -6637,13 +6590,11 @@ def persinvo(request,idhec,idper):
 	dependencia=datos.dependencia.descripcion
 	unidadreg=datos.dependencia.unidades_regionales.descripcion
 
-	#listap=Personas.objects.all()
 	#envio de datos al template updatehechos.html
 	formcalles= AddressForm()
 	formbarrios = BarriadasForm()
 	formciu=RefCiudades.objects.all()
 
-	#formr = PersInvolucradasForm()
 	info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,
 	'caratula':caratula,'idhec':idhec,'domicilios':domicilios,'formro':formro,'formcalles':formcalles,
 	'actuante':actuante,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'formbarrios':formbarrios,
@@ -6653,9 +6604,6 @@ def persinvo(request,idhec,idper):
 	'tienePersonas':tienePersonas,'tienelugar':tienelugar,'formd':formd,'formpr':formpr,'formc':formc,
 	'state':state,'delito':delito,'descripcion':descripcion,'formpa':formpa,'depe':depe,'unidadreg':unidadreg,'dependencia':dependencia,
 	'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,'preventivo':datos,'noposee':noposee,}
-	#if request.POST.get('grabar')=="Guardar":   
-	#    return HttpResponseRedirect(reverse('persinvol',args=[idhec,0]))
-	#else:
 	return render_to_response('./personasin.html',info,context_instance=RequestContext(request))
 
 @login_required   
@@ -6718,7 +6666,6 @@ def persinvom(request,idhec,idper):
 		idpin=request.POST.get('ver')
 		idpersi=PersInvolucradas.objects.get(id=request.POST.get('ver'))
 
-		#idperm=PersInvolucradas.objects.get(id=request.POST.get('ver')) 
 		idper=idpersi.persona_id
 	
 		mostrar="si"
@@ -6746,8 +6693,6 @@ def persinvom(request,idhec,idper):
 					otros=True
 		
 		formr = PersInvolucradasForm(instance=idpersi)
-		#formr.fields['roles'].queryset=RefPeople.objects.filter(descripcion=idpersi.roles)
-		#print estadetenido
 		formr.fields['roles'].initial=idpersi.roles
 		if personas.ciudad_res:
 			 formp.fields['pais_res'].initial=personas.ciudad_res.pais
@@ -6770,16 +6715,12 @@ def persinvom(request,idhec,idper):
 				 if formr.is_valid():
 						persoin=PersInvolucradas.objects.get(persona=perso.id,hechos_id=idhec)
 						persoin.roles = formr.cleaned_data['roles']
-						#persoin.menor = formr.cleaned_data['menor']
-						#menoris=persoin.menor 
-						
 						anionac=datetime.datetime.strptime(fecha_nac,'%d/%m/%Y').strftime('%Y')
 						anioactual=datetime.datetime.now()
 						aniohoy=anioactual.today().year
 						
 						if anionac>=1900:
 							dife=aniohoy-int(anionac)
-							#if (dife>=18 and menoris=='no') or  (dife<=17 and menoris=='si'):
 							if 'APREHENDIDO' in persoin.roles.descripcion or  'APRENDIDO' in persoin.roles.descripcion or 'DETENIDO' in persoin.roles.descripcion:
 									
 									 if formr.cleaned_data['fechahoradetencion']:
@@ -6850,9 +6791,7 @@ def persinvom(request,idhec,idper):
 								persoin.save()
 							except IntegrityError:
 								errors.append('Datos existente en Personas Involucradas')
-							#else:
-							#	mostrar='0'
-							#	errors.append('La Persona es Menor de Edad')
+							
 				 else:
 
 						mostrar="no"
@@ -6884,13 +6823,6 @@ def persinvom(request,idhec,idper):
 		 mostrar="0"      
 	 
 		
-	"""
-	if request.POST.get('roles'):
-					roles=RefPeople.objects.get(id=request.POST.get('roles'))
-					if roles.descripcion.find('APRE')>=0 or roles.descripcion.find('DETE')>=0:
-						 comb="detenido"
-						 roles=RefPeople.objects.filter(id=request.POST.get('roles')).values()
-	"""
 	datosinvo=Hechos.objects.get(id=idhec).involu.all()
 	
 	hec = Hechos.objects.get(id = idhec)
@@ -6918,14 +6850,12 @@ def persinvom(request,idhec,idper):
 	dependencia=datos.dependencia.descripcion
 	unidadreg=datos.dependencia.unidades_regionales.descripcion
 
-	#listap=Personas.objects.all()
 	#envio de datos al template updatehechos.html
 	fecha_autorizacion=datos.fecha_autorizacion
 	formcalles= AddressForm()
 	formbarrios = BarriadasForm()
 	formciu =RefCiudades.objects.filter(id=idciu)
  
-	#formr = PersInvolucradasForm()
 	info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,
 	'caratula':caratula,'idhec':idhec,'domicilios':domicilios,'formro':formro,'formcalles':formcalles,
 	'actuante':actuante,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'formbarrios':formbarrios,
@@ -6976,8 +6906,6 @@ def lugar_hecho(request,idhecho,idprev):
 
 		form = LugarForm(instance=lugar)
 		if request.POST.get('grabar') == 'Modificar':
-		 #idlugar = Hechos.objects.get(id=idhecho).lugar_hecho.all()[0]
-		 #form = LugarForm(instance=idlugar)
 		 lugar=Lugar.objects.get(id=idlugar.id)
 		 form.fields['calle'].queryset = RefCalles.objects.filter(ciudad = preventivo.dependencia.ciudad)
 		 form.fields['barrio'].queryset = RefBarrios.objects.filter(ciudad = preventivo.dependencia.ciudad)
@@ -7003,7 +6931,6 @@ def lugar_hecho(request,idhecho,idprev):
 				lugar.departamento        = form.cleaned_data['departamento']
 		 
 				
-				#if not form.cleaned_data['calle']:
 				
 				ncalle,numero = street_name(form.cleaned_data['callen'])
 				try:
@@ -7017,9 +6944,7 @@ def lugar_hecho(request,idhecho,idprev):
 				lugar.calle =calle
 							 
 				 
-				#else:
-					#lugar.calle = form.cleaned_data['calle']
-
+				
 				
 				if not form.cleaned_data['altura']:
 				 
@@ -7029,9 +6954,7 @@ def lugar_hecho(request,idhecho,idprev):
 						 numero2 = None
 					 lugar.altura = numero2
 				else:
-					 #print numero,form.cleaned_data['altura']
 					 if numero or numero==form.cleaned_data['altura'] :
-						 #print numero,form.cleaned_data['altura']
 						 if numero!=form.cleaned_data['altura']:
 								numero2=form.cleaned_data['altura']
 						 else:
@@ -7052,12 +6975,10 @@ def lugar_hecho(request,idhecho,idprev):
 					barrio.descripcion = nbarrio
 					barrio.save()
 					lugar.barrio = barrio
-				#print request.user.get_profile().depe_id,depe
 				if request.user.get_profile().depe_id==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
 				 
 					 lugar.save() 
 					 if request.POST.get('grabar') == 'Modificar':
-						 #print form.cleaned_data['cond_climaticas']
 						 existen=lugar.cond_climaticas.through.objects.filter(lugar_id=idlugar).delete()
 							
 					 if form.cleaned_data['cond_climaticas']:
@@ -7135,12 +7056,8 @@ def street_name(string):
 	while nstring[len(nstring)-1].isdigit():
 		number=nstring[len(nstring)-1]+number
 			
-		#if nstring[len(nstring)-1].isdigit():
-			#number=nstring[len(nstring)-1]+number
-	 
 		nstring = nstring[:-1]
 		
-	#print nstring,number
 	
 	return (nstring,number)
 
@@ -7231,13 +7148,11 @@ def informe(request,idhec,idprev):
 			domi=Personas.objects.get(id=p.persona.id).persodom.all()
 			if domi:
 				for l in Personas.objects.get(id=p.persona.id).persodom.all():
-					 #datosgral=str(p.roles)+'-'+str(p)+' '+str(p.persona.tipo_doc)+' :'+str(p.persona.nro_doc)
 					 dad=Personas.objects.get(id=p.persona.id).padre.all()
 					 tieneper=True
 					 if dad: 
 
 							for la in Personas.objects.get(id=p.persona.id).padre.all():
-									#print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
 									
 									roles='<u>'+str(p.roles)+'</u><br><br>'
 									if bandera:
@@ -7251,7 +7166,6 @@ def informe(request,idhec,idprev):
 										else:
 											persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
-									#persona='<dd>'+str(p)+', '+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+',  Estado Civil :'+' '+str(p.persona.estado_civil)+'<br><dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'<br></dd>'
 									domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
 									if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
 											padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+'  y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
@@ -7272,7 +7186,6 @@ def informe(request,idhec,idprev):
 							else:
 								persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
-						 #persona='<dd>'+str(p)+', '+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+'<br><dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'<br></dd>'
 						 domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'<br></dd>'
 						 padys='<dd>no registra datos de los padres'+'<br><br></dd>'
 						 datosgral=roles+persona+domi+padys  
@@ -7290,7 +7203,6 @@ def informe(request,idhec,idprev):
 					else:
 						persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
-				#persona='<dd>'+str(p)+', '+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+',  Estado Civil : '+' '+str(p.persona.estado_civil)+'<br><dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'<br></dd>'
 				domi='<dd>no registra domicilio'+'<br></dd>'
 				padys='<dd>no registra datos de los padres'+'<br><br></dd>'
 				datosgral=roles+persona+domi+padys
@@ -7299,7 +7211,6 @@ def informe(request,idhec,idprev):
 		for i in involuscra:
 			 datosper=datosper+' * '+i+'<br>'
  
-		 #datosper.append(persona)
 		datosgral=''
 		
 		deta=''
@@ -7343,21 +7254,6 @@ def informe(request,idhec,idprev):
 			rubros='Rubro y Categoria :'+str(eles.rubro)+' --- '+str(eles.categoria)
 			canti=' Cantidad : '+str(eles.cantidad)+' --- '+str(eles.unidadmed)
 			obse=' Observaciones : '+str(eles.descripcion.encode("utf8"))
-			"""if eles.ampliacion:
-				 ampli=' Por medio de Ampliacion :'+str(eles.ampliacion.titulo)+' --- '+str(eles.ampliacion.fecha.strftime("%d/%m/%Y"))
- 
-			if deta:
-				 if detav:
-						eleme='<br>'+str(i)+' --'+rubro+'<br>'+rubros+'<br>'+canti+'<br>'+obse+'<br>'+detav+'<br>'+ampli+'<br>'
-				 else:
-						eleme='<br>'+str(i)+' --'+rubro+'<br>'+rubros+'<br>'+canti+'<br>'+obse+'<br>'+deta+'<br>'+ampli+'<br>'
-					 
-			else:
-				 if detav:
-						eleme='<br>'+str(i)+' --'+rubro+'<br>'+rubros+'<br>'+canti+'<br>'+obse+'<br>'+detav+'<br>'+ampli+'<br>'
-				 else:
-						eleme='<br>'+str(i)+' --'+rubro+'<br>'+rubros+'<br>'+canti+'<br>'+obse+'<br>'+ampli+'<br>'
-			"""
 			if deta:
 				 if detav:
 						eleme='<br>'+str(i)+' --'+rubro+'<br>'+rubros+'<br>'+canti+'<br>'+obse+'<br>'+detav+'<br>'
@@ -7394,13 +7290,6 @@ def informe(request,idhec,idprev):
 		for a in autoridades:
 				autoridad=autoridad+'*'+str(a)+'<br>'
 		informa=datos.autoridades.values_list('email',flat=True)
-		"""
-		for i in informa:
-				infor=infor+str(i)+','
-
-		if infor[len(infor)-1] == ',':
-			infor = infor[:-1]
-		"""
 		jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=actuante).values('jerarquia_id'))
 		jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=preventor).values('jerarquia_id'))
 		form1=Hechos.objects.filter(preventivo=idprev)
@@ -7430,7 +7319,6 @@ def informe(request,idhec,idprev):
 		titulo5='Edificio : '+str(lugar.edificio)+' --- Escalera: '+str(lugar.escalera)+' --- Departamento: '+str(lugar.departamento)+' ---  Piso: '+str(lugar.piso)+'<br><hr>'
 		titulo6='Condiciones Climaticas del lugar <br><hr>'+'<dd>'+str(titempo)+'</dd><br><hr>'      
 		titulo7='Elementos del Hecho <br><hr>'+str(elementos)+'</dd><br><hr>' 
-		#print type(titulo),type(tresto),type(titulo1), type(titulo2)
 		text_content=titulo+tresto+titulo1+titulo2+titulo3+titulo4+titulo5+titulo6+titulo7
 	 
 		if request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
@@ -7442,11 +7330,8 @@ def informe(request,idhec,idprev):
 			nstring=''
 			acumula=''
 			envio=1
-			#print infor
 			for dire in informa:
 					direcciones.append(dire)
-			#direcciones.append('2jefeacei@policia.chubut.gov.ar')  
-					#print dire
 					indice=0
 					nstring=''
 					if dire.find(',')>=0 or dire.find(';')>=0:
@@ -7483,34 +7368,9 @@ def informe(request,idhec,idprev):
 			 'state':state, 'continua':continua,'delito':delito,'descripcion':descripcion,'idprev':idprev,
 			 'destino': destino,'form1':form1,'ftiposdelitos':ftiposdelitos,'tamaño':5,}
 
-		#return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))     
-		#if envio<1:
 		return render_to_response('./informado.html', info, context_instance=RequestContext(request))     
-		#else:
-		#return render_to_response('./500.html',info,context_instance=RequestContext(request))   
-"""
-def extraeemail(string):
-
-	nstring =''
-	indice = 0
-	number = ''
-	
-	while indice < len(string):
 		
-			 if string[indice]!=',' and string[indice]!=';':
-					nstring = nstring + string[indice]
-					indice = indice +1 
-		 
-			 else:
-					
-					indice=indice+1
-					nstring=''
-				 
-				 
-		 
 
-	return (nstring)
-"""
 @login_required   
 @transaction.commit_on_success
 @group_required(["policia","investigaciones","radio"])
@@ -7592,7 +7452,6 @@ def elementos(request,idhecho):
 					 errors.append('Elementos guardados')
 			else:
 				 if elemento.categoria.descripcion =='FUEGO' or elemento.categoria.descripcion=='DE FUEGO':
-						 #print formv.errors.as_text
 						 if formar.is_valid():
 							 elemento.save()
 							 armas=Armas()
@@ -7746,51 +7605,7 @@ def elemento(request,idhecho,elemento):
 				 obdata=Vehiculos.objects.get(id=idar)
 				 formv=VehiculosForm(instance=obdata)
 				 tienecar=True
-	"""
-	if request.POST.get('button') == 'Guardar':
-		form = ElementosForm(request.POST)
-		formar=ArmasForm(request.POST)
-		formv=VehiculosForm(request.POST)
-		
-		if form.is_valid():
-		
-			elementox.tipo           = form.cleaned_data['tipo']
-			elementox.rubro          = form.cleaned_data['rubro']
-			elementoxcategoria      = form.cleaned_data['categoria']
-			elementox.cantidad       = form.cleaned_data['cantidad']
-			elementox.unidadmed      = form.cleaned_data['unidadmed']
-			elementox.descripcion    = form.cleaned_data['descripcion']
-		 
-			if elementox.rubro.descripcion=='VEHICULOS' or elementox.rubro.descripcion== 'AUTOMOTORES':
-					if formv.is_valid():
-							elementox.save()
-							form = ElementosForm()
-							formv=VehiculosForm()
-			else:
-				 if elementox.categoria.descripcion =='FUEGO' or elementox.categoria.descripcion=='DE FUEGO':
-						print formar.errors.as_text
-						#if formar.is_valid():
-						#   print 'hola'
-						elementox.save()
-						
-						obdata.tipos    = formar.cleaned_data['tipos']
-						obdata.subtipos = formar.cleaned_data['subtipos']
-						obdata.sistema_disparo = formar.cleaned_data['sistema_disparo']
-						obdata.marcas = formar.cleaned_data['marcas']
-						obdata.calibre = formar.cleaned_data['calibre']
-						obdata.modelo = formar.cleaned_data['modelo']
-						obdata.nro_arma=formar.cleaned_data['nro_arma']
-						obdata.nro_doc = formar.cleaned_data['nro_doc']
-						obdata.propietario = formar.cleaned_data['propietario']
-						obdata.save()
-			
-						 
-						form = ElementosForm()
-						formar=ArmasForm()
-				 else:
-							 elementox.save()
-							 form=ElementosForm()     
-	"""
+
 	lista = Elementos.objects.filter(hechos = hecho.id,borrado__isnull=True)
 	if len(Elementos.objects.filter(hechos = hecho.id,borrado__isnull=True))>0:
 		tieneob = True
@@ -7883,25 +7698,13 @@ def seemaps(request):
 
 			i=0
 			if (fechadesde and fechahasta and delitos and ureg and depes) or (fechadesde and fechahasta and delitos and ciudad) or (fechadesde and fechahasta and ureg and depes) or (fechadesde and fechahasta and ciudad):
-					#dias=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()-datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
 					hoy=str(datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date())+' 00:00:01'
 					ayer=str(datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date())+' 23:59:59'
 					hoy=datetime.datetime.strptime(hoy,'%Y-%m-%d %H:%M:%S')
 					ayer=datetime.datetime.strptime(ayer,'%Y-%m-%d %H:%M:%S')
-					#hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
-					#ayer=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()
-					#-dias
-					#hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y")
-					#ayer=(datetime.datetime.strptime(fechahasta,"%d/%m/%Y")+timedelta(days=1)).date()
-					#hoy=datetime.datetime.strptime(fechadesde,"%d/%m/%Y").date()
-					#ayer=datetime.datetime.strptime(fechahasta,"%d/%m/%Y").date()
 					ayerfue=ayer.strftime('%d/%m/%Y %H:%M:%S') 
 					hoyes=hoy.strftime('%d/%m/%Y %H:%M:%S')
 				 
-					#hoy=datetime.datetime(hoy.year, hoy.month, hoy.day)
-					#ayer=datetime.datetime(ayer.year, ayer.month, ayer.day)
-					
-					#print hoy,ayer
 					if not ciudad and not depes:
 						 ciudad=preventivo.ciudad.id
 
@@ -7914,7 +7717,6 @@ def seemaps(request):
 				
 							filtrorefd=HechosDelito.objects.filter(refdelito_id=delis,borrado__isnull=True).values('hechos_id') 
 							refdelitosdes.append(RefDelito.objects.get(id=delis).descripcion)
-							#injusticia=RefDelito.objects.get(id=delis).descripcion
 							if filtrorefd:
 							
 								preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__range=[hoy,ayer]).values()
@@ -7935,37 +7737,15 @@ def seemaps(request):
 															for correr in filtrode:
 																	injusticia=injusticia+RefDelito.objects.get(id=correr['refdelito_id']).descripcion+', '
 																	delitosin=injusticia
-															#print idhec
-															#idsh=HechosDelito.objects.filter(hechos_id=idhec,borrado__isnull=True).values('hechos_id')
-															#if idsh:
 															datalugar=Lugar.objects.filter(hecho_id=idhec).values('id')
 															if datalugar:
 									 
-															 """
-															 reglugar=Lugar.objects.get(id=datalugar)
-															 preven.append(str(desde['nro'])+'/'+str(desde['anio'])+' Fecha Denuncia :'+str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y'))+','+str(reglugar.latitud)+','+str(reglugar.longitud))
-															 haydatos=True
-															 """
-													
 															 
 															 reglugar=Lugar.objects.get(id=datalugar)
 															 prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia.encode("utf8"))}
 															 preven.append(prevs)
 															 haydatos=True
 															 i=i+1   
-															 """
-															 prevs.append(str(desde['nro'])+'/'+str(desde['anio']))
-															 prevs.append(str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')))
-															 prevs.append(str(reglugar.latitud))
-															 prevs.append(str(reglugar.longitud))
-															 preven.append(prevs)
-															 prevs=[]
-																	 
-															 prevs={}
-															 prevs={'preventivo':str(desde['nro'])+'/'+str(desde['anio']),'fecha denuncia':str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud':str(reglugar.latitud),'longitud':str(reglugar.longitud)}
-															 preven.append(prevs)
-
-															 haydatos=True  """
 															 injusticia='' 
 									#muestra delitos
 						else:
@@ -7973,20 +7753,17 @@ def seemaps(request):
 							for delis in filtrorefd:
 								refdelitosdes.append(RefDelito.objects.get(id=delis['refdelito_id']).descripcion)
 		 
-							#injusticia=RefDelito.objects.get(id=delis).descripcion
-						 
+							
 							if filtrorefd:
 								if ayer==hoy:
 									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__startswith=hoy).values()
 								else:
 									preventivos=Preventivos.objects.filter(dependencia=depes,fecha_autorizacion__range=(hoy,ayer)).values()
 			 
-								#print preventivos
 								for desde in preventivos:
 									 idp=desde['id']
 								 
 									 idhecho=Hechos.objects.filter(preventivo_id=idp).values()
-									 #print idhecho
 									 if idhecho:
 											for ids in idhecho:
 												 idhec=ids['id'] 
@@ -7997,17 +7774,10 @@ def seemaps(request):
 															for correr in filtrode:
 																	injusticia=injusticia+RefDelito.objects.get(id=correr['refdelito_id']).descripcion+', '
 																	delitosin=injusticia
-															#print idhec
-															#idsh=HechosDelito.objects.filter(hechos_id=idhec,borrado__isnull=True).values('hechos_id')
-															#if idsh:
 															datalugar=Lugar.objects.filter(hecho_id=idhec).values('id')
 															if datalugar:
 									 
-															 """
-															 reglugar=Lugar.objects.get(id=datalugar)
-															 preven.append(str(desde['nro'])+'/'+str(desde['anio'])+' Fecha Denuncia :'+str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y'))+','+str(reglugar.latitud)+','+str(reglugar.longitud))
-															 haydatos=True
-															 """
+															
 															 
 															 reglugar=Lugar.objects.get(id=datalugar)
 															 prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia.encode("utf8"))}
@@ -8015,22 +7785,7 @@ def seemaps(request):
 															 preven.append(prevs)
 															 haydatos=True
 															 i=i+1   
-															 """
-															 prevs.append(str(desde['nro'])+'/'+str(desde['anio']))
-															 prevs.append(str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')))
-															 prevs.append(str(reglugar.latitud))
-															 prevs.append(str(reglugar.longitud))
-															 preven.append(prevs)
-															 prevs=[]
-														 
-															 prevs={}
-															 prevs={'preventivo':str(desde['nro'])+'/'+str(desde['anio']),'fecha denuncia':str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud':str(reglugar.latitud),'longitud':str(reglugar.longitud)}
-															 preven.append(prevs)
-
-															 haydatos=True  """
 															injusticia=''       
-					#print preven
-			 
 					if ciudad:
 					
 					 depes=Dependencias.objects.filter(ciudad_id=ciudad).values('id')
@@ -8051,7 +7806,6 @@ def seemaps(request):
 									for crias in depes:
 											dp=crias['id']
 											preventivos=Preventivos.objects.filter(dependencia=dp,fecha_autorizacion__range=[hoy,ayer]).values()
-											#print preventivos
 											for desde in preventivos:
 													idp=desde['id']
 													idhecho=Hechos.objects.filter(preventivo_id=idp).values()
@@ -8067,39 +7821,27 @@ def seemaps(request):
 																			 for correr in filtrode:
 																					 injusticia=injusticia+RefDelito.objects.get(id=correr['refdelito_id']).descripcion+', '
 																					 delitosin=injusticia
-																		# idsh=HechosDelito.objects.filter(hechos_id=idhec,borrado__isnull=True).values('hechos_id')
-																		#if idsh:
 																			 datalugar=Lugar.objects.filter(hecho_id=idhec).values('id')
 																		
 																			 if datalugar:
 																					reglugar=Lugar.objects.get(id=datalugar)
 																				 
-																					#prevs.append()
-																					"""
-																					prevs.append(str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')))
-																					prevs.append(str(reglugar.latitud))
-																					prevs.append(str(reglugar.longitud))
-																					preven.append(prevs)
-																					prevs=[]"""
 																					
 																	
 																																				
 																					prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia.encode("utf8"))}
 																					preven.append(prevs)
-																					#preven.append(str(desde['nro'])+','+str(desde['anio'])+','+str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y'))+','+str(reglugar.latitud)+','+str(reglugar.longitud))
 																					haydatos=True
 																					
-																					#print prevs
 																					i=i+1        
-															#ref=RefCiudades.objects.get(id=ciudad).descripcion
 																			 injusticia=''
-																					#print type(preven)
+																					
 						else:
 							filtrorefd=HechosDelito.objects.all().filter(borrado__isnull=True).values('hechos_id','refdelito_id') 
 							for delis in filtrorefd:
 								refdelitosdes.append(RefDelito.objects.get(id=delis['refdelito_id']).descripcion)
 						
-							#injusticia=RefDelito.objects.get(id=delis).descripcion
+							
 						 
 							if filtrorefd:
 								depes=Dependencias.objects.filter(ciudad_id=ciudad).values('id')
@@ -8112,8 +7854,6 @@ def seemaps(request):
 											else:
 												preventivos=Preventivos.objects.filter(dependencia=dp,fecha_autorizacion__range=[hoy,ayer]).values()
 			 
-											#print preventivos
-											#=Preventivos.objects.filter(dependencia=dp,fecha_denuncia__range=(ayer,hoy)).values()
 											
 											for desde in preventivos:
 													idp=desde['id']
@@ -8130,59 +7870,20 @@ def seemaps(request):
 																			 for correr in filtrode:
 																					 injusticia=injusticia+RefDelito.objects.get(id=correr['refdelito_id']).descripcion+', '
 																					 delitosin=injusticia
-																		# idsh=HechosDelito.objects.filter(hechos_id=idhec,borrado__isnull=True).values('hechos_id')
-																		#if idsh:
 																			 datalugar=Lugar.objects.filter(hecho_id=idhec).values('id')
 																		
 																			 if datalugar:
 																					reglugar=Lugar.objects.get(id=datalugar)
 																				 
-																					#prevs.append()
-																					"""
-																					prevs.append(str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')))
-																					prevs.append(str(reglugar.latitud))
-																					prevs.append(str(reglugar.longitud))
-																					preven.append(prevs)
-																					prevs=[]"""
-																					
-																					
-																					
-																					#delis=injusticia.encode(encoding='ISO-8859-1',errors='strict')
-																					#print delis
 																					prevs={'id'+str(i):str(desde['id']),'prev'+str(i):str(desde['nro'])+'/'+str(desde['anio']),'denuncia'+str(i):str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y')),'latitud'+str(i):str(reglugar.latitud),'longitud'+str(i):str(reglugar.longitud),'delitos'+str(i):str(injusticia.encode('ISO-8859-1'))}
-																					#ver=_decode_dict(prevs)
-																					#print ver
 																					preven.append(prevs)
-																					 #preven.append(str(desde['nro'])+','+str(desde['anio'])+','+str(datetime.datetime.strftime(desde['fecha_denuncia'], '%d/%m/%Y'))+','+str(reglugar.latitud)+','+str(reglugar.longitud))
 																					haydatos=True
-																					#print prevs
 																					i=i+1        
-																					#ref=RefCiudades.objects.get(id=ciudad).descripcion
 																					injusticia=''
 
-					#print preven
-					#print preventivo, depes,ureg  
-					"""values={'today':today,'ref':ref,'refdelitosdes':refdelitosdes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,}
-					return render_to_response('./vermapa.html', values, context_instance=RequestContext(request)) """
 	
 	values={'buscar':buscar,'buscarciu':buscarciu,'ayerfue':ayerfue,'hoyes':hoyes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,'depes':depes,'ureg':ureg,'refdelitosdes':refdelitosdes,}
 	return render_to_response('./mapsanality.html',values,context_instance=RequestContext(request)) 
-
-"""def _decode_dict(data):
-		rv = {}
-		for key, value in data.iteritems():
-				if isinstance(key, unicode):
-						key = key.encode('ISO-8859-1')
-				if isinstance(value, unicode):
-						value = value.encode('ISO-8859-1')
-				elif isinstance(value, list):
-						value = _decode_list(value)
-				elif isinstance(value, dict):
-						value = _decode_dict(value)
-				print value.encode(encoding='ISO-8859-1',errors='strict')
-				rv[key] = value
-			
-		return rv"""
 
 #definicion para ver personas involuvradas en hechos
 @login_required   
@@ -8208,7 +7909,6 @@ def verperin(request):
 
 		 filtro=Personas.objects.filter(entry_query)
 
-		 #}.values('id','tipo_doc','apellidos','nro_doc','nombres','ocupacion','fecha_nac',)
 		 
 		 if filtro:
 				if filtro not in todos:
@@ -8303,12 +8003,10 @@ def verpersin(request,idper):
 		 actuante=datos.actuante
 		 preventor=datos.preventor
 		 autoridades= datos.autoridades.values_list('descripcion',flat=True)
-		 #listap=Personas.objects.all()
 		 #envio de datos al template updatehechos.html
 		 formcalles= AddressForm()
 		 formbarrios = BarriadasForm()
 		 formciu =RefCiudades.objects.filter(id=idciu)
-			#formr = PersInvolucradasForm()
 		 info={'delitos':delitos,'persinv':persinv,'alldata':alldata,'filtro':filtro,'todosdata':todosdata,'perhechos':perhechos,'dataper':dataper,'datos':datos,'datosinvo':datosinvo,'errors': errors,'state':state,'destino': destino,'mostrar':mostrar,'filtro':filtro,'todos':todos,}
 	else:
 		 errors.append("La persona seleccionada no registra datos que los involucre en algun Hecho")
@@ -8444,12 +8142,7 @@ def repestadis(request):
 			delitos=datos.__getitem__('delitoe')
 			texto=datos.__getitem__('buscartex')
 			mesnro=strptime(mes,'%b').tm_mon
-			#npreve=Preventivos.objects.filter(dependencia=depes,fecha_denuncia__month=mesnro,fecha_denuncia__year=anio).values()
 			filtrohecho=Hechos.objects.filter(descripcion__icontains=texto)
-			#mostrar=filtrohecho.descripcion.find('USURPACION')
-			#if mostrar:
-			#print filtrohecho,idhec
-			#print filtrohecho
 			if not ciudad and not depes:
 				 ciudad=preventivo.ciudad.id
 
@@ -8459,42 +8152,7 @@ def repestadis(request):
 				preventivos=Preventivos.objects.filter(dependencia=depes,fecha_denuncia__month=mesnro,fecha_denuncia__year=anio).values()
 	
 			 
-				"""
-				for desde in preventivos:
-						idp=desde['id']
-						idhecho=Hechos.objects.filter(preventivo_id=idp).values().order_by('motivo')
-						if idhecho:
-							 for ids in idhecho:
-									 idhec=ids['id'] 
-									 motivo=ids['motivo_id']
-
-									 filtromotivo=RefMotivosHecho.objects.get(id=motivo)
-									
-									 if filtromotivo.descripcion.find('PARTICULAR')>=0:
-											dparti=dparti+1
-									 else:
-										 if filtromotivo.descripcion.find('POLICIAL')>=0:
-												inpoli=inpoli+1
-										 else: 
-											 if filtromotivo.descripcion.find('JUDICIAL')>=0:
-												 ordenj=ordenj+1
-											 else:
-												 otros=otros+1
-									 if tipo:
-											filtrotipode=HechosDelito.objects.filter(hechos_id=idhec,borrado__isnull=True).values()
-											if filtrotipode:
-												 for deli in filtrotipode:
-														 idrefdelito=deli['refdelito_id']
-														 filtrodelitos=RefDelito.objects.filter(id=idrefdelito).values()
-														 for tipos in filtrodelitos:
-																 idtipo=tipos['tipo_delito_id']
-																 if int(tipo)==int(idtipo):
-																		tipodel=RefTipoDelitos.objects.get(id=idtipo)
-																		son=son+1
-							 #print son,tipodel                    
-									 #print filtrotipode
-							 #print dparti,inpoli,ordenj,otros
-							 """
+				
 	values={'tiposdelitos':tiposdelitos,'anios':anios,'month_choices':months_choices,'ayerfue':ayerfue,'hoyes':hoyes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,'depes':depes,'ureg':ureg,'refdelitosdes':refdelitosdes,}
 	return render_to_response('./reportes.html',values,context_instance=RequestContext(request)) 
 
@@ -8573,7 +8231,6 @@ def repforages(request):
 	sumosin=0
 	rephomisexo=False
 	reprobosexo=False
-	#delitos=HechosDelito.objects.all()
 				 
 	if request.POST.get('ver')=="Visualizar" or request.POST.get('expo')=="Exportar" or request.POST.get('expo1')=="Exportar" or request.POST.get('expor')=="Exportar":
 			datosform=request.POST
@@ -8610,7 +8267,6 @@ def repforages(request):
 					 if depes:
 									for crias in depes:
 											dp=crias['id']
-											#print fechadesde,fechahasta
 											preventivos=Preventivos.objects.all().filter(dependencia=dp,fecha_autorizacion__isnull=False,fecha_denuncia__month=fechadesde,fecha_denuncia__year=fechahasta).values()
 											
 											for desde in preventivos:
@@ -8623,7 +8279,6 @@ def repforages(request):
 																 idprevh=ids['preventivo_id'] 
 																 if idprevh==idp:
 																			idhecho=ids['id'] 
-																			#si necesitas sacar segun role es aqui
 																			filtrodelih=HechosDelito.objects.all().filter(hechos_id=idhecho,borrado__isnull=True).values('id','refdelito_id','hechos_id') 
 																			torobos=[]
 																			sexo=''
@@ -8744,7 +8399,6 @@ def repforages(request):
 											
 											preventivo=Dependencias.objects.get(id=depes)
 											ciudad=""
-											#preventivo.ciudad.descripcion
 											depe=preventivo.descripcion
 											unireg=preventivo.unidades_regionales.descripcion
 											lugar=ciudad+' -- '+unireg+' -- '+depe
@@ -8909,7 +8563,6 @@ def repforages(request):
 																						sexor=''
 																						for indelis in filtrodelih:
 																								 descripcion=RefDelito.objects.get(id=indelis['refdelito_id']) 
-																								 #print descripcion
 																								 if descripcion.descripcion.find('HOMI')>=0 or descripcion.descripcion.find('ROBO')>=0 or descripcion.descripcion.find('HURTO')>=0 or (descripcion.descripcion.find('HOMI')<0 or descripcion.descripcion.find('ROBO')<0 or descripcion.descripcion.find('HURTO')<0):
 																									 filtroperin=PersInvolucradas.objects.all().filter(hechos_id=idhecho)
 																									 sumo=sumo+len(filtroperin)
@@ -9183,7 +8836,6 @@ def repforages(request):
 		robar['16-25']=['16-25',tsexomr,tsexofr,tsexosr]
 
 		for i in rango:
-			#print str(i.encode("utf8")) + ' Mayor de Edad(entre 18 y 25 años)'
 			if i.find('ROBO')>=0:
 				 trobos=trobos+1
 			else:
@@ -9243,7 +8895,6 @@ def repforages(request):
 		robar['26-35']=['26-35',tsexomr,tsexofr,tsexosr]
 
 		for i in rango1:
-			#print str(i.encode("utf8"))+ ' Mayor de Edad(entre 26 y 35 años)' 
 			if i.find('ROBO')>=0:
 				 trobos=trobos+1
 			else:
@@ -9300,7 +8951,6 @@ def repforages(request):
 		robar['36-45']=['36-45',tsexomr,tsexofr,tsexosr]
 
 		for i in rango2:
-			#print str(i.encode("utf8")) + ' Mayor de Edad(entre 36 y 45 anios)'
 			if i.find('ROBO')>=0:
 				 trobos=trobos+1
 			else:
@@ -9356,7 +9006,6 @@ def repforages(request):
 		robar['46-55']=['46-55',tsexomr,tsexofr,tsexosr]
 
 		for i in rango3:
-			#print str(i.encode("utf8"))+ ' Mayor de Edad(entre 46 y 55 años)'
 			if i.find('ROBO')>=0:
 				 trobos=trobos+1
 			else:
@@ -9411,7 +9060,6 @@ def repforages(request):
 		robar['56-65']=['56-65',tsexomr,tsexofr,tsexosr]
 
 		for i in rango4:
-			#print str(i.encode("utf8"))+ ' Mayor de Edad(entre 56 y 65 años)'
 			if i.find('ROBO')>=0:
 				 trobos=trobos+1
 			else:
@@ -9468,7 +9116,6 @@ def repforages(request):
 		robar['66-75']=['66-75',tsexomr,tsexofr,tsexosr]
 
 		for i  in rango5:
-			#print str(i.encode("utf8"))+ ' Mayor de Edad(entre 66 y 75 años)'
 			if i.find('ROBO')>=0:
 				 trobos=trobos+1
 			else:
@@ -9523,7 +9170,6 @@ def repforages(request):
 		rob['76-99']=[tsexomr,tsexofr,tsexosr]
 		robar['76-99']=['76-99',tsexomr,tsexofr,tsexosr]
 		for i in rango6:
-			##print str(i.encode("utf8"))+ ' Mayor de 75 años)'
 			if i.find('ROBO')>=0:
 				 trobos=trobos+1
 			else:
@@ -9556,19 +9202,7 @@ def repforages(request):
 	key=valores.keys()
 
 	arreglo=[]
-	"""
-	fila=0
-	for key,value in sorted(dato.iteritems()):
-		 
-		 datos=(value)
-		 indice=0
-		 for celda in valores[key]:
-				 arreglo.append(value[indice] )
-				 indice+=1
-				 
- 
-		 fila += 1
-	"""
+	
 
 	
 	if request.POST.get('expo')=="Exportar":
@@ -10385,7 +10019,7 @@ def killings(request):
 																				else:
 																						sumosar+=1
 																						dictar['Sin Armas']=sumosar
-														 #print dictlt,dictar,dictvi,dictim,tothechos
+														 
 																			 
 
 														 
@@ -10396,7 +10030,6 @@ def killings(request):
 											
 											preventivo=Dependencias.objects.get(id=depes)
 											ciudad=""
-											#preventivo.ciudad.descripcion
 											depe=preventivo.descripcion
 											unireg=preventivo.unidades_regionales.descripcion
 											lugar=ciudad+' -- '+unireg+' -- '+depe
@@ -10459,7 +10092,7 @@ def killings(request):
 																						sumosar+=1
 																						dictar['Sin Armas']=sumosar
 																						 
-														 #print dictlt,dictar,dictvi,dictim,tothechos
+														 
 														
 																						 
 				else:
@@ -10542,7 +10175,7 @@ def killings(request):
 																											sumosar+=1
 																											dictar['Sin Armas']=sumosar
 																 
-																	 #print dictlt,dictar,dictvi,dictim,tothechos
+																	 
 	dictvic={}
 	dictimp={}
 	if tothechos:
@@ -14787,7 +14420,6 @@ def enviarp(request,idprev):
 				'</EnviarMensaje>'+\
 				'</soap:Body>'+\
 				'</soap:Envelope>'
-		print xmls	
 		user='policia-test'
 		password='policia-test'
 		params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -14870,7 +14502,6 @@ def enviadoa(request):
 		countinvolus=0
 		unireg=0
 		i=0
-		#print grabarfam
 		for hay in grabarfam:
 			datosgral=""
 			lugar=''
@@ -14907,7 +14538,6 @@ def enviadoa(request):
 			localcria=Localidad.objects.get(descripcion__icontains=depes)
 			localcria=int(localcria.idLocalidad)
 			
-			#print ciudad,depe,laticiudad,localidad,lati,longi,localcria
 			amplia = Ampliacion.objects.get(id=hay.id)
 			tieneampli=True
 			form=AmpliacionForm(instance=amplia)
@@ -15155,8 +14785,7 @@ def enviadoa(request):
 			infor=''
 			autoridad=''
 			#datos=Preventivos.objects.get(id=hay.id)
-			#print datos
-
+			
 			nro=preventivo.nro
 			anio=preventivo.anio
 			fecha_denuncia=preventivo.fecha_denuncia
@@ -15178,7 +14807,6 @@ def enviadoa(request):
 			#descripcion=html2text.html2text(str(amplia.descripcion),True)
 			descripcion=strip_tags(amplia.descripcion).replace('&nbsp;','')
 			descripcion=descripcion.replace('"','')
-			#print descripcion  
 			cierre_causa=amplia.cierre_causa
 			if cierre_causa==1:
 			   fecha_cierre=timezone.localtime(amplia.fecha_cierre).strftime("%d/%m/%Y %H:%m:%S")
@@ -15231,8 +14859,7 @@ def enviadoa(request):
 			'</soap:Body>'+\
 			'</soap:Envelope>'
 						
-			#print xmls
-	
+			
 			user='policia-test'
 			password='policia-test'
 			params = { 'Authorization' : 'Basic %s' % base64.b64encode("user:password") }
@@ -15249,12 +14876,10 @@ def enviadoa(request):
 			webservice.send(xmls)
 			totenviados=totenviados+1
 			ref=webservice.getresponse()
-			#print ref.status,ref.reason,ref.read()
 			refer=str(ref.status)+'-'+str(ref.reason)
 			valorweb=0
 			if ref.status==200:
 			   data = ref.read()
-			   print data,ref.status
 			   #aqui actualizar el campo sendwebservice en preventivo a 1
 			   user = User.objects.get(username='23140893')
 			   ampli = Ampliacion.objects.get(id=hay.id)
@@ -15633,16 +15258,13 @@ def persinvovif(request,idhec,idper):
 			else:
 						errors.append('No se existe persona involucrada.')  
 			mostrar="0"     
-		#print  request.POST.get('grabar')
 		if request.POST.get('grabar')=="Guardar": 
 				 
 				 formp = PersonasForm(request.POST, request.FILES)          #obtiene los datos de la persona en un formulario persona
 				 dom = DomiciliosForm(request.POST,request.FILES)           #obtiene los datos del domicilio en un formulario domicilio
 				 formr = PerInvolViolenfliarForm(request.POST,request.FILES)   #obtiene los datos de persona involucrada en un formulario persona involucrada
 				 formpa = PadresForm(request.POST,request.FILES)
-				 #print idper
 				 #fecha_detencion=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
-				 #print request.POST.get('fechahoradetencion')
 				 """
 				 if request.POST.get('fechahoradetencion'):
 						fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
@@ -15710,7 +15332,7 @@ def persinvovif(request,idhec,idper):
 						 perso.otrasactividades = formp.cleaned_data['otrasactividades']
 						 perso.horalugaractivi = formp.cleaned_data['horalugaractivi']
 						 """             
-						 #print request.POST.get('roles')
+						 
 
 						 perso.estado_civil = formp.cleaned_data['estado_civil']
 						 idpoli=formp.cleaned_data['ocupacion']
@@ -15721,7 +15343,6 @@ def persinvovif(request,idhec,idper):
 
 						else:
 							 
-							 #print request.POST.get('ocupacion')
 							 if request.POST.get('ocupacion')=='None' or request.POST.get('ocupacion')=='':
 								 refpoli=RefOcupacion.objects.get(descripcion='EMPLEADO')
 								 texto='EMPLEADO'
@@ -15759,7 +15380,7 @@ def persinvovif(request,idhec,idper):
 											persom.alias      = formp.cleaned_data['alias']
 											persom.estado_civil = formp.cleaned_data['estado_civil']
 											try:
-											#print idper
+											
 										
 												persom.save()
 
@@ -15838,7 +15459,7 @@ def persinvovif(request,idhec,idper):
 
 									 persoin.infraganti = formr.cleaned_data['infraganti'] 
 									 """
-									 #print formr.cleaned_data['roles']
+									 
 									 if 'DENUNCIANTE' in str(formr.cleaned_data['roles']) or 'Denunciante' in str(formr.cleaned_data['roles']).capitalize():
 										persoin.vinculovictima = formr.cleaned_data['vinculovictima']
 										persoin.pidereserva = formr.cleaned_data['pidereserva']
@@ -15874,11 +15495,9 @@ def persinvovif(request,idhec,idper):
 								 else:
 									 #persi=Personas.objects.get(id=idper)
 									 #formp=PersonasForm(instance=persi)
-									 #print formr.errros.as_text
 									 errors.append('Error faltan datos en seccion de Rol de la Persona')
 									 #return HttpResponseRedirect('./',)
 									 #mostrar='es'  
-									 #print personas.id
 									 filtros=Personas.objects.filter(id = personas.id)     
 									 if filtros not in todos:
 										 todos.append(filtros)
@@ -15901,7 +15520,7 @@ def persinvovif(request,idhec,idper):
 	except Exception, e:
 		noposee=""
 	
-	#print noposee
+	
 	"""
 	datosinvo=hechos.involu.all()
 	hec = Hechos.objects.get(id = idhec)
