@@ -28,7 +28,7 @@ from email.mime.text import MIMEText
 from django.template import Context, Template, RequestContext
 from django.template.loader import get_template,render_to_string
 from openpyxl import Workbook
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.utils.encoding import smart_str, smart_unicode
 #import ho.pisa as pisa
 #import cStringIO as StringIO
@@ -933,7 +933,11 @@ def inicial(request):
 	ciudades = ""
 	state= request.session.get('state')
 	destino= request.session.get('destino')
-	return render(request,'./index1.html',{'state':state, 'destino': destino})
+	no_enviados = False
+	if Actuantes.objects.filter(funcion__gt=1,documento=request.user.username):
+		no_enviados = obtener_cantidad_no_enviados(request)
+	no_autorizados = obtener_cantidad_no_autorizados(request)
+	return render(request,'./index1.html',{'state':state, 'destino': destino,'no_enviados':no_enviados,'no_autorizados':no_autorizados})
 
 #la funcion en donde se guardan los grupos de usuarios que son ingresados en usuarios
 @login_required
@@ -7368,6 +7372,9 @@ def informe(request,idhec,idprev):
 			 'state':state, 'continua':continua,'delito':delito,'descripcion':descripcion,'idprev':idprev,
 			 'destino': destino,'form1':form1,'ftiposdelitos':ftiposdelitos,'tamaño':5,}
 
+		enviarp(request,idprev)
+		#return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))     
+		#if envio<1:
 		return render_to_response('./informado.html', info, context_instance=RequestContext(request))     
 		
 
@@ -12994,7 +13001,6 @@ def sendfechas(request):
 
 
 @login_required   
-@group_required(["administrador"])
 def enviadop(request):
 	state= request.session.get('state')
 	destino= request.session.get('destino')
@@ -13777,13 +13783,17 @@ def enviadop(request):
 
 
 @login_required   
-@group_required(["administrador"])
 def enviarp(request,idprev):
 	state= request.session.get('state')
 	destino= request.session.get('destino')
 	preventivo = Preventivos.objects.get(id=idprev) 							# obtengo el preventivo a enviar
 	ciudad= preventivo.dependencia.ciudad 										# reservo la ciudad
 	depe=preventivo.dependencia 												# reservo la dependencia
+	enviado,sin_enviar = verificar_enviado(idprev)
+	if enviado and len(sin_enviar) >= 1:
+		marcar_enviados(sin_enviar)
+		return HttpResponseRedirect('/spid/inicio/')
+	print 'entro a enviarp'
 	#Datos del Hecho delicitivo atraves del nro de preventivo
 	if Hechos.objects.filter(preventivo=preventivo.id): 						# si el preventivo tiene un hecho cargado
 		hecho = Hechos.objects.get(preventivo=preventivo.id) 					# obtengo el hecho
@@ -14440,14 +14450,23 @@ def enviarp(request,idprev):
 		if ref.status==200:
 		   data = ref.read()
 		   #aqui actualizar el campo sendwebservice en preventivo a 1
-		   user = User.objects.get(username='23140893')
+		   user = request.user
 		   prev = Preventivos.objects.get(id=idprev)
-		   judi=EnvioPreJudicial()
-		   judi.preventivo=prev
-		   judi.fecha_autorizacion=preventivo.fecha_autorizacion
-		   judi.user=user
-		   judi.enviado=1
-		   judi.save()
+		   try:
+		   	   EnvioPreJudicial.objects.get(preventivo=prev)
+		   	   judi = EnvioPreJudicial.objects.get(preventivo = prev)
+		   	   judi.fecha_autorizacion = prev.fecha_autorizacion
+		   	   judi.user = user
+		   	   judi.enviado = 1
+		   	   judi.save()
+		   except ObjectDoesNotExist:
+			   judi=EnvioPreJudicial()
+			   judi.preventivo=prev
+			   judi.dependencia = prev.dependencia
+			   judi.fecha_autorizacion=preventivo.fecha_autorizacion
+			   judi.user=user
+			   judi.enviado=1
+			   judi.save()
 		   
 		   valorweb=1 
 		   repla=Preventivos.objects.get(id=preventivo.id)
@@ -14455,22 +14474,30 @@ def enviarp(request,idprev):
 		   repla.save()
 		   lista=EnvioPreJudicial.objects.all()
 		   webservice.close()
-		   #return render(request, './enviowebservice.html',{'refer':refer,})
+		   #return judi.enviado)
 		else:
-		   user = User.objects.get(username='29260319')
+		   user = request.user
 		   prev = Preventivos.objects.get(id=idprev)
-		   judi=EnvioPreJudicial()
-		   judi.preventivo=prev
-		   judi.fecha_autorizacion=preventivo.fecha_autorizacion
-		   judi.user=user
-		   judi.enviado=0
-		   judi.save()
+		   try: 
+		   		EnvioPreJudicial.objects.get(preventivo = prev)
+		   		judi = EnvioPreJudicial.objects.get(preventivo = prev)
+		   		judi.fecha_autorizacion = prev.fecha_autorizacion
+		   		judi.user = user
+		   		judi.enviado = 0
+		   		judi.save()
+		   except ObjectDoesNotExist:
+		   		judi=EnvioPreJudicial()
+		   		judi.preventivo=prev
+		   		judi.dependencia = prev.dependencia
+		   		judi.fecha_autorizacion=preventivo.fecha_autorizacion
+		   		judi.user=user
+		   		judi.enviado=0
+		   		judi.save()
 		   lista=EnvioPreJudicial.objects.all()
-		   #return render(request, './errorHTTP.html',{'refer':refer,})
-	
+		   webservice.close()
+		   #return judi.enviado
 		datosdict={}
-
-	return HttpResponseRedirect(reverse('pwebservice'))
+	return HttpResponseRedirect('/spid/inicio/')
 
 
 @login_required   
@@ -15570,3 +15597,81 @@ def persinvovif(request,idhec,idper):
 	'autoridades':autoridades,'errors': errors, 'dependencia':dependencia,'unidadreg':unidadreg,'listap':listap,'todos':todos,'datosinvo':datosinvo,
 	'state':state,'delitos':delitos,'destino': destino,'idhec':idhec}
 	return render_to_response('./formpersovif.html',info,context_instance=RequestContext(request))
+
+@login_required
+def obtener_no_enviados(request):
+	depe = request.user.get_profile().depe
+	no_enviados = EnvioPreJudicial.objects.filter(enviado = 0,dependencia=depe)
+	data = serializers.serialize("json",no_enviados)
+	return HttpResponse(data, mimetype='application/json')
+
+
+@login_required
+def obtener_cantidad_no_enviados(request):
+	depe = request.user.get_profile().depe
+	return  EnvioPreJudicial.objects.filter(enviado=0,dependencia=depe).count()
+
+@login_required
+def obtener_cantidad_no_autorizados(request):
+	user = request.user
+	if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
+		id_preventor = Actuantes.objects.get(documento=user.username).id
+		return Preventivos.objects.filter(fecha_autorizacion__isnull=True,preventor=id_preventor).count()
+	return False
+
+@login_required
+def pendientes_envio(request):
+	state= request.session.get('state')
+	destino= request.session.get('destino')
+	user = request.user
+	depe = user.get_profile().depe
+	pendientes = EnvioPreJudicial.objects.filter(enviado=0,dependencia=depe) 
+	info = {
+		'state' 		: state,
+		'destino' 		: destino,
+		'pendientes' 	: pendientes,
+	}
+	return render_to_response('./pendientes_envio.html',info,context_instance=RequestContext(request))
+
+def verificar_enviado(prev):
+	sin_enviar = []
+	try:
+		envio = EnvioPreJudicial.objects.get(preventivo=prev)
+		return bool(envio.enviado),sin_enviar
+	except  MultipleObjectsReturned:
+		try:
+			EnvioPreJudicial.objects.get(preventivo=prev,enviado=1)
+			for envio in EnvioPreJudicial.objects.filter(preventivo=prev):
+				if not envio.enviado:
+					sin_enviar.append(envio.id)
+
+			return bool(EnvioPreJudicial.objects.get(preventivo=prev,enviado=1).enviado),sin_enviar
+		except ObjectDoesNotExist:
+			return False,sin_enviar
+		except MultipleObjectsReturned:
+			for envio in EnvioPreJudicial.objects.filter(preventivo=prev):
+				if not envio.enviado:
+					sin_enviar.append(envio.id)
+			return True,sin_enviar
+	except ObjectDoesNotExist:
+		return False, sin_enviar			
+
+def marcar_enviados(sin_enviar):
+	for elemento in sin_enviar:
+		envio = EnvioPreJudicial.objects.get(id=elemento)
+		envio.enviado = 1
+		envio.save()
+
+@login_required
+def pendientes_autorizacion(request):
+	state= request.session.get('state')
+	destino= request.session.get('destino')
+	user = request.user
+	preventor = Actuantes.objects.get(documento=user.username)
+	pendientes = Preventivos.objects.filter(fecha_autorizacion__isnull=True,preventor=preventor)
+	info = {
+		'state'			:state,
+		'destino'		: destino,
+		'pendientes'	:pendientes,
+	}
+	return render_to_response('./pendientes_autorizacion.html',info,context_instance=RequestContext(request))

@@ -24,6 +24,7 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.http import HttpResponse
 from django.template import Context, loader
 from django.forms.util import ErrorList
+from preventivos.views import obtener_cantidad_no_enviados, obtener_cantidad_no_autorizados
 
 
 def some_view(request):
@@ -134,8 +135,11 @@ def login_user(request):
                     state = str(Group.objects.get(name=varios))
                   request.session['state']=state
                   request.session['destino']=destino
-                          
-                  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday})
+                  no_enviados = False
+                  if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
+                    no_enviados = obtener_cantidad_no_enviados(request)
+                  no_autorizados = obtener_cantidad_no_autorizados(request)
+                  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados})
                 else:
                   state="Dependencias seleccionadas INCONRRECTAS"
                   return render(request, 'index.html', {'state':state,'form':form})

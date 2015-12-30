@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block main %}
+ <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+    <thead>
+      <tr>
+        <th>Nro</th>
+        <th>Fecha Carga</th>
+        <th>Fecha Autorizado</th>
+        <th>Causa</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pendiente in pendientes %}
+        <tr>
+          <td> {{ pendiente.preventivo.nro }} </td>
+          <td> {{ pendiente.preventivo.fecha_carga }} </td>
+          <td> {{ pendiente.preventivo.fecha_autorizacion }} </td>
+          <td> {{ pendiente.preventivo.caratula }} </td>
+          <td> <a href="{% url 'selectPrev' pendiente.preventivo.id %}">Ver</a> <a href="{% url 'enviarws' pendiente.preventivo.id %}">enviar</a> </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+ </table>  
+{% endblock %}

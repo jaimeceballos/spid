@@ -1415,9 +1415,10 @@ class EnvioPreJudicial(models.Model):
 	preventivo = models.ForeignKey('Preventivos') 
 	user = models.ForeignKey(User)
 	enviado=models.IntegerField(default=0)
+	dependencia = models.ForeignKey('Dependencias',null=True,blank=True)
 
 	def __unicode__(self):
-		return u'%s' % (self.fecha)
+		return u'%s' % (self.fecha_envio)
  
 	class Meta:
 		ordering = ['fecha_envio']

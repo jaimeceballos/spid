@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block main %}
+ <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+    <thead>
+      <tr>
+        <th>Nro</th>
+        <th>Fecha Carga</th>
+       <th>Causa</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for preventivo in pendientes %}
+        <tr>
+          <td> {{ preventivo.nro }} </td>
+          <td> {{ preventivo.fecha_carga }} </td>
+          <td> {{ preventivo.caratula }} </td>
+          <td> <a href="{% url 'selectPrev' preventivo.id %}">Ver</a> </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+ </table>  
+{% endblock %}
