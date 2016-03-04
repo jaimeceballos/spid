@@ -26,6 +26,7 @@ class UserProfile(models.Model):
 	ureg = models.ForeignKey('UnidadesRegionales',blank=True, null=True,)
 	depe = models.ForeignKey('Dependencias',blank=True, null=True,)
 	last_login = models.BooleanField(default=True)
+	ultimo_ingreso = models.DateTimeField(blank=True,null=True)
 	
 	def __str__(self):  
 	  return "%s's profile" % self.user  

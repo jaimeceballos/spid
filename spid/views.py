@@ -81,6 +81,10 @@ def login_user(request):
          password = request.POST.get('password')
          depe = request.POST.get('dependencias')
          ureg = request.POST.get('ureg')
+         ultimo_ingreso = User.objects.get(username = username).last_login
+         profile = User.objects.get(username=username).get_profile()
+         profile.ultimo_ingreso = ultimo_ingreso
+         profile.save()
          if username.isdigit():
           user = auth.authenticate(username=username, password=password)
           if user is not None:
@@ -139,7 +143,7 @@ def login_user(request):
                   if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
                     no_enviados = obtener_cantidad_no_enviados(request)
                   no_autorizados = obtener_cantidad_no_autorizados(request)
-                  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados})
+                  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso})
                 else:
                   state="Dependencias seleccionadas INCONRRECTAS"
                   return render(request, 'index.html', {'state':state,'form':form})
@@ -197,7 +201,7 @@ def login_user(request):
               else:    
                 state="Usuario no Autorizado"
                 return render(request, 'index.html', {'state':state,'form':form})
-            return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday})
+            return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'ultimo_ingreso':ultimo_ingreso})
           
         else:
             return render(request, 'index.html', {'name':name,'form':form})
