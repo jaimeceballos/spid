@@ -18,6 +18,16 @@
     <center><p style="font:15px;"><strong>Usted tiene {{ no_autorizados }} preventivos pendientes de autorizacion por favor revise el <a href="{% url 'pendientes_autorizacion' %}">listado</a>.<strong></p></center>
     </div>
   {% endif %}
+  {% if 'investigaciones' in state or 'policia' in state %}
+  <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;">
+    <p id="salutation" style="color:black">
+      Habiendo detectado que en la totalidad de los preventivo cargados, se estan cargando los elementos involucrados en el hecho dentro de la descripcion del mismo, es necesario recordar que el sistema cuenta con un modulo de carga de elementos involucrados en el hecho.<br>
+      Es importante que la carga de los mismos se realice dentro de este modulo ya que este modulo permite realizar una busqueda de preventivos a partir de los elementos involucrados en el hecho.<br>
+
+    </p></blockquote>
+  </div>
+
+  {% endif %}
 <!--
 <div align="center" style="color: #fff;background-color: #c9302c;border-color: #ac2925;height:250px" >
     <h2 style="color: #fff">El Per&iacute;odo de cargas de pruebas en el Sistema SPID finaliza el D&iacute;a 31 de Diciembre de 2014 (31/12/2014),<br>
@@ -31,14 +41,14 @@
 
 {% if birthday %}
 		<div id="cumple">
-			
+
 			<center><p id="salutation">
 				Bienvenido {{user.first_name}} {{user.last_name}}, <br>usted ha sido seleccionado como el usuario del dia!!!<br>
 				Haga click en el boton para recibir su estimulo.
 			</p></center>
 			<div align="right" id="basic-modal"><a class="btn btn-success basic" name="basic"  href="." ><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Recibir </label></a></div>
 		</div>
-			
+
 	{% endif %}
 -->
 
@@ -81,5 +91,3 @@
 <li>6. Conexión con el sistema del Poder Judicial, con el fin de que los datos sean actualizados recíprocamente.</li></ul></div>
 
 -->
-
-
