@@ -7372,7 +7372,7 @@ def informe(request,idhec,idprev):
 			 'state':state, 'continua':continua,'delito':delito,'descripcion':descripcion,'idprev':idprev,
 			 'destino': destino,'form1':form1,'ftiposdelitos':ftiposdelitos,'tamaño':5,}
 
-		enviarp(request,idprev)
+		#enviarp(request,idprev)
 		#return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
 		#if envio<1:
 		return render_to_response('./informado.html', info, context_instance=RequestContext(request))
@@ -15713,3 +15713,10 @@ def buscar_tipos_doc(tipo_doc):
 	if Tipodocumentos.objects.filter(descripcion__icontains=tipo_doc):
 		return Tipodocumentos.objects.filter(descripcion__icontains=tipo_doc)[0].pk
 	return 'DESC'
+
+def actualizar_ultimo_ingreso():
+	usuarios = User.objects.all()
+	for user in usuarios:
+		profile = user.get_profile()
+		profile.ultimo_ingreso = user.last_login
+		profile.save()
