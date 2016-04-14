@@ -147,6 +147,8 @@ urlpatterns = patterns('',
     url(r'^pwebservice/$', 'preventivos.views.enviadop',name='pwebservice'),
     url(r'^pwebservice/enviar/(?P<idprev>[0-9]+)/$', 'preventivos.views.enviarp',name='enviarws'),
     url(r'^awebservice/$', 'preventivos.views.enviadoa',name='awebservice'),
+    url(r'^pendientes_envio/$','preventivos.views.pendientes_envio',name='pendientes_envio'),
+    url(r'^pendientes_autorizacion/$','preventivos.views.pendientes_autorizacion',name='pendientes_autorizacion'),
     (r'^', 'preventivos.views.page_not_found'),
     (r'^', 'preventivos.views.server_error'),
 
