@@ -9,7 +9,7 @@ from django.conf import settings
 
 
 handler404 = 'preventivos.views.page_not_found'
-handler500 = 'preventivos.views.server_error' 
+handler500 = 'preventivos.views.server_error'
 admin.autodiscover()
 
 urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', name="changePass"),
@@ -18,7 +18,7 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     (r'^spid/login/$', 'spid.views.login_user'),
     (r'^solicitud/$', 'spid.views.registro'),
      (r'^contacto/$', 'spid.views.contactar'),
-    (r'^resetpassword/$', 'django.contrib.auth.views.password_reset', 
+    (r'^resetpassword/$', 'django.contrib.auth.views.password_reset',
     {'post_reset_redirect' : '../spid/','template_name' : 'registration/password_reset_form.html'}),
     (r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
     (r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
@@ -30,6 +30,6 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     (r'^spid/salir/$', 'spid.views.nologin'),
     (r'^admin/config/', include(admin.site.urls)),
     (r'^preventivos/', include('preventivos.urls')),
+    url(r'^NIF/',include('NIF.urls')),
     (r'^','preventivos.views.page_not_found'),
  )
-
