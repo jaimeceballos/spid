@@ -44,7 +44,7 @@ def completar(numero):
 	return numero
 
 def crear_barcode(numero):
-	filename = os.path.join('spid','static','generated','temp',str(numero))
+	filename = os.path.join('generated','temp',str(numero))
 	print filename
 	writer = barcode.writer.ImageWriter()
 	code = barcode.Code39(numero,writer = writer,add_checksum = False)
@@ -65,8 +65,8 @@ def generar_codigos(request):
 			paginas =  calcular_cantidad_paginas(total_imagenes)
 			archivo = FPDF('P','mm','A4')
 			archivo.add_page()
-			#os.remove(os.path.join('spid','static','generated','codigos.pdf'))
-			os.makedirs(os.path.join('spid','static','generated','temp'))
+			#os.remove(os.path.join('generated','codigos.pdf'))
+			os.makedirs(os.path.join('generated','temp'))
 			for pagina in range(0,paginas):
 				eje_x = 0
 				for linea in range(0,12):
@@ -87,8 +87,8 @@ def generar_codigos(request):
 					eje_x = 0
 				if(cantidad > 0):
 					archivo.add_page()
-			archivo.output(os.path.join('spid','static','generated','codigos.pdf'),'F')
-			shutil.rmtree(os.path.join('spid','static','generated','temp'))
+			archivo.output(os.path.join('generated','codigos.pdf'),'F')
+			shutil.rmtree(os.path.join('generated','temp'))
 			return HttpResponseRedirect(reverse('descargar'))
 		else:
 			values['error'] = 'Error en el formulario vuelva a intentarlo'
