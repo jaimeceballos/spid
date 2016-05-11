@@ -57,6 +57,7 @@ def generar_codigos(request):
 	if request.method == 'POST':
 		form = GeneratorForm(request.POST)
 		if form.is_valid():
+			os.chmod(os.path.join('generated','temp'),755)
 			cantidad = int(form.cleaned_data['cantidad'])
 			provincia = form.cleaned_data['codigo_provincia']
 			ciudad = form.cleaned_data['codigo_ciudad']
