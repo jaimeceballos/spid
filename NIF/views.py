@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from .forms import *
 from fpdf import FPDF
 import barcode, os, shutil
-
+from spid.settings import RUTA_PROYECTO as ruta
 
 TAMANIO_CODIGO = 50
 
@@ -57,6 +57,7 @@ def generar_codigos(request):
 	if request.method == 'POST':
 		form = GeneratorForm(request.POST)
 		if form.is_valid():
+			os.chmod(os.path.join('generated','temp'),755)
 			cantidad = int(form.cleaned_data['cantidad'])
 			provincia = form.cleaned_data['codigo_provincia']
 			ciudad = form.cleaned_data['codigo_ciudad']
@@ -117,3 +118,6 @@ def home_nif(request):
 
 def descargar_codigos(request):
 	return render_to_response('descargar.html',{},context_instance= RequestContext(request))
+
+def ver():
+	print ruta
