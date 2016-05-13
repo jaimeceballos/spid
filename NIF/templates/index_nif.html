@@ -17,9 +17,12 @@
         right: 20%;
         bottom: 30%;
       }
-
+      .barra{
+        background-color: #101010;
+        width: 100px;
+      }
     </style>
-
+    
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
@@ -32,6 +35,7 @@
 
   </head>
   <body>
+
     <div class="content">
       {% if error %}
         <div class="alert alert-success alert-dismissable">
@@ -44,35 +48,44 @@
         </div>
       {% endif %}
       <div class="jumbotron well" id="formulario">
+        <center><h2>Generador de codigo NIF</h2></center>
+        <hr>
         {% block contenido %}
         <form class="form-horizontal" action="{% url 'generar' %}" method="post">{% csrf_token %}
           <div class="row">
-              <div class="col-xs-2">
+              <div class="col-md-2">
                 <label>Numero Inicial:</label>
               </div>
-              <div class="col-xs-1">
+              <div class="col-md-1">
                 {{form.codigo_provincia}}
               </div>
-              <div class="col-xs-1">
+              <div class="col-md-1">
                 {{form.codigo_ciudad}}
               </div>
-              <div class="col-xs-3">
+              <div class="col-md-2">
                 {{form.numero_inicial}}
               </div>
           </div>
           <br>
           <div class="row">
-              <div class="col-xs-2">
+              <div class="col-md-2">
                 <label for="">Cantidad</label>
               </div>
-              <div class="col-xs-2">
+              <div class="col-md-3">
                 {{form.cantidad}}
               </div>
           </div>
           <br>
-          <button type="submit" class="btn btn-block" name="generar">Generar</button>
+          <button type="submit" class="btn btn-block btn-default" name="generar">Generar</button>
         </form>
+        <br>
+        <div>
+          <a href="/generated/codigos.pdf" class="btn btn-xs btn-success"> <i class="glyphicon glyphicon-download-alt"></i> Ver &uacute;ltimo generado </a>
+        </div>
       {% endblock contenido %}
+      <p>
+        <center><small>Desarrollado por Divisi&oacute;n Desarrollo Inform&aacute;tico - &Aacute;rea Comunicaciones e Inform&aacute;tica - Jefatura de Polic&iacute;a</small></center>
+      </p>
       </div>
     </div>
   </body>
