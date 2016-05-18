@@ -66,7 +66,7 @@ def generar_codigos(request):
 			paginas =  calcular_cantidad_paginas(total_imagenes)
 			archivo = FPDF('P','mm','A4')
 			archivo.add_page()
-			os.remove(os.path.join('/tmp/','NIF','generated','codigos.pdf'))
+			os.remove(os.path.join('/tmp','NIF','generated','codigos.pdf'))
 			os.makedirs(os.path.join('/tmp','NIF','generated','temp'))
 			for pagina in range(0,paginas):
 				eje_x = 0
