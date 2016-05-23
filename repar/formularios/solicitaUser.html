@@ -1,0 +1,168 @@
+<html>
+ {% load static %}
+
+
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulario de Solicitud de Usuarios SPID</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+h1.salto{
+PAGE-BREAK-AFTER: always
+}
+body {
+  background-color:#fff;
+}
+
+p#parrafo{
+  text-indent: 9%;
+  font-size: 11px;
+  padding: 20px;
+}
+#rot{
+  
+    color: rgba(0, 0, 0, 0.1);
+    -webkit-transform: rotate(314deg);
+    -moz-transform: rotate(314deg);
+    -o-transform: rotate(314deg);
+    writing-mode: bt-rl;
+    margin-left:10%;
+    vertical-align: middle;
+
+    width:700px;
+    font-size:48px;
+}
+strong{
+  font-size: 12px;
+    font-family: "DroidSansMono";
+}
+#B2 {
+  width:700px;
+  margin-left:auto;
+  margin-right:auto;
+  border:2px inset #07fbe7;
+}
+h1 {
+  color:black;
+  font-size: 18px;
+  text-align:center;
+  position: relative;
+  margin-left: 0px;
+  padding: 0px;
+}
+h2 {
+  color:#03c4b4;
+  padding-left:20px;
+  margin-top:50px;
+  margin-bottom:50px;
+}
+h4 {
+ color:black;
+  font-size: 12px;
+  margin-left:25%;
+  position: relative;
+  padding: -5px;
+}
+img {
+  float:left;
+  vertical-align: top;
+  width:8%;
+  padding:5px;
+}
+p {
+  font-size:11px;
+  padding:3px;
+  padding-top: 0px;
+  color:black;
+
+  text-align:justify;
+  line-height: -2px;
+  font-family: "DroidSansMono";
+}
+div{
+  font-size:12px;
+  padding:3px;
+  padding-top: 0px;
+  color:black;
+  text-align:justify;
+  line-height: 15px;
+  font-family: "DroidSansMono";
+}
+ul {
+  list-style:none;
+  color:#6a030f;
+  font-size:12px;
+  line-height: 5px;
+  font-weight:bold;
+  
+}
+
+ul#L1 {
+  list-style:none;
+  color:#6a030f;
+  font-size:12px;
+  font-weight:bold;
+  
+}
+ul#L2 {
+  color:#c1051b;
+  font-weight:normal;
+}
+
+table {
+  width:auto;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  background-color:#fff;
+}
+p#P {
+  border:2px outset #f1ae0d;
+  width:60%;
+  margin-left:auto;
+  margin-right:auto;
+  color:#f1ae0d;
+  font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+table {
+  border-collapse: collapse;
+  border: 0px solid #fff; 
+  width: 100%; 
+
+}
+tr { background: #fff; }
+tr.altrow { background: #F9F9F9;  }
+th, td {
+  text-align: left;  
+  font-size: 12px;   
+  border-width: 0px;
+    border-style: solid;
+}
+p#P a {
+  text-decoration:none;
+  color:#ac7b04;
+}
+p#P a:hover {
+  text-decoration:underline;
+}
+
+
+</style>
+
+
+</head>
+<body >
+ 
+
+   {%include "header.html"%}
+ <strong>{%autoescape off%}{{name}}{%endautoescape%}</strong>
+
+<p id="parrafo"><strong>{%autoescape off%}{{cuerpos}}{%endautoescape%}</strong></p>
+  <div style="width:700px;margin-left:10%;padding:10px;"><strong>{%autoescape off%}{{usuas}}{%endautoescape%}</strong></div>
+<p id="parrafo"><strong>{%autoescape off%}{{saludo}}{%endautoescape%}</strong></p>
+
+<div>
+   {%include "footer.html"%}</div_>
+</body>
+</html>
+

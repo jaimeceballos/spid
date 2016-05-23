@@ -4,8 +4,10 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <link rel="shortcut icon" href="{{STATIC_URL}}/imagenes/preventivos/icono.ico" type="image/x-icon"/>
- <title>SISTEMA POLICIAL DE INFORMACIÓN DELICTUAL</title> 
+  <link rel="shortcut icon" href="{{STATIC_URL}}imagenes/preventivos/icono.ico" type="image/x-icon"/>
+ 
+  
+ <title>SISTEMA POLICIAL DE REGISTRO DE ARMAS</title> 
 {% include "fnciones.html"%}
 <script type="text/javascript">
         $(document).ready(function () {
@@ -67,13 +69,13 @@
       
      
      
-            <div id="logo4"><p style="font-size:28px"> INCIDENCIA DELICTIVA</p></div>
-            <div id="logo6"><p style="font-size:16px">ESTADISTICAS - HERRAMIENTAS DE ANALISIS Y PREVENCION</p></div>
+            <div id="logo4"><p style="font-size:28px"> Siregar - Policia de Chubut </p></div>
+            <div id="logo6"><p style="font-size:16px"> Sistema de Registración  de Armas</p></div>
 
-                       <!--<div id="logo2"><p>POLICIA</p><p>DE LA</p><p>PROVINCIA</p><p> DE </p><p>CHUBUT</p></div>-->
+                       <!--<div id="logo2"><p>POLICIA</p><p>DE LA</p><p>PROVINCIA</p><p> DE </p><p>CHUBUT</p></div>
 
                        <div id="logo2">
-                        <img src="{{STATIC_URL}}imagenes/preventivos/CIUDAD.gif" style="border:0px solid #C0C0C0;"></div>
+                        <img src="{{STATIC_URL}}imagenes/preventivos/CIUDAD.gif" style="border:0px solid #C0C0C0;"></div>-->
       
                </div>   
       
@@ -84,7 +86,7 @@
 
 </section>
 <!-- header area -->
-            {% include "menuver.html"%}
+            {% include "menurepar.html"%}
  
  
 
@@ -108,14 +110,7 @@
           {% block contenidos%}
       {% endblock %}    
     </div>
-      <div id="modificar">
-          {% block modificar%}
-      {% endblock %}    
-    </div>
-     <div id="ciudadres">
-          {% block ciudadres%}
-      {% endblock %}    
-    </div>
+     
 
              
 
@@ -132,7 +127,7 @@
   <div id="colophon" class="wrapper clearfix">
           <div class="blue align.left">{% if user.is_authenticated %}
             {%if user.is_staff or not user.is_staff%}Usuario :&nbsp;{% endif %} &nbsp;{{ user.first_name }}&nbsp;{{ user.last_name }}&nbsp;-- {{destino}}
-            {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;<a class="blue align-right"><strong>Policia de Chubut - Div. Sistemas Informaticos - &copy; SEP/2013</strong> &nbsp;&nbsp;</a>  </div> 
+            {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;<a class="blue align-right"><strong>Policia de Chubut - Div. Sistemas Informaticos - &copy; MAY/2016</strong> &nbsp;&nbsp;</a>  </div> 
 
     </div>
     
@@ -177,9 +172,9 @@
         style="align:center;border:0px solid #C0C0C0;">
 
       <h4>Policia de la Provincia de Chubut </h4>
-       <h4>Incidencia Delictual</h4>
+       <h4>Repar</h4>
        <br>
-        <h4> - Ingreso no Permitido - Comuniquese con el Administrador de SPID</h4>
+        <h4> - Ingreso no Permitido - Comuniquese con el Administrador del Sistema</h4>
     {%endblock%}   
    </div>
 {%endif%}

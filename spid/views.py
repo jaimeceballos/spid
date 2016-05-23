@@ -77,6 +77,7 @@ def login_user(request):
          return render(request, 'correocontacto.html', {'state':state,'formj':formj})
     else:
         if request.POST.get('logonea')=='Conectar':
+         
          username = request.POST.get('username')
          password = request.POST.get('password')
          depe = request.POST.get('dependencias')
@@ -133,10 +134,13 @@ def login_user(request):
               
                 gr=user.groups.values_list('name', flat=True)
                 for varios in gr:
-                    state = str(Group.objects.get(name=varios))
+                    state = gr
+                    #str(Group.objects.get(name=varios))
+
                 if uregis == uregis1 and depeni == depeni1:
                   for varios in gr:
-                    state = str(Group.objects.get(name=varios))
+                    state = gr
+                    #str(Group.objects.get(name=varios))
                   request.session['state']=state
                   request.session['destino']=destino
                   no_enviados = False
@@ -178,10 +182,12 @@ def login_user(request):
 
                 gr=user.groups.values_list('name', flat=True)
                 for varios in gr:
-                    state = str(Group.objects.get(name=varios))
+                    state = gr
+                    #str(Group.objects.get(name=varios))
                 if uregis == uregis1 and depeni == depeni1: 
                    for varios in gr:
-                    state = str(Group.objects.get(name=varios))
+                    state = gr
+                    #str(Group.objects.get(name=varios))
                    request.session['state']=state
                    request.session['destino']=destino
                 else: 
@@ -201,7 +207,8 @@ def login_user(request):
               else:    
                 state="Usuario no Autorizado"
                 return render(request, 'index.html', {'state':state,'form':form})
-            return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'ultimo_ingreso':ultimo_ingreso})
+
+              return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'ultimo_ingreso':ultimo_ingreso})
           
         else:
             return render(request, 'index.html', {'name':name,'form':form})
@@ -349,6 +356,6 @@ def passwordChange(request):
       state = "SE DESCONECTO DEL SISTEMA"
   form = DependenciasForm()      
   formd = []  
-  print form,formd
+  #print form,formd
   return render(request, 'index.html', {'formd':formd,'form':form,'state':state,})
   #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})

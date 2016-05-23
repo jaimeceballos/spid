@@ -1,0 +1,20 @@
+<script>
+  function abrirMod(){
+    window.showModalDialog("http://127.0.0.1:8000/repar/contacto/","","dialogWidth:800px;dialogHeight:540px;dialogTop:100;dialogLeft: 350");
+  }
+</script>
+
+{% block cabecera %}
+<li class='current'><a href='#'><span>Utilidades</span></a>
+       
+                        <ul>
+      
+        <li><a href="https://www.renar.gov.ar"  target="_blank" ><span>RENAR</span></a></li>
+           
+        <li><a href="#" onclick="abrirMod();"><span>Contacto</span></a></li>
+        
+        <li><a href="/repar/salir/"><span>Desconectar</span></a></li>
+      </ul>
+ </li>       
+        
+{%endblock%}

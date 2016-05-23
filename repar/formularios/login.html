@@ -1,0 +1,38 @@
+{% extends "authrepar.html" %}
+ {% load static %}
+{% block sidebar %}
+<script>
+  function abrirMod(){
+    window.showModalDialog("http://policia.chubut.gov.ar:8000/repar/contacto/","","dialogWidth:670px;dialogHeight:540px;dialogTop:200;dialogLeft: 350");
+  }
+  </script>
+		   <table border="0" cellspacing="0" cellpadding="0" width="230px" style="margin:0 auto;">{% csrf_token %}
+                       <tr><td class="lefttitle"><b>INICIAR SESION</b>
+                                 <tr><td class="box_middle" >
+                                 <table>
+                                     {{ state }}
+                                	<form id="form" action="/repar/login/" method="POST">{% csrf_token %} 
+                                		{% if next %}
+		                                <input type="hidden" name="next" value="{{ next }}" />
+		                                {% endif %}
+                                    <input type="hidden" name="estado" id="estado" value="{{ state }}" /> 
+                                   
+		                                <p><span class="rojo"></span>Usuario</p>
+		                                <input type="text" name="username" class="ame" value="{{ username }}" autocomplete="off"/>
+		                                <p><span class="rojo"></span>Contraseña</p>
+		                                <input type="password" name="password" class="ame" value="" />
+		                                <br><br>
+                                  
+		                                  <input class="new-aqua" class="btn btn-success" type="submit" value="Conectar" name="logonea"/>
+                                      <input type="submit" class="new-aqua" name="registrar" value="Registrarse" title="Mediante formulario permite solicitar Usuario y Passqord" />
+                                        
+                                </form><br><br>
+                                  <p>Olvido su contraseña? <a href="/resetpassword/"> <img src="{% get_static_prefix %}imagenes/spid/forget.png" style="border:0px solid #C0C0C0; width:20px; height:20px;"></a></p>
+                                  <p>Contactar a: <a href="#" onclick="abrirMod();"> <img src="{% get_static_prefix %}imagenes/spid/contact.gif" style="border:0px solid #C0C0C0; width:20px; height:20px;" title="Enviar Consultas a:"></a></p>
+                                   </table>
+                                </td></tr>
+                         	<tr><td class="box_foot"></td></tr>
+                     <table>
+	         	{% endblock %}
+{% block main %}
+{% endblock %}

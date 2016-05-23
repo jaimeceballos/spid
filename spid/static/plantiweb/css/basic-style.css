@@ -186,7 +186,7 @@ body{
 	background:#fff;
 }
 h1, h2, h3, h4, h5, h6{
-	color:#333; 
+	color:#404; 
 }
 
 footer{ 
@@ -302,7 +302,16 @@ box-shadow: 0 1px 4px rgba(0,0,0,.2);
 -o-box-shadow: 0 1px 4px rgba(0,0,0,.2);
 }
 
+.recuadro
+{
+	box-sizing: border-box;
+    max-width: 100%;
+    margin-left: 10px;
+    padding: 18px;
+    background-color:  #ffffff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 
+}
 aside { 
 	float:right;
 	width:30%;
@@ -320,10 +329,10 @@ aside {
 .srt-menu ul {
 	position:		absolute;
 	display:none;
-	width:			10em; /* left offset of submenus need to match (see below) */
+	width:			15em; /* left offset of submenus need to match (see below) */
 }
 .srt-menu ul li {
-	width:			100%;
+	width:			15em;
 }
 .srt-menu li:hover {
 	visibility:		inherit; /* fixes IE7 'sticky bug' */
@@ -334,7 +343,7 @@ aside {
 	margin-left:0px;
 }
 .srt-menu li li {
-	margin-left:0px;
+	margin-left:-10px;
 }
 .srt-menu a {
 	display:		block;
@@ -343,7 +352,7 @@ aside {
 .srt-menu li:hover ul,
 .srt-menu li.sfHover ul {
 	display:block;
-	left:			-5;
+	left:			-10;
 	top:			31px; /* match top ul list item height */
 	z-index:		99;
 	-webkit-box-shadow:  2px 3px 2px 0px rgba(00, 00, 00, .3);

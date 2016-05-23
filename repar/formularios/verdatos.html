@@ -1,0 +1,233 @@
+{% extends "piso.html" %}
+{% block main %}
+
+<div class="recuadro">
+ <form id="form" action="." method="post" class="form-group">{% csrf_token %} 
+    <input type="hidden" name="ids" id="ids" value="{{result.id}}" autocomplete="off"/>
+    <div class="form-group">
+      <div class="row">
+        <h1>Listado General de Registro de Armas</h1>
+        <div id="demo">
+        <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+                      <thead>
+                          <tr class="gradeC">
+                             <th width="10px">Ver+</th>
+                             <th width="20px">Tipo</th>
+                             <th width="20px">Calibres</th>
+                             <th width="50px">Marcas</th>
+                             <th width="50px">Modelos</th>
+                             <th width="20px">Nro Arma</th>
+                             <th width="20px">Ultima Transferencia</th>
+                          </tr>
+                      </thead>
+                        
+                           <tbody>
+                               {% for listas in lista %}
+                                <tr  class="gradeC"> 
+                                  <td width="5%"><a href='/repar/seek/{{ listas.id }}/'><span class="glyphicon glyphicon-info-sign" title="Ver más Información"></span></a> <a href='/repar/seek/{{ listas.id }}/'></a></td>
+                                  <td width="15%">{{ listas.tipoar}}</td>
+                                  <td width="20%">{{ listas.calibre}}</td>
+                                  <td width="30%">{{ listas.marca}}</td>
+                                  <td width="80%">{{ listas.modelo}}</td>
+                                  <td width="10%">{{listas.nro_arma}}</td>
+                                   <td width="15%">{{listas.fecha_transf|date:"d/m/Y"}}</td>
+                                  </td>
+                                </tr>
+                               {% endfor %}
+                          </tbody>
+        </table>
+       </div>
+      </div>
+     </div>
+     <br>
+     {%if result%}
+          <input type="hidden" id="ide" name="ide" value="{{result.id}}"/>
+          <div class="form-group">
+                <div class="row">
+                   <div class="col-md-12">  
+                      
+                               <h6>Datos del Propietario</h6>
+                                   <ul>
+                                     <li>
+                                        Propietario : {{result.apellidos_pro}}, {{result.nombres_pro}} --- Domicilio : {{result.domicilio_pro}} </li>
+                                        <li>Tipo y Nro Documento : {{result.tipodoc}}, {{result.nrodoc_pro}}</li>
+                                     </li>
+                                     <li>
+                                        Nro de Prontuario : {{result.nro_prontuario}} --- Sección : {{result.seccion}} 
+                                     </li>
+                                  </ul>
+                              {%if historial%}
+                               <h6>Ultimos Movimientos</h6>
+                               {%for his in historial%}
+                                <ul>
+                                     <li>
+                                        Fecha Transferencia : {{his.fechamov|date:"d/m/Y"}} --- Propietario : {{his.apellidos_pro}}, {{his.nombres_pro}}  ---  Domicilio : {{his.domicilio_pro}} </li>
+                                     <li> 
+                                        Tipo y Nro Documento : {{his.tipodoc}}, {{his.nrodoc_pro}}
+                                     </li>
+                                     <li>
+                                        Nro de Prontuario : {%if his.pro_prontuario%}{{his.nro_prontuario}}{%else%}NO POSEE{%endif%} ---     Sección : {%if his.seccion%}{{his.seccion}}{%else%}NO POSEE{%endif%}
+                                     </li>
+                                     <hr>
+                                  </ul>
+                               {%endfor%}  
+                              {%endif%}
+                            
+                   </div>
+                   <br>
+                   <div class="modal-footerep">
+                      <div align="right">
+                    
+                        <button type="button" id="transf" class="btn-sm btn-link" title="Transferir Registro">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        </button>
+                        <a href='/repar/seek/0/'> <button type="button" id="reset" class="btn-sm btn-link" title="Iniciar Formulario"><span class="glyphicon glyphicon-refresh"></span></button></span></a>  
+                      
+                     </div>
+                   </div>
+         </div>
+      </div>
+      {%endif%}
+      
+      <div id="trans" name="trans" style='display:none;'>
+      <div class="container" style="width:100%"> 
+     
+        <div class="panel panel-primary">
+         <div class="panel-heading">Transferir de Propietario </div>
+          <br>
+          <div class="form-group">
+           <div class="row">
+             <div class="col-md-10">
+                    <label for="pais_id" class="col-xs-2 control-label"> Apellido/s</label>
+                    <div class="col-lg-10">
+                       {{formt.apellidos_pro}}
+                    </div>
+             </div>
+          
+             <div class="col-xs-2 col-md-10">
+           
+                <label for="nombrespro" class="col-xs-2 control-label"> Nombres</label>
+                <div class="col-lg-10">
+                 {{formt.nombres_pro}}
+                </div>
+             </div>
+             <div class="col-xs-2 col-md-10">
+           
+                <label for="nombrespro" class="col-xs-2 control-label"> Domicilio</label>
+                <div class="col-lg-10">
+                 {{formt.domicilio_pro}}
+                </div>
+             </div>
+              <div class="col-md-10">
+       
+             
+                  <label for="tipodoc" class="col-xs-2 control-label"> Tipo Doc</label>
+                   <div class="col-lg-3">
+                      <select name="tipodoc" id="tipodoc" class="form-control">
+                         <option {{formt.tipodoc}}</option>
+                      </select> 
+                    </div>
+             
+                      <label for="nrodocpro" class="col-xs-1 control-label"> Nro </label>
+                      <div class="col-lg-3">
+                         <input type="text" id="nrodoc_pro" name="nrodoc_pro" size="10" 
+                         onkeypress="return isNumberKey(event,this)" autocomplete="off" 
+                         class="form-control" {{formt.nrodoc_pro}}
+                      </div>
+              </div>
+              
+                  <div class="col-md-10">
+               
+                    <label for="nroprontuario" class="col-xs-2 control-label">Prontuario</label>
+                    <div class="col-lg-3">
+                        <input type="text" class="form-control" name="prontuario" id="prontuario" placeholder="Nro de Prontuario" autocomplete="off"/>
+                    </div>
+                          
+                    <label for="seccion" class="col-xs-1 control-label"> Sección </label>
+                    <div class="col-lg-3">
+                      <input type="text" class="form-control" name="seccion" id="seccion" placeholder="Sección" autocomplete="off"/>
+                    </div>
+            
+                    <div class="col-lg-1">
+                     <button type="button" id="searchpro" class="btn-sm btn-link" title="Buscar Prontuario">
+                     <span class="glyphicon glyphicon-search"></span>
+                     </button>
+                    </div>
+                  </div>
+
+
+              <div class="col-md-10">
+                  <label for="nrodocpro" class="col-xs-2 control-label"> Observaciones </label>
+                      <div class="col-lg-10">
+                          {{formt.observaciones}}
+                      </div>
+              </div>
+          </div>
+        </div>
+                    
+        <div class="modal-footerep">
+          <button type="button" id="cerro" class="btn-xs btn-primary" title="Cerrar">
+          <span class="glyphicon glyphicon-off"></span>
+          </button>
+          <input class="btn-md btn-success" type="submit" value= "Grabar" name="grabart" title="Guardar datos" >
+        </div>
+     
+       
+      </div>
+    </div>  
+  </div>
+  <br>
+   <div id="protu" name="protu" style='display:none;'>
+      <div class="container" style="width:100%"> 
+     
+       <div class="panel panel-primary">
+       <div class="panel-heading">Form de Consultar Prontuarios</div>
+        <br>
+        <div class="form-group">
+          <div class="row">
+  
+            <div class="col-md-10">
+             <label for="models" class="col-lg-2 control-label"> Buscar </label>
+             <div class="col-lg-3">
+             <input type="text" class="form-control" name="datos" id="datos" onkeypress="return isNumberKey(event,this)" placeholder="Dni" autocomplete="off" value=""/>
+            </div>
+              <button type="button" id="seek" class="btn-sm btn-link" title="Buscar">
+              <span class="glyphicon glyphicon-search"></span> </button>
+           </div>
+          </div>
+         </div>
+           <div class="form-group">
+          <div class="row"> 
+            <br>
+            <div class="col-md-10">
+                     <label for="modelosar" class="col-lg-2 control-label"> Resultado </label>
+                      <div class="col-lg-6">
+                        <select name="modelos" id="modelos" style="width: 500px;" class="form-control">
+                                 <option selected="selected" </option>
+                        </select>
+                   
+                      </div>
+                      
+                 </div>
+        </div>
+        <div class="modal-footerep">
+       
+          <button type="button" id="cierro" class="btn-xs btn-primary" title="Cerrar">
+          <span class="glyphicon glyphicon-off"></span>
+          </button>
+          
+        </div>
+     
+       </div>
+      </div>
+    </div>  
+   </div>
+  <br>
+</form> 
+</div>
+{% endblock %}
+{%block contenido%}
+
+      
+{%endblock%}
+
