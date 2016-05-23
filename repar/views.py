@@ -79,7 +79,8 @@ def loguser(request):
     destino = ''
     changePass = ''
     birthday=False
-    form = DependenciasForm()
+    #form = DependenciasForm()
+    form=''
     formpass = CambiarPassForm()
    
     if request.POST.get('username')=='':
