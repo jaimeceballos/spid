@@ -12,7 +12,7 @@ handler500 = 'repar.views.server_error'
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns('',url(r'^repar/change/$', 'repar.views.passwordChange', name="changePass"
 	(r'^$', 'repar.views.iniciar'),
     (r'^inicio/$', 'repar.views.inicial'),
     (r'^login/$', 'repar.views.loguser'),

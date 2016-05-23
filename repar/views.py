@@ -159,6 +159,41 @@ def nologin(request):
     formd = []  
     return render(request, 'login.html', {'formd':formd,'state':state})
 
+def passwordChange(request):
+  formpass = CambiarPassForm(request.POST)
+  changePass = 'si'
+
+  state = request.session['state']
+  destino = request.session['destino']
+  form = ''
+  #DependenciasForm()
+
+  user = User.objects.get(username=request.user)
+  #if formpass.is_valid():
+  pass1 = request.POST.get('pass1')
+ 
+  if pass1:
+     user.date_joined=datetime.datetime.now()
+     user.set_password(pass1)
+     user.save()
+     profiles = user.get_profile()
+     profiles.last_login=False
+     profiles.save()
+     changePass = ''
+  logout(request)
+  try:
+      del request.session['state']
+      del request.session['destino']
+      request.session.flush()
+  except KeyError:
+      pass
+      state = "SE DESCONECTO DEL SISTEMA"
+  #form = DependenciasForm()      
+  formd = []  
+  #print form,formd
+  return render(request, 'login.html', {'formd':formd,'form':form,'state':state,})
+  #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})
+
 def register(request):
     info_enviado = False
     name=""
