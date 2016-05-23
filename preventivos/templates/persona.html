@@ -3,13 +3,13 @@
 {% block main %}
 <script>
   function abrirModal(){
-    window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addbarrios/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    window.showModalDialog("http://127.0.0.1:8000/preventivos/addbarrios/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
    function abrirModalc(){
     window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addcalles/","","dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
   }
   function abrirModalcr(){
-    ret = window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/addciudades/?id="+form,window.document,"dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
+    ret = window.showModalDialog("http://127.0.0.1:8000/preventivos/addciudades/?id="+form,window.document,"dialogWidth:450px;dialogHeight:300px;dialogTop:200;dialogLeft: 350;resizable:0");
     if(ret !=null){
       alert(id)
       document.getElementById(ciudades_r).innerText=form;
@@ -333,48 +333,5 @@
       
 {% endblock %}
 {%block ciudadres%}
-<form  action="" role="form"  method="post">{% csrf_token %} 
 
-   <h1>Formulario de ABM de Ciudades/Localidades</h1>
-   {% if errors %}
-            
-              {% for error in errors %}
-                    <div id="fade" class="overlay"  style="display: block;"></div>
-                     <div id="light" class="modals" style="display: block;">
-                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
-                        <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
-                       </p>
-                       </div>
-               {% endfor %}
-             
-    {% endif %}  
-    <br>
-
-    <p><strong for="pais" name="pais"> Seleccione Pais  :
-     <select name="pais" id="pais" class="combolist"  size="1"/>
-      <option name="pais">Seleccione Pais </option>&nbsp;
-       <option {{formpr.pais}}</option>
-     </select></strong></p>
-    
-      
-     <input type="hidden" name="ids" id="ids" value="{{ciudad.id}}" autocomplete="off"/>
-    
-     <p><label for="descripcion" name="descripcion">Ciudad Residencia : 
-    <input type="text" name="descripcion" id="descripcion" value="{{ciudad.descripcion}}" autocomplete="off"/>
-    <a href="/preventivos/ciudades/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>   
-    
-     {% if ciudad in lista %}
-      <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">
-     <input class="btn btn-success" type="submit" value= "Borrar" name="borrar" title="Elimina ciudad">
-
-    {%else%}
-     <input class="btn btn-success" type="submit" value= "Grabar" name="grabarciu" title="Grabar ciudad" >
-    {%endif%}</label></p>
-    
-  <!--input type="text" name="pais" id="pais" value="{{ciudades.pais}}" disabled="disabled"/-->
-    </label>
-    </p>  
-   
-    </form> 
-      
 {%endblock%}

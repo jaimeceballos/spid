@@ -35,10 +35,9 @@ from django.contrib.auth.decorators import *
 #Reportes
 from cStringIO import StringIO
 #Propios del Modelo
-from preventivos.models import *
-from preventivos.views import *
-from preventivos.forms import *
-
+from repar.models import *
+from repar.views import *
+from repar.forms import *
 #Render msg
 def msg_render(msg):
     raw_t=''
@@ -141,6 +140,7 @@ def registro_post_delete(sender, instance, **kwargs):
     log.save()
     return
 #Signals Definicion - aqui se definen cada una de las tablas que requieren ser logueadas
-signals.post_save.connect(registro_post_save, sender=Preventivos)
-signals.post_delete.connect(registro_post_delete, sender=PersInvolucradas)
+
+signals.post_save.connect(registro_post_save, sender=Historyrepar)
+signals.post_save.connect(registro_post_save, sender=Repardata)
 signals.post_save.connect(registro_post_save, sender=User)#Este directamete registra los movimientos de la tabla de Usuarios

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+  {% load static %}
+	<meta charset="UTF-8">
+	<title>Formulario Solicitud Usuario</title>
+	 <link rel="shortcut icon" href="{% get_static_prefix %}imagenes/spid/icono.ico" type="image/x-icon">
+	<link href="{% get_static_prefix %}css/spid/stylos.css" type="text/css" rel="stylesheet" />
+ 		<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/jquery.min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/funciones.js"></script>
+	<script type="text/javascript"  src="{{STATIC_URL}}js/spid/jquery.numeric.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#docu').numeric();
+    $('#decimal').numeric(","); 
+});
+</script>
+</head>	
+<body>
+<header>
+	<div id="hgroup">
+		<h1>Solicitar Usuario y contraseña </h1>
+		
+	</div>
+  <!--
+  <div align="center" style="color: #fff;background-color: #c9302c;border-color: #ac2925;">
+    <br>
+    <h2> El D&iacute;a 30 de Diciembre de 2014 finaliz&oacute; el per&iacute;odo de solicitud de Usuarios de pruebas para el sistema SPID.<br>
+        Toda solicitud recibida apartir de esa fecha sera dada de alta el primer d&iacute;a h&aacute;bil del mes de enero de 2015.</h2><br>
+  </div>
+-->
+</header>
+   <div id="contenedor">
+	<div id="textoContacto">
+		<h3>Formulario De Registro</h3>
+		    <form action="../solicitud/" method="post" id="formulario" name="formContacto" >{% csrf_token %} 
+                                		{% if next %}
+		                                <input type="hidden" name="next" value="{{ next }}" />
+		                                {% endif %}
+		<table>
+                         <tr>
+                          <td valign="top">
+			<div><label for="Apeynombre">Apellido y Nombre *:</label>
+			<input name="name" id="name"  placeholder="Introduce Apellido y Nombre" class="name" AUTOCOMPLETE="OFF"/></div>
+           </td>
+           <tr>
+			<td>
+			<div><label for="dni">N° Documento *:</label>
+			<input name="docu" id="docu" placeholder="Nro de Dni" class="docu" maxlength="8" AUTOCOMPLETE="OFF"/></div>
+            </td>
+        </tr>
+         <tr>
+			<td>
+
+			      <label for="jerarquia">Jerarquia *:</label>
+      <select name="jerarca" id="jerarca" class="comboj" ><option name="jerarca">Seleccione Jerarquia</option>
+      <option {{formj.jerarquia_id}}</option>
+      </select>
+
+        <!--<label for="jerarquia">Jerarquia *:</label>
+			<input name="jerarca" id="jerarca" placeholder="Jerarquia actual" class="jerarca" AUTOCOMPLETE="OFF"/></div>-->
+              </td>
+        </tr>
+
+          <tr>
+        <td>
+			<div><label for="destino">Destino actual *:</label>
+			<input name="destino" id="destino" placeholder="¿Cargo y lugar de trabajo Actual" class="destino" AUTOCOMPLETE="OFF"/></div>
+               </td>
+        </tr>
+          <tr>
+        <td>   
+			<div><label for="mail" >E-mail*:</label>
+			<input name="mail" id="mail" placeholder="Envió de repuesta a?" class="mail" AUTOCOMPLETE="OFF"/></div>
+			</td>
+                          </tr>
+                        </table>
+           <table>
+                         <tr>
+                          <td valign="top">
+                          <label id="modif01" for="comentario" style="text-align:top">Solicitud/Personas *:</label>
+                            <img src="{% get_static_prefix %}imagenes/spid/ayuda.png" style="border:0px solid #C0C0C0; width:20px; height:20px;" 
+                               onclick="alert('En solicitud/personal. Deberá detallar para cada usuario que tendrá acceso al sistema como usuario. Ejemplo : 1- Apellido y Nombres | Tipo y Nro de Documento | Jerarquia |  Fecha de Nacimiento | Lugar de nacimiento. Email de uso personal y privado de cada usuario...')"> <br/>
+                          <textarea id="modif02" autocomplete="off" placeholder="Detalle el personal que tendrá acceso al sistema como usuario. Ejemplo : 1- Apellido y Nombres | Tipo y Nro de Documento | Jerarquia |Fecha de Nacimiento | Estado Civil| Lugar de nacimiento. Email de uso personal y privado de cada usuario..." name="comment" class="modif02"></textarea>
+                        </td>
+                          </tr>
+                        </table>
+                   	<div id="aster" > (*) Campos obligatorios</div>
+                   	
+         		{% csrf_token %}<input type="submit"  value="Enviar" name="envia" class="botonAcceder" />
+		</form>                
+	</div><!-- /textoContacto -->
+   </div>
+<div id="footer">
+	<p>Desarrollado por <strong>Policia de Chubut - Div. Sistemas Informaticos - &nbsp;<a href="">Email</a>  &nbsp; &copy; 2013</strong></p>
+	
+</div>
+
+
+</body>
+</html>

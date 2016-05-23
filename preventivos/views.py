@@ -4103,8 +4103,8 @@ def oficiales(request,idact):
 @transaction.commit_on_success
 @group_required(["administrador","policia","investigaciones","radio"])
 def personas(request):
-	state       = request.session.get('state')
-	destino     = request.session.get('destino')
+	state  = request.session.get('state')
+	destino = request.session.get('destino')
 	persona = ""
 	domicilios = ""
 	persona = Personas()

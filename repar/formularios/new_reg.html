@@ -1,0 +1,373 @@
+{% extends "piso.html" %}
+{% block main %}
+
+<div class="recuadro">
+ <form id="form" action="." method="post" class="form-group">{% csrf_token %} 
+  
+      {% if errors %}
+        
+        {%if not clean%}
+     
+          <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+
+            {% if errors.tipoar %}
+                <strong> Seleccione Tipo de Arma: {{errors.tipoar}} </strong>
+            {% endif %}
+            {% if errors.calibre %}
+                <strong> Seleccione Calibre: {{errors.calibre}} </strong>
+            {% endif %}
+            {% if errors.marca %}
+                <strong> Seleccione Marca: {{errors.marca}} </strong>
+            {% endif %}
+            {% if errors.calibre %}
+                <strong> Seleccione Modelo: {{errors.modelo}} </strong>
+            {% endif %}
+            {% if errors.nro_arma %}
+                <strong> Nro de Arma: {{errors.nro_arma}} </strong>
+            {% endif %}
+            {% if errors.apellidos_pro %}
+                <strong> Apellidos: {{errors.apellidos_pro}} </strong>
+            {% endif %}
+            {% if errors.nombres_pro %}
+                <strong> Nombres: {{errors.nombres_pro}} </strong>
+            {% endif %}
+            {% if errors.domicilio_pro %}
+                <strong> Domicilio : {{errors.domicilio}} </strong>
+            {% endif %}
+            {% if errors.tipodoc %}
+                <strong> Seleccione Tipo Documento: {{errors.tipodoc}} </strong>
+            {% endif %}
+            {% if errors.nrodoc_pro %}
+                <strong> Nro de Documento: {{errors.nrodoc_pro}} </strong>
+            {% endif %}
+         </div>
+        {%else%}
+
+      
+              <div class="alert alert-info">
+                <a href="#" class="close" data-dismiss="alert">x</a>
+                 {{errors}}
+              </div>
+   
+        {%endif%} 
+         
+      {%endif%}
+
+              <input type="hidden" name="ids" id="ids" value="{{result.id}}" autocomplete="off"/>
+              <h1>Formulario de Registro de Armas</h1>
+              <br>
+              <div class="form-group">
+                <div class="row">
+
+                 <div class="col-xs-8 col-md-4">
+                        <label for="tipos" class="col-lg-4 control-label"> Armas</label>
+                        <div class="col-xs-6">
+                           <select name="tipoar" id="tipoar" style="width: 200px;" class="form-control">
+                             <option {{formrep.tipoar}}</option>
+                           </select>
+                
+                        </div>
+                 </div>
+               
+                
+                 <div class="col-xs-8 col-md-4">
+                     <label for="calibres" class="col-lg-4 control-label"> Calibres </label>
+                      <div class="col-lg-6">
+                        <select name="calibre" id="calibre" style="width: 200px;" class="form-control">
+                                  <option {{formrep.calibre}}</option>
+                        </select>
+                   
+                      </div>
+                      
+                 </div>
+                </div>
+
+                <br>
+                <div class="row">
+
+                 <div class="col-xs-6 col-md-4">
+                        <label for="marcas" class="col-lg-4 control-label"> Marcas </label>
+                        <div class="col-xs-6">
+                          
+                           <select name="marca" id="marca" style="width: 200px;" class="form-control">
+                              <option {{formrep.marca}}</option>
+                           </select>
+                
+                        </div>
+                 </div>
+               
+                
+                 <div class="col-xs-8 col-md-4">
+                     <label for="modelosar" class="col-lg-4 control-label"> Modelos</label>
+                      <div class="col-lg-6">
+                        <select name="modelo" id="modelo" style="width: 200px;" class="form-control">
+                                 <option selected="selected"{{formrep.modelo}}</option>
+                        </select>
+                   
+                      </div>
+                      
+                 </div>
+                 <div class="col-md-4">
+                
+                   <button type="button" id="addmodels" class="btn-sm btn-link" title="Agregar Modelos">
+                     <span class="glyphicon glyphicon-plus"></span>
+                   </button>
+                 </div>
+                </div>
+                <br>
+                <div class="row">
+                 <div class="col-xs-6 col-md-4">
+                   <label for="nroarma" class="col-lg-4 control-label"> Nro Arma</label>
+                    <div class="col-lg-8" class="form-control">
+                       {{formrep.nro_arma}}    
+                    </div>
+                 </div>
+                </div>
+              </div>
+              
+ 
+   
+    <div id="oculto" name="oculto" style='display:none;'>
+      <div class="container" style="width:100%"> 
+     
+       <div class="panel panel-primary">
+       <div class="panel-heading">Agregar Modelos de Armas </div>
+        <br>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-6">
+             <label for="mark" class="col-lg-3 control-label"> Marcas  </label>
+             <div class="col-lg-10">
+              <select name="trademark" id="trademark" style="width: 200px;" class="form-control">
+                <option {{form.trademark}}</option>
+              </select>
+             </div>
+            </div>
+            <div class="col-md-6">
+             <label for="models" class="col-lg-3 control-label"> Modelos </label>
+             <div class="col-lg-12">
+             <input type="text" class="form-control" name="descripcionm" id="descripcionm" value="{{modelos.descripcionm}}" placeholder="Descripcion del Arma/Modelo/Serie" autocomplete="off"/>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footerep">
+          <button type="button" id="addclose" class="btn-xs btn-primary" title="Cerrar">
+          <span class="glyphicon glyphicon-off"></span>
+          </button>
+          <input class="btn-md btn-success" type="submit" value= "Grabar" name="grabarm" title="Guardar datos" >
+        </div>
+     
+       </div>
+      </div>
+    </div>  
+  </div>
+  
+   <div class="form-group">
+    <div class="row">
+
+     <div class="col-md-8">
+       
+            <label for="apellidopro" class="col-lg-2 control-label"> Apellido/s</label>
+            <div class="col-lg-10">
+             {{formrep.apellidos_pro}}
+           </div>
+     </div>
+    </div>
+   </div>
+    <div class="form-group">
+    <div class="row">
+         <div class="col-xs-3 col-md-8">
+       
+            <label for="nombrespro" class="col-xs-2 control-label"> Nombres</label>
+            <div class="col-lg-10">
+             {{formrep.nombres_pro}}
+           </div>
+     </div>
+   </div>
+
+   </div>
+   <div class="form-group">
+    <div class="row">
+        <div class="col-xs-6 col-md-4">
+       
+            <label for="tipodoc" class="col-lg-4 control-label"> Tipo Doc</label>
+             <div class="col-lg-8">
+                <select name="tipodoc" id="tipodoc" class="form-control">
+                   <option {{formrep.tipodoc}}</option>
+                </select> 
+              </div>
+        </div>
+                 
+        <div class="col-xs-6 col-md-4">
+                <label for="nrodocpro" class="col-lg-4 control-label"> Nro </label>
+                <div class="col-lg-8">
+                   <input type="text" id="nrodoc_pro" name="nrodoc_pro" size="10" 
+                   onkeypress="return isNumberKey(event,this)" autocomplete="off" 
+                   class="form-control" {{formrep.nrodoc_pro}}
+                </div>
+        </div>
+    </div>
+   </div> 
+   <br>
+       <div class="form-group">
+    <div class="row">
+
+     <div class="col-xs-3 col-md-8">
+       
+            <label for="domi" class="col-xs-2 control-label"> Domicilio </label>
+            <div class="col-lg-10">
+             {{formrep.domicilio_pro}}
+           </div>
+     </div>
+    
+   </div>
+  <br>
+  <div class="form-group">
+    <div class="row">
+      <div class="col-xs-6 col-md-4">
+       
+            <label for="nroprontuario" class="col-lg-4 control-label">Prontuario</label>
+            <div class="col-lg-8">
+                {{formrep.nro_prontuario}}
+           </div>
+      </div>
+        <div class="col-xs-6 col-md-4">
+       
+            <label for="seccion" class="col-lg-4 control-label"> Sección </label>
+            <div class="col-lg-8">
+              {{formrep.seccion}}
+           </div>
+      </div>
+       <div class="col-md-4">
+         <button type="button" id="searchpro" class="btn-sm btn-link" title="Buscar Prontuario">
+         <span class="glyphicon glyphicon-search"></span>
+         </button>
+       </div>
+   </div>
+  </div>
+  
+   <br>
+   <div id="protu" name="protu" style='display:none;'>
+      <div class="container" style="width:100%"> 
+     
+       <div class="panel panel-primary">
+       <div class="panel-heading">Form de Consultar Prontuarios</div>
+        <br>
+        <div class="form-group">
+          <div class="row">
+          
+            <div class="col-md-10">
+             <label for="models" class="col-lg-2 control-label"> Buscar </label>
+             <div class="col-lg-3">
+             <input type="text" class="form-control" name="datos" id="datos" onkeypress="return isNumberKey(event,this)" placeholder="Dni" autocomplete="off" value=""/>
+            </div>
+              <button type="button" id="seek" class="btn-sm btn-link" title="Buscar">
+              <span class="glyphicon glyphicon-search"></span> </button>
+           </div>
+          </div>
+         </div>
+           <div class="form-group">
+          <div class="row"> 
+            <br>
+            <div class="col-md-10">
+                     <label for="modelosar" class="col-lg-2 control-label"> Resultado </label>
+                      <div class="col-lg-6">
+                        <select name="modelos" id="modelos" style="width: 500px;" class="form-control">
+                                 <option selected="selected" </option>
+                        </select>
+                   
+                      </div>
+                      
+                 </div>
+        </div>
+        <div class="modal-footerep">
+       
+          <button type="button" id="cierro" class="btn-xs btn-primary" title="Cerrar">
+          <span class="glyphicon glyphicon-off"></span>
+          </button>
+          
+        </div>
+     
+       </div>
+      </div>
+    </div>  
+   </div>
+  <br>
+  <div class="form-group">
+        <div class="row">
+        
+          <div class="col-md-12">
+              <label for="observaciones" class="col-lg-12 control-label">Observaciones : <span class="bg-info">Armas extraviadas, sustraidas, perdidas o halldas, etc. anotar datos que la identifiquen(Nota,expte,Orden del dia, etc.)</span></label>
+              <div class="col-md-12">
+
+               {{formrep.observaciones}}
+                  
+              </div>
+          </div>
+        </div>
+  </div>
+  <br>
+   <div class="form-group">
+        <div class="row">
+           <div class="modal-footerep">
+              <div align="right">
+              {%if result.id%}
+                <input class="btn-md btn-success" type="submit" value= "Actualizar" name="grabarepar" title="Guardar datos" >
+              {%else%}
+               
+              <input class="btn-md btn-success" type="submit" value= "Guardar" name="grabarepar" title="Guardar datos" >
+              {%endif%}  
+              <a href='/repar/new/'> <button type="button" id="reset" class="btn-xs btn-primary" title="Iniciar Formulario Nuevo"><span class="glyphicon glyphicon-refresh"></span></button></span></a>  
+              
+            </div>
+        </div>
+  </div>
+
+  <br>
+    <hr>
+   <h1>Listado General de Registro de Armas</h1>
+      <div id="demo">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+        <thead>
+            <tr class="gradeC">
+               <th width="10px">Id.</th>
+               <th width="10px">Tipo</th>
+               <th width="20px">Calibres</th>
+               <th width="30px">Marcas</th>
+               <th width="20px">Modelos</th>
+               <th width="20px">Nro Arma</th>
+               <th width="50px">Propietario</th>
+               <th width="10px">TipoDni</th>
+            </tr>
+        </thead>
+          
+             <tbody>
+                 {% for listas in lista %}
+                  <tr  class="gradeC"> 
+                    <td width="5%"><a href='/repar/regis/{{ listas.id }}/'><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td width="20%">{{ listas.tipoar}}</td>
+                      <td width="10%">{{ listas.calibre}}</td>
+                          <td width="20%">{{ listas.marca}}</td>
+                     <td width="20%">{{ listas.modelo}}</td>
+                           <td width="20%">{{listas.nro_arma}}</td>
+                          
+                            <td width="20%">{{ listas.apellidos_pro}},{{listas.nombres_pro}}</td>
+
+                            <td width="20%">{{ listas.tipodoc}},{{listas.nrodoc_pro}}</td> 
+                 
+                      </td>
+                  </tr>
+                 {% endfor %}
+            </tbody>
+           </table>
+  
+       </div>
+</form> 
+</div>
+{% endblock %}
+{%block contenido%}
+
+      
+{%endblock%}
+

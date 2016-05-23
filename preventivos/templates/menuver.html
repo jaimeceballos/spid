@@ -10,9 +10,12 @@
         <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
             <ul class="srt-menu" id="menu-main-navigation">
+
             {% if user.is_authenticated and user.is_staff or not user.is_staff%}
+                      
                         <li><a href="/spid/inicio/"><span>Inicio</span></a></li>
-                                      {%if 'policia' in state or 'jefes' in state%}
+
+                                      {%if 'policia' in state or 'jefes' in state or 'investigaciones' in state or 'radio' in state%}
                                       
                                         <li class='has-sub'><a href='#'><span>Preventivos</span></a>
                                              <ul>
@@ -64,48 +67,10 @@
                                          </ul>
                                        </li>
                                {%endif%}
-
+                               
                                 {%if 'investigaciones' in state or 'radio' in state%}
                                       
-                                        <li class='has-sub'><a href='#'><span>Preventivos</span></a>
-                                             <ul>
-                                               <li><a href="/preventivos/new/"><span>Nuevo</span></a></li>
-                                             </ul>
-                                        </li>
-                                        <!--
-                                        <li class='has-sub'><a href='#'><span>Ampliaciones</span></a>
-                                             <ul>
-                                               <li><a href="/ampliaciones/"><span>Nuevo</span></a></li>
-                                             </ul>
-                                        </li>-->
-                                        <li class='has-sub'><a href='#'><span>Personas</span></a>
-                                             <ul>
-                                               <li><a href="/preventivos/persona/"><span>Padron General</span></a></li>
-                                             </ul>
-                                        </li>
-                                        <!--
-                                       <li class='has-sub'><a href='#'><span>Detenidos</span></a>
-                                             <ul>
-                                               <li><a href="/preventivos/detenidos/ingresos/"><span>Ingresos</span></a></li>
-                                               <li><a href="/preventivos/detenidos/egresos/"><span>Egresos</span></a></li>
-                                             </ul>
-                                        </li>-->
-                                        <li class='has-sub'><a href='#'><span>Búsqueda</span></a>
-                                         <ul>
-                                          <li><a href='/preventivos/seedata/'><span>Preventivos</span></a></li>
-                                          <li><a href='/preventivos/seehechos/'><span>Descripcion Hechos</span></a></li>
-                                          <li><a href='/preventivos/seedelitos/'><span>Delitos</span></a></li>
-                                          <li><a href='/preventivos/seeampli/'><span>Ampliaciones</span></a></li>
-                                          <li><a href='/preventivos/peoplein/'><span>Personas Involucradas</span></a></li>
-                                          <li><a href='/preventivos/objectsin/'><span>Elementos Involucrados</span></a></li>
-                          
-                                         </ul>
-                                        </li>
-                                        <li class='has-sub'><a href='#'><span>Mapa del Delito</span></a>
-                                         <ul>
-                                           <li><a href="/preventivos/mapsanality/"><span>Ver</span></a></li>
-                                         </ul>
-                                       </li> 
+                                       
                                        <li class='has-sub'><a href='#'><span>Informes Varios</span></a>
                                          <ul>   
                                            <li><a href="/preventivos/forages/"><span>Resumen de Personas Involucradas</span></a></li>
@@ -121,6 +86,7 @@
                                 {%endif%}
                                {% endif %}
                             {% if user.is_authenticated and user.is_staff or not user.is_staff%}
+                               
                                  {%if 'visita' in state%}
 
                                  <li class='has-sub'><a href='#'><span>Búsqueda</span></a>
@@ -142,6 +108,10 @@
                                
                                 {% endif %}
                             {% endif %}
+                         
+                         
+                                    
+                          
                             {% if user.is_authenticated and not user.is_staff%}
                                  {%if 'judiciales' in state%}
                                        <li class='has-sub'><a href='#'><span>Mapa del Delito</span></a>

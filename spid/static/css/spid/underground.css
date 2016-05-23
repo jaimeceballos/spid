@@ -26,7 +26,7 @@ a:hover {
 }
 
 /* headers */
-h1, h2, h3 {
+h1, h2, h3, h4 {
 	 font-family: 'DroidSansMono';
 	font-weight: bold;
 	color: #333;
@@ -38,10 +38,16 @@ h1 {
 h2 {
 	font-size: 115%;	
 	text-transform: uppercase; 		
+
 }
 h3 {
 	font-size: 115%;
 	color: #003366;		
+}
+h4 {
+  font-size: 55%;
+  letter-spacing: .5px;
+  color: #003366; 
 }
 
 /* images */
@@ -55,7 +61,7 @@ img.float-left {
   margin: 5px 10px 10px 0px;
 }
 
-h1, h2, h3, p {
+h1, h2, h3, p, h4 {
 	padding: 0;		
 	margin: 10px;
 }

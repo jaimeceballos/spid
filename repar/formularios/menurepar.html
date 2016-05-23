@@ -1,0 +1,33 @@
+{% block sidebar %}
+
+ <header class="wrapper clearfix">
+               
+   <div id="banner">        
+        
+        <!-- main navigation -->
+        <nav id="topnav" role="navigation">
+        <div class="menu-toggle">Menu</div>  
+            <ul class="srt-menu" id="menu-main-navigation">
+            {% if user.is_authenticated and user.is_staff or not user.is_staff%}
+                      
+                        <li><a href="/repar/inicio/"><span>Inicio</span></a></li>
+                         <li class='has-sub'><a href='#'><span>Registros</span></a>
+                                             <ul>
+                                               <li><a href="/repar/new/"><span>Nuevo</span></a></li>
+                                                <li><a href="/repar/seek/0/"><span>Consultar</span></a></li>
+                                             </ul>
+                                        </li>
+                                      
+                            {%endif%}
+          
+
+                     {% include "menuv.html"%}
+                       </ul>
+        </nav><!-- #topnav -->
+   
+   
+     </div> 
+    </header><!-- end header -->
+
+
+{% endblock %}
