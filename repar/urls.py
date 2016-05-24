@@ -27,8 +27,7 @@ urlpatterns = patterns('',url(r'^repar/change/$', 'repar.views.passwordChange', 
     #(r'^new/search/$', 'repar.views.search'),
     (r'^regis/(?P<id>[0-9A-Za-z]+)/$', 'repar.views.editarReg'),
     (r'^seek/(?P<id>[0-9A-Za-z]+)/$', 'repar.views.verdata'),
-    (r'^resetpassword/$', 'django.contrib.auth.views.password_reset', 
-    {'post_reset_redirect' : '../repar/','template_name' : 'registration/password_reset_form.html'}),
+   
     (r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
     (r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
 
