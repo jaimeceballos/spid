@@ -1,5 +1,6 @@
 from django.conf.urls import *
 from django.contrib import admin
+from repar.views import register
 from django.contrib.auth.decorators import login_required
 from repar import views
 from repar import forms
@@ -12,7 +13,7 @@ handler500 = 'repar.views.server_error'
 
 admin.autodiscover()
 
-urlpatterns = patterns('',url(r'^repar/change/$', 'repar.views.passwordChange', name="changePass"
+urlpatterns = patterns('',url(r'^repar/change/$', 'repar.views.passwordChange', name="changePass"),
 	(r'^$', 'repar.views.iniciar'),
     (r'^inicio/$', 'repar.views.inicial'),
     (r'^login/$', 'repar.views.loguser'),
