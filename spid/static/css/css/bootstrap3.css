@@ -6123,7 +6123,7 @@ button.close {
 .visible-lg-inline-block {
   display: none !important;
 }
-@media (max-width: 767px) {
+@media (max-width: 640px) {
   .visible-xs {
     display: block !important;
   }
@@ -6138,7 +6138,7 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 640px) {
   .visible-xs-block {
     display: block !important;
   }

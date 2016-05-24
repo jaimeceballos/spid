@@ -29,9 +29,9 @@ Doc_opciones=(
 class RepardataForm(forms.ModelForm):
     apellidos_pro = forms.CharField(widget=forms.TextInput(attrs=dict({'class':'form-control','size': 100,'autocomplete':'off','placeholder':'Apellidos/Propietario'})))
     nombres_pro = forms.CharField(widget=forms.TextInput(attrs=dict({'class':'form-control','size': 100,'autocomplete':'off','placeholder':'Nombres/Propietario'})))
-    domicilio_pro = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','autocomplete':'off','size':150})))
+    domicilio_pro = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','autocomplete':'off','placeholder':'Domicilio actual'})))
     nrodoc_pro = forms.IntegerField(max_value=99999999,widget=TextInput(attrs=dict({'class':'form-control','size': 6}))) 
-    nro_arma = forms.CharField(widget=TextInput(attrs=dict({'class':'form-control'}))) 
+    nro_arma = forms.CharField(widget=TextInput(attrs=dict({'class':'form-control','size':150}))) 
     nro_prontuario = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','autocomplete':'off'})))
     seccion = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','autocomplete':'off'})))    
     observaciones = forms.CharField(required=False,max_length=2000,widget=forms.Textarea(attrs=dict({'class':'form-control','rows':3,'col':80})))
