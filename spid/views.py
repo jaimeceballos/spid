@@ -134,13 +134,11 @@ def login_user(request):
               
                 gr=user.groups.values_list('name', flat=True)
                 for varios in gr:
-                    state = gr
-                    #str(Group.objects.get(name=varios))
+                    state = str(Group.objects.get(name=varios))
 
                 if uregis == uregis1 and depeni == depeni1:
                   for varios in gr:
-                    state = gr
-                    #str(Group.objects.get(name=varios))
+                    state = str(Group.objects.get(name=varios))
                   request.session['state']=state
                   request.session['destino']=destino
                   no_enviados = False
@@ -182,12 +180,10 @@ def login_user(request):
 
                 gr=user.groups.values_list('name', flat=True)
                 for varios in gr:
-                    state = gr
-                    #str(Group.objects.get(name=varios))
+                    state = str(Group.objects.get(name=varios))
                 if uregis == uregis1 and depeni == depeni1: 
                    for varios in gr:
-                    state = gr
-                    #str(Group.objects.get(name=varios))
+                    state = str(Group.objects.get(name=varios))
                    request.session['state']=state
                    request.session['destino']=destino
                 else: 
