@@ -10,7 +10,7 @@
                        <tr><td class="lefttitle"><b>INICIAR SESION</b>
                                  <tr><td class="box_middle" >
                                  <table>
-                                     {{ state }}
+                                   
                                 	<form id="form" action="/spid/login/" method="POST">{% csrf_token %} 
                                 		{% if next %}
 		                                <input type="hidden" name="next" value="{{ next }}" />

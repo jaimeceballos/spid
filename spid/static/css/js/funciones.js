@@ -343,6 +343,33 @@
             $('#provinciar_id').select2({});
 
            $('#datepicker').datepicker({});
+
+              $("#ciu").change(function(event){
+
+          if ($(this).attr("checked")=="checked"){
+             $("#depes").attr('checked',false);
+             $("#combodepe").fadeOut(200)
+             $("#combociu").fadeIn(200)
+           }else{
+             $("#depes").attr('checked',false);
+             $("#combodepe").fadeOut(200)
+             $("#combociu").fadeOut(200)
+           }
+         
+        });
+        $("#depes").change(function(event){
+          alert('hola')
+          if ($(this).attr("checked")=="checked"){
+             $("#ciu").attr('checked',false);
+             $("#combodepe").fadeIn(200)
+             $("#combociu").fadeOut(200)
+           }else{
+             $("#ciu").attr('checked',false);
+             $("#combodepe").fadeOut(200)
+             $("#combociu").fadeOut(200)
+           }
+         
+        }); 
           
 } ); 
 

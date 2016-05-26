@@ -131,7 +131,7 @@
 <footer>
   <div id="colophon" class="wrapper clearfix">
           <div class="blue align.left">{% if user.is_authenticated %}
-            {%if user.is_staff or not user.is_staff%}Usuario :&nbsp;{% endif %} &nbsp;{{ user.first_name }}&nbsp;{{ user.last_name }}&nbsp;-- {{destino}}
+            {%if user.is_staff or not user.is_staff%}Usuario : {{state}}&nbsp;{% endif %} &nbsp;{{ user.first_name }}&nbsp;{{ user.last_name }}&nbsp;-- {{destino}}
             {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;<a class="blue align-right"><strong>Policia de Chubut - Div. Sistemas Informaticos - &copy; SEP/2013</strong> &nbsp;&nbsp;</a>  </div> 
 
     </div>
