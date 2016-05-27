@@ -63,7 +63,7 @@ def iniciar(request):
     return render(request, 'index.html', {'formd':formd,'state':state,'destino':destino,'form':form})
 
 def login_user(request):
-    state = ''
+    state = []
     name=''
     username = password = ''
     destino = ''
@@ -132,11 +132,13 @@ def login_user(request):
                 depeni=depen.id
               
               
-                gr=user.groups.values_list('name', flat=True).exclude(name__icontains=u'repar')
-                
+                gr=user.groups.values_list('name', flat=True)
+                #.exclude(name__contains=u'repar')
+                #print (gr)
                 for varios in gr:
-                    state = str(Group.objects.get(name=varios))
-                 
+                    state.append(str(Group.objects.get(name=varios)))
+                
+                #print (state)
                  
                 #state=gr
                 if uregis == uregis1 and depeni == depeni1:
@@ -181,12 +183,14 @@ def login_user(request):
                 depen=Dependencias.objects.get(descripcion=depes)
                 depeni=depen.id
 
-                gr=user.groups.values_list('name', flat=True).exclude(name__icontains=u'repar')
+                gr=user.groups.values_list('name', flat=True)
+                #.exclude(name__contains=u'repar')
                
-              
+                #state=gr
                 for varios in gr:
-                    states = str(Group.objects.exclude(name__icontains='repar'))
-                    state = str(Group.objects.get(name=varios))
+                     state.append(str(Group.objects.get(name=varios)))
+                #    state = str(Group.objects.get(name=varios))
+                #print (state)
                 if uregis == uregis1 and depeni == depeni1: 
                    #for varios in gr:
                    #  state = str(Group.objects.get(name=varios))
