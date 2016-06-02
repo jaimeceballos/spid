@@ -110,7 +110,7 @@
 table.display {
 	margin: 0 auto;
 	clear: both;
-	width: 100%;
+	width: auto;
     font-size: 10%;
 	font-weight: normal;
 	letter-spacing: 1px;

@@ -424,8 +424,9 @@ def editarReg(request, id):
      
       if formrep.errors.has_key('__all__'):
            clean=True
-     
+          
       if formrep.is_valid():
+      
          result.tipoar = formrep.cleaned_data['tipoar']
          result.calibre = formrep.cleaned_data['calibre']
          result.marca = formrep.cleaned_data['marca']
@@ -439,7 +440,18 @@ def editarReg(request, id):
          result.nro_prontuario = formrep.cleaned_data['nro_prontuario']
          result.seccion = formrep.cleaned_data['seccion']
          result.observaciones = formrep.cleaned_data['observaciones']
-         result.save()
+      else:
+         result.calibre = formrep.cleaned_data['calibre']
+         result.modelo = formrep.cleaned_data['modelo']
+         result.apellidos_pro = formrep.cleaned_data['apellidos_pro'].upper()
+         result.nombres_pro = formrep.cleaned_data['nombres_pro'].upper()
+         result.domicilio_pro = formrep.cleaned_data['domicilio_pro'].upper()
+         result.tipodoc = formrep.cleaned_data['tipodoc']
+         result.nro_prontuario = formrep.cleaned_data['nro_prontuario']
+         result.seccion = formrep.cleaned_data['seccion']
+         result.observaciones = formrep.cleaned_data['observaciones']
+      
+      result.save()
          
         
       errors = formrep.errors

@@ -55,17 +55,19 @@
       {%endif%}
 
               <input type="hidden" name="ids" id="ids" value="{{result.id}}" autocomplete="off"/>
-              <h6>Formulario de Registro de Armas</h6>
-              <br>
+          
+     
+              <h6>Formulario de Registro de Armas  <span style="color: red;margin-left:55%;"> * </span> Datos Obligatorios </h6>
+                   <br>
               <div class="form-group">
                 <div class="row">
 
                  <div class="col-xs-8 col-md-4">
-                        <label for="tipos" class="col-lg-4 control-label"> Armas</label>
+                        <label for="tipos" class="col-lg-4 control-label"><span style="color: red">*</span> Armas </label>
                         <div class="col-xs-6">
                            <select name="tipoar" id="tipoar" style="width: 200px;" class="form-control">
                              <option {{formrep.tipoar}}</option>
-                           </select>
+                          </select>
                 
                         </div>
                  </div>
@@ -87,7 +89,7 @@
                 <div class="row">
 
                  <div class="col-md-4">
-                        <label for="marcas" class="col-lg-4 control-label"> Marcas </label>
+                        <label for="marcas" class="col-lg-4 control-label"> <span style="color: red">*</span> Marcas </label>
                         <div class="col-md-6">
                           
                            <select name="marca" id="marca" style="width: 200px;" class="form-control">
@@ -118,7 +120,7 @@
                 <br>
                 <div class="row">
                  <div class="col-md-8">
-                   <label for="nroarma" class="col-lg-2 control-label"> Nro Arma</label>
+                   <label for="nroarma" class="col-lg-2 control-label"> <span style="color: red">*</span> Nro Arma</label>
                     <div class="col-lg-6" class="form-control">
                        {{formrep.nro_arma}}    
                     </div>
@@ -168,7 +170,7 @@
 
      <div class="col-md-8">
        
-            <label for="apellidopro" class="col-lg-2 control-label"> Apellido/s</label>
+            <label for="apellidopro" class="col-lg-2 control-label"><span style="color: red">*</span>  Apellido/s</label>
             <div class="col-lg-10">
              {{formrep.apellidos_pro}}
            </div>
@@ -179,7 +181,7 @@
     <div class="row">
          <div class="col-md-8">
        
-            <label for="nombrespro" class="col-xs-2 control-label"> Nombres</label>
+            <label for="nombrespro" class="col-xs-2 control-label"> <span style="color: red">*</span> Nombres</label>
             <div class="col-lg-10">
              {{formrep.nombres_pro}}
            </div>
@@ -191,19 +193,18 @@
     <div class="row">
         <div class="col-xs-6 col-md-4">
        
-            <label for="tipodoc" class="col-lg-4 control-label"> Tipo Doc</label>
+            <label for="tipodoc" class="col-lg-4 control-label"><span style="color: red">*</span>  Tipo Doc</label>
              <div class="col-lg-8">
-                <select name="tipodoc" id="tipodoc" class="form-control">
+                <select name="tipodoc" id="tipodoc" class="form-control" >
                    <option {{formrep.tipodoc}}</option>
                 </select> 
               </div>
         </div>
                  
         <div class="col-xs-6 col-md-4">
-                <label for="nrodocpro" class="col-lg-4 control-label"> Nro </label>
+                <label for="nrodocpro" class="col-lg-4 control-label"><span style="color: red">*</span>  Nro </label>
                 <div class="col-lg-8">
-                   <input type="text" id="nrodoc_pro" name="nrodoc_pro" size="10" 
-                   onkeypress="return isNumberKey(event,this)" autocomplete="off" 
+                   <input type="text" id="nrodoc_pro" name="nrodoc_pro" size="10" autocomplete="off" 
                    class="form-control" {{formrep.nrodoc_pro}}
                 </div>
         </div>
@@ -337,8 +338,7 @@
                <th width="30px">Marcas</th>
                <th width="20px">Modelos</th>
                <th width="20px">Nro Arma</th>
-               <th width="50px">Propietario</th>
-               <th width="10px">TipoDni</th>
+            
             </tr>
         </thead>
           
@@ -352,9 +352,7 @@
                      <td width="20%">{{ listas.modelo}}</td>
                            <td width="20%">{{listas.nro_arma}}</td>
                           
-                            <td width="20%">{{ listas.apellidos_pro}},{{listas.nombres_pro}}</td>
-
-                            <td width="20%">{{ listas.tipodoc}},{{listas.nrodoc_pro}}</td> 
+                            
                  
                       </td>
                   </tr>
