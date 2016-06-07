@@ -5,11 +5,11 @@
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <link rel="shortcut icon" href="{{STATIC_URL}}/imagenes/preventivos/icono.ico" type="image/x-icon"/>
- <title>SISTEMA POLICIAL DE INFORMACIÓN DELICTUAL</title> 
+ <title>SISTEMA POLICIAL DE INFORMACIÓN DELICTUAL</title>
 {% include "fnciones.html"%}
 <script type="text/javascript">
         $(document).ready(function () {
-           
+
             //Demo code
             $('.password-container').pschecker({ onPasswordValidate: validatePassword, onPasswordMatch: matchPassword });
 
@@ -47,7 +47,7 @@
   {% if 'si' in changePass %}
         {% include "validator.html"%}
 
-    
+
     {% endif %}
 <!-- wrap starts here -->
   {% if user.is_authenticated %}
@@ -56,17 +56,17 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-  
 
-<section id="page-header" class="clearfix">    
+
+<section id="page-header" class="clearfix">
 <!-- responsive FlexSlider image slideshow -->
-    <div id="header">  
-       <div id="header-logo">     
-      
+    <div id="header">
+       <div id="header-logo">
+
       <div id="logo"><img onclick="mensajes();" src="{{STATIC_URL}}imagenes/preventivos/policia.png"  style="border:0px solid #C0C0C0;"></div>
-      
-     
-     
+
+
+
             <div id="logo4"><p style="font-size:28px"> INCIDENCIA DELICTIVA</p></div>
             <div id="logo6"><p style="font-size:16px">ESTADISTICAS - HERRAMIENTAS DE ANALISIS Y PREVENCION</p></div>
 
@@ -74,71 +74,71 @@
 
                        <div id="logo2">
                         <img src="{{STATIC_URL}}imagenes/preventivos/CIUDAD.gif" style="border:0px solid #C0C0C0;"></div>
-      
-               </div>   
-      
-   
-            
+
+               </div>
+
+
+
 
     </div>
 
 </section>
 <!-- header area -->
             {% include "menuver.html"%}
- 
- 
 
-<!-- main content area -->   
-<div class="wrapper" id="main"> 
-    
-<!-- content area -->    
- 
-    <div id="main">       
+
+
+<!-- main content area -->
+<div class="wrapper" id="main">
+
+<!-- content area -->
+
+    <div id="main">
       {% block main %}
-        
-      {% endblock %}  
-          
-    </div>      
+
+      {% endblock %}
+
+    </div>
        <!-- modal content -->
     <div id="contenido">
           {% block contenido %}
-      {% endblock %}    
+      {% endblock %}
     </div>
      <div id="contenidos">
           {% block contenidos%}
-      {% endblock %}    
+      {% endblock %}
     </div>
       <div id="modificar">
           {% block modificar%}
-      {% endblock %}    
+      {% endblock %}
     </div>
      <div id="ciudadres">
           {% block ciudadres%}
-      {% endblock %}    
+      {% endblock %}
     </div>
 
-             
 
 
-      
-      
-   
+
+
+
+
   </div><!-- #end div #main .wrapper -->
-    
+
 <p style="height:315px;">
 </p>
-<!-- footer area -->    
+<!-- footer area -->
 <footer>
   <div id="colophon" class="wrapper clearfix">
           <div class="blue align.left">{% if user.is_authenticated %}
             {%if user.is_staff or not user.is_staff%}Usuario : {%for grupos in state%}{{grupos|capfirst|slice:"0:1"}}{%endfor%}&nbsp;{% endif %} &nbsp;{{ user.first_name }}&nbsp;{{ user.last_name }}&nbsp;-- {{destino}}
-            {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;<a class="blue align-right"><strong>Policia de Chubut - Div. Sistemas Informaticos - &copy; SEP/2013</strong> &nbsp;&nbsp;</a>  </div> 
+            {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;<a class="blue align-right"><strong>Policia de Chubut - Div. Sistemas Informaticos - &copy; SEP/2013</strong> &nbsp;&nbsp;</a>  </div>
 
     </div>
-    
-   
-    
-</footer><!-- #end footer area --> 
+
+
+
+</footer><!-- #end footer area -->
 
 
 <!-- jQuery -->
@@ -147,7 +147,7 @@
 
 <script defer src="{{STATIC_URL}}plantiweb/js/flexslider/jquery.flexslider-min.js"></script>
 
-<!-- fire ups - read this file!  -->   
+<!-- fire ups - read this file!  -->
 <script src="{{STATIC_URL}}plantiweb/js/main.js"></script>
 
 
@@ -165,22 +165,22 @@
 </div>
 {%else%}
 
-   
-  
-   
 
-  
+
+
+
+
 
  <div id="sitio">
     {% block error %}
-         <img onclick="mensajes();" src="{{STATIC_URL}}imagenes/preventivos/policia.png" 
+         <img onclick="mensajes();" src="{{STATIC_URL}}imagenes/preventivos/policia.png"
         style="align:center;border:0px solid #C0C0C0;">
 
       <h4>Policia de la Provincia de Chubut </h4>
        <h4>Incidencia Delictual</h4>
        <br>
         <h4> - Ingreso no Permitido - Comuniquese con el Administrador de SPID</h4>
-    {%endblock%}   
+    {%endblock%}
    </div>
 {%endif%}
 </body>

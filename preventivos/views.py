@@ -15720,3 +15720,49 @@ def actualizar_ultimo_ingreso():
 		profile = user.get_profile()
 		profile.ultimo_ingreso = user.last_login
 		profile.save()
+
+def cambiar_password(request):
+	state= request.session.get('state')
+	destino= request.session.get('destino')
+	user = request.user
+	usuarios = User.objects.all()
+	usuarios = usuarios.exclude(username = user)
+	usuarios = usuarios.exclude(username = 'fernando')
+	form = CambiarContraseniaForm()
+	info = {
+		'state':state,
+		'destino':destino,
+		'usuarios':usuarios,
+		'form':form,
+	}
+
+
+	if request.method == 'POST':
+		form = CambiarContraseniaForm(request.POST)
+		if form.is_valid():
+			cambio 								= CambiarContrasenia()
+			try:
+				usuario 							= User.objects.get(id = request.POST.get('usuario'))
+				cambio.motivo 						= form.cleaned_data['motivo']
+				cambio.detalle_motivo 				= form.cleaned_data['detalle_motivo']
+				cambio.usuario_que_cambia 			= user.username
+				cambio.usuario	 					= usuario.username
+				cambio.fecha_cambio 				= datetime.datetime.now()
+				profile_usuario 					= usuario.get_profile()
+				profile_usuario.last_login  		= True
+				profile_usuario.solicitud_cambio	= True
+				profile_usuario.fecha_solicitud     = datetime.datetime.now()
+				profile_usuario.clave_anterior 		= usuario.password
+				try:
+					cambio.save()
+					profile_usuario.save()
+					usuario.set_password(usuario.username)
+					usuario.save()
+					info['msg'] = 'El cambio de contraseña se realizo con exito.'
+				except Exception as e:
+					info['error'] = 'Hubo un error en al intentar cambiar la contraseña, por favor vuelva a intentarlo mas tarde.'
+			except Exception as e:
+				info['error'] = 'Por favor revise haber ingresado todos los datos del formulario muchas gracias.'
+		else:
+			info['error'] = 'Por favor revise haber ingresado todos los datos del formulario muchas gracias.'
+	return render_to_response('./cambiar_password.html',info,context_instance = RequestContext(request))

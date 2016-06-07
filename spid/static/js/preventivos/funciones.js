@@ -1,10 +1,10 @@
  function mensajes(){
        $.msgBox({
-       title:"Jefatura de Policia Chubut        Sistemas Informaticos Rawson", 
+       title:"Jefatura de Policia Chubut        Sistemas Informaticos Rawson",
        content:"Programadores : Cabo 1° Ceballos Jaime A. Cabo Dorado Fernando E.",
         type:"info"});
-      } 
-      function validaCuit(sCUIT){    
+      }
+      function validaCuit(sCUIT){
         var aMult = '5432765432';
         var aMult = aMult.split('');
         if (sCUIT && sCUIT.length == 11)
@@ -23,7 +23,7 @@
         {
             return true;
         }
-        }    
+        }
         return false;
        }
 
@@ -46,10 +46,10 @@
          }
       }
       function validateMail(idMail) {
-       //Creamos un objeto 
-       object=document.getElementById(idMail); 
-       valueForm=object.value; 
-       // Patron para el correo 
+       //Creamos un objeto
+       object=document.getElementById(idMail);
+       valueForm=object.value;
+       // Patron para el correo
        var patron=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/;
        if(valueForm.search(patron)==0) {
         //Mail correcto
@@ -62,11 +62,11 @@
        return false;
 
      }
-      
+
       function isNumberKeyc(evt,input){
          var charCode = (evt.which) ? evt.which : event.keyCode
          var num = input.value.replace(/\./g,'');
-        
+
          if (charCode > 31 && (charCode < 48 || charCode > 57))
             return false;
          if(num.length>3 ){
@@ -78,7 +78,7 @@
       function isNumberKey(evt,input){
          var charCode = (evt.which) ? evt.which : event.keyCode
          var num = input.value.replace(/\./g,'');
-        
+
          if (charCode > 31 && (charCode < 48 || charCode > 57))
             return false;
          if(num.length>7 ){
@@ -90,7 +90,7 @@
       function isNumberKey1(evt,input){
          var charCode = (evt.which) ? evt.which : event.keyCode
          var num = input.value.replace(/\./g,'');
-        
+
          if (charCode > 31 && (charCode < 48 || charCode > 57))
             return false;
          if(num.length>11){
@@ -102,7 +102,7 @@
         function isNumberKey2(evt,input){
          var charCode = (evt.which) ? evt.which : event.keyCode
          var num = input.value.replace(/\./g,'');
-        
+
          if (charCode > 31 && (charCode < 48 || charCode > 57))
             return false;
          if(num.length>99 ){
@@ -114,15 +114,15 @@
       function cambiar(valor){
         var toLoad;
         var valores = $('#idc').val();
-                  
+
                     if (valores!=''){
                       toLoad= '../ids/'+valor+'/';
                     }else{
                       toLoad= 'ids/'+valor+'/';
-        
+
                     }
-       
- 
+
+
         $.get(toLoad, function(data){
              var options = '<option value="">Seleccione Ciudad<option>';
              for (var i = 0; i < data.length; i++){
@@ -131,12 +131,12 @@
                           $('#calles').html(options)
                           $("#calles option:first").attr('selected', 'selected');
        }, "json");
-     
+
       }
 function documentVerify(){
          /*var nro_doc=document.getElementById('nro_doc').value
 
-         
+
         if( !nro_doc && $('#tipo_doc option:selected').text()=='NO POSEE'){
          var fechaActual = new Date();
          var dni = fechaActual.getTime();
@@ -152,7 +152,7 @@ function documentVerify(){
         }else{
           $('#menor').val('no');
         }
-        
+
 }
 
       function validaPersonaInv(){
@@ -163,7 +163,7 @@ function documentVerify(){
               return valp($('#roles option:selected').text());
            }
            alert('Debe indicar el rol de la persona');
-           return false; 
+           return false;
 
         }
         if(grabar == 'Grabar'){
@@ -171,9 +171,9 @@ function documentVerify(){
           return valp();
 
         }
-        
+
         return true;
-        
+
 
       }
 
@@ -220,7 +220,7 @@ function documentVerify(){
                    alert('Debe seleccionar Ciudad de nacimiento.');
                    return false;
               }
-              
+
               if($('#pais_res').val()==''){
                    alert('Debe seleccionar pais de residencia.');
                    return false;
@@ -656,7 +656,7 @@ $(document).ready(function() {
                     $('#grabar').attr('disabled', 'disabled');
                     for(var i = 0; i < data.length; i++){
                       $('#datosexiste').append('<p><b>Apellido y nombre: </b>'+data[i].fields["apellidos"]+', '+data[i].fields["nombres"]+'</p>'+
-                                                '<p>Si considera que cometi&oacute; un error haga click en'+ 
+                                                '<p>Si considera que cometi&oacute; un error haga click en'+
                                                  ' el boton limpiar ingreso y realice la busqueda de persona. En caso de no '+
                                                  'considerar un error por favor presione F5 y cargue a la persona con tipo de DNI "NO POSEE" y contactese con un administrador para solucionar el inconveniente.</p>');
                     }
@@ -680,32 +680,32 @@ $(document).ready(function() {
         $("[rel='tooltip']").tooltip();
         $("#juridica").click(function(event){
           var esjuridica= $(this).find(":selected").text();
-         
+
           if (esjuridica=='SI'){
 
-                 $("#razon_social").val('')     
+                 $("#razon_social").val('')
                  $("#razon_social").attr('disabled',false);
                  $("#cuit").attr('disabled',false);
                  $("#nrocuit").attr('disabled',false);
           }else{
-               $("#razon_social").val('')     
+               $("#razon_social").val('')
                  $("#razon_social").attr('disabled',true);
                  $("#cuit").attr('disabled',true);
-                 $("#nrocuit").attr('disabled',true);     
+                 $("#nrocuit").attr('disabled',true);
           }
         });
 
 
         $('#roles').click(function(event){
            var options= $(this).find(":selected").text();
-          
+
            if (options=='APREHENDIDO' || options=='APRENDIDO' || options=='DETENIDO'){
               $('#detenidos').fadeIn(50);
               $('#razon').fadeOut(50);
               $('#menores').fadeOut(50);
                $(".obligatorios_denunciante").fadeOut(50);
-                $(".obligatorios_otros").fadeIn(50);         
-            
+                $(".obligatorios_otros").fadeIn(50);
+
            }else{
              if (options=='DENUNCIANTE'){
                 $('#razon').fadeOut(50);
@@ -714,7 +714,7 @@ $(document).ready(function() {
                 $('#esdetenido').fadeOut(50);
                  $(".obligatorios_otros").fadeOut(50);
                 $(".obligatorios_denunciante").fadeIn(50);
-    
+
              }else{
               if (options=='DENUNCIADO' || options=='VICTIMA'){
                 $('#menores').fadeIn(50);
@@ -722,49 +722,49 @@ $(document).ready(function() {
                 $('#detenidos').fadeOut(50);
                 $('#esdetenido').fadeOut(50);
                 $(".obligatorios_denunciante").fadeOut(50);
-                $(".obligatorios_otros").fadeIn(50);     
-             
-         
+                $(".obligatorios_otros").fadeIn(50);
+
+
               }else{
-              
+
                 $('#detenidos').fadeOut(50);
                 $('#razon').fadeOut(50);
                 $('#menores').fadeIn(50);
                 $('#esdetenido').fadeOut(50);
                 $(".obligatorios_denunciante").fadeOut(50);
-                $(".obligatorios_otros").fadeIn(50);         
-            
-              } 
+                $(".obligatorios_otros").fadeIn(50);
+
+              }
              }
-            
-      
-           }   
-    
+
+
+           }
+
         });
    $('#ciudades_r').change(function(event){
                     var idcit= $('#ciudades_r').val();
-               
+
                     var valor = $('#ids').val();
                     var toLoad;
                     var options = '<option value="">Seleccione Barrio</option>';
-             
+
                     if (valor!='' && valor!='None'){
                       toLoad= '../../town/'+idcit+'/';
                     }else{
                       toLoad= 'town/'+idcit+'/';
                     }
-           
+
                    $.get(toLoad, function(data){
-                                  
+
                             for (var i = 0; i < data.length; i++){
-                                
+
                                options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                              
+
                             }
-                            
+
                             $('#barrio_codigo').html(options)
                             $("#barrio_codigo option:first").attr('selected', 'selected');
-                  }, "json"); 
+                  }, "json");
                    var options2 = '<option value="">Seleccione calle</option>';
                    if (valor!='' && valor!='None'){
                       toLoad= '../../street/'+idcit+'/';
@@ -775,8 +775,8 @@ $(document).ready(function() {
                       for (var i = 0; i < data.length; i++){
                         options2 += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
                       }
-                           
-                           
+
+
                           $('#calles').html(options2)
                             $("#calles:first").attr('selected', 'selected');
                             $('#entre').html(options2)
@@ -786,60 +786,62 @@ $(document).ready(function() {
 
         $('#rolesvif').click(function(event){
            var options= $(this).find(":selected").text();
-          
-         
+
+
              if (options=='DENUNCIANTE'){
                 $('#denunciante').fadeIn(50);
                 $('#victima').fadeOut(50);
              }else{
               if (options=='VICTIMA'){
-              
+
                 $('#denunciante').fadeOut(50);
                 $('#victima').fadeIn(50);
-              
-         
+
+
               }else{
                if (options=='DENUNCIADO'){
-               
+
                  $('#denunciante').fadeOut(50);
                  $('#victima').fadeOut(50);
-               } 
+               }
               }
-             }   
-    
+             }
+
         });
         $('#todo').change(function(event){
-           
+
             opciones = document.getElementsByName("ciudades");
-            
-            
+
+
             if($(this).attr("checked")=="checked"){
               for(var i=0; i<opciones.length;i++) {
-                
-               
+
+
                 $('#id_ciudades_'+i).attr('checked', true);
               }
             }else{
-            
+
              for(var i=0; i<opciones.length;i++) {
-                
-                
+
+
                 $('#id_ciudades_'+i).attr('checked',false);
               }
             }
-      
+
         });
  $("#ciudades").select2({
-          
+
          });
+$("#usuario").select2({
+});
         $("#ciudad_nac").select2({
-          
+
          });
          $("#nro-unidad").select2({
-          
+
          });
            $("#ureg").select2({
-          
+
          });
          $('#tipo').select2({});
          $('#unidadmed').select2({});
@@ -858,36 +860,36 @@ $(document).ready(function() {
               minimumInputLength: 1
           });
         $("#calle").select2({
-          
+
         });
         $("#calles").select2({
-          
+
         });
         $("#barrio_codigo").select2({
-          
+
         });
         $("#entre").select2({
-          
+
         });
         $("#barrio").select2({
-          
+
         });
         $("#dependencia").select2({});
-    
 
-     
+
+
         $("#depe").select2({
-             
+
          });
         $('#ciudad').select2({
               minimumInputLength: 1
           });
-       
+
         $("#mes").select2({})
         $("#anios").select2({})
         $("#tipodel").select2({})
         $("#delitoe").select2({})
-       
+
         $("#provi").change(function(event){
 
           if ($(this).attr("checked")=="checked"){
@@ -897,7 +899,7 @@ $(document).ready(function() {
              $("#combociu").fadeOut(200)
              $("#vista").fadeIn(200)
              $("#reportes").fadeOut(200)
-             
+
            }else{
              $("#depes").attr('checked',false);
              $("#ciu").attr('checked',false);
@@ -906,9 +908,9 @@ $(document).ready(function() {
              $("#vista").fadeOut(200)
              $("#reportes").fadeOut(200)
            }
-         
+
         });
-         
+
 
           $("#ciu").change(function(event){
 
@@ -919,16 +921,16 @@ $(document).ready(function() {
              $("#combociu").fadeIn(200)
              $("#combofechas").fadeIn(200)
              $("#vista").fadeOut(200)
-             
+
            }else{
              $("#depes").attr('checked',false);
              $("#provi").attr('checked',false);
              $("#combodepe").fadeOut(200)
              $("#combociu").fadeOut(200)
              $("#combofechas").fadeOut(200)
-   
+
            }
-         
+
         });
             $("#vere").click(function(event){
                $("#verele").fadeIn(100)
@@ -959,9 +961,9 @@ $(document).ready(function() {
              $("#combofechas").fadeOut(200)
              $("#reportes").fadeOut(200)
            }
-         
-        }); 
-        
+
+        });
+
          $('#tipos').select2({}).change(function(event){
                     $('#subtipos').html('<option value="">Seleccione Tipo de uso de Arma de Fuego</option>');
                     var ida = $('#idampl').val();
@@ -969,39 +971,39 @@ $(document).ready(function() {
                     var uso = $('#tipos').val();
                     var toLoad;
                     var options=''
-                    
+
                     if (ida==null){
                        toLoad= '../../modouso/'+uso+'/';
                     }else{
-                    
+
                        toLoad= '../../../modouso/'+uso+'/';
                      }
-             
-                 
+
+
                     $.get(toLoad, function(data){
- 
+
                              for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
-                      
+
                             $('#subtipos').html(options)
                             $("#subtipos option:first").attr('selected', 'selected');
               }, "json");
-           });  
-       
+           });
+
         $('#categoria').select2({}).change(function(evento) {
            var dfuego=$('#categoria option:selected').text();
             if (dfuego=='DE FUEGO' || dfuego=='FUEGO'){
                 alert('A continuacion debe cargar las caracteristicas generales del Arma de fuego')
-        
+
                 $('#habilitaf').fadeIn(500);
            }else{
                 $('#habilitaf').fadeOut(500);
           }
         });
-         
+
         $('#rubro').select2({}).change(function(event){
                     $('#habilitaf').fadeOut(500);
                     var ida=$('#idampl').val();
@@ -1009,57 +1011,57 @@ $(document).ready(function() {
                     var idelemento = $('#idele').val();
                     var toLoad;
                     var options=''
-                    
-                   
+
+
                     if (ida==null){
                       toLoad= '../../getcategory/'+rubro+'/';
                     }else{
                        toLoad= '../../../getcategory/'+rubro+'/';
                     }
-               
+
                    $.get(toLoad, function(data){
-                                  
+
                             for (var i = 0; i < data.length; i++){
-                                
+
                                options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                              
+
                             }
-                            
+
                             $('#categoria').html(options)
                             $("#categoria option:first").attr('selected', 'selected');
-                  }, "json"); 
+                  }, "json");
                    var vehiculos=$('#rubro option:selected').text();
                     if (vehiculos=='VEHICULOS' || vehiculos=='AUTOMOTORES'){
                         alert('A continuacion debe cargar las caracteristicas generales del Vehiculo '+$('#tipo option:selected').text())
-        
+
                         $('#habilitav').fadeIn(500);
                     }else{
                          $('#habilitav').fadeOut(500);
                   }
            });
-       
-          
+
+
         $('#tipodel').change(function(event){
                     $('#delitoe').html('<option value="">Seleccione Tipos de Delitos</option>');
                     var idtd= $('#tipodel').val();
                     var toLoad;
-              
-                   
+
+
                     toLoad=idtd+'/';
-               
+
                     $.get(toLoad, function(data){
-                          
+
                             if (data.length!=0){
                                var options = '<option value="">Seleccione Delitos</option>';
                             }else{
                                var options = '<option value=""></option>';
                             }
                              for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
-                           
+
                             $('#delitoe').html(options)
                             $("#delitoe option:first").attr('selected', 'selected');
               }, "json");
@@ -1070,10 +1072,10 @@ $(document).ready(function() {
 
                     var idtd= $('#tipodelito').val();
                     var toLoad;
-              
-                   
+
+
                     toLoad= '../tdelito/'+idtd+'/';
-                   
+
                     $.get(toLoad, function(data){
                             if (data.length!=0){
                                var options = '<option value="">Seleccione Delitos</option>';
@@ -1081,94 +1083,94 @@ $(document).ready(function() {
                                var options = '<option value=""></option>';
                             }
                              for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
-                      
+
                             $('#delito').html(options)
                             $("#delito option:first").attr('selected', 'selected');
               }, "json");
            });
         $('#delito').change(function(event){
                     $('#modos').html('<option value="">Seleccione Delitos</option>');
-                   
+
 
                     var idtd= $('#delito').val();
                     var toLoad;
-               
+
                     toLoad= '../delito/'+idtd+'/';
-                    
+
                     $.get(toLoad, function(data){
                              if (data.length!=0){var options = '<option value="">Seleccione Modos Aquí</option>';
                              }else{
                                var options = '<option value="">Modos solo con LESIONES</option>';
-                             }  
+                             }
                              for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
-                      
+
                             $('#modos').html(options)
                             $("#modos option:first").attr('selected', 'selected');
-         
+
               }, "json");
            });
-          
+
             $('#ureg').change(function(event){
-                   
+
                     $('#depe').html('<option value="">Seleccione Unidad Regional</option>');
                     if($('#ureg').val()){
-                      var idure= $('#ureg').val();  
+                      var idure= $('#ureg').val();
                     }else{
                       var idure= $('#nro-unidad').val();
                     }
                     var toLoad;
                     toLoad= '../ure/'+idure+'/';
-                  
+
                     $.get(toLoad, function(data){
- 
+
                             var options = '<option value="">Seleccione Unidad Regional</option>';
                              for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
-                      
+
                             $('#depe').html(options)
                             $("#depe option:first").attr('selected', 'selected');
-                           
+
               }, "json");
-           }); 
-     
+           });
+
        $('#nro-unidad').change(function(event){
                     $('#depe').html('<option value="">Seleccione Unidad Regional</option>');
                     if($('#ureg').val()){
-                      var idure= $('#ureg').val();  
+                      var idure= $('#ureg').val();
                     }else{
                       var idure= $('#nro-unidad').val();
                     }
-                  
+
                     var toLoad;
                     toLoad= '../ure/'+idure+'/';
-    
+
                     $.get(toLoad, function(data){
- 
+
                             var options = '<option value="">Seleccione Unidad Regional</option>';
                              for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
-                      
+
                             $('#depe').html(options)
                             $("#depe option:first").attr('selected', 'selected');
               }, "json");
            });
-       
-    
-       
+
+
+
         $('#addmarca').click(function(event){
 
           $("#nueva_marca").each(function() {
@@ -1182,7 +1184,7 @@ $(document).ready(function() {
 
         });
          $('#addmarcav').click(function(event){
-          
+
           $("#nueva_marcav").each(function() {
               displaying = $(this).css("display");
               if(displaying == "inline-block") {
@@ -1192,7 +1194,7 @@ $(document).ready(function() {
               }
             });
 
-        });  
+        });
 
        $("#ciu").change(function(event){
 
@@ -1201,14 +1203,14 @@ $(document).ready(function() {
              $("#combodepe").fadeOut(200)
              $("#combociu").fadeIn(200)
              $("#combofechas").fadeIn(200)
-             
+
            }else{
              $("#depes").attr('checked',false);
              $("#combodepe").fadeOut(200)
              $("#combociu").fadeOut(200)
               $("#combofechas").fadeOut(200)
            }
-         
+
         });
         $("#depes").change(function(event){
           if ($(this).attr("checked")=="checked"){
@@ -1222,14 +1224,14 @@ $(document).ready(function() {
              $("#combociu").fadeOut(200)
               $("#combofechas").fadeOut(200)
            }
-         
-        }); 
-         
+
+        });
+
         $('#pais').change(function(event){
                   $('#provincia').html('<option value="">Seleccione Provincia</option>');
                   $('#departamento').html('<option value="">Seleccione Provincia</option>');
                   $('#ciudades').html('<option value="">Seleccione Ciudades</option>');
-                
+
                     var idPais= $('#pais').val();
                     var valor = $('#ids').val();
                     var toLoad;
@@ -1237,20 +1239,20 @@ $(document).ready(function() {
                       toLoad= '../../'+idPais+'/';
                     }else{
                       toLoad= idPais+'/';
-        
+
                     }
-                    
+
                    $.get(toLoad, function(data){
                       var options = '<option value="">Seleccione Provincia</option>';
                       $('#departamento').html('<option value="">Seleccione Provincia</option>');
                       $('#ciudades').html('<option value="">Seleccione Ciudades</option>');
-                      
+
                             for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
-                            
+
                               $('#provincia').html(options)
                             $("#provincia option:first").attr('selected', 'selected');
                             $('#ciudades').html(options)
@@ -1268,24 +1270,24 @@ $(document).ready(function() {
                       toLoad= '../../'+idPais+'/';
                     }else{
                       toLoad= idPais+'/';
-          
+
                     }
-                   
+
                    $.get(toLoad, function(data){
                             var options = '<option value="">Seleccione Ciudad</option>';
                              for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
-                      
+
                              $('#ciudades_r').html(options)
                             $("#ciudades_r option:first").attr('selected', 'selected');
               }, "json");
            });
 
            $('#provincia').change(function(event){
-        
+
           var idp= $('#provincia').val();
           var valor = $('#ids').val();
                     var toLoad;
@@ -1293,21 +1295,21 @@ $(document).ready(function() {
                       toLoad= '../../dpto/'+idp+'/';
                     }else{
                       toLoad= 'dpto/'+ idp+'/';
-                  }    
+                  }
                   $.get(toLoad, function(data){
 
                         var options = '<option value="">Seleccione un Dpto</option>';
-                    
+
                             for (var i = 0; i < data.length; i++){
-                              
+
                                 options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                         
+
                             }
                             $('#departamento').html(options)
                             $("#departamento option:first").attr('selected', 'selected');
               }, "json");
            });
-        
+
         $('#addbarrio').click(function(event){
             $("#nuevo_barrio").each(function() {
               displaying = $(this).css("display");
@@ -1325,7 +1327,7 @@ $(document).ready(function() {
                 $(this).css("display","block");
               }
             });
-            
+
         });
          $('#seekper').click(function(evento) {
            $('#buscarper').fadeIn(200);
@@ -1341,8 +1343,8 @@ $(document).ready(function() {
             $('#domicilio').fadeIn(50);
           }else{
             $('#domicilio').fadeOut(50);
-          }  
-       
+          }
+
 
         });
         $('#detenido').change(function(){
@@ -1352,15 +1354,14 @@ $(document).ready(function() {
                 $('#razon').fadeOut(50);
               }else{
                 $('#esdetenido').fadeOut(50);
-                $('#razon').fadeIn(50); 
-              }  
+                $('#razon').fadeIn(50);
+              }
         });
        $('#buscar').click(function(evento){
           address = $('#calle option:selected').text() + ' ' + $('#altura').val()+ ', '+$('#cpp').val();
           alert(address)
           initializes(address);
         });
- 
-       
+
+
             });
- 

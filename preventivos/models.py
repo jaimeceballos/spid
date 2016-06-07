@@ -27,6 +27,9 @@ class UserProfile(models.Model):
 	depe = models.ForeignKey('Dependencias',blank=True, null=True,)
 	last_login = models.BooleanField(default=True)
 	ultimo_ingreso = models.DateTimeField(blank=True,null=True)
+	solicitud_cambio = models.BooleanField(default=False)
+	fecha_solicitud = models.DateTimeField(blank=True,null=True)
+	clave_anterior = models.CharField(max_length=128,blank=True,null=True)
 
 	def __str__(self):
 	  return "%s's profile" % self.user
@@ -1353,7 +1356,7 @@ class Barrio(models.Model):
 	descripcion=models.CharField(max_length=100)
 
 	def __unicode__(self):
-	  return  u'%s %s' % (self.idBarrio,self.descripcion)  
+	  return  u'%s %s' % (self.idBarrio,self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
 
@@ -1439,3 +1442,13 @@ class EnvioAmpJudicial(models.Model):
 	class Meta:
 		ordering = ['fecha_envio']
 		db_table = 'envioampjudicial'
+
+class CambiarContrasenia(models.Model):
+	motivo 				= models.CharField(max_length=20)
+	detalle_motivo 		= models.CharField(max_length=100)
+	usuario_que_cambia 	= models.CharField(max_length=12)
+	usuario 			= models.CharField(max_length=12)
+	fecha_cambio		= models.DateTimeField(auto_now=True)
+
+	class Meta:
+		db_table = 'reset_passwords'

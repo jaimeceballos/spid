@@ -20,9 +20,9 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     (r'^spid/login/$', 'spid.views.login_user'),
     (r'^solicitud/$', 'spid.views.registro'),
     (r'^contacto/$', 'spid.views.contactar'),
-    (r'^password/$', 'django.contrib.auth.views.password_reset', 
+    (r'^password/$', 'django.contrib.auth.views.password_reset',
     {'post_reset_redirect' : '../repar/','template_name' : 'registro/password_reset_form.html'}),
-    (r'^resetpassword/$', 'django.contrib.auth.views.password_reset', 
+    (r'^resetpassword/$', 'django.contrib.auth.views.password_reset',
     {'post_reset_redirect' : '../spid/','template_name' : 'registration/password_reset_form.html'}),
     (r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
     (r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
@@ -36,5 +36,5 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     url(r'^NIF/',include('NIF.urls')),
     (r'^repar/', include('repar.urls')),
     (r'^','preventivos.views.page_not_found'),
-   
+
  )

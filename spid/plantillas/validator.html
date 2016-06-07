@@ -1,10 +1,10 @@
- 
+
   {% block main %}
   <script>
   function abrirModal(){
     window.showModalDialog("http://www.policia.chubut.gov.ar:8000/preventivos/helpass/","","dialogWidth:600px;dialogHeight:550px;dialogTop:100;dialogLeft: 100;resizable:0");
   }
-  
+
 </script>
   <div id="fade" class="overlay"  style="display: block;"></div>
       <div id="light" class="modals" style="display: block;height:270px;width:60%;">
@@ -13,8 +13,8 @@
          width="18px" title="Ayuda de creacion de contraseña"></a>
         </div>
         <p style="color: red;" > Este es su primer ingreso al Sistema SPID, Por favor genere una nueva Clave:</p>
-        <form action="{% url 'changePass' %}" method="post">{% csrf_token %} 
-          
+        <form {% if not 'R' in state %} action="{% url 'changePass' %}" {% else %} action="{% url 'changePassR' %}" {% endif %} method="post">{% csrf_token %} 
+
          <!-- {{formpass.as_p}}
           <p><input class="new-aqua" type="submit" value= "Aceptar" name="aceptar"></p>-->
           <p >
@@ -40,7 +40,7 @@
             <div class="strength-indicator">
                 <div class="meter">
                 </div>
-                Una contraseña de seguridad Fuerte contiene 
+                Una contraseña de seguridad Fuerte contiene
                 entre 6 y 12 caracteres.
                 No incluya palabras comunes ni nombres.
                 Combine letras mayusculas, minusculas,

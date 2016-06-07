@@ -8,12 +8,12 @@ from repar.forms import *
 from repar.views import *
 from django.conf import settings
 handler404 = 'repar.views.page_not_found'
-handler500 = 'repar.views.server_error' 
+handler500 = 'repar.views.server_error'
 
 
 admin.autodiscover()
 
-urlpatterns = patterns('',url(r'^repar/change/$', 'repar.views.passwordChange', name="changePass"),
+urlpatterns = patterns('',url(r'^repar/change/$', 'repar.views.passwordChange', name="changePassR"),
 	(r'^$', 'repar.views.iniciar'),
     (r'^inicio/$', 'repar.views.inicial'),
     (r'^login/$', 'repar.views.loguser'),
@@ -27,9 +27,8 @@ urlpatterns = patterns('',url(r'^repar/change/$', 'repar.views.passwordChange', 
     #(r'^new/search/$', 'repar.views.search'),
     (r'^regis/(?P<id>[0-9A-Za-z]+)/$', 'repar.views.editarReg'),
     (r'^seek/(?P<id>[0-9A-Za-z]+)/$', 'repar.views.verdata'),
-   
+
     (r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
     (r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
 
 )
-
