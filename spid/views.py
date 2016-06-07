@@ -1,4 +1,4 @@
-#encoding:utf-8 
+#encoding:utf-8
 from preventivos.models import *
 from preventivos.forms import *
 from django.core.context_processors import csrf
@@ -28,8 +28,8 @@ from preventivos.views import obtener_cantidad_no_enviados, obtener_cantidad_no_
 
 
 def some_view(request):
-   full= os.path.dirname(__file__)+"/static/pdfs/" 
-   fullpath = os.path.join(full, 'preventivo digital SPID.pdf',) 
+   full= os.path.dirname(__file__)+"/static/pdfs/"
+   fullpath = os.path.join(full, 'preventivo digital SPID.pdf',)
    response = HttpResponse(file(fullpath).read())
    response['Content-Type'] = 'application/pdf'
    response['Content-disposition'] = 'attachment; filename=preventivo\ digital\ SPID.pdf'
@@ -38,7 +38,7 @@ def some_view(request):
 
 
 def obtener_dependencias(request,depes):
-        
+
         data = request.POST
         dependencias = Dependencias.objects.filter(unidades_regionales = depes)
         data = serializers.serialize("json", dependencias)
@@ -73,11 +73,11 @@ def login_user(request):
     formpass = CambiarPassForm()
     if request.POST.get('username')=='':
          formj = ActuantesForm()
-         
+
          return render(request, 'correocontacto.html', {'state':state,'formj':formj})
     else:
         if request.POST.get('logonea')=='Conectar':
-         
+
          username = request.POST.get('username')
          password = request.POST.get('password')
          depe = request.POST.get('dependencias')
@@ -89,10 +89,10 @@ def login_user(request):
          if username.isdigit():
           user = auth.authenticate(username=username, password=password)
           if user is not None:
-       
+
            if Personas.objects.get(nro_doc=username).fecha_nac.day == date.today().day and Personas.objects.get(nro_doc=username).fecha_nac.month == date.today().month:
               birthday = True
-     
+
          if ureg and depe:
             uregi1=UnidadesRegionales.objects.get(id=ureg)
             uregis1=uregi1.id
@@ -120,7 +120,7 @@ def login_user(request):
                 #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")<=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
                 if user.get_profile().last_login:
                    changePass = 'si'
-              
+
                 auth.login(request, user)
                 userp=user.get_profile()
                 profiles = user.get_profile()
@@ -130,16 +130,16 @@ def login_user(request):
                 uregis=uregi.id
                 depen=Dependencias.objects.get(descripcion=depes)
                 depeni=depen.id
-              
-              
+
+
                 gr=user.groups.values_list('name', flat=True)
                 #.exclude(name__contains=u'repar')
                 #print (gr)
                 for varios in gr:
                     state.append(str(Group.objects.get(name=varios)))
-                
+
                 #print (state)
-                 
+
                 #state=gr
                 if uregis == uregis1 and depeni == depeni1:
                   #for varios in gr:
@@ -154,13 +154,13 @@ def login_user(request):
                 else:
                   state="Dependencias seleccionadas INCONRRECTAS"
                   return render(request, 'index.html', {'state':state,'form':form})
-        
+
               else:
                 state = "Ud. es un Usuario inactivo. Comuniquese con el Administrador del Sistema"
             else:
-              
+
                state = "Su usuario y/o password son incorrectos"
-          
+
             return render(request, 'index.html', {'state':state,'form':form})
          else:
             user = auth.authenticate(username=username, password=password)
@@ -172,7 +172,7 @@ def login_user(request):
                 #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")!=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
                 if user.get_profile().last_login:
                    changePass = 'si'
-              
+
                 auth.login(request, user)
                 userp=user.get_profile()
                 profiles = user.get_profile()
@@ -185,18 +185,18 @@ def login_user(request):
 
                 gr=user.groups.values_list('name', flat=True)
                 #.exclude(name__contains=u'repar')
-               
+
                 #state=gr
                 for varios in gr:
                      state.append(str(Group.objects.get(name=varios)))
                 #    state = str(Group.objects.get(name=varios))
                 #print (state)
-                if uregis == uregis1 and depeni == depeni1: 
+                if uregis == uregis1 and depeni == depeni1:
                    #for varios in gr:
                    #  state = str(Group.objects.get(name=varios))
                    request.session['state']=state
                    request.session['destino']=destino
-                else: 
+                else:
 
                   if state=="administrador" or state=="visita":
                      state = str(Group.objects.get(name=gr))
@@ -206,16 +206,16 @@ def login_user(request):
                   else:
                     state="Usuario no Autorizado"
                     return render(request, 'index.html', {'state':state,'form':form})
-              
 
-              
-                        
-              else:    
+
+
+
+              else:
                 state="Usuario no Autorizado"
                 return render(request, 'index.html', {'state':state,'form':form})
 
               return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'ultimo_ingreso':ultimo_ingreso})
-          
+
         else:
             return render(request, 'index.html', {'name':name,'form':form})
 
@@ -233,7 +233,7 @@ def registro(request):
     soli=''
     if request.POST.get('envia')=='Enviar':
            jerarca=RefJerarquias.objects.get(id=request.POST.get('jerarca'))
-           
+
            info_enviado= True
            subject, from_email, to = 'Solicitud de Usuario - SPID' ,request.POST.get('mail'), 'divsistemasjp@policia.chubut.gov.ar'
            text_content = "Solicitud recibida de : %s<br><br>Nro de Dni : %s<br><br>Jerarquia : %s<br><br>Destino actual : %s<br><br> Usuarios <br><br> %s <br><br>" % (request.POST.get('name'),str(request.POST.get('docu')),jerarca,request.POST.get('destino'),request.POST.get('comment'))
@@ -243,8 +243,8 @@ def registro(request):
                msg.send(fail_silently=True)
            except IndexError:
                pass
-          
-      
+
+
            cabecera = '<br><br><br>'+'Al Sr :............................'+'<br>'+'ADMINISTRADOR SPID'+'<br>'+'S____________/_____________D'+'<br><br>'
            cuerpos='Por medio de la presente, me dirijo a UD. con el fin de solicitar el ALTA de usuarios al Sistema SPID'
            usuas='Lista del Personal A/C: '+str(jerarca)+' - '+str(request.POST.get('destino'))+'<br><br>'+str(request.POST.get('comment'))+'<br><br><br><br><br><br>'
@@ -252,7 +252,7 @@ def registro(request):
            datos.append(cabecera)
            for i in datos:
              soli=soli+i
-         
+
            return  render(request,'solicitud.html',{'name':soli,'today':today,'cuerpos':cuerpos,'usuas':usuas,'saludo':saludo,})
     else:
        formj = ActuantesForm()
@@ -271,9 +271,9 @@ def contactar(request):
     today = datetime.datetime.now()
     datos=[]
     soli=''
-    
+
     if request.POST.get('envia')=='Enviar':
-          
+
            info_enviado= True
            subject, from_email, to = 'Solicitud de Información' ,request.POST.get('mail'), 'fydsoftware@gmail.com'
            text_content = "Solicitud recibida de : %s<br><br> Comentario : %s <br><br>" % (request.POST.get('name'),request.POST.get('comment'))
@@ -285,10 +285,10 @@ def contactar(request):
            direcciones=[]
            for dire in dire:
               direcciones.append(dire)
-              direcciones.append('jaimeceballos82@gmail.com')    
-    
+              direcciones.append('jaimeceballos82@gmail.com')
+
            for cantdir in direcciones:
-      
+
              try:
                msg = EmailMultiAlternatives(subject,text_content,from_email, [cantdir])
                msg.attach_alternative(text_content,'text/html')
@@ -303,7 +303,7 @@ def contactar(request):
            datos.append(cabecera)
            for i in datos:
              soli=soli+i
-           
+
            return  render(request,'solicitud.html',{'name':soli,'today':today,'cuerpos':cuerpos,'usuas':usuas,'saludo':saludo,})"""
            return render(request,'solicitar.html',  {'name':name})
     else:
@@ -326,8 +326,8 @@ def nologin(request):
     except KeyError:
         pass
         state = "SE DESCONECTO DEL SISTEMA"
-    form = DependenciasForm()      
-    formd = []  
+    form = DependenciasForm()
+    formd = []
     return render(request, 'index.html', {'formd':formd,'state':state,'form':form})
 
 
@@ -343,13 +343,17 @@ def passwordChange(request):
   user = User.objects.get(username=request.user)
   #if formpass.is_valid():
   pass1 = request.POST.get('pass1')
- 
+
   if pass1:
      user.date_joined=datetime.datetime.now()
      user.set_password(pass1)
      user.save()
      profiles = user.get_profile()
      profiles.last_login=False
+     if profiles.solicitud_cambio:                                              #si el cambio de contraseña es por un pedido de reinicio
+         profiles.solicitud_cambio = False                                      #cambio la bandera de solicitud de cambio
+         profiles.fecha_solicitud = None                                        #blanqueo la fecha de solicitud de reinicio
+         profiles.clave_anterior = None                                         #blanqueo la clave anterior
      profiles.save()
      changePass = ''
   logout(request)
@@ -360,8 +364,8 @@ def passwordChange(request):
   except KeyError:
       pass
       state = "SE DESCONECTO DEL SISTEMA"
-  form = DependenciasForm()      
-  formd = []  
+  form = DependenciasForm()
+  formd = []
   #print form,formd
   return render(request, 'index.html', {'formd':formd,'form':form,'state':state,})
   #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})

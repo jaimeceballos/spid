@@ -1,22 +1,22 @@
 {% block sidebar %}
 
  <header class="wrapper clearfix">
-               
-        <div id="banner">        
-        
 
-        
+        <div id="banner">
+
+
+
         <!-- main navigation -->
         <nav id="topnav" role="navigation">
-        <div class="menu-toggle">Menu</div>  
+        <div class="menu-toggle">Menu</div>
             <ul class="srt-menu" id="menu-main-navigation">
 
             {% if user.is_authenticated and user.is_staff or not user.is_staff%}
-                      
+
                         <li><a href="/spid/inicio/"><span>Inicio</span></a></li>
 
                                       {%if 'policia' in state or 'jefes' in state or 'investigaciones' in state or 'radio' in state%}
-                                      
+
                                         <li class='has-sub'><a href='#'><span>Preventivos</span></a>
                                              <ul>
                                                <li><a href="/preventivos/new/"><span>Nuevo</span></a></li>
@@ -59,7 +59,7 @@
                                            <!-- <li><a href="/preventivos/reportes/"><span>Busco Hechos</span></a></li>-->
                                      </ul>
                                 </li>
-                                
+
                                     </li>
                                         <li class='has-sub'><a href='#'><span>Mapa del Delito</span></a>
                                          <ul>
@@ -67,26 +67,26 @@
                                          </ul>
                                        </li>
                                {%endif%}
-                               
+
                                 {%if 'investigaciones' in state or 'radio' in state%}
-                                      
-                                       
+
+
                                        <li class='has-sub'><a href='#'><span>Informes Varios</span></a>
-                                         <ul>   
+                                         <ul>
                                            <li><a href="/preventivos/forages/"><span>Resumen de Personas Involucradas</span></a></li>
                                            <li><a href="/preventivos/hechos/">
                                             <span>Cantidad de Hechos s/Tipo y p/Delitos </span></a></li>
                                            <li><a href="/preventivos/homicides/"><span>Cantidad de Hechos con Homicidios  Tipo de Lugar/Armas</span></a></li>
                                            <li><a href="/preventivos/automotores/">
-                                            <span>Cantidad de Automotores s/Tipo y p/Delitos </span></a></li>                                          
+                                            <span>Cantidad de Automotores s/Tipo y p/Delitos </span></a></li>
                                          </ul>
-                                       </li> 
-                                       
-                                 
+                                       </li>
+
+
                                 {%endif%}
                                {% endif %}
                             {% if user.is_authenticated and user.is_staff or not user.is_staff%}
-                               
+
                                  {%if 'visita' in state%}
 
                                  <li class='has-sub'><a href='#'><span>Búsqueda</span></a>
@@ -95,7 +95,7 @@
                                          <li><a href='/preventivos/seeampli/'><span>Ampliaciones</span></a></li>
                                             <li><a href='/preventivos/peoplein/'><span>Personas Involucradas</span></a></li>
                                                   <li><a href='/preventivos/objectsin/'><span>Elementos Involucradas</span></a></li>
-                          
+
                                           <li><a href='/preventivos/causas/'><span>Causas/Detenidos</span></a></li>
                                      </ul>
                                 </li>
@@ -104,29 +104,29 @@
                                     <li><a href="/preventivos/reportes/"><span>Reportes Varios</span></a></li>
                                   </ul>
                                  </li>
-                                
-                               
+
+
                                 {% endif %}
                             {% endif %}
-                         
-                         
-                                    
-                          
+
+
+
+
                             {% if user.is_authenticated and not user.is_staff%}
                                  {%if 'judiciales' in state%}
                                        <li class='has-sub'><a href='#'><span>Mapa del Delito</span></a>
                                          <ul>
                                            <li><a href="/preventivos/mapsanality/"><span>Ver</span></a></li>
                                          </ul>
-                                       </li> 
+                                       </li>
                                   <li class='has-sub'><a href='#'><span>Consultas</span></a>
                                      <ul>
                                            <li><a href='/preventivos/seedata/'><span>Preventivos</span></a></li>
                                      </ul>
                                 </li>
-                                
-                                
-                               
+
+
+
                                 {% endif %}
                             {% endif %}
                             {% if user.is_authenticated and user.is_staff %}
@@ -136,7 +136,7 @@
                                           <li><a href='/preventivos/user/'><span>Usuarios</span></a></li>
                                          <!-- <li><a href='/preventivos/groupusers/'><span>Grupos de Usuarios</span></a></li>-->
                                            <li><a href='/preventivos/groupfree/'><span>Permisos a Grupos</span></a></li>
-                                        
+                                           <li><a href="{% url 'cambiar_password'%}"><span>Reset contrase&ntilde;a usuarios </span></a></li>
                                           <li><a href='/preventivos/actuantes/'><span>Actuantes  Preventores</span></a></li>
                                           <li><a href='/preventivos/controller/'><span>Actividades de Usuarios</span></a></li>
                                      </ul>
@@ -162,17 +162,17 @@
                                          <li><a href="/preventivos/category/"><span>Categorias</span></a></li>
                                          <li><a href="/preventivos/typearms/"><span>Tipos de Armas</span></a></li>
                                          <li><a href="/preventivos/subarms/"><span>Sub-Tipos de Armas</span></a></li>
-                                       
+
                                          <li><a href="/preventivos/barrios/"><span>Barrios</span></a></li>
                                          <li><a href="/preventivos/address/"><span>Direcciones   Calles</span></a></li>
                                          <li><a href="/preventivos/authorities/">Autoridades Oficiales</span></a></li>
                                      </ul>
                                 </li>
-                            
+
                             {%endif%}
                      {% include "menuhyv.html"%}
         </nav><!-- #topnav -->
-  
+
     </header><!-- end header -->
 
 
@@ -184,12 +184,12 @@
                        <!--  <tr><td class="lefttitle"><b>Preventivo Policial  </b></td></tr>
                                <tr><td class="box_middle">-->
              <!--                   <tr><td>
-                                
-                               
+
+
                                   <ul   id="menu-bar">
                                       {% if user.is_authenticated and user.is_staff or not user.is_staff%}
                                       {%if 'policia' in state%}
-                                      
+
                                         <li class='has-sub'><a href='#'><span>Preventivos</span></a>
                                              <ul>
                                                <li><a href="/preventivos/new/"><span>Nuevo</span></a></li>
@@ -228,7 +228,7 @@
                                            <!-- <li><a href="/preventivos/reportes/"><span>Busco Hechos</span></a></li>-->
                               <!--       </ul>
                                 </li>
-                                
+
                                     </li>
                                         <li class='has-sub'><a href='#'><span>Mapa del Delito</span></a>
                                          <ul>
@@ -238,7 +238,7 @@
                                {%endif%}
 
                                 {%if 'investigaciones' in state%}
-                                      
+
                                         <li class='has-sub'><a href='#'><span>Preventivos</span></a>
                                              <ul>
                                                <li><a href="/preventivos/new/"><span>Nuevo</span></a></li>
@@ -266,23 +266,23 @@
                                           <li><a href='/ampliaciones/seedata/'><span>Ampliaciones</span></a></li>
                                           <li><a href='/preventivos/peoplein/'><span>Personas Involucradas</span></a></li>
                                           <li><a href='/preventivos/objectsin/'><span>Elementos Involucrados</span></a></li>
-                          
+
                                          </ul>
                                         </li>
                                         <li class='has-sub'><a href='#'><span>Mapa del Delito</span></a>
                                          <ul>
                                            <li><a href="/preventivos/mapsanality/"><span>Ver</span></a></li>
                                          </ul>
-                                       </li> 
- 
+                                       </li>
+
                                         <li class='has-sub'><a href='#'><span>Estadísticas</span></a>
                                          <ul>
                                            <li><a href="/preventivos/forages/"><span>Personas Inv. p/Edad</span></a></li>
                                            <li><a href="/preventivos/reportes/"><span>Delitos</span></a></li>
-                                           
+
                                          </ul>
-                                       </li> 
-                                 
+                                       </li>
+
                                 {%endif%}
                                {% endif %}
                             {% if user.is_authenticated and user.is_staff or not user.is_staff%}
@@ -294,7 +294,7 @@
                                           <li><a href='/ampliaciones/seedata/'><span>Ampliaciones</span></a></li>
                                             <li><a href='/preventivos/peoplein/'><span>Personas Involucradas</span></a></li>
                                                   <li><a href='/preventivos/objectsin/'><span>Elementos Involucradas</span></a></li>
-                          
+
                                           <li><a href='/preventivos/causas/'><span>Causas/Detenidos</span></a></li>
                                      </ul>
                                 </li>
@@ -303,8 +303,8 @@
                                     <li><a href="/preventivos/reportes/"><span>Reportes Varios</span></a></li>
                                   </ul>
                                  </li>
-                                
-                               
+
+
                                 {% endif %}
                             {% endif %}
                             {% if user.is_authenticated and user.is_staff %}
@@ -314,7 +314,7 @@
                                           <li><a href='/preventivos/user/'><span>Usuarios</span></a></li>
                                           <li><a href='/preventivos/groupusers/'><span>Grupos de Usuarios</span></a></li>
                                            <li><a href='/preventivos/groupfree/'><span>Permisos a Grupos</span></a></li>
-                                        
+
                                           <li><a href='/preventivos/actuantes/'><span>Actuantes  Preventores</span></a></li>
                                           <li><a href='/preventivos/controller/'><span>Actividades de Usuarios</span></a></li>
                                      </ul>
@@ -340,7 +340,7 @@
                                          <li><a href="/preventivos/category/"><span>Categorias</span></a></li>
                                          <li><a href="/preventivos/typearms/"><span>Tipos de Armas</span></a></li>
                                          <li><a href="/preventivos/subarms/"><span>Sub-Tipos de Armas</span></a></li>
-                                       
+
                                          <li><a href="/preventivos/barrios/"><span>Barrios</span></a></li>
                                          <li><a href="/preventivos/address/"><span>Direcciones - Calles</span></a></li>
                                          <li><a href="/preventivos/authorities/">Autoridades Oficiales</span></a></li>
@@ -352,13 +352,13 @@
                                            <li><a href="/preventivos/delitozonas/"><span>Delitos por Dependencias</span></a></li>
                                            <li><a href="/preventivos/forages/"><span>Delitos contra la Vida</span></a></li>
                                            <li><a href="/preventivos/forages/"><span>Delitos contra Propiedad</span></a></li>
-                                                                                      
+
                                          </ul>
-                                       </li> 
+                                       </li>
                             {%endif%}
-                     
+
                             </ul>
-                      
+
                           </td></tr>-->
                           <!--<tr><td class="box_foot"></td></tr>-->
                  <!--    </table>-->

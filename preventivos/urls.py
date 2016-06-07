@@ -8,17 +8,17 @@ from preventivos.views import *
 from django.conf import settings
 
 FORMS = [("nro", PrimerForm),
-     ("actores", SegundoForm),    ("autoridades", TerceroForm),     ("confirmation", FinForm),       
+     ("actores", SegundoForm),    ("autoridades", TerceroForm),     ("confirmation", FinForm),
     ]
 
 contact_wizard = preventivos.as_view(FORMS)
 
 handler404 = 'preventivos.views.page_not_found'
-handler500 = 'preventivos.views.server_error' 
+handler500 = 'preventivos.views.server_error'
 
 admin.autodiscover()
 
-urlpatterns = patterns('', 
+urlpatterns = patterns('',
   	(r'^user/$','preventivos.views.new_user'),
    #(r'^permgroups/$','preventivos.views.permisos'),
     (r'^climas/$', 'preventivos.views.climas'),
@@ -149,9 +149,9 @@ urlpatterns = patterns('',
     url(r'^awebservice/$', 'preventivos.views.enviadoa',name='awebservice'),
     url(r'^pendientes_envio/$','preventivos.views.pendientes_envio',name='pendientes_envio'),
     url(r'^pendientes_autorizacion/$','preventivos.views.pendientes_autorizacion',name='pendientes_autorizacion'),
+    url(r'^cambiar_password/$','preventivos.views.cambiar_password',name='cambiar_password'),
     (r'^', 'preventivos.views.page_not_found'),
     (r'^', 'preventivos.views.server_error'),
 
- 
+
    )
-  

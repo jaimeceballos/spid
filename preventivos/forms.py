@@ -1,9 +1,9 @@
-#encoding:utf-8 
+#encoding:utf-8
 from django.forms import ModelForm, TimeField
 from django import forms
 from datetime import datetime
 from django.contrib import admin
-from django.utils import timezone 
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import  Group,Permission,User
 from django.contrib.admin import widgets
@@ -33,46 +33,46 @@ class GroupForm(forms.ModelForm):
 	class Meta:
 		model = Group
 		exclude=('name')
-		   
+
 		groups = forms.ModelChoiceField(
-		Group.objects.all(), 
+		Group.objects.all(),
 		widget=admin.widgets.FilteredSelectMultiple(('groups'), False))
 
 	def __init__(self, *args, **kwargs):
 		super(GroupForm,self).__init__(*args,**kwargs)
- 
-	   
+
+
 		self.fields["permissions"].widget = forms.SelectMultiple()
 		self.fields["permissions"].queryset = Permission.objects.filter(content_type__app_label__contains='preventivos')
- 
+
 
 
 
 class UserForm(forms.ModelForm):
-   
+
 	class Meta:
 		model = User
 		exclude = ('password','last_login','is_superuser','date_joined')
 		fields = ('groups','user_permissions','username','first_name','last_name','last_login','email','is_active','is_staff')
- 
+
 	def __init__(self, *args, **kwargs):
 		super(UserForm,self).__init__(*args,**kwargs)
- 
-	   
+
+
 		self.fields["user_permissions"].widget = forms.SelectMultiple()
 		self.fields["user_permissions"].queryset = Permission.objects.filter(content_type__app_label__contains='preventivos')
- 
+
 		self.fields["groups"].widget = forms.SelectMultiple()
 		self.fields["groups"].queryset = Group.objects.all()
- 
-	   
+
+
 class UserProfileForm(forms.ModelForm):
-  
+
 	def __init__(self, *args, **kwargs):
 		super(UserProfileForm,self).__init__(*args,**kwargs)
- 
+
 	class Meta():
-	   
+
 		model = UserProfile
 		fields=('ureg','depe')
 
@@ -88,7 +88,7 @@ class DepartamentosForm(forms.ModelForm):
 
 class ProvinciasForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
-   
+
 	class Meta:
 		model = RefProvincia
 
@@ -118,15 +118,15 @@ class UnidadesForm(forms.ModelForm):
 	ciudad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
 	class Meta:
 		model = UnidadesRegionales
- 
+
 class DependenciasForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	ciudad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
 	unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.all())
 
-	
+
 	class Meta:
-		model = Dependencias        
+		model = Dependencias
 
 class PeopleForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
@@ -137,7 +137,7 @@ class TipoDelitosForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefTipoDelitos
- 
+
 class DelitoForm(forms.ModelForm):
 	descripcion = forms.CharField(required = True)
 	tipo_delito = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefTipoDelitos.objects.all())
@@ -182,17 +182,17 @@ class CategoryForm(forms.ModelForm):
 class BarriadasForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	ciudad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
-   
+
 	class Meta:
 	  model = RefBarrios
 	  exclude = ('deleted',)
-  
+
 class AddressForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	ciudad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
-   
+
 	class Meta:
-	  model = RefCalles   
+	  model = RefCalles
 
 class AuthoritiesForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
@@ -201,28 +201,28 @@ class AuthoritiesForm(forms.ModelForm):
 	class Meta:
 	   model = RefAutoridad
 	   fields = ('ciudades','descripcion','email',)
- 
+
 	def __init__(self, *args, **kwargs):
 		super(AuthoritiesForm,self).__init__(*args,**kwargs)
 
 		self.fields["ciudades"].widget = CheckboxSelectMultiple()
 		self.fields["ciudades"].queryset = RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))
- 
+
 class TipoJerarquiaForm(forms.ModelForm):
 	descripcion = forms.CharField(required = True)
- 
+
 	class Meta:
 		model = RefTipoJerarquia
- 
+
 class DivisionJerarquiaForm(forms.ModelForm):
 	descripcion = forms.CharField(required = True)
- 
+
 	class Meta:
 		model = RefDivisionJerarquia
- 
+
 class JerarquiasForm(forms.ModelForm):
 	descripcion = forms.CharField(required = True)
- 
+
 	class Meta:
 		model = RefJerarquias
 
@@ -232,7 +232,7 @@ class SexoForm(forms.ModelForm):
 	('2','MASCULINO'),
 	)
 	descripcion = forms.CharField(widget = forms.CheckboxSelectMultiple(choices = Sexo_opciones))
-  
+
 	class Meta:
 		model = RefSexo
 
@@ -245,17 +245,17 @@ class TipodocForm(forms.ModelForm):
 	('5','PAS'),
 	)
 	descripcion = forms.CharField(widget = forms.CheckboxSelectMultiple(choices = Doc_opciones))
-  
+
 	class Meta:
 		model = RefTipoDocumento
 
 class ActuantesForm(forms.ModelForm):
 	fcio_opciones=(('1','ACTUANTE'),('2','PREVENTOR'),('3','ACT / PREV'))
 	funcion = forms.CharField(initial='1',widget = forms.RadioSelect(choices = fcio_opciones))
-	
+
 	class Meta:
 		model = Actuantes
-		
+
 
 class HorizRadioRenderer(forms.RadioSelect.renderer):
 	""" this overrides widget method to put radio buttons horizontally
@@ -287,7 +287,7 @@ class PersonasForm(forms.ModelForm):
 	class Meta:
 		model = Personas
 		#fields = ('estado_civil','nro_doc','ciudad_res','ocupacion')
-	
+
 
 
 class PersonalForm(forms.ModelForm):
@@ -302,7 +302,7 @@ class ComunidadesForm(forms.ModelForm):
 	('3','Rural'),
 	)
 	descripcion = forms.CharField(widget = forms.CheckboxSelectMultiple(choices = Zonas_opciones))
-  
+
 	class Meta:
 		model = RefComunidades
 
@@ -315,32 +315,32 @@ class PrimerForm(forms.ModelForm):
 		cleaned_data = super(PrimerForm, self).clean()
 		#if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
 		#   raise forms.ValidationError("El Nro y Año Existentes")
-	 
+
 		#if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
 		#   raise forms.ValidationError("El Nro y Año Existentes")
 		if self.cleaned_data.get('fecha_denuncia') is not None:
 			fecha_denuncia = self.cleaned_data.get('fecha_denuncia')
 			#Obtenemos la fecha actual
-			
+
 			fecha_actual = timezone.now()
- 
+
 			if fecha_denuncia > fecha_actual:
 			   raise forms.ValidationError("El Fecha de Denuncia no debe ser mayor al dia de hoy")
 		else:
 		  raise forms.ValidationError("Ingrese una Fecha de Denuncia menor o igual a la Fecha actual")
-   
-		
+
+
 		if self.cleaned_data.get('unidad') is not None:
 		   filtro=Dependencias.objects.filter(unidades_regionales_id__exact=self.cleaned_data.get('unidad'))
 		   if self.cleaned_data.get('dependencia') not in filtro:
 			  raise forms.ValidationError('La dependencia elegida no pertenece a la U.R.E seleccionada')
-		  
+
 		return self.cleaned_data
 	class Meta:
 		model = Preventivos
 		fields = ('fecha_denuncia','caratula','dependencia')
-	
-	
+
+
 
 class SegundoForm(forms.ModelForm):
 	unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
@@ -357,10 +357,10 @@ class SegundoForm(forms.ModelForm):
 		#raise forms.ValidationError("Seleccione Actuante y Preventor diferentes")
 		#if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
 		#    raise forms.ValidationError("El Nro y Año Existentes")
-	   
+
 		if  self.cleaned_data.get('actuante') is None or self.cleaned_data.get('preventor') is None:
 			raise forms.ValidationError("Seleccione Actuante y Preventor")
-	
+
 		return self.cleaned_data
 	class Meta:
 		model = Preventivos
@@ -374,12 +374,12 @@ class TerceroForm(forms.ModelForm):
 	anio = forms.IntegerField(required=False)
 	def clean(self):
 		cleaned_data = super(TerceroForm, self).clean()
-	   
+
 		if Preventivos.objects.filter(dependencia__exact=self.cleaned_data.get('dependencia'),nro__exact=self.cleaned_data.get('nro'),anio__exact=self.cleaned_data.get('anio')).values('nro'):
 		   raise forms.ValidationError("El Nro y Año Existentes")
-		
+
 		return self.cleaned_data
-		
+
 	def __init__(self, *args, **kwargs):
 		super(TerceroForm,self).__init__(*args,**kwargs)
 		self.fields["autoridades"].widget = CheckboxSelectMultiple()
@@ -394,7 +394,7 @@ class FinForm(forms.ModelForm):
 	unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
 	nro = forms.IntegerField(required=False)
 	anio = forms.IntegerField(required=False)
-   
+
 	def clean(self):
 		cleaned_data = super(FinForm, self).clean()
 		if  self.cleaned_data.get('actuante') is None or self.cleaned_data.get('preventor') is None:
@@ -407,7 +407,7 @@ class FinForm(forms.ModelForm):
 		self.fields["autoridades"].widget = CheckboxSelectMultiple()
 		self.fields["autoridades"].queryset = RefAutoridad.objects.all()
 		self.fields["autoridades"].help_text='Seleccione haciendo click sobre cada de las Autoridades a Informar.-'
-	
+
 	class Meta:
 		model = Preventivos
 		fields = ('fecha_denuncia','caratula','actuante','preventor','autoridades',)
@@ -424,8 +424,8 @@ class PreventivosForm(forms.ModelForm):
 		self.fields["autoridades"].widget = CheckboxSelectMultiple()
 		self.fields["autoridades"].queryset = RefAutoridad.objects.all()
 		self.fields["autoridades"].help_text='Seleccione haciendo click sobre cada de las Autoridades a Informar.-'
-	
-  
+
+
 	class Meta:
 		model = Preventivos
 		fields = ('nro','anio','fecha_denuncia','caratula','actuante','preventor','autoridades',)
@@ -440,21 +440,21 @@ class HechosForm(forms.ModelForm):
 		self.fields['motivo'].required = True
 		self.fields['fecha_desde'].required = True
 		self.fields['fecha_hasta'].required = True
-   
+
 
 	def clean_motivo(self):
 		motivo=self.cleaned_data['motivo']
 		if not motivo:
 			msg = 'Ingrese el Motivo de la Denuncia del Hecho'
 			raise forms.ValidationError(self.error_messages[msg])
-	
+
 		return motivo
 
-	def clean_fecha_desde(self):    
+	def clean_fecha_desde(self):
 		fecha_desde = self.cleaned_data['fecha_desde']
-		if not fecha_desde: 
+		if not fecha_desde:
 			 raise forms.ValidationError(self.error_messages['Ingrese las Fechas y Hora de Inicio'])
-		return fecha_desde   
+		return fecha_desde
 	def clean_fecha_hasta(self):
 		fecha_desde = self.cleaned_data['fecha_desde']
 		fecha_hasta = self.cleaned_data['fecha_hasta']
@@ -463,9 +463,9 @@ class HechosForm(forms.ModelForm):
 		else:
 		   if fecha_desde > fecha_hasta:
 			   raise forms.ValidationError("La Fecha y Hora Final Debe ser mayor a la de Inicio")
-		
+
 		return fecha_hasta
-   
+
 	class Meta:
 		model = Hechos
 		fields = ('descripcion','motivo','fecha_desde','fecha_hasta',)
@@ -490,9 +490,9 @@ class SearchPreveForm(forms.Form):
 	unidades_regionales=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.exclude(descripcion__icontains='INVESTIGACION') &  UnidadesRegionales.objects.exclude(descripcion__icontains='AREA'))
 	#unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.filter(Q(descripcion__startswith="OPERA") | Q(descripcion__startswith="UNIDAD")))
 	dependencias = forms.Select()
-	
-	
-	
+
+
+
 	"""
 	class Meta:
 		model = Preventivos
@@ -508,20 +508,20 @@ class HechoForm(forms.ModelForm):
 		self.fields['motivo'].required = True
 		self.fields['fecha_desde'].required = True
 		self.fields['fecha_hasta'].required = True
-   
+
 
 	def clean_motivo(self):
 		motivo=self.cleaned_data['motivo']
 		if not motivo:
 			msg = 'Ingrese el Motivo de la Denuncia del Hecho'
 			raise forms.ValidationError(self.error_messages[msg])
-	
+
 		return motivo
-	def clean_fecha_desde(self):    
+	def clean_fecha_desde(self):
 		fecha_desde = self.cleaned_data['fecha_desde']
-		if not fecha_desde: 
+		if not fecha_desde:
 			 raise forms.ValidationError(self.error_messages['Ingrese las Fechas y Hora de Inicio'])
-		return fecha_desde   
+		return fecha_desde
 	def clean_fecha_hasta(self):
 		cleaned_data = super(HechoForm, self).clean()
 		fecha_desde = self.cleaned_data['fecha_desde']
@@ -531,9 +531,9 @@ class HechoForm(forms.ModelForm):
 		else:
 		   if fecha_desde > fecha_hasta:
 			   raise forms.ValidationError("La Fecha y Hora Final Debe ser mayor a la de Inicio")
-		
+
 		return fecha_hasta
-   
+
 	class Meta:
 		model = Hechos
 		fields = ('descripcion','motivo','fecha_desde','fecha_hasta',)
@@ -558,21 +558,21 @@ class PersInvolucradasForm(forms.ModelForm):
 			'roles': forms.Select(attrs={'initial':5}),
 		    'cuit': forms.Select(attrs={'initial':8}),
 		}
-	   
+
 class DomiciliosForm(forms.ModelForm):
- 
+
 	class Meta:
 		model = Domicilios
 		exclude = ('personas','ref_ciudades',)
 
 class DetenidosForm(forms.ModelForm):
 
-	def clean_fechahoradetencion(self):    
+	def clean_fechahoradetencion(self):
 		fechahoradetencion = self.cleaned_data['fechahoradetencion']
-		if not fechahoradetencion: 
+		if not fechahoradetencion:
 			 raise forms.ValidationError(self.error_messages['Ingrese las Fechas y Hora de Ingreso'])
-		return fechahoradetencion 
-		
+		return fechahoradetencion
+
 	def clean_fechahoralibertad(self):
 		cleaned_data = super(DetenidosForm, self).clean()
 		fechahoradetencion = self.cleaned_data['fechahoradetencion']
@@ -583,7 +583,7 @@ class DetenidosForm(forms.ModelForm):
 		else:
 		   if fechahoradetencion > fechahoralibertad:
 			   raise forms.ValidationError("La Fecha y Hora de Egreso Debe ser mayor a la de Ingreso")
-		
+
 		return fechahoralibertad
 
 	class Meta:
@@ -591,7 +591,7 @@ class DetenidosForm(forms.ModelForm):
 		exclude = ('persona',)
 
 class PadresForm(forms.ModelForm):
- 
+
 	class Meta:
 		model = Padres
 		exclude = ('persona',)
@@ -665,22 +665,22 @@ class MapaForm(forms.Form):
 	ciu = forms.BooleanField(required=False,initial=False)
 	depes=forms.BooleanField(required=False,initial=False)
 	delito=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13',}),queryset = RefDelito.objects.all(), initial=RefDelito.objects.get(id=1),required=False)
-	
+
 	"""def __init__(self, *args, **kwargs):
 		super(MapaForm,self).__init__(*args,**kwargs)
 		self.fields["delito"].widget = CheckboxSelectMultiple()
 		self.fields["delito"].queryset = RefDelito.objects.all()
 		self.fields["delito"].help_text='Seleccione haciendo click sobre cada uno de los Delitos'"""
-	
+
 	def clean(self):
 		cleaned_data = super(MapaForm,self).clean()
 		if not self.cleaned_data.get['ciudades']:
 		   raise forms.ValidationError('Debe indicar una Ciudad ')
-			   
+
 		return cleaned_data
 
 class AmpliacionForm(forms.ModelForm):
-	
+
 	class Meta:
 		model   = Ampliacion
 		exclude = ('preventivo','fecha_autorizacion','sendwebservice')
@@ -693,6 +693,17 @@ class AmpliacionForm(forms.ModelForm):
 		self.fields["titulo"].widget.attrs = {'size':80,}
 		self.fields["descripcion"].widget = forms.Textarea(attrs={'cols': 80, 'rows': 20})
 
+class CambiarContraseniaForm(forms.ModelForm):
+	MOTIVO_CHOICES = (
+		('1','ORDEN SUPERIOR'),
+		('2','SOLICITUD DEL USUARIO'),
+	)
+	motivo 	= forms.ChoiceField(widget=forms.Select(attrs=dict({'class':'form-control'})),choices = MOTIVO_CHOICES,required=True)
+	detalle_motivo = forms.CharField(widget=forms.Textarea(attrs=dict({'class':'form-control'})))
+	class Meta:
+		model = CambiarContrasenia
+		exclude = ('usuario', 'usuario_que_cambia','fecha')
+
 """
 nuevo=(('1','SI'),('0','NO'),)
 class ViolenciaFliarForm(forms.ModelForm):
@@ -703,7 +714,7 @@ class ViolenciaFliarForm(forms.ModelForm):
 	#hechos=forms.IntegerField(required=False)
 	class Meta:
 		model = ViolenciaFliar
-		exclude = ('hechos','fecha','fecha_carga',)   
+		exclude = ('hechos','fecha','fecha_carga',)
 	def __init__(self, *args, **kwargs):
 		super(ViolenciaFliarForm,self).__init__(*args, **kwargs)
 		self.fields["intervencioncual"].widget.attrs = {'size':42,}
@@ -732,7 +743,7 @@ class PerInvolViolenfliarForm(forms.ModelForm):
 			'teldomalternativos' : forms.TextInput(attrs={'size':120}),
 			'teldomfliaprimaria': forms.TextInput(attrs={'size':120}),
 			'telconfigurasreferentes': forms.TextInput(attrs={'size':120}),
-			
+
 		}
 
 	def __init__(self, *args, **kwargs):
