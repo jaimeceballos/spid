@@ -20,7 +20,12 @@
                                         <li class='has-sub'><a href='#'><span>Preventivos</span></a>
                                              <ul>
                                                <li><a href="/preventivos/new/"><span>Nuevo</span></a></li>
+                                               {% if radio_user %}
+
+                                                 <li> <a href="#"><i class="glyphicon glyphicon-send"></i><span> Reenvio de preventivos </span></a> </li>
+                                               {% endif %}
                                              </ul>
+
                                         </li>
                                         <!--
                                         <li class='has-sub'><a href='#'><span>Ampliaciones</span></a>

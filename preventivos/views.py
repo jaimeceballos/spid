@@ -937,7 +937,11 @@ def inicial(request):
 	if Actuantes.objects.filter(funcion__gt=1,documento=request.user.username):
 		no_enviados = obtener_cantidad_no_enviados(request)
 	no_autorizados = obtener_cantidad_no_autorizados(request)
-	return render(request,'./index1.html',{'state':state, 'destino': destino,'no_enviados':no_enviados,'no_autorizados':no_autorizados})
+	usuario = request.user
+	radio_user = False
+	if usuario.groups.filter(name='radio'):
+		radio_user = True
+	return render(request,'./index1.html',{'state':state, 'destino': destino,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'radio_user':radio_user})
 
 #la funcion en donde se guardan los grupos de usuarios que son ingresados en usuarios
 @login_required
@@ -7090,9 +7094,9 @@ def informe(request,idhec,idprev):
 		destino= request.session.get('destino')
 		preventivo = Preventivos.objects.get(id = idprev)
 		#grabo la fecha de autorizacion
-		fecha_autorizacion=preventivo.fecha_autorizacion
-		grabarfa = Preventivos.objects.filter(id = idprev).update(fecha_autorizacion=datetime.datetime.now())
-
+		if not preventivo.fecha_autorizacion:
+			fecha_autorizacion=preventivo.fecha_autorizacion
+			grabarfa = Preventivos.objects.filter(id = idprev).update(fecha_autorizacion=datetime.datetime.now())
 		ciudad= preventivo.dependencia.ciudad
 		depe=preventivo.dependencia
 		#Datos del Hecho delicitivo atraves del nro de preventivo
@@ -7375,6 +7379,11 @@ def informe(request,idhec,idprev):
 		#enviarp(request,idprev)
 		#return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
 		#if envio<1:
+		if request.session['reenvio']:
+			request.session['msg'] = 'El preventivo se reenvio con exito.'
+			preventivo.reenviado = True
+			preventivo.save()
+			return HttpResponseRedirect(reverse('reenvio'))
 		return render_to_response('./informado.html', info, context_instance=RequestContext(request))
 
 
@@ -12983,12 +12992,10 @@ def envioemail(envio,nstring,subject,text_content,from_email):
 	try:
 			msg = EmailMultiAlternatives(subject,text_content,from_email, [nstring])
 			msg.attach_alternative(text_content,'text/html')
-			msg.send(fail_silently=True)
+			msg.send(fail_silently=False)
 
-	except IndexError:
-
-			pass
-
+	except smtplib.SMTPException as e:
+		print e
 	return(envio,nstring,subject,text_content,from_email)
 
 @login_required
@@ -15721,6 +15728,8 @@ def actualizar_ultimo_ingreso():
 		profile.ultimo_ingreso = user.last_login
 		profile.save()
 
+@login_required
+@permission_required('user.is_staff')
 def cambiar_password(request):
 	state= request.session.get('state')
 	destino= request.session.get('destino')
@@ -15766,3 +15775,71 @@ def cambiar_password(request):
 		else:
 			info['error'] = 'Por favor revise haber ingresado todos los datos del formulario muchas gracias.'
 	return render_to_response('./cambiar_password.html',info,context_instance = RequestContext(request))
+
+
+@login_required
+def preventivos_autorizados_n_dias(request,dependencia):
+	usuario = request.user
+	#ur = UnidadesRegionales.objects.get(descripcion__startswith= usuario.get_profile().depe.descripcion.split('RADIO CABECERA-')[1])
+	#dependencias = Dependencias.objects.filter(ciudad = ur.ciudad,unidades_regionales = ur)
+	actual_date = datetime.datetime.now()
+	initial_date = actual_date - timedelta(days=15)
+	preventivos = Preventivos.objects.filter(fecha_autorizacion__range = (initial_date,actual_date),dependencia = dependencia,reenviado=False)
+	data = serializers.serialize("json", preventivos)
+	return HttpResponse(data, mimetype='application/json')
+
+@login_required
+def reenvio(request):
+	state= request.session.get('state')
+	destino= request.session.get('destino')
+	info = {
+		'state':state,
+		'destino':destino,
+	}
+	usuario = request.user
+	unidades=False
+	if '-' in usuario.get_profile().depe.descripcion:
+		ur = usuario.get_profile().depe.descripcion.split('RADIO CABECERA-')[1]
+		if ur == 'ESQ':
+			ur = UnidadesRegionales.objects.get(descripcion__startswith = 'ESQ')
+		elif ur == 'PM':
+			ur = UnidadesRegionales.objects.get(descripcion__startswith = 'PUER')
+		elif ur == 'CR':
+			ur = UnidadesRegionales.objects.get(descripcion__startswith = 'COM')
+		else:
+			ur = UnidadesRegionales.objects.get(descripcion__startswith = 'TRE')
+	else:
+		ur = UnidadesRegionales.objects.get(descripcion__startswith = 'AREA COM')
+
+	if 'COMUNICACIONES' in ur.descripcion:
+		unidades = UnidadesRegionales.objects.all()
+	if unidades:
+		dependencias = {}
+	else:
+		dependencias = Dependencias.objects.filter(ciudad = ur.ciudad,unidades_regionales = ur)
+	actual_date = datetime.datetime.now()
+	initial_date = actual_date - timedelta(days=15)
+	preventivos = {}
+	for dependencia in dependencias:
+		info[dependencia.id] = Preventivos.objects.filter(fecha_autorizacion__range=(initial_date,actual_date),dependencia=dependencia)
+	info['dependencias'] = dependencias
+	info['unidades'] = unidades
+	request.session['reenvio'] = True
+	try:
+		if request.session['msg']:
+			info['msg'] = request.session['msg']
+			del request.session['msg']
+	except KeyError as e:
+		print e
+
+	return render_to_response('./reenvio.html',info,context_instance=RequestContext(request))
+
+@login_required
+def reenviar(request,idprev):
+	hecho = Preventivos.objects.get(id=idprev).hecho.all()[0].id
+	return HttpResponseRedirect(reverse('informa',args=[hecho,idprev]))
+
+def obtener_preventivo(request,depe,numero,anio):
+	preventivo = Preventivos.objects.get(dependencia=depe,nro=numero,anio=anio)
+	data = serializers.serialize("json",[preventivo,])
+	return HttpResponse(data, mimetype='application/json')

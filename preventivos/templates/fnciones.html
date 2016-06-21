@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="{{STATIC_URL}}plantiweb/css/basic-style.css">
 
 <!-- end CSS-->
-    
+
 <!-- JS-->
 <script src="{{STATIC_URL}}plantiweb/js/libs/modernizr-2.6.2.min.js"></script>
 <!-- end JS-->
@@ -17,11 +17,11 @@
 
 <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
 <link href="{{STATIC_URL}}css/preventivos/default.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/underground.css" type="text/css" />	
-<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/demo_table.css" type="text/css" />	
-<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/demo_page.css" type="text/css" />	
-<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/basic.css" type="text/css" />	
-<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/menustyle.css" type="text/css" />  
+<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/underground.css" type="text/css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/demo_table.css" type="text/css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/demo_page.css" type="text/css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/basic.css" type="text/css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/preventivos/menustyle.css" type="text/css" />
 <script type='text/javascript' src='{{STATIC_URL}}js/preventivos/jquerym.js'></script>
 <script type='text/javascript' src='{{STATIC_URL}}js/preventivos/basic.js'></script>
 <script type='text/javascript' src='{{STATIC_URL}}js/preventivos/menu.js'></script>
@@ -32,11 +32,11 @@
 <script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/preventivos/menu_jquery.js" ></script>
 <link href="{{STATIC_URL}}css/preventivos/msgBoxLight.css" rel="stylesheet" type="text/css"/>
 <!--DATE PICKER-->
-<link href="{{STATIC_URL}}css/preventivos/calendario.css" type="text/css" rel="stylesheet"/> 
-<script src="{{STATIC_URL}}js/preventivos/calendar.js" type="text/javascript"></script> 
-<script src="{{STATIC_URL}}js/preventivos/calendar-es.js" type="text/javascript"></script> 
-<script src="{{STATIC_URL}}js/preventivos/calendar-setup.js" type="text/javascript"></script> 
-<script src="{{STATIC_URL}}js/preventivos/nicEdit-latest.js" type="text/javascript"></script> 
+<link href="{{STATIC_URL}}css/preventivos/calendario.css" type="text/css" rel="stylesheet"/>
+<script src="{{STATIC_URL}}js/preventivos/calendar.js" type="text/javascript"></script>
+<script src="{{STATIC_URL}}js/preventivos/calendar-es.js" type="text/javascript"></script>
+<script src="{{STATIC_URL}}js/preventivos/calendar-setup.js" type="text/javascript"></script>
+<script src="{{STATIC_URL}}js/preventivos/nicEdit-latest.js" type="text/javascript"></script>
 <script src="{{STATIC_URL}}js/preventivos/jscal2.js" type="text/javascript"></script>
 <script src="{{STATIC_URL}}js/preventivos/en.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/preventivos/jscal2.css" />
@@ -54,22 +54,34 @@
    <link href="{{ STATIC_URL }}css/css/bootstrap.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}css/css/bootstrap3.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}css/css/bootstrapValidator.css" rel="stylesheet">
-        <link rel="stylesheet" href="{{STATIC_URL}}css/css/demo_table.css" type="text/css" />   
+        <link rel="stylesheet" href="{{STATIC_URL}}css/css/demo_table.css" type="text/css" />
         <link href="{{STATIC_URL}}css/css/select2.css" rel="stylesheet" type="text/css"/>
-       
+
         <script type="text/javascript" src="{{ STATIC_URL }}css/js/bootstrap3.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}css/js/bootstrapValidator.js"></script>
-        <script src="{{STATIC_URL}}css/js/select2.js" type="text/javascript"></script>        
+        <script src="{{STATIC_URL}}css/js/select2.js" type="text/javascript"></script>
         <script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}css/js/jquery.dataTables.js"></script>
-     
+
     <script type="text/javascript">
-    
-      bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+
+      bkLib.onDomLoaded(function() {
+        nicEditors.allTextAreas();
+        $('#id_detalle_motivo').each(function(){
+        $(this).prev().prev().hide();
+        $(this).prev().hide();
+        $(this).on('keyup',function(){
+            $(this).prev()
+                .find('.nicEdit-main')
+                .html(jQuery(this).val());
+        });
+        $(this).show();
+    });
+       });
      </script>
-     
-   
+
+
      <script type="text/javascript" charset="utf-8">
-			
+
 $(document).ajaxStart(function(){
     $('#spinner').show();
 }).ajaxStop(function(){
