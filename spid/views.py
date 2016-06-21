@@ -150,7 +150,10 @@ def login_user(request):
                   if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
                     no_enviados = obtener_cantidad_no_enviados(request)
                   no_autorizados = obtener_cantidad_no_autorizados(request)
-                  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso})
+                  radio_user = False
+                  if user.groups.filter(name='radio'):
+                        radio_user = True
+                  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user})
                 else:
                   state="Dependencias seleccionadas INCONRRECTAS"
                   return render(request, 'index.html', {'state':state,'form':form})

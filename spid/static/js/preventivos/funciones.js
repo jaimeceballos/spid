@@ -1362,6 +1362,43 @@ $("#usuario").select2({
           alert(address)
           initializes(address);
         });
+      $('#reenvio_buscar').click(function(event){
+        if($('#preventivo_depe option:selected').val() == ''){
+          alert('Debe seleccionar dependencia');
+        }else if($('#numero').val() == ''){
+          alert('Debe indicar un numero de preventivo');
+        }else if($('#reenvio-anio').val() == ''){
+          alert('Debe indicar el año');
+        }else{
+          dependencia = $('#preventivo_depe option:selected').val();
+          numero = $('#numero').val();
+          anio = $('#reenvio-anio').val();
+          toLoad= '/preventivos/obtener_preventivo/'+dependencia+'/'+numero+'/'+anio+'/';
+          $('#resultado-buscar').empty();
+          $.get(toLoad, function(data){
+
+              $('#resultado-buscar').append('<div class="col-md-12 well">'+
+                        '<table class="table table-bordered table-condensed">'+
+                        '<tr><td>'+data[0]['fields']['caratula']+'</td><td>'+
+                        '<a href="/preventivos/reenviar/'+data[0]["pk"]+'/"><i class="glyphicon glyphicon-send"</i></a></td></tr>'+
+                        '</table></div>');
 
 
-            });
+          }, "json").fail(function(){
+            $('#resultado-buscar').append('<div class="col-md-12 alert alert-danger" role="alert" id="preventivo_error">'+
+                      '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'+
+                      '<span class="sr-only">Error:</span> El preventivo solicitado no existe </div>');
+          });
+        }
+      });
+      $('#preventivo_unidad').change(function(){
+        var toLoad = '/preventivos/ure/'+$('#preventivo_unidad option:selected').val()+'/';
+        $.get(toLoad,function(data){
+          $('#preventivo_depe').empty().append('<option value="">Seleccione Dependencia</option>');
+          for (var i = 0; i < data.length; i++){
+            option = '<option value="'+data[i]["pk"]+'">'+data[i]["fields"]["descripcion"]+'</option>'
+            $('#preventivo_depe').append(option);
+          }
+        });
+      });
+});

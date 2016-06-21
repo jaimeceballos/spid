@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block main %}
+<div class="container">
+  {% if msg %}
+    <div class="row">
+      <div class="col-md-12 alert alert-success" role='alert'>
+        {{msg}}
+      </div>
+
+    </div>
+  {% endif %}
+  <div class="row">
+    <div class="col-md-12">
+      <!--button type="button" name="button" class="btn btn-primary btn-xs"> Buscar uno </button-->
+      <!--ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#">Home</a></li>
+        <li role="presentation"><a href="#">Profile</a></li>
+        <li role="presentation"><a href="#">Messages</a></li>
+      </ul-->
+      <ul class="nav nav-tabs">
+        <li class="nav active"><a href="#buscar_uno" data-toggle="tab"> Buscar un preventivo </a></li>
+        {% if not unidades %}
+          <li class="nav"><a href="#listado" data-toggle="tab">Ver Listado</a></li>
+        {% endif %}
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+          <div class="tab-pane fade in active" id="buscar_uno">
+            <br>
+            {% if unidades %}
+              <div class="row form-group form-group-sm">
+                <div class="col-md-3">
+                  <label for="">Unidad Regional</label>
+                </div>
+                <div class="col-md-9">
+                  <select class="form-control" id="preventivo_unidad">
+                      <option value="">Seleccione Unidad</option>
+                      {% for unidad in unidades%}
+                        <option value="{{unidad.id}}">{{unidad.descripcion}}</option>
+                      {% endfor %}
+                  </select>
+                </div>
+              </div>
+            {% endif %}
+            <div class="row form-group form-group-sm">
+              <div class="col-md-3">
+                <label for="">Dependencia</label>
+              </div>
+              <div class="col-md-9">
+                <select class="form-control required" id="preventivo_depe">
+                  <option value="">Seleccione Dependencia</option>
+                  {% for dependencia in dependencias %}
+                    <option value="{{dependencia.id}}">{{dependencia.descripcion}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="row form-group form-group-sm">
+              <div class="col-md-3">
+                <label for="">N&uacute;mero/a&ntilde;o</label>
+              </div>
+              <div class="col-md-9">
+                <div class="col-md-6">
+                    <input type="text" class="form-control required" id="numero" value="" autocomplete="off">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control required" id="reenvio-anio" value="" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                  <button type="button" id="reenvio_buscar" class="btn btn-success pull-right">Buscar</button>
+              </div>
+            </div>
+            <div class="row" id='resultado-buscar'>
+
+            </div>
+          </div>
+          <div class="tab-pane fade" id="listado">
+            <ul class="nav nav-pills">
+
+              {% for dependencia in dependencias%}
+                <li {% if forloop.first %} class="nav active" {% else %} class ="nav" {% endif %} ><a href="#{{dependencia.id}}" data-toggle="tab" id="aid_{{dependencia.id}}"> <small>{{dependencia.descripcion.lower|capfirst }}</small> </a></li>
+
+              {% endfor %}
+
+            </ul>
+              <div class="tab-content">
+                {% for dependencia in dependencias %}
+                <div {% if forloop.first %} class="tab-pane fade in active" {% else %} class="tab-pane fade" {% endif %} id='{{dependencia.id}}'>
+                  <div class="row">
+              		<div class="col-md-12">
+              			<table class='table table-bordered table-condensed'>
+              			  <thead>
+              			    <th>
+              			      Preventivo
+              			    </th>
+                        <th>
+                          Causa
+                        </th>
+                        <th>
+                          Acciones
+                        </th>
+              			  </thead>
+                      <tbody id='tbl_{{dependencia.id}}'>
+                        <script type="text/javascript">
+                          $('#tbl_{{dependencia.id}}').addClass('table');
+                          var dependencia = {{dependencia.id}};
+                          toLoad= '{% url 'autorizados_reenvio' dependencia.id %}';
+                          $.get(toLoad, function(data){
+                             for (var i = 0; i < data.length; i++){
+                               $('#tbl_{{dependencia.id}}').append('<tr id="'+data[i]["pk"]+'"> <td><center>' + data[i]["fields"]["nro"] + '/' + data[i]["fields"]["anio"]+'</center></td><td>'+ data[i]["fields"]["caratula"]+'</td><td><a href="/preventivos/reenviar/'+data[i]["pk"]+'/"><i class="glyphicon glyphicon-send"</i></a></td></tr>');
+                             }
+                          }, "json");
+                        </script>
+                      </tbody>
+              			</table>
+
+              		</div>
+              	</div>
+                </div>
+                {% endfor %}
+
+              </div>
+            </ul>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

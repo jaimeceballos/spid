@@ -662,6 +662,7 @@ class Preventivos(models.Model):
 	dependencia = models.ForeignKey('Dependencias',blank=True,null=True)
 	autoridades = models.ManyToManyField('RefAutoridad',blank=True,null=True)
 	sendwebservice = models.IntegerField(default=0)
+	reenviado = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'%s %s %s %s' % (self.id,self.caratula,self.actuante,self.preventor)
