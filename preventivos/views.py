@@ -7379,11 +7379,15 @@ def informe(request,idhec,idprev):
 		#enviarp(request,idprev)
 		#return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
 		#if envio<1:
-		if request.session['reenvio']:
-			request.session['msg'] = 'El preventivo se reenvio con exito.'
-			preventivo.reenviado = True
-			preventivo.save()
-			return HttpResponseRedirect(reverse('reenvio'))
+		try:
+			if request.session['reenvio']:
+				request.session['msg'] = 'El preventivo se reenvio con exito.'
+				preventivo.reenviado = True
+				preventivo.save()
+				return HttpResponseRedirect(reverse('reenvio'))
+		except KeyError:
+			pass
+
 		return render_to_response('./informado.html', info, context_instance=RequestContext(request))
 
 
