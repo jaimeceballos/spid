@@ -391,9 +391,13 @@ class preventivos(SessionWizardView):
 				pre.dependencia=dependencia
 
 				pre.save()
-
+				jefe = False
 				for grabauto in form.cleaned_data['autoridades']:
+						if 'JEFE DE POLICIA' == grabauto.descripcion:
+							jefe = True
 						pre.autoridades.add(int(RefAutoridad.objects.get(descripcion=grabauto).id))
+				if not jefe:
+					pre.autoridades.add(int(RefAutoridad.objects.get(descripcion='JEFE DE POLICIA').id))
 
 				idprev=pre.id
 
@@ -7093,7 +7097,7 @@ def informe(request,idhec,idprev):
 		state= request.session.get('state')
 		destino= request.session.get('destino')
 		preventivo = Preventivos.objects.get(id = idprev)
-		#grabo la fecha de autorizacion
+		#grabo la fecha de autorizacion solo la primera vez que se informa el preventivo
 		if not preventivo.fecha_autorizacion:
 			fecha_autorizacion=preventivo.fecha_autorizacion
 			grabarfa = Preventivos.objects.filter(id = idprev).update(fecha_autorizacion=datetime.datetime.now())
