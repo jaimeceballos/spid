@@ -4714,242 +4714,25 @@ def verprev(request):
 		 #fecha_cargah=str(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date())+' 23:59:59'
 		 #fecha_cargas=datetime.datetime.strptime(fecha_cargas,'%Y-%m-%d %H:%M:%S')
 		 #fecha_cargah=datetime.datetime.strptime(fecha_cargah,'%Y-%m-%d %H:%M:%S')
-
-
-		 if nro and not ureg and not depe:
-				if anio and not ureg and not depe:
-					if caratula:
-						query_string=str(nro)+''+str(anio)+''+caratula
-						entry_query = get_query(query_string, ['nro', 'anio','caratula',])
-					else:
-						query_string=str(nro)+''+str(anio)
-						entry_query = get_query(query_string, ['nro', 'anio',])
-				else:
-					anio=request.POST.get('anio')
-					if caratula:
-						query_string=caratula+' '+str(nro)
-						entry_query = get_query(query_string, ['caratula','nro',])
-
-					else:
-						caratula=''
-						query_string=str(nro)
-						entry_query = get_query(query_string, ['nro',])
-
-				filtro=Preventivos.objects.filter(entry_query).order_by('anio','nro','dependencia')
-				if filtro not in todos:
-						todos.append(filtro)
-
-
-		 else:
-			 nro=request.POST.get('nro')
-		 if anio and not ureg and not depe:
-
-					if caratula:
-						query_string=str(anio)+''+caratula
-						entry_query = get_query(query_string, ['anio','caratula',])
-					else:
-						query_string=str(anio)
-						entry_query = get_query(query_string, ['anio',])
-
-					todos.append(Preventivos.objects.filter(entry_query).order_by('anio','nro','dependencia'))
-
-		 else:
-					#anio=''
-
-					if caratula and not ureg and not depe and not nro:
-						query_string=caratula
-						entry_query = get_query(query_string, ['caratula',])
-						todos.append(Preventivos.objects.filter(entry_query).order_by('anio','nro','dependencia'))
-
-					else:
-						caratula=request.POST.get('caratulas')
-
-
-
-
-		 #En el caso que solamente consulte ureg
-		 #si solo tengo ureg primero filtro en todas las dependencias de esa unidad
-		 #depes=Dependencias.objects.filter(unidades_regionales=ureg)
-		 #genero un arreglo ej. prev[] hago un for depende in depes agrego a prev.append(preventivos.objects.filter(dependencia=depende))
-		 if ureg and not depe and not fecha_carga:
-			#fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-			#fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
-			depes=Dependencias.objects.filter(unidades_regionales=ureg)
-			if nro:
-				 for son in depes:
-						 todos.append(Preventivos.objects.filter(dependencia=son,nro=nro).order_by('anio','nro','dependencia'))
-			else:
-				if anio:
-					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son,anio=anio).order_by('anio','nro','dependencia'))
-				else:
-							if caratula:
-
-								for son in depes:
-									todos.append(Preventivos.objects.filter(dependencia=son,caratula__icontains=caratula).order_by('anio','nro','dependencia'))
-							else:
-								 for son in depes:
-									 todos.append(Preventivos.objects.filter(dependencia=son).order_by('anio','nro','dependencia'))
-
-		 else:
-
-			if fecha_carga and fecha_cargah and ureg and not depe:
-				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-				fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
-				depes=Dependencias.objects.filter(unidades_regionales=ureg)
-				for son in depes:
-					todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia'))
-
-			else:
-				if fecha_carga  and ureg and not depe:
-
-					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					 fecha_cargal=(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")+timedelta(days=1)).date()
-
-					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
-					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargal)).order_by('anio','nro','dependencia'))
-
-
-
-
-		 if ureg and depe:
-			#fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-			#fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
-			if fecha_carga and fecha_cargah:
-					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					 fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
-					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
-					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargah)).order_by('anio','nro','dependencia'))
-			else:
-			 if fecha_carga:
-					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					 fecha_cargat=(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")+timedelta(days=1)).date()
-					 depes=Dependencias.objects.filter(unidades_regionales=ureg)
-					 for son in depes:
-							todos.append(Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargat)).order_by('anio','nro','dependencia'))
+		 todos = Preventivos.objects.all()
+		 if depe != "":
+			 todos = todos.filter(dependencia = depe)
+		 if ureg != "":
+			 dependencias = Dependencias.objects.filter(unidades_regionales= ureg)
+			 todos = todos.filter(dependencia__in = dependencias)
+		 if nro != "":
+			 todos = todos.filter(nro = nro)
+		 if anio != "":
+			 todos = todos.filter(anio = anio)
+		 if caratula != "":
+			 todos = todos.filter(caratula__icontains = caratula)
+		 if fecha_carga != "":
+			 if fecha_cargah == "":
+				 fecha_cargah =  datetime.datetime.now()
 			 else:
-				if nro:
-					 todos.append(Preventivos.objects.filter(dependencia=depe,nro=nro).order_by('anio','nro','dependencia'))
-				else:
-					 if anio:
-
-							todos.append(Preventivos.objects.filter(dependencia=depe,anio=anio).order_by('anio','nro','dependencia'))
-					 else:
-							if caratula:
-
-								 todos.append(Preventivos.objects.filter(dependencia=depe,caratula__icontains=caratula).order_by('anio','nro','dependencia'))
-							else:
-
-
-								 todos.append(Preventivos.objects.filter(dependencia=depe).order_by('anio','nro','dependencia'))
-
-
-		 else:
-			if ureg:
-			 depes=Dependencias.objects.filter(unidades_regionales=ureg)
-			 if fecha_carga and fecha_cargah:
-					fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					fecha_cargag=(datetime.datetime.strptime(request.POST.get('fecha_cargah'),"%d/%m/%Y")+timedelta(days=1)).date()
-
-					for son in depes:
-							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__range =(fecha_cargas,fecha_cargag)).order_by('anio','nro','dependencia')
-			 else:
-				if fecha_carga:
-					 fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-					 for son in depes:
-							fil=Preventivos.objects.filter(dependencia=son, fecha_carga__startswith=fecha_cargas).order_by('anio','nro','dependencia')
-				else:
-				 if nro:
-					 for son in depes:
-
-						 #filnro=Preventivos.objects.filter(dependencia=son,nro=nro).values('caratula')
-						 fil=Preventivos.objects.filter(dependencia=son,nro=nro).order_by('anio','nro','dependencia')
-
-
-
-				 else:
-					 if anio:
-
-							for son in depes:
-								fil=Preventivos.objects.filter(dependencia=son,anio=anio).order_by('anio','nro','dependencia')
-					 else:
-							if caratula:
-								for son in depes:
-									fil=Preventivos.objects.filter(dependencia=son,caratula__icontains=caratula).order_by('anio','nro','dependencia')
-							else:
-								 for son in depes:
-									 fil=Preventivos.objects.filter(dependencia=son).order_by('anio','nro','dependencia')
-
-			 if fil in todos:
-							todos=[]
-							todos.append(fil)
-			 else:
-				 err=True
-
-		 #hago filtro si viene ureg y depe
-
-		 #aqui hago filtro si viene fecha de carga con cualquier otro valor concatenar arreglos con append
-
-		 if fecha_carga and fecha_cargah and not ureg and not depe:
-
-
-				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-
-				fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
-				if nro:
-					 filnro=Preventivos.objects.filter(fecha_carga__range=[fecha_cargas,fecha_cargah],nro__exact=nro).order_by('anio','nro','dependencia')
-					 if filnro not in todos:
-							todos=[]
-							todos.append(filnro)
-				else:
-					 if anio:
-						 filanio=Preventivos.objects.filter(fecha_carga__range=[fecha_cargas,fecha_cargah],anio__exact=anio).order_by('anio','nro','dependencia')
-						 if filanio not in todos:
-							todos=[]
-							todos.append(filanio)
-					 else:
-							if caratula:
-								filanio=Preventivos.objects.filter(fecha_carga__range=[fecha_cargas,fecha_cargah],caratula__icontains=caratula).order_by('anio','nro','dependencia')
-								if filanio not in todos:
-								 todos=[]
-								 todos.append(filanio)
-
-							else:
-								todos.append(Preventivos.objects.all().filter(fecha_carga__range=[fecha_cargas,fecha_cargah]).order_by('anio','nro','dependencia'))
-
-
-
-								#'id','nro','anio','caratula','fecha_carga'))
-
-		 else:
-			 if fecha_carga and not ureg and not depe:
-				fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y")
-				fecha_cargah=datetime.datetime.now()
-
-				if nro:
-					 filnro=Preventivos.objects.filter(fecha_carga__range=[fecha_cargas,fecha_cargah],nro__exact=nro).order_by('anio','nro','dependencia')
-					 if filnro not in todos:
-							todos=[]
-							todos.append(filnro)
-				else:
-					 if anio:
-						 filanio=Preventivos.objects.filter(fecha__range=[fecha_cargas,fecha_cargah],anio__exact=anio).order_by('anio','nro','dependencia')
-						 if filanio not in todos:
-							todos=[]
-							todos.append(filanio)
-					 else:
-							if caratula:
-								filanio=Preventivos.objects.filter(fecha_carga__range=[fecha_cargas,fecha_cargah],caratula__icontains=caratula).order_by('anio','nro','dependencia')
-								if filanio not in todos:
-								 todos=[]
-								 todos.append(filanio)
-
-							else:
-
-								todos.append(Preventivos.objects.all().filter(fecha_carga__range=[fecha_cargas,fecha_cargah]).order_by('anio','nro','dependencia'))
-								#'id','nro','anio','caratula','fecha_carga'))
+				 fecha_cargah = datetime.datetime.strptime(fecha_cargah+' 00:00:00',"%d/%m/%Y %H:%M:%S")
+			 fecha_carga = datetime.datetime.strptime(fecha_carga+' 00:00:00',"%d/%m/%Y %H:%M:%S")
+			 todos = todos.filter(fecha_carga__range = [fecha_carga,fecha_cargah])
 
 		 if request.POST.get('searchs')=="Exportar":
 		   filadata={}
@@ -4965,8 +4748,8 @@ def verprev(request):
 		   fila2=[]
 		   fila3=[]
 		   iil=[]
-		   for ins in todos:
-			for datas in ins:
+		   for datas in todos:
+
 			  #if datas.sendwebservice==1:
 				preventivo = Preventivos.objects.get(id = datas.id)
 				ciudad= preventivo.dependencia.ciudad

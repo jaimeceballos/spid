@@ -1,6 +1,6 @@
 {%if 'no' in total %}
 
-  
+
  <h1>LISTADO GENERAL DE PREVENTIVOS </h1>
  <div> Realice una Búsqueda mas detallada con el resultado que se encontró con la búsqueda anterior</div>
 
@@ -9,7 +9,7 @@
         <thead>
             <tr class="gradeC">
                <th >Nro/Año</th>
-             
+
                <th>Caratula</th>
                 <th>U.Regional/Dependencias</th>
                   <th>Fecha Denuncia</th>
@@ -20,9 +20,8 @@
         </thead>
             <tbody>
 
-              
-                {% for existen in todos %}
-                 {%for datos in existen %}
+
+                {% for datos in todos %}
                   <tr  class="gradeC"> 
                    {%if datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES'%}
                    <td width="10%"><a href='{% url 'selectPrev' datos.id %}'>
@@ -30,15 +29,15 @@
                    {%else%}
                     <td width="10%"><strong>{{ datos.nro }}/{{ datos.anio}}</strong></td>
                    {%endif%}
-                  
+
                    <td width="50%">{{ datos.caratula}}</td>
                    <td width="25%">{{datos.dependencia.unidades_regionales.descripcion}} / {{ datos.dependencia.descripcion}}</td>
                       <td width="10%">{{ datos.fecha_denuncia|date:" d/m/Y"}}</td>
                    <td width="10%">{{ datos.fecha_carga|date:" d/m/Y"}}</td>
                    <td width="10%">{{ datos.fecha_autorizacion|date:" d/m/Y"}}</td>
                    <td width="12%">{{ datos.fecha_cierre|date:" d/m/Y"}}</td>
-         
-               
+
+
                   {%if datos.fecha_autorizacion and datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and datos.fecha_autorizacion%}
                     <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
                   {%else%}
@@ -51,13 +50,11 @@
                   {%else%}
                     <strong><center>---</center></strong>
                   {%endif%}
-                 
+
                   </td>
                  </tr>
-                 {% endfor %}
                 {%endfor%}
             </tbody>
     </table>
   </div>
 {%endif%}
-
