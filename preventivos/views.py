@@ -4735,275 +4735,7 @@ def verprev(request):
 			 todos = todos.filter(fecha_carga__range = [fecha_carga,fecha_cargah])
 
 		 if request.POST.get('searchs')=="Exportar":
-		   filadata={}
-		   filahecho={}
-		   filadelitos={}
-		   filalugar={}
-		   filaperin={}
-		   filaele={}
-		   denuncia=''
-		   allgral=[]
-		   filagral={}
-		   ii=4
-		   fila2=[]
-		   fila3=[]
-		   iil=[]
-		   for datas in todos:
-
-			  #if datas.sendwebservice==1:
-				preventivo = Preventivos.objects.get(id = datas.id)
-				ciudad= preventivo.dependencia.ciudad
-				depe=preventivo.dependencia
-				unireg=depe.unidades_regionales.descripcion
-				filadata={'Preventivo Nro.':str(datas.nro)+'/'+str(datas.anio),'Unidad Regional':str(datas.dependencia.unidades_regionales),'Dependencia':str(datas.dependencia),'Localidad':str(ciudad),'Caratula':str(datas.caratula.encode("utf8")),'Fecha Denuncia':str(timezone.localtime(datas.fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S"))}
-				filagral=filadata
-				datahechos=Preventivos.objects.get(id=datas.id).hecho.all()
-				if datahechos:
-				 for dhecho in datahechos:
-
-					if dhecho.descripcion==None or dhecho.descripcion=='':
-						denuncia="SIN DESCRIPCION"
-					else:
-						denuncia=html2text.html2text(dhecho.descripcion,True)
-						denuncia=denuncia.encode('utf-8', 'xmlcharrefreplace')
-						denuncia=strip_tags(denuncia)
-						#.replace('&nbsp;','')
-						denuncia=denuncia.replace('&nbsp;','')
-						denuncia=denuncia.replace('"','')
-						denuncia=denuncia[:200]+'...'
-
-					if dhecho.motivo.descripcion==None or dhecho.motivo.descripcion=='':
-					   motivo='SIN MOTIVO'
-					else:
-					   motivo=str(dhecho.motivo.descripcion)
-					filahecho={'Motivo Preventivo':motivo,'Denuncia':denuncia,"Dia Hecho":str(timezone.localtime(dhecho.fecha_desde).strftime("%A")),"Fecha Desde":str(timezone.localtime(dhecho.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")),'Fecha Hasta':str(timezone.localtime(dhecho.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S"))}
-					filagral.update(filahecho)
-					idhec=dhecho.id
-					delito =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
-					cometidos=[]
-					hechodeli=""
-					for d in delito:
-						cometidos.append(d)
-
-					hechodeli=''
-					modus=' SIN MODALIDAD  '
-					for i in cometidos:
-						if hechodeli:
-							hechodeli=hechodeli+'-'+unicode(str(i).strip(),'UTF-8')
-						else:
-							hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')
-
-						if i.refmodoshecho!=None:
-							modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+' - '
-
-						filadelitos={'Delitos':hechodeli.strip()+modus}
-
-					filagral.update(filadelitos)
-
-				 involuscra=[]
-				 eleminvo=[]
-				 datosper=""
-				 elementos=""
-				 involus=Hechos.objects.get(id=idhec).involu.all()
-				 eleinvo=Elementos.objects.filter(hechos=idhec,ampliacion_id__isnull=True,borrado__isnull=True).all()
-				else:
-					motivo='SIN MOTIVO'
-					denuncia='SIN DESCRIPCION'
-					delis='SIN DELITOS'
-					moduss='SIN MODO OPERANDI'
-					fechadesde='SIN FECHA'
-					fechahasta="SIN FECHA"
-					filahecho={'Motivo Preventivo':motivo,'Denuncia':denuncia,'Fecha Desde':fechadesde,'Fecha Hasta':fechahasta}
-					filagral.update(filahecho)
-
-					filadelitos={'Delitos':delis+moduss}
-
-					filagral.update(filadelitos)
-
-
-
-				datosgral=""
-				lugar=''
-				lati=''
-				longi=''
-				condiciones=''
-				perjuridica=''
-				involucrados=0
-				if len(Lugar.objects.filter(hecho=idhec))>0:
-					tienelugar=True
-					idlugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]
-					lugar=Hechos.objects.get(id=idhec).lugar_hecho.all()[0]
-					if idlugar.altura==None:
-					   idlugar.altura=0
-
-					lugarhecho={'Lugar':str(idlugar.tipo_lugar),"Zona":str(idlugar.zona),'LugarHecho':str(idlugar.calle)+' Nro.: '+str(idlugar.altura)}
-					tienelugar = True
-					if idlugar.barrio==None:
-					   lugarbarrio='SIN DESCRIPCION'
-					else:
-						lugarbarrio=unicode(str(idlugar.barrio),'UTF-8')
-
-					barrio={'BarrioHecho':lugarbarrio}
-					#condiciones= lugar.cond_climaticas.values_list('descripcion',flat=True)
-					laticiudad = RefCiudades.objects.get(id=datas.dependencia.ciudad_id)
-
-					lati=laticiudad.lat
-					longi=laticiudad.longi
-					filacoorde={'Latitud':str(lati),'Longitud':str(longi)}
-
-
-				filagral.update(lugarhecho)
-				filagral.update(barrio)
-				filagral.update(filacoorde)
-
-				if len(Hechos.objects.get(id=idhec).involu.all())>0:
-					 tienePersonas=True
-					 countinvolus=Hechos.objects.get(id=idhec).involu.all().count()
-					 rolins=''
-					 for p in Hechos.objects.get(id=idhec).involu.all():
-						bandera=True
-						tienepersona=True
-						rolins=rolins+p.roles.descripcion+'-'
-						#involucrados=involucrados+1
-						perinvocondi={'Franganti':p.infraganti.upper(),'Tentativa':p.tentativa.upper()}
-						filagral.update(perinvocondi)
-
-					 perinvo={'Involucrados':rolins}
-					 filagral.update(perinvo)
-				else:
-					sinrol='SIN DESCRIPCION'
-					fraganti='NO'
-					tentativa='NO'
-					perinvo={'Involucrados':sinrol,'Franganti':fraganti,'Tentativa':tentativa}
-					perinvo.update(perinvo)
-					filagral.update(perinvo)
-
-				rotulo='CantidadElementos '+str(len(eleinvo))
-				datosgral=''
-				obdata=[]
-				obdatav=[]
-				deta=''
-				detav=''
-				eleme=''
-				hay=[]
-				i=1
-				obse=''
-				for eles in eleinvo:
-						tieneelementos=True
-						obdata=[]
-						obdatav=[]
-						deta=''
-						detav=''
-
-						if len(Elementosarmas.objects.filter(idelemento=eles.id))>0:
-
-							 idar = Elementosarmas.objects.filter(idelemento=eles.id).values('idarma')
-							 tieneelementos=True
-							 obdata=Armas.objects.filter(id=idar)
-							 for extra in obdata:
-								titu=' Carateristicas Generales : '
-								tabla=str(extra.subtipos)+'- Tipo/s : '+str(extra.tipos)+'- Sistema de Disparo : '+str(extra.sistema_disparo)+'- Marcas : '+str(extra.marcas)
-								tipos='Calibre : '+str(extra.calibre)+'- Modelo : '+str(extra.modelo)+'- Nro Serie : '+str(extra.nro_arma)+'- Propietario : '+str(extra.nro_doc)+'-'+str(extra.propietario)
-								deta=titu+tabla+tipos
-
-						if len(Elementoscars.objects.filter(idelemento=eles.id))>0:
-							 tieneelementos=True
-							 idarv = Elementoscars.objects.filter(idelemento=eles.id).values('idvehiculo')
-
-							 obdatav=Vehiculos.objects.filter(id=idarv)
-							 for extrav in obdatav:
-								tituv=' Carateristicas Generales : '
-								tablav=' Marca/s : '+str(extrav.idmarca)+'- Modelo : '+str(extrav.modelo)+'- Dominio : '+str(extrav.dominio)+'- Año : '+str(extrav.anio)
-								tiposv=' Tipo/s : '+str(extrav.tipov)+'- Nro Chasis : '+str(extrav.nchasis)+'- Nro. Motor : '+str(extrav.nmotor)+'- Propietario : '+str(extrav.nro_doc)+' - '+str(extrav.propietario)
-								detav=tituv+tablav+tiposv
-
-
-
-						tipo=str(eles.tipo)
-						ampli=''
-						rubro='Elemento/s '+str(eles.tipo)
-						rubros='Rubro y Categoria : '+str(eles.rubro)+'-'+str(eles.categoria)
-						canti='Cantidad : '+str(eles.cantidad)+'-'+str(eles.unidadmed)
-						if eles.descripcion.strip():
-							obse='Observaciones : '+str(eles.descripcion.encode("utf8"))
-							obse=obse.replace('&NBSP;','')
-
-						if deta:
-							 if detav:
-								 eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+detav+' | '
-							 else:
-								 eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+deta+' | '
-
-						else:
-							 if detav:
-								 eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+detav+' | '
-							 else:
-								 eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+deta+' | '
-
-						eleminvo.append(eleme)
-						i=i+1
-				elementos=''
-				for ja in eleminvo:
-					elementos=elementos+ja
-
-				if elementos:
-				   elementos={'Elementos':elementos}
-				else:
-				   contiene='SIN ELEMENTOS'
-				   elementos={'Elementos':contiene}
-
-				filagral.update(elementos)
-				fila4=[]
-				for key,value in sorted(filagral.items()):
-					fila4.append(value)
-
-				f=fila4
-				fila3.append(f)
-				ii+=1
-				iil.append(ii)
-
-
-		   libro = Workbook()
-		   hoja = libro.get_active_sheet()
-		   hoja.title = "Informe Gral"
-
-		   # Ahora, se obtiene las celdas en la cuál se colocará el nombre
-		   # del campo. como son 8 campos, se necesita 8 celdas
-		   celda = hoja.cell("B1")
-		   celda.value=" Elementos recopilados desde la Base de Datos para Estadísticas "
-		   celda = hoja.cell("B3")
-		   celda.value=" Tabla con datos obtenidos de Preventivos Enviados e Informados"
-		   rango_celdas = hoja.range("B4:W4")
-		   # se crea una tupla con los nombres de los campos
-		   nombre_campos = "BARRIOHECHO","CARATULA","DELITOS","DENUNCIA","DEPENDENCIA","DIA DEL HECHO","ELEMENTOS","FECHA DENUNCIA","FECHA DESDE","FECHA HASTA","FRAGANTI","INVOLUCRADOS","LATITUD","LOCALIDAD","LONGITUD","LUGAR","LUGARHECHO","MOTIVO","PREVENTIVO NRO","TENTATIVA","UNIDAD REGIONAL","ZONA"
-		   # ahora, se asigna cada nombre de campo a cada celda
-
-		   for campo in rango_celdas:
-				indice = 0  # se crea un contador para acceder a la tupla
-				for celda in campo:
-						celda.value = nombre_campos[indice]
-						indice += 1
-		   longitud=ii
-		   celdas_datos = hoja.range("B5:W{0}".format(longitud))
-		   # ahora vamos a dar los valores a las celdas con los datos
-
-		   fila=0
-
-		   for valuex in fila3:
-				indice1=0
-				for celda in celdas_datos[fila]:
-					celda.value = valuex[indice1]
-					indice1+=1
-				fila += 1
-
-
-
-		   response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
-		   nombre_archivo = "informe.xlsx"
-		   contenido = "attachment; filename={0}".format(nombre_archivo)
-		   response["Content-Disposition"] = contenido
-		   libro.save(response)
-		   return response
+			 return exportar_listado(request,todos)
 
 
 	else:
@@ -5022,6 +4754,322 @@ def verprev(request):
 	'state':state,'destino': destino,'form':form}
 
 	return render_to_response('./seeprev.html',info,context_instance=RequestContext(request))
+
+def exportar_listado(request,todos):
+	filadata={}
+	filahecho={}
+	filadelitos={}
+	filalugar={}
+	filaperin={}
+	filaele={}
+	denuncia=''
+	allgral=[]
+	filagral={}
+	ii=4
+	fila2=[]
+	fila3=[]
+	iil=[]
+	for datas in todos:
+
+	   #if datas.sendwebservice==1:
+		 preventivo = Preventivos.objects.get(id = datas.id)  					#obtiene el preventivo
+		 ciudad= preventivo.dependencia.ciudad 									#obtiene la ciudad
+		 depe=preventivo.dependencia											#obtiene la dependencia
+	 	 unireg=depe.unidades_regionales.descripcion 							#obtiene la unidad regional
+		 filadata={																#prepara los datos de la fila
+		 		'Preventivo Nro.':str(datas.nro)+'/'+str(datas.anio),
+		 		'Unidad Regional':str(datas.dependencia.unidades_regionales),
+				'Dependencia':str(datas.dependencia),
+				'Localidad':str(ciudad),
+				'Caratula':str(datas.caratula.encode("utf8")),
+				'Fecha Denuncia':str(timezone.localtime(datas.fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S"))}
+		 filagral=filadata														#asigna la fila creada a fila gral
+		 datahechos=Preventivos.objects.get(id=datas.id).hecho.all() 			#obtiene los hechos relacionados al preventivo
+		 if datahechos:															#si hay hechos relacionados
+		  for dhecho in datahechos:												#para cada hecho
+
+			 if dhecho.descripcion==None or dhecho.descripcion=='':				#si no esta cargada la descripcion
+				 denuncia="SIN DESCRIPCION" 									#asigna sin descripcion a denuncia
+			 else:																#si tiene cargada la descripcion
+				 denuncia=html2text.html2text(dhecho.descripcion,True) 			#convierete el texto html en texto simple
+				 denuncia=denuncia.encode('utf-8', 'xmlcharrefreplace')			#codifica el texto en utf-8
+				 denuncia=strip_tags(denuncia)									#quita todos los tags html
+				 #.replace('&nbsp;','')
+				 denuncia=denuncia.replace('&nbsp;','')
+				 denuncia=denuncia.replace('"','')
+				 denuncia=denuncia[:200]+'...'
+
+			 if dhecho.motivo.descripcion==None or dhecho.motivo.descripcion=='': #si no tiene cargado el motivo de denuncia
+				motivo='SIN MOTIVO'												#le asigna un sin motivo
+			 else:																# si lo tiene cargado
+				motivo=str(dhecho.motivo.descripcion)							# lo asigna en motivo
+			 filahecho={ 														#prepara los datos de la fila hecho
+			 		'Motivo Preventivo':motivo,
+					'Denuncia':denuncia,
+					"Dia Hecho":str(timezone.localtime(dhecho.fecha_desde).strftime("%A")),
+					"Fecha Desde":str(timezone.localtime(dhecho.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")),
+					'Fecha Hasta':str(timezone.localtime(dhecho.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S"))
+				}
+			 filagral.update(filahecho) 										#actualiza fila gral con fila hecho
+			 idhec=dhecho.id													#obtiene el id del hecho
+			 delito =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True) #obtiene los delitos del hecho
+			 cometidos=[]														#crea un arreglo de cometidos
+			 hechodeli=""														#crea una variable hechodeli
+			 for d in delito: 													#por cada delito
+				 cometidos.append(d)											# lo agrega a cometidos
+
+			 hechodeli='' 														#limpia hecho deli
+			 modus=' SIN MODALIDAD  '											#asigna sin modalidad al modus
+			 for i in cometidos:												#para cada delito
+				 if hechodeli != '':											#si hecho deli no esta vacio
+					 hechodeli=hechodeli+'-'+unicode(str(i).strip(),'UTF-8')    # le agrega el delito separado por guion
+				 else:															#si esta vacio
+					 hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')		#agrega el delito
+
+				 if i.refmodoshecho!=None: 										#si el delito tiene modo
+					 modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+' - ' 	# se lo agrega
+
+				 filadelitos={													#prepara la filadelitos
+				 		'Delitos':hechodeli.strip()+modus
+						}
+
+			 filagral.update(filadelitos)										#a la fila gral le agrega filadelitos
+
+		  involuscra=[]															#crea un arreglo de involurados
+		  eleminvo=[]															#crea un arreglo de elementos
+		  datosper=""															#crea una variable datosper
+		  elementos=""															#crea una variable elementos
+		  involus=Hechos.objects.get(id=idhec).involu.all() 					#obtiene todos los involucrados
+		  eleinvo=Elementos.objects.filter(hechos=idhec,ampliacion_id__isnull=True,borrado__isnull=True).all() #obtiene todos los elementos involucrados
+		 else:																		#si no tiene hecho relacionado
+			 motivo='SIN MOTIVO' 												# motivo sin motivo
+			 denuncia='SIN DESCRIPCION' 										# denuncia sin descripcion
+			 delis='SIN DELITOS'												#delis sin delitos
+			 moduss='SIN MODO OPERANDI'											#modus sin modo
+			 fechadesde='SIN FECHA'												#fechas sin fecha
+			 fechahasta="SIN FECHA"
+			 filahecho={														#prepara fila hecho
+			 	'Motivo Preventivo':motivo,
+				'Denuncia':denuncia,
+				"Dia Hecho":'SIN DESCRIPCION',
+				'Fecha Desde':fechadesde,
+				'Fecha Hasta':fechahasta
+				}
+			 filagral.update(filahecho) 										#agrega fila hecho a fila gral
+
+			 filadelitos={														#prepara filadelitos
+			 		'Delitos':delis+moduss
+					}
+
+			 filagral.update(filadelitos) 										#agrega fila delitos a fila gral
+
+
+
+		 datosgral=""															#datos gral vacio
+		 lugar=''																# lugar vacio
+		 lati=''																#latitud vacio
+		 longi=''																#longitud vacio
+		 condiciones=''															#condiciones vacio
+		 perjuridica=''															#persona juridica vacio
+		 involucrados=0 														#involucrados 0
+		 if len(Lugar.objects.filter(hecho=idhec))>0:							#si el hecho tiene lugar
+			 tienelugar=True													#levanta la bandera tiene lugar
+			 idlugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]		#obtiene el id del lugar
+			 lugar=Hechos.objects.get(id=idhec).lugar_hecho.all()[0]			#obtiene el lugar
+			 if idlugar.altura==None:											#si no tiene altura el lugar
+				idlugar.altura=0												#lo pone en 0
+
+			 lugarhecho={														#prepara el lugar
+			 		'Lugar':str(idlugar.tipo_lugar),
+					"Zona":str(idlugar.zona),
+					'LugarHecho':str(idlugar.calle)+' Nro.: '+str(idlugar.altura)
+					}
+			 if idlugar.barrio==None: 											#si no tiene barrio
+				lugarbarrio='SIN DESCRIPCION' 									#le pone sin descripcion
+			 else:																#si tiene barrio
+				 lugarbarrio=unicode(str(idlugar.barrio),'UTF-8')				#lo obtiene formateado a utf-8
+
+			 barrio={															#prepara el barrio
+			 	'BarrioHecho':lugarbarrio
+				}
+			 #condiciones= lugar.cond_climaticas.values_list('descripcion',flat=True)
+			 laticiudad = RefCiudades.objects.get(id=datas.dependencia.ciudad_id) #obtiene la ciudad
+
+			 lati=laticiudad.lat												#obtiene la latitud
+			 longi=laticiudad.longi												#obtiene la longitud
+			 filacoorde={ 														#prepara la fila de coordenadas
+			 		'Latitud':str(lati),
+					'Longitud':str(longi)
+					}
+
+
+		 filagral.update(lugarhecho) 											#agrega lugarhecho a fila gral
+		 filagral.update(barrio)												#agrega barrio a fila gral
+		 filagral.update(filacoorde) 											#agrega filacoorde a fila gral
+
+		 if len(Hechos.objects.get(id=idhec).involu.all())>0:					#si tiene involucrados
+			  tienePersonas=True												# levanta la bandera tienePersonas
+			  countinvolus=Hechos.objects.get(id=idhec).involu.all().count()	#obtiene la cantidad de personas involucradas
+			  rolins=''															#rolins vacio
+			  for p in Hechos.objects.get(id=idhec).involu.all():				#para cada involucrado
+				 bandera=True													#bandera True
+				 tienepersona=True 												#tienePersonas True
+				 rolins=rolins+p.roles.descripcion+'-' 							#suma el rol a rolins
+				 #involucrados=involucrados+1
+				 perinvocondi={													#prepara condicion del involucrado
+				 		'Franganti':p.infraganti.upper(),
+						'Tentativa':p.tentativa.upper()
+						}
+				 filagral.update(perinvocondi)									#actualiza fila gral con perinvcondi
+
+			  perinvo={															#prepara perinvo
+			  	'Involucrados':rolins
+				}
+			  filagral.update(perinvo)											#agrega perinvo filagral
+		 else:																	# si no tiene personas
+			 sinrol='SIN DESCRIPCION'											#sin rol sin descripcion
+			 fraganti='NO'														#fraganti no
+			 tentativa='NO'														#tentativa no
+			 perinvo= {															#prepara perinvo
+			 		'Involucrados':sinrol,
+					'Franganti':fraganti,
+					'Tentativa':tentativa
+					}
+			 perinvo.update(perinvo)											#agreaga perinvo a perinvo
+			 filagral.update(perinvo)											#agrega filagral a perinvo
+
+		 rotulo='CantidadElementos '+str(len(eleinvo))							#rotulo = a la cantidad de elementos
+		 datosgral=''															#datos gral vacio
+		 obdata=[] 																#crea un arreglo obdata
+		 obdatav=[] 															#crea un arreglo obdatav
+		 deta=''																#deta vacio
+		 detav=''																#detav vacio
+		 eleme=''																#eleme vacio
+		 hay=[]																	#crea un arreglo hay
+		 i=1																	#crea un contador en 1
+		 obse=''																#obse vacio
+		 for eles in eleinvo:													#para cada elemento en eleinvo
+				 tieneelementos=True											#tieneelementos true
+				 obdata=[]
+				 obdatav=[]
+				 deta=''
+				 detav=''
+
+				 if len(Elementosarmas.objects.filter(idelemento=eles.id))>0:	#si tiene armas
+
+					  idar = Elementosarmas.objects.filter(idelemento=eles.id).values('idarma') #obtiene el id
+					  tieneelementos=True
+					  obdata=Armas.objects.filter(id=idar)						#obtiene el arma
+					  for extra in obdata: 										#por cada arma
+						 titu=' Carateristicas Generales : '					#obtiene sus caracteristicas
+						 tabla=str(extra.subtipos)+'- Tipo/s : \
+						 		'+str(extra.tipos)+'- Sistema de Disparo : \
+								'+str(extra.sistema_disparo)+'- Marcas : \
+								'+str(extra.marcas)
+						 tipos='Calibre : '+str(extra.calibre)+'- Modelo : \
+						 	 	'+str(extra.modelo)+'- Nro Serie : \
+								'+str(extra.nro_arma)+'- Propietario : \
+								'+str(extra.nro_doc)+'-'+str(extra.propietario)
+						 deta=titu+tabla+tipos 									#en deta agrega todos los detalles
+
+				 if len(Elementoscars.objects.filter(idelemento=eles.id))>0:	#si tiene vehiculos
+					  tieneelementos=True
+					  idarv = Elementoscars.objects.filter(idelemento=eles.id).values('idvehiculo') #obtiene el id del vehiculo
+
+					  obdatav=Vehiculos.objects.filter(id=idarv)				#obtiene el vehiculo
+					  for extrav in obdatav:									#para cada vehiculo
+						 tituv=' Carateristicas Generales : '					#obtiene sus caracteristicas
+						 tablav=' Marca/s : '+str(extrav.idmarca)+'- Modelo : '+str(extrav.modelo)+'- Dominio : '+str(extrav.dominio)+'- Año : '+str(extrav.anio)
+						 tiposv=' Tipo/s : '+str(extrav.tipov)+'- Nro Chasis : '+str(extrav.nchasis)+'- Nro. Motor : '+str(extrav.nmotor)+'- Propietario : '+str(extrav.nro_doc)+' - '+str(extrav.propietario)
+						 detav=tituv+tablav+tiposv								#agrega las caracteriticas a detav
+
+
+
+				 tipo=str(eles.tipo)											#obtiene el tipo elemento
+				 ampli=''
+				 rubro='Elemento/s '+str(eles.tipo)								#obtiene el rubro
+				 rubros='Rubro y Categoria : '+str(eles.rubro)+'-'+str(eles.categoria)	#obtiene el rubro y categoria
+				 canti='Cantidad : '+str(eles.cantidad)+'-'+str(eles.unidadmed) 	#obtiene la cantidad de elemento y unidad medida
+				 if eles.descripcion.strip():
+					 obse='Observaciones : '+str(eles.descripcion.encode("utf8")) #codifica a utf-8 la descripcion
+					 obse=obse.replace('&NBSP;','')
+
+				 if deta:
+					  if detav:
+						  eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+detav+' | '
+					  else:
+						  eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+deta+' | '
+
+				 else:
+					  if detav:
+						  eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+detav+' | '
+					  else:
+						  eleme=str(i)+'°-'+rubro+' '+rubros+' '+canti+' '+obse+' '+deta+' | '
+
+				 eleminvo.append(eleme)
+				 i=i+1
+		 elementos=''
+		 for ja in eleminvo:
+			 elementos=elementos+ja
+
+		 if elementos:
+			elementos={'Elementos':elementos}
+		 else:
+			contiene='SIN ELEMENTOS'
+			elementos={'Elementos':contiene}
+
+		 filagral.update(elementos)												#agrega los elementos a fila gral
+		 fila4=[]																#crea un arreglo fila4
+		 for key,value in sorted(filagral.items()):								#para cada elemento en filagral
+			 fila4.append(value)												#agrega el valor en fila4
+
+		 f=fila4
+		 fila3.append(f)														#agrega la fila en fila3
+		 ii+=1																	#suma uno a ii que inicia en 4
+		 iil.append(ii)															#agrega ii al arreglo iil
+
+
+	libro = Workbook()															#crea un nuevo libro
+	hoja = libro.get_active_sheet()												#crea una nueva hoja
+	hoja.title = "Informe Gral"													#le pone titulo a la hoja
+
+	# Ahora, se obtiene las celdas en la cuál se colocará el nombre
+	# del campo. como son 8 campos, se necesita 8 celdas
+	celda = hoja.cell("B1")
+	celda.value=" Elementos recopilados desde la Base de Datos para Estadísticas "
+	celda = hoja.cell("B3")
+	celda.value=" Tabla con datos obtenidos de Preventivos Enviados e Informados"
+	rango_celdas = hoja.range("B4:W4")
+	# se crea una tupla con los nombres de los campos
+	nombre_campos = "BARRIOHECHO","CARATULA","DELITOS","DENUNCIA","DEPENDENCIA","DIA DEL HECHO","ELEMENTOS","FECHA DENUNCIA","FECHA DESDE","FECHA HASTA","FRAGANTI","INVOLUCRADOS","LATITUD","LOCALIDAD","LONGITUD","LUGAR","LUGARHECHO","MOTIVO","PREVENTIVO NRO","TENTATIVA","UNIDAD REGIONAL","ZONA"
+	# ahora, se asigna cada nombre de campo a cada celda
+
+	for campo in rango_celdas:
+		 indice = 0  # se crea un contador para acceder a la tupla
+		 for celda in campo:
+				 celda.value = nombre_campos[indice]
+				 indice += 1
+	longitud=ii
+	celdas_datos = hoja.range("B5:W{0}".format(longitud))
+
+	# ahora vamos a dar los valores a las celdas con los datos
+
+	fila=0
+	for valuex in fila3:
+		 indice1=0
+		 for celda in celdas_datos[fila]:
+			 celda.value = valuex[indice1]
+			 indice1+=1
+		 fila += 1
+
+
+
+	response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+	nombre_archivo = "informe.xlsx"
+	contenido = "attachment; filename={0}".format(nombre_archivo)
+	response["Content-Disposition"] = contenido
+	libro.save(response)
+	return response
 
 @login_required
 @group_required(["policia","investigaciones","visita","radio"])
@@ -10727,7 +10775,6 @@ def repautos(request):
 
 				 celdas_datost = hoja.range("C33:F{0}".format(longitudse))
 				 filat=0
-				 #print celdas_datost
 				 for celdas in celdas_datost[filat]:
 
 									 if 'robos' in  dictse.keys():
@@ -11153,7 +11200,6 @@ def amplia_ele(request,idprev,idamp):
 					 errors.append('Elementos guardados')
 			else:
 				 if elemento.categoria.descripcion =='FUEGO' or elemento.categoria.descripcion=='DE FUEGO':
-						 #print formv.errors.as_text
 						 if formar.is_valid():
 							 elemento.save()
 							 armas=Armas()
@@ -11231,7 +11277,6 @@ def amplia_ele(request,idprev,idamp):
 
 
 	lista = Elementos.objects.filter(hechos = hechos.id,cargado_prev=True,ampliacion__isnull=True,borrado__isnull=True)
-	#print lista
 	listam= Elementos.objects.filter(hechos = hechos.id,ampliacion_id=idamp,borrado__isnull=True)
 
 
@@ -11303,7 +11348,6 @@ def reporampli(request,idprev,idamp):
 						 if dad:
 
 								for la in Personas.objects.get(id=p.persona.id).padre.all():
-									#print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
 									if p.menor=='':
 										 p.menor="NO"
 									roles='<u>'+str(p.roles)+'</u>'+' : '
@@ -11825,7 +11869,6 @@ def eleampli(request,idhecho,elemento,idamp):
 					 errors.append('Elementos guardados')
 			else:
 				 if elemento.categoria.descripcion =='FUEGO' or elemento.categoria.descripcion=='DE FUEGO':
-						 #print formv.errors.as_text
 						 if formar.is_valid():
 							 elemento.save()
 							 armas=Armas()
@@ -11992,7 +12035,6 @@ def amplia_pers(request,idprev,idamp):
 		persoinvform = PersInvolucradasForm(instance=personainv)
 	if request.POST.get('modificar') == 'Modificar':
 		persinv = PersInvolucradasForm(request.POST, request.FILES)
-		print persinv.errors.as_text
 		if persinv.is_valid():
 			personainv                  = PersInvolucradas.objects.get(id=request.POST.get('idinv'))
 			per                         = PersInvolucradas()
@@ -12116,7 +12158,6 @@ def amplia_per(request,idprev,idamp,idper):
 	 formpa = PadresForm(request.POST,request.FILES)
 
 	 #fecha_detencion=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
-	 #print request.POST.get('fechahoradetencion')
 	 anionac=datetime.datetime.strptime(request.POST.get('fecha_nac'),'%d/%m/%Y').strftime('%Y')
 	 anioactual=datetime.datetime.now()
 	 aniohoy=anioactual.today().year
