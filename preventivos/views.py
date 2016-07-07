@@ -4696,64 +4696,49 @@ def verprev(request):
 	errors=[]
 	unidadregi=''
 	jurisdi=''
-	if request.POST.get('search')=="Buscar" or request.POST.get('searchs')=="Exportar":
-
-		 form=SearchPreveForm(request.POST, request.FILES)
-		 nro=request.POST.get('nro')
-		 anio=request.POST.get('anio')
-		 caratula=request.POST.get('caratulas')
-		 fecha_carga=request.POST.get('fecha_cargas')
-		 fecha_cargah=request.POST.get('fecha_cargah')
-		 ureg=request.POST.get('ureg')
-		 depe=request.POST.get('depe')
-		 unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
-		 jurisdi=unidadregi.ciudad.descripcion
-		 #fecha_cargas=datetime.datetime.strptime(fecha_carga,"%d/%m/%Y %H:%M:%S")
-		 #fecha_cargah=(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y")+timedelta(days=1)).date()
-		 #fecha_cargas=str(datetime.datetime.strptime(fecha_carga,"%d/%m/%Y").date())+' 00:00:01'
-		 #fecha_cargah=str(datetime.datetime.strptime(fecha_cargah,"%d/%m/%Y").date())+' 23:59:59'
-		 #fecha_cargas=datetime.datetime.strptime(fecha_cargas,'%Y-%m-%d %H:%M:%S')
-		 #fecha_cargah=datetime.datetime.strptime(fecha_cargah,'%Y-%m-%d %H:%M:%S')
-		 todos = Preventivos.objects.all()
-		 if depe != "":
-			 todos = todos.filter(dependencia = depe)
-		 if ureg != "":
-			 dependencias = Dependencias.objects.filter(unidades_regionales= ureg)
-			 todos = todos.filter(dependencia__in = dependencias)
-		 if nro != "":
-			 todos = todos.filter(nro = nro)
-		 if anio != "":
-			 todos = todos.filter(anio = anio)
-		 if caratula != "":
-			 todos = todos.filter(caratula__icontains = caratula)
-		 if fecha_carga != "":
-			 if fecha_cargah == "":
-				 fecha_cargah =  datetime.datetime.now()
-			 else:
-				 fecha_cargah = datetime.datetime.strptime(fecha_cargah+' 00:00:00',"%d/%m/%Y %H:%M:%S")
-			 fecha_carga = datetime.datetime.strptime(fecha_carga+' 00:00:00',"%d/%m/%Y %H:%M:%S")
-			 todos = todos.filter(fecha_carga__range = [fecha_carga,fecha_cargah])
-
-		 if request.POST.get('searchs')=="Exportar":
-			 return exportar_listado(request,todos)
+	peticion 		= request.GET.get('peticion')
+	if peticion != None and peticion != "":
+		nro				= request.GET.get('nro')
+		anio			= request.GET.get('anio')
+		caratula		= request.GET.get('caratulas')
+		fecha_carga		= request.GET.get('fecha_carga')
+		fecha_cargah	= request.GET.get('fecha_cargah')
+		ureg			= request.GET.get('ureg')
+		depe			= request.GET.get('depe')
 
 
-	else:
-		if request.POST.get('reset')=="Limpiar":
-			 todos=''
-			 total='si'
-
+		todos = Preventivos.objects.all()
+		if depe != "" and depe != None:
+		 todos = todos.filter(dependencia = depe)
+		if ureg != "" and ureg != None:
+		 dependencias = Dependencias.objects.filter(unidades_regionales= ureg)
+		 todos = todos.filter(dependencia__in = dependencias)
+		if nro != "" and nro != None:
+		 todos = todos.filter(nro = nro)
+		if anio != "" and anio != None:
+		 todos = todos.filter(anio = anio)
+		if caratula != "" and caratula != None:
+		 todos = todos.filter(caratula__icontains = caratula)
+		if fecha_carga != "" and fecha_carga != None:
+			if fecha_cargah == "" or fecha_cargah == None:
+				fecha_cargah =  datetime.datetime.now()
+			else:
+				fecha_cargah = datetime.datetime.strptime(fecha_cargah+' 00:00:00',"%d/%m/%Y %H:%M:%S")
+			fecha_carga = datetime.datetime.strptime(fecha_carga+' 00:00:00',"%d/%m/%Y %H:%M:%S")
+			todos = todos.filter(fecha_carga__range = [fecha_carga,fecha_cargah])
+		if peticion == 'buscar':
+			return render_to_response("./listarprev.html",{'todos':todos},context_instance=RequestContext(request))
 		else:
+			return exportar_listado(request,todos)
 
-				 todos.append(Preventivos.objects.all())
-				 total=Preventivos.objects.all().count
 
 
 	info={'nro':nro,'anio':anio,'fecha_carga':fecha_carga,'fecha_cargah':fecha_cargah,
 	'caratula':caratula,'todos':todos,'total':total,'errors':errors,'unidadregi':unidadregi,'jurisdi':jurisdi,
 	'state':state,'destino': destino,'form':form}
-
 	return render_to_response('./seeprev.html',info,context_instance=RequestContext(request))
+
+
 
 def exportar_listado(request,todos):
 	filadata={}
@@ -5068,6 +5053,7 @@ def exportar_listado(request,todos):
 	nombre_archivo = "informe.xlsx"
 	contenido = "attachment; filename={0}".format(nombre_archivo)
 	response["Content-Disposition"] = contenido
+	response["Content-type"] = "application/download"
 	libro.save(response)
 	return response
 

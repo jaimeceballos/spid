@@ -964,6 +964,47 @@ $("#usuario").select2({
 
         });
 
+        $("#busqueda-form").submit(function(event){
+          event.preventDefault();
+          $("#loader").show();
+          var url = '/preventivos/seedata/';
+          var nro = $(this).find("input[name='nro']").val();
+     		  var anio = $(this).find("input[name='anio']").val();
+     		  var caratula = $(this).find("input[name='caratulas']").val();
+     		  var fecha_carga = $(this).find("input[name='fecha_cargas']").val();
+          alert(fecha_carga);
+     		  var fecha_cargah = $(this).find("input[name='fecha_cargah']").val();
+     		  var ureg= $(this).find("select[name='ureg']").val();
+     		  var depe = $(this).find("select[name='depe']").val();
+          var peticion = "buscar"
+
+          $.get(url,{nro:nro,anio:anio,caratula:caratula,fecha_carga:fecha_carga,fecha_cargah:fecha_cargah,ureg:ureg,depe:depe,peticion:peticion},function(data){
+
+          })
+          .done(function(data){
+            $("#loader").hide();
+            $("#listado-busqueda").empty().append(data);
+          })
+        });
+
+        $("#export-search").click(function(event){
+          //$("#loader").show();
+          var url = '/preventivos/seedata/';
+          var nro = $("#busqueda-form").find("input[name='nro']").val();
+     		  var anio = $("#busqueda-form").find("input[name='anio']").val();
+     		  var caratula = $("#busqueda-form").find("input[name='caratulas']").val();
+     		  var fecha_carga = $("#busqueda-form").find("input[name='fecha_cargas']").val();
+     		  var fecha_cargah = $("#busqueda-form").find("input[name='fecha_cargah']").val();
+     		  var ureg= $("#busqueda-form").find("select[name='ureg']").val();
+     		  var depe = $("#busqueda-form").find("select[name='depe']").val();
+          var peticion = "exportar"
+          url = url+'?nro='+nro+'&anio='+anio+'&caratula='+caratula+'&fecha_carga='+fecha_carga+'&fecha_cargah='+fecha_cargah+'&ureg='+ureg+'&depe='+depe+'&peticion='+peticion;
+
+          window.location.assign(url);
+
+
+        });
+
          $('#tipos').select2({}).change(function(event){
                     $('#subtipos').html('<option value="">Seleccione Tipo de uso de Arma de Fuego</option>');
                     var ida = $('#idampl').val();

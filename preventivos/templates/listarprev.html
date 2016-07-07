@@ -1,60 +1,60 @@
-{%if 'no' in total %}
+
+    <h1>LISTADO GENERAL DE PREVENTIVOS </h1>
+    <div> Realice una Búsqueda mas detallada con el resultado que se encontró con la búsqueda anterior</div>
+
+     <div id="demo">
+       <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+           <thead>
+               <tr class="gradeC">
+                  <th >Nro/Año</th>
+
+                  <th>Caratula</th>
+                   <th>U.Regional/Dependencias</th>
+                     <th>Fecha Denuncia</th>
+                  <th>Carga</th> <th>Autorizado</th> <th>Cierre</th>
+                  <th>Ampliar</th>
+                  <th>Opcion</th>
+                </tr>
+           </thead>
+               <tbody>
 
 
- <h1>LISTADO GENERAL DE PREVENTIVOS </h1>
- <div> Realice una Búsqueda mas detallada con el resultado que se encontró con la búsqueda anterior</div>
+                   {% for datos in todos %}
+                     <tr  class="gradeC">
+                      {%if datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES'%}
+                      <td width="10%"><a href='{% url 'selectPrev' datos.id %}'>
+                      {{ datos.nro }}/{{ datos.anio}}</a></td>
+                      {%else%}
+                       <td width="10%"><strong>{{ datos.nro }}/{{ datos.anio}}</strong></td>
+                      {%endif%}
 
-  <div id="demo">
-    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
-        <thead>
-            <tr class="gradeC">
-               <th >Nro/Año</th>
-
-               <th>Caratula</th>
-                <th>U.Regional/Dependencias</th>
-                  <th>Fecha Denuncia</th>
-               <th>Carga</th> <th>Autorizado</th> <th>Cierre</th>
-               <th>Ampliar</th>
-               <th>Opcion</th>
-             </tr>
-        </thead>
-            <tbody>
+                      <td width="50%">{{ datos.caratula}}</td>
+                      <td width="25%">{{datos.dependencia.unidades_regionales.descripcion}} / {{ datos.dependencia.descripcion}}</td>
+                         <td width="10%">{{ datos.fecha_denuncia|date:" d/m/Y"}}</td>
+                      <td width="10%">{{ datos.fecha_carga|date:" d/m/Y"}}</td>
+                      <td width="10%">{{ datos.fecha_autorizacion|date:" d/m/Y"}}</td>
+                      <td width="12%">{{ datos.fecha_cierre|date:" d/m/Y"}}</td>
 
 
-                {% for datos in todos %}
-                  <tr  class="gradeC"> 
-                   {%if datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES'%}
-                   <td width="10%"><a href='{% url 'selectPrev' datos.id %}'>
-                   {{ datos.nro }}/{{ datos.anio}}</a></td>
-                   {%else%}
-                    <td width="10%"><strong>{{ datos.nro }}/{{ datos.anio}}</strong></td>
-                   {%endif%}
+                     {%if datos.fecha_autorizacion and datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and datos.fecha_autorizacion%}
+                       <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
+                     {%else%}
 
-                   <td width="50%">{{ datos.caratula}}</td>
-                   <td width="25%">{{datos.dependencia.unidades_regionales.descripcion}} / {{ datos.dependencia.descripcion}}</td>
-                      <td width="10%">{{ datos.fecha_denuncia|date:" d/m/Y"}}</td>
-                   <td width="10%">{{ datos.fecha_carga|date:" d/m/Y"}}</td>
-                   <td width="10%">{{ datos.fecha_autorizacion|date:" d/m/Y"}}</td>
-                   <td width="12%">{{ datos.fecha_cierre|date:" d/m/Y"}}</td>
+                          <td width="10%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="Para generar una Ampliacion debe estar Autorizado/Enviado el Preventivo" rel='tooltip' /></a></center></td>
+                     {%endif%}
+                    <td width="12%">
+                     {%if datos.dependencia.ciudad.descripcion != jurisdi%}
+                     <a href="{% url 'reportes' datos.id %}" target="_blank" > <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" title="Solo puede ver el preventivo en modo vista preeliminar" rel='tooltip' /> </a>
+                     {%else%}
+                       <strong><center>---</center></strong>
+                     {%endif%}
 
-
-                  {%if datos.fecha_autorizacion and datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and datos.fecha_autorizacion%}
-                    <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
-                  {%else%}
-
-                       <td width="10%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="Para generar una Ampliacion debe estar Autorizado/Enviado el Preventivo" rel='tooltip' /></a></center></td>
-                  {%endif%}
-                 <td width="12%">
-                  {%if datos.dependencia.ciudad.descripcion != jurisdi%}
-                  <a href="{% url 'reportes' datos.id %}" target="_blank" > <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" title="Solo puede ver el preventivo en modo vista preeliminar" rel='tooltip' /> </a>
-                  {%else%}
-                    <strong><center>---</center></strong>
-                  {%endif%}
-
-                  </td>
-                 </tr>
-                {%endfor%}
-            </tbody>
-    </table>
-  </div>
-{%endif%}
+                     </td>
+                    </tr>
+                   {%endfor%}
+               </tbody>
+       </table>
+       <script type="text/javascript">
+         $('#example').DataTable();
+       </script>
+     </div>

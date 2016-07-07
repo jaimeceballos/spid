@@ -1,136 +1,133 @@
 {% extends "base.html" %}
 {% block main %}
 
- <form id="form" action="." method="post">{% csrf_token %} 
-   <h1>Formulario de Busqueda de Preventivos</h1>
+<div class="row">
+  <h1>Formulario de Busqueda de Preventivos</h1>
+  {% if errors %}
+
+            {% for error in errors %}
+             <div id="fade" class="overlay"  style="display: block;"></div>
+                   <div id="light" class="modals" style="display: block;">
+                <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
+                <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
+                     </p>
+                     </div>
+             {% endfor %}
+
+  {% endif %}
+  <div class="col-md-6">
+    <form action="" method="post" id="busqueda-form">{% csrf_token %}
+      <div class="row form-group form-group-sm">
+        <div class="col-md-2">
+          <label for=""> Nro : </label>
+        </div>
+        <div class="col-md-4">
+          <input type="numeric" id="nro" name="nro" size="6" autocomplete="off" style="margin-left:8px;" value="{{nro}}"/>
+          <div style="color:red;">{{form.nro.errors}}</div>
+        </div>
+        <div class="col-md-2">
+          <label for=""> A&ntilde;o : </label>
+        </div>
+        <div class="col-md-4">
+          <input type="numeric" id="anio" name="anio" size="6" autocomplete="off" value="{{anio}}"/>
+          <div style="color:red;">{{form.anio.errors}}</div>
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <div class="col-md-4">
+          <label for="">Fecha de Carga : Desde :</label>
+        </div>
+        <div class="col-md-3">
+          <input type="text" id="fecha_cargas" name="fecha_cargas" autocomplete="off" size="9" value=""
+           placeholder="dd/mm/aaaa" />
+            <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha de Carga Denuncia">
+
+            <script type="text/javascript">
+              Calendar.setup({
+                inputField : "fecha_cargas", // id del campo de texto
+                ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto
+                button : "lanzador" // el id del botón que lanzará el calendario
+              });
+            </script>
+
+        </div>
+        <div class="col-md-2">
+          <label> Hasta :</label>
+        </div>
+        <div class="col-md-3">
+          <input type="text" id="fecha_cargah" name="fecha_cargah" autocomplete="off" size="9"
+           placeholder="dd/mm/aaaa" />
+            <input class="botoncalendar"  type="button" id="lanzadora" title="Seleccione Fecha de Carga de Denuncia">
+
+            <script type="text/javascript">
+              Calendar.setup({
+                inputField : "fecha_cargah", // id del campo de texto
+                ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto
+                button : "lanzadora" // el id del botón que lanzará el calendario
+              });
+            </script>
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <div class="col-md-2">
+          <label> Caratula : </label>
+        </div>
+        <div class="col-md-10">
+          <input type="text" id="caratulas" name="caratulas"  size="58" autocomplete="off" value="{{caratula}}"/>
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <div class="col-md-2">
+          <label for="">Unidad Regional:</label>
+        </div>
+        <div class="col-md-4">
+          <select id="ureg" name="ureg" style="width:180px;">
+          <option name="ureg"  {{form.unidades_regionales}}  </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="">Dependencia:</label>
+        </div>
+        <div class="col-md-4">
+          <select id="depe" name="depe" style="width:180px;margin-left:8px;">
+          <option name="depe" {{form.dependencias}}  </option>
+          </select>
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <div class="col-md-12">
+          <div align="right">
+               <input class="btn btn-success" type="submit" value="Buscar" id="search" name="search"
+             title="Permite la busqueda de preventivos"/>
+              <a class="btn btn-success" href="/preventivos/seedata/" title="Limpia la pantalla de datos">Limpiar</a>
+           {%if user.is_authenticated and user.is_staff%}
+             <input class="botonexpo" type="button" value="Exportar" id="export-search" name="searchs" style="font-size:11px;"
+             title="Permite Exportar Preventivos enviados e informados"/>
 
 
-    {% if errors %}
-            
-              {% for error in errors %} 
-               <div id="fade" class="overlay"  style="display: block;"></div>
-                     <div id="light" class="modals" style="display: block;">
-                  <p style="color: red;" > {{ error }}.- &nbsp;&nbsp;
-                  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"><input class="botoncerrar"  type="text" value= "CERRAR"></a>
-                       </p>
-                       </div>
-               {% endfor %}
-             
-    {% endif %}  
-    <br>
-    <table class="table" >
-    <tr>
-      <td>
-    
-    <strong> Nro : </strong>
-    <input type="numeric" id="nro" name="nro" size="6" autocomplete="off" style="margin-left:8px;" value="{{nro}}"/>
-    <div style="color:red;">{{form.nro.errors}}</div>
-      </td>
- <td width="300px;">
-       <div align="left">
-            <input class="btn btn-success" type="submit" value="Buscar" id="search" name="search"
-          title="Permite la busqueda de preventivos"/>
-           <input class="btn btn-success" type="submit" value="Limpiar" id="reset" name="reset"
-        title="Limpia la pantalla de datos"/>
-        {%if user.is_authenticated and user.is_staff%}
-          <input class="botonexpo" type="submit" value="Exportar" id="searchs" name="searchs" style="font-size:11px;"
-          title="Permite Exportar Preventivos enviados e informados"/>
-       
-      
-        {%endif%}
-       </div>
-    </td>
-  </tr>
-  <tr><td>
-   
-      <strong> Año : </strong>
-    <input type="numeric" id="anio" name="anio" size="6" autocomplete="off" value="{{anio}}"/>
-    <div style="color:red;">{{form.anio.errors}}</div>
-    </tr></td>
-    <tr><td>
-      <!--
- <p>
-       <div id="datetimepicker" class="input-append date">
-        <strong>Fecha y Hora Carga Desde:</strong>
-    <input type="text" id="fecha_cargas" name="fecha_cargas" autocomplete="off" size="9" placeholder="dd/mm/aaaa h:m:s" />
-      <span class="add-on">
-        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-      </span> </div>
-     
-      <div id="datetimepicker1" class="input-append date">
-      <strong>Fecha y Hora Carga Hasta :</strong>
-      <input type="text" id="fecha_cargah" name="fecha_cargah" autocomplete="off" size="9" 
-     placeholder="dd/mm/aaaa h:m:s" />
-      <span class="add-on">
-        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-      </span>
-     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
-<script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
-</script>
-<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
-</script></div></p>-->
+           {%endif%}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-6">
+    <div class="alert alert-info alert-dismissible" role='alert'>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4>Informaci&oacute;n a tener en cuenta:</h4>
+        <ul>
+          <li>Si solamente desea visualizar la informaci&oacute;n relacionada a su busqueda en esta pantalla, rellene los campos de filtro y presione buscar.</li>
+          <li>Si desea exportar la informaci&oacute; relacionada a su busqueda, rellene el formulario y en lugar de presionar buscar, presione exportar.</li>
+        </ul>
+    </div>
+  </div>
+</div>
+<div class="row" id="loader" style="display:none">
+  <center><img src="/static/imagenes/preventivos/rolling.gif"  /></center>
+</div>
+<div class="row">
+  <div class="col-md-12" id="listado-busqueda">
 
-    <strong> Fecha de Carga : Desde :</strong>
-    <input type="text" id="fecha_cargas" name="fecha_cargas" autocomplete="off" size="9" value="{{fecha_carga | date:"d/m/Y"}}"
-     placeholder="dd/mm/aaaa" />
-      <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha de Carga Denuncia">
-      
-      <script type="text/javascript"> 
-        Calendar.setup({ 
-          inputField : "fecha_cargas", // id del campo de texto 
-          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
-          button : "lanzador" // el id del botón que lanzará el calendario 
-        }); 
-      </script> 
-
-    &nbsp;&nbsp;
-    <strong> Hasta :</strong>
-    <input type="text" id="fecha_cargah" name="fecha_cargah" autocomplete="off" size="9" 
-     placeholder="dd/mm/aaaa" />
-      <input class="botoncalendar"  type="button" id="lanzadora" title="Seleccione Fecha de Carga de Denuncia">
-    
-      <script type="text/javascript"> 
-        Calendar.setup({ 
-          inputField : "fecha_cargah", // id del campo de texto 
-          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
-          button : "lanzadora" // el id del botón que lanzará el calendario 
-        }); 
-      </script>
-     
-   </td>
- </tr>
- <tr><td>
-    
-    <strong> Caratula : </strong>
-    <input type="text" id="caratulas" name="caratulas"  size="58" autocomplete="off" value="{{caratula}}"/>
-   </td>
-  </tr>
-  <tr><td>
-   
-       <strong> Unidad Regional:</strong>
-        <select id="ureg" name="ureg" style="width:180px;">
-        <option name="ureg"  {{form.unidades_regionales}}  </option>
-        </select>
-        </td></tr>
-        <tr><td> 
-        <strong> Dependencias :</strong>
-        <select id="depe" name="depe" style="width:180px;margin-left:8px;">
-        <option name="depe" {{form.dependencias}}  </option>
-        </select>   
-  
-  
- </td>
-</tr>
- </tr>
-</table>
-   <br>
-   <br>
-
-   {% include "./listarprev.html"%}
-
-
-
- </form> 
+  </div>
+</div>
 {% endblock %}
