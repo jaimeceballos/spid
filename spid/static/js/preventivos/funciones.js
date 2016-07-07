@@ -972,8 +972,7 @@ $("#usuario").select2({
      		  var anio = $(this).find("input[name='anio']").val();
      		  var caratula = $(this).find("input[name='caratulas']").val();
      		  var fecha_carga = $(this).find("input[name='fecha_cargas']").val();
-          alert(fecha_carga);
-     		  var fecha_cargah = $(this).find("input[name='fecha_cargah']").val();
+          var fecha_cargah = $(this).find("input[name='fecha_cargah']").val();
      		  var ureg= $(this).find("select[name='ureg']").val();
      		  var depe = $(this).find("select[name='depe']").val();
           var peticion = "buscar"
