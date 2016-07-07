@@ -4700,7 +4700,7 @@ def verprev(request):
 	if peticion != None and peticion != "":
 		nro				= request.GET.get('nro')
 		anio			= request.GET.get('anio')
-		caratula		= request.GET.get('caratulas')
+		caratula		= request.GET.get('caratula')
 		fecha_carga		= request.GET.get('fecha_carga')
 		fecha_cargah	= request.GET.get('fecha_cargah')
 		ureg			= request.GET.get('ureg')
