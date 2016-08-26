@@ -151,9 +151,18 @@ def login_user(request):
                     no_enviados = obtener_cantidad_no_enviados(request)
                   no_autorizados = obtener_cantidad_no_autorizados(request)
                   radio_user = False
+
                   if user.groups.filter(name='radio'):
                         radio_user = True
-                  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user})
+
+                  autorizados = 0
+                  if radio_user:
+                      dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = user.get_profile().depe.id))
+                      preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)
+                      if preventivos.count() > 0:
+                          autorizados = preventivos.count()
+
+                  return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
                 else:
                   state="Dependencias seleccionadas INCONRRECTAS"
                   return render(request, 'index.html', {'state':state,'form':form})

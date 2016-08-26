@@ -943,9 +943,15 @@ def inicial(request):
     no_autorizados = obtener_cantidad_no_autorizados(request)
     usuario = request.user
     radio_user = False
+    autorizados = 0
     if usuario.groups.filter(name='radio'):
         radio_user = True
-    return render(request,'./index1.html',{'state':state, 'destino': destino,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'radio_user':radio_user})
+    if radio_user:
+        dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id))
+        preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)
+        if preventivos.count() > 0:
+            autorizados = preventivos.count()
+    return render(request,'./index1.html',{'state':state, 'destino': destino,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'radio_user':radio_user,'autorizados':autorizados})
 
 #la funcion en donde se guardan los grupos de usuarios que son ingresados en usuarios
 @login_required
@@ -6891,11 +6897,23 @@ def street_name(string):
 
     return (nstring,number)
 
+def autorizar(request,idprev):
+    preventivo = Preventivos.objects.get(id=idprev)
+    msg =""
+    try:
+        preventivo.fecha_autorizacion = datetime.datetime.now()
+        preventivo.autoriza = request.user.username
+        preventivo.save()
+        msg = "El preventivo fue autorizado."
+    except Exception as e:
+        msg = "no se pudo autorizar el preventivo."
+    return HttpResponse(msg)
+
 #informar a autoridades por email
 @login_required
 @transaction.commit_on_success
 @group_required(["policia","investigaciones","radio"])
-def informe(request,idhec,idprev):
+def informe(request,idhec,idprev,aforo):
         info_enviado = False
         name=""
         docu=""
@@ -6916,9 +6934,11 @@ def informe(request,idhec,idprev):
         destino= request.session.get('destino')
         preventivo = Preventivos.objects.get(id = idprev)
         #grabo la fecha de autorizacion solo la primera vez que se informa el preventivo
-        if not preventivo.fecha_autorizacion:
-            fecha_autorizacion=preventivo.fecha_autorizacion
-            grabarfa = Preventivos.objects.filter(id = idprev).update(fecha_autorizacion=datetime.datetime.now())
+        if not preventivo.fecha_envio:
+            fecha_envio=preventivo.fecha_envio
+            grabarfa = Preventivos.objects.filter(id = idprev).update(fecha_envio=datetime.datetime.now())
+        if not preventivo.aforo:
+            grabarAforo = Preventivos.objects.filter(id = idprev).update(aforo=aforo)
         ciudad= preventivo.dependencia.ciudad
         depe=preventivo.dependencia
         #Datos del Hecho delicitivo atraves del nro de preventivo
@@ -12153,15 +12173,6 @@ def amplia_per(request,idprev,idamp,idper):
       if request.POST.get('fechahoradetencion'):
             fechadete=datetime.datetime.strptime(request.POST.get('fechahoradetencion'), '%d/%m/%Y %H:%M:%S').strftime('%d/%m/%Y')
             fecha_denuncia=preventivo.fecha_denuncia.strftime('%d/%m/%Y')
-            #print fecha_denuncia,fechadete
-            #fd = timezone.localtime(fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S")
-            #print fd
-            #fd = time.strptime(fd, "%d/%m/%Y")
-            #fd = time.strptime(str(fecha_denuncia), "%Y-%m-%d")
-            #fdet = time.strptime(fechadete, "%d/%m/%Y")
-            print fechadete,fecha_denuncia
-            #print 'fecha detencion',fdet,'--------------','fecha_denuncia',fd
-            #if fechadete<fecha_denuncia:
 
             fd = time.strptime(fecha_denuncia, "%d/%m/%Y")
             fdet = time.strptime(fechadete, "%d/%m/%Y")
@@ -12248,7 +12259,6 @@ def amplia_per(request,idprev,idamp,idper):
              perso.otrasactividades = formp.cleaned_data['otrasactividades']
              perso.horalugaractivi = formp.cleaned_data['horalugaractivi']
              """
-             #print request.POST.get('roles')
 
              perso.estado_civil = formp.cleaned_data['estado_civil']
              idpoli=formp.cleaned_data['ocupacion']
@@ -12259,7 +12269,6 @@ def amplia_per(request,idprev,idamp,idper):
 
             else:
 
-                 #print request.POST.get('ocupacion')
                  if request.POST.get('ocupacion')=='None' or request.POST.get('ocupacion')=='':
                      refpoli=RefOcupacion.objects.get(descripcion='EMPLEADO')
                      texto='EMPLEADO'
@@ -12297,7 +12306,7 @@ def amplia_per(request,idprev,idamp,idper):
                                 persom.alias      = formp.cleaned_data['alias']
                                 persom.estado_civil = formp.cleaned_data['estado_civil']
                                 try:
-                                #print idper
+
 
                                     persom.save()
 
@@ -12360,13 +12369,12 @@ def amplia_per(request,idprev,idamp,idper):
                          detenidos = Detenidos()
 
 
-                         #print persoin.detenido
                          persoin.persona=personas
                          detenidos.persona = personas
                          persoin.hechos=hechos
 
                          persoin.roles = formr.cleaned_data['roles']
-                         #persoin.menor = formr.cleaned_data['menor']
+
                          if dife>=18:
                             persoin.menor='no'
                          else:
@@ -12408,15 +12416,9 @@ def amplia_per(request,idprev,idamp,idper):
 
 
 
-                         #mostrar='0'
+
                      else:
-                         #persi=Personas.objects.get(id=idper)
-                         #formp=PersonasForm(instance=persi)
-                         #print formr.errros.as_text
                          errors.append('Error faltan datos en seccion de Rol de la Persona')
-                         #return HttpResponseRedirect('./',)
-                         #mostrar='es'
-                         #print personas.id
                          filtros=Personas.objects.filter(id = personas.id)
                          if filtros not in todos:
                              todos.append(filtros)
@@ -12432,7 +12434,6 @@ def amplia_per(request,idprev,idamp,idper):
      else:
         mostrar='no'
      return HttpResponseRedirect('../')
-    #print idper
     if idper != '0':
         personas = Personas.objects.get(id=idper)
         formp = PersonasForm(instance=personas)
@@ -15662,3 +15663,37 @@ def obtener_preventivo(request,depe,numero,anio):
     preventivo = Preventivos.objects.get(dependencia=depe,nro=numero,anio=anio)
     data = serializers.serialize("json",[preventivo,])
     return HttpResponse(data, mimetype='application/json')
+
+@login_required
+def autorizados_envio(request):
+    state= request.session.get('state')
+    destino= request.session.get('destino')
+    info = {
+        'state':state,
+        'destino':destino,
+    }
+    usuario = request.user
+    unidad = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id)
+    dependencias = Dependencias.objects.filter(unidades_regionales = unidad)
+    preventivos = Preventivos.objects.filter(fecha_autorizacion__isnull = False, fecha_envio__isnull = True,dependencia__in = dependencias).order_by('dependencia')
+
+    depes = preventivos.values('dependencia').distinct()
+    dependencias = dependencias.filter(id__in=depes)
+    info['preventivos'] = preventivos
+    info['dependencias'] = dependencias
+    return render_to_response('./enviar.html',info,context_instance = RequestContext(request))
+
+@login_required
+def envio(request,idprev):
+    state= request.session.get('state')
+    destino= request.session.get('destino')
+    info = {
+        'state':state,
+        'destino':destino,
+    }
+    usuario = request.user
+    info['preventivo'] = Preventivos.objects.get(id = idprev)
+    info['hecho'] = info['preventivo'].hecho.all()[0]
+    info['autoridades'] = info['preventivo'].autoridades.all()
+
+    return render_to_response('./verificar_envio.html',info,context_instance=RequestContext(request))

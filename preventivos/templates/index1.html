@@ -8,12 +8,7 @@
 {% block main %}
 
   <p>Bienvenido {{ user.first_name }}&nbsp;{{ user.last_name }}, tu &uacute;ltimo ingreso fue el {{ user.get_profile.ultimo_ingreso }} </p>
-  <div class="alert alert-info" role="alert">
 
-      <strong>Informamos que se soluciono el error que se generaba al realizar el envio de preventivos. Sepan disculpar las molestas ocasionadas. Muchas gracias.<br>Oficina de Desarrollo - &Aacute;rea Comunicaciones</strong>
-
-
-  </div>
   {% if no_enviados %}
     <!--div style="width:50%;margin-top:15px;margin-bottom:15px;padding:10px;border-radius:5px;background-color:#5EA94C;border:1px solid #e3e3e3;-webkit-box-shadow: 2px 2px 2px 2px #ccc;box-shadow:2px 2px 2px 2px #ccc;">
     <center><p style="font:15px;"><strong>Usted tiene {{ no_enviados }} preventivos pendientes de envio por favor revise el <a href="{% url 'pendientes_envio' %}">listado</a>.</strong></p></center>
@@ -26,17 +21,23 @@
     </div>
   {% endif %}
   {% if 'investigaciones' in state or 'policia' in state %}
-  <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;">
+  <!--div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;">
     <p id="salutation" style="color:black">
       Habiendo detectado que en la totalidad de los preventivo cargados, se estan cargando los elementos involucrados en el hecho dentro de la descripcion del mismo, es necesario recordar que el sistema cuenta con un modulo de carga de elementos involucrados en el hecho.<br>
       Es importante que la carga de los mismos se realice dentro de este modulo ya que este modulo permite realizar una busqueda de preventivos a partir de los elementos involucrados en el hecho.<br>
 
     </p></blockquote>
-  </div>
+  </div-->
 
   {% endif %}
 
-
+  {% if autorizados %}
+    <div class="alert alert-info" role="alert">
+      <p>
+        Hay <span class="badge"> {{autorizados}} </span> preventivos autorizados en espera de envio. <a href="{% url 'autorizados_envio' %}">Ver listado</a>.
+      </p>
+    </div>
+  {%  endif %}
 {% endblock %}
 {% block contenido %}
 

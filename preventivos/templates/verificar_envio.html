@@ -1,0 +1,125 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12 well">
+      <div class="row form-group form-group-sm">
+        <div class="col-md-1">
+          <label for="">N&uacute;mero</label>
+        </div>
+        <div class="col-md-3">
+          {{preventivo.nro}}/{{preventivo.anio}}
+        </div>
+        <div class="col-md-1">
+          <label for="">Cargado</label>
+        </div>
+        <div class="col-md-3">
+          {{preventivo.fecha_carga}}
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <div class="col-md-1">
+          <label for="">Causa</label>
+        </div>
+        <div class="col-md-6">
+          {{preventivo.caratula}}
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <div class="col-md-1">
+          <label for="">Preventor</label>
+        </div>
+        <div class="col-md-3">
+          {{preventivo.preventor}}
+        </div>
+        <div class="col-md-1">
+          <label for="">Actuante</label>
+        </div>
+        <div class="col-md-3">
+          {{preventivo.actuante}}
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <div class="col-md-2">
+          <label for="">Destinatarios</label>
+        </div>
+        <div class="col-md-10">
+          {% for autoridad in autoridades %}
+            <span class="label label-default">{{autoridad}}</span>
+          {% endfor%}
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <div class="col-md-2">
+          <label for="">Descripci&oacute;n</label>
+        </div>
+        <div class="col-md-10">
+          {% autoescape off %}
+              {{hecho.descripcion }}
+          {% endautoescape %}
+
+        </div>
+      </div>
+
+      <div class="row form-group form-group-sm" id="verificado" style="display:none">
+        <div class="col-md-1">
+          <label for="">Aforo</label>
+        </div>
+        <div class="col-md-3">
+          <input type="number" id="aforo" class="form-control" value="">
+        </div>
+      </div>
+      <div class="row form-group form-group-sm">
+        <form action="" method="post" id="aforar-enviar">{%csrf_token%}
+          <div class="col-md-3">
+            <label for="">N&uacute;mero de Aforo</label>
+          </div>
+          <div class="col-md-3">
+            <input type="text" id="aforo-numero" value="" class="form-control solo-numero">
+            <span id="error" style="display:none">Verifique el numero ingresado</span>
+            <input type="hidden" id="preventivo" value="{{preventivo.id}}">
+            <input type="hidden" id="hecho" value="{{hecho.id}}">
+          </div>
+          <div class="col-md-3">
+            <input class="btn btn-primary btn-xs pull-right" type="submit" value="Aforar y enviar" id="aforar"/>
+          </div>
+
+        </form>
+        <script type="text/javascript">
+        $('.solo-numero').keyup(function (){
+            this.value = (this.value + '').replace(/[^0-9]/g, '');
+          });
+        $("#aforar-enviar").submit(function(event){
+            event.preventDefault();
+            $("#error").hide();
+
+            var preventivo = $("#preventivo").val();
+            var aforo = $("#aforo-numero").val();
+            var hecho = $("#hecho").val();
+            if(aforo < 1 || aforo > 9999){
+              $("#error").show();
+
+
+            }else{
+                $("#aforar").prop('disabled','true');
+                var url = '/preventivos/seleccionar/informa/'+hecho+'/'+preventivo+'/'+aforo+'/';
+                $.get(url,function(data){
+                  $("#resultado").hide();
+                  $("#loader").show();
+                })
+                .done(function(data){
+                  $("#element{{preventivo.id}}").fadeOut();
+                  $("#element{{preventivo.id}}").remove();
+                  $("#resultado").empty().append(data);
+                  $("#loader").hide();
+                  $("#resultado").show();
+                  if($(".element-depe-{{preventivo.dependencia.id}}").length == 0){
+                    $("#depe-{{preventivo.dependencia.id}}").fadeOut();
+                  }
+                  contarElementos({{preventivo.dependencia.id}});
+                })
+            }
+        });
+        </script>
+      </div>
+    </div>
+  </div>
+</div>

@@ -642,6 +642,25 @@ function documentVerify(){
 
 }(window.jQuery);
 
+
+function verPreventivo(id){
+  $("#resultado").empty();
+  $("#loader").show();
+  var url = '/preventivos/envio/'+id+'/';
+  $.get(url,function(data){
+
+  })
+  .done(function(data){
+    $("#resultado").empty().append(data);
+    $("#loader").hide();
+    $("#resultado").show();
+  })
+}
+
+function contarElementos(depe){
+  $("#contador"+depe).empty().append($(".element-depe-"+depe).length);
+}
+
 $(document).ready(function() {
         $('#nro_doc').change(function(event){
             if($('#tipo_doc').val() == ''){
@@ -963,6 +982,29 @@ $("#usuario").select2({
            }
 
         });
+
+        $("#autorizar").click(function(event){
+          event.preventDefault();
+          var id = $("#idPreventivo").val();
+          var toLoad = "/preventivos/autorizar/"+id+"/";
+          var respuesta;
+          $("#autorizar").prop('disabled',true);
+          $("#loader").show();
+          $.get(toLoad,function(data){
+
+          })
+          .done(function(data){
+            $("#loader").hide();
+            $("#autorizar").hide();
+            $("#autorizado").show();
+            $("#autorizado").append(data);
+            $("#back").show();
+          })
+
+        });
+
+
+
 
         $("#busqueda-form").submit(function(event){
           event.preventDefault();

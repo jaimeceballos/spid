@@ -178,6 +178,7 @@ class UnidadesRegionales(models.Model):
 	id = models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length=80L)
 	ciudad = models.ForeignKey('RefCiudades',on_delete=models.PROTECT)
+	cabecera_envio = models.ForeignKey('Dependencias',on_delete = models.PROTECT,blank=True,null=True)
 
 	def __unicode__(self):
 		return u'%s' %  (self.descripcion)
@@ -663,6 +664,10 @@ class Preventivos(models.Model):
 	autoridades = models.ManyToManyField('RefAutoridad',blank=True,null=True)
 	sendwebservice = models.IntegerField(default=0)
 	reenviado = models.BooleanField(default=False)
+	fecha_envio = models.DateTimeField(null=True)
+	autoriza = models.CharField(max_length = 10,blank=True,null=True)
+	aforo = models.IntegerField(null=True)
+
 
 	def __unicode__(self):
 		return u'%s %s %s %s' % (self.id,self.caratula,self.actuante,self.preventor)
