@@ -12807,8 +12807,6 @@ def verificardni(request,tdni,dni):
     return HttpResponse(data, mimetype='application/json')
 
 def envioemail(envio,nstring,subject,text_content,from_email):
-    #print nstring
-
     try:
             msg = EmailMultiAlternatives(subject,text_content,from_email, [nstring])
             msg.attach_alternative(text_content,'text/html')
