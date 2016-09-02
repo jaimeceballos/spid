@@ -20,7 +20,8 @@
     <center><p style="font:15px;"><strong>Usted tiene {{ no_autorizados }} preventivos pendientes de autorizacion por favor revise el <a href="{% url 'pendientes_autorizacion' %}">listado</a>.<strong></p></center>
     </div>
   {% endif %}
-  {% if 'investigaciones' in state or 'policia' in state %}
+  <!---->
+  {% if 'radio' in state or 'policia' in state %}
   <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;">
     <p id="salutation" style="color:black">
       Se informa que se realizaron las siguientes modificaciones en el sistema.<br>

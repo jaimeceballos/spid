@@ -90,10 +90,10 @@
        {%endif%}
       {%endif%}
 
-
+      {% if preventivo.fecha_autorizacion%}
         <a href="{% url 'reportes' idprev %}" target="_blank" ><input type="button" class="botonprint"
             title="Imprimir Preventivo"/></input></a></div>
-
+      {% endif %}      
 <hr>
 
 
@@ -235,43 +235,40 @@
           style="margin-top:0px;font-size:10px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Descripcion del Hecho</label></a></p>
     {%if tienelugar%}
 
-      {% if depe == user.get_profile.depe and "jefes" in state  and not fecha_autorizacion  %}
-      <!-- or "RADIO" in user.get_profile.depe.descripcion and  not fecha_autorizacion or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and  not fecha_autorizacion -->
-       <div align="center">
-        <input type="button" class="btn btn-success"  id="autorizar" value="Autorizar" ></input>
-        <div class=""  id="loader" style="display:none" >
-          <img src="/static/imagenes/preventivos/spinner.gif" alt="" />
-        </div>
-        <div class="alert alert-success" id="autorizado" style="display:none">
+      {% if depe == user.get_profile.depe   %}
+        {% if not fecha_autorizacion  and "jefes" in state %}
+          <!-- or "RADIO" in user.get_profile.depe.descripcion and  not fecha_autorizacion or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and  not fecha_autorizacion -->
+           <div align="center">
+            <input type="button" class="btn btn-success"  id="autorizar" value="Autorizar" ></input>
+            <div class=""  id="loader" style="display:none" >
+              <img src="/static/imagenes/preventivos/spinner.gif" alt="" />
+            </div>
+            <div class="alert alert-success" id="autorizado" style="display:none">
 
-        </div>
-        <div class="" style="display:none" id="back">
-            <a href="/spid/inicio/" class="btn btn-success">Volver</a>
-        </div>
+            </div>
+            <div class="" style="display:none" id="back">
+                <a href="/spid/inicio/" class="btn btn-success">Volver</a>
+            </div>
 
-      </div>
+          </div>
+        {% else %}
+          <strong style="color:red;">Prev. Autorizado el : {{fecha_autorizacion|date:"d/m/y H:i:s"}} Hrs.</strong>
+          {% if preventivo.fecha_envio %}
+              <p>
+                <strong style="color:red;">Prev. Enviado el : {{preventivo.fecha_envio|date:"d/m/y"}}</strong>
+              </p>
+          {% else %}
+            <p>
+                <strong style="color:red;">El preventivo a&uacute;n no fue enviado a sus destinatarios. Por favor comuniquese con la cabecera correspondiente.</strong>
+            </p>
+
+          {% endif %}
+          {% if preventivo.fecha_cierre %}
+            <strong style="color:red;margin-left:20px;">Prev. / Causa cerrada el : {{preventivo.fecha_cierre|date:"d/m/y H:i:s"}} Hrs.</strong>
+          {% endif%}
+        {% endif%}
       {%else%}
-         <!-- {%if not fecha_autorizacion%}
-                 <p align="center">
-
-                   <a  type="button" href="{% url 'informa' idhec idprev %}"  class="new-aqua">
-                    <label   title="Permite Informar el Preventivo a las Autoridades correspondientes"
-                    style="font-size:14px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Informar </label>
-                    </a>
-                 </p>
-
-          {%else%}-->
-
-          {%if preventivo.fecha_cierre and fecha_autorizacion%}
-                <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>
-                <strong style="color:red;margin-left:20px;">Prev. / Causa cerrada el : {{preventivo.fecha_cierre|date:"d/m/y H:i:s"}} Hrs.</strong>
-          {%else%}
-             {%if fecha_autorizacion%}
-                <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y H:i:s"}} Hrs.</strong>
-             {%endif%}
-          {%endif%}
-
-               {%if depe == user.get_profile.depe and 'jefes' in state and not preventivo.fecha_cierre or "RADIO" in user.get_profile.depe.descripcion and not preventivo.fecha_cierre%}
+        {%if depe == user.get_profile.depe and 'jefes' in state and not preventivo.fecha_cierre or "RADIO" in user.get_profile.depe.descripcion and not preventivo.fecha_cierre%}
                  <p align="center">
                    <a  type="button" href="{% url 'ampliacion' idprev %}"  class="new-aquas">
                    <label   title="Permite realizar el Cierre del Preventivo mediante una Ampliación"
@@ -279,8 +276,7 @@
                   </label>
                   </a>
                 </p>
-              {%endif%}
-          <!--{%endif%}-->
+        {%endif%}
       {%endif%}
      {%endif%}
 
