@@ -53,175 +53,201 @@ def help_view(request):
     formd = []
     return render(request, 'musers.html', {'formd':formd,'state':state,'destino':destino,'form':form})
 
+#Definicion que carga la pantalla de login
 def iniciar(request):
-    state = ''
-    name=''
-    username = password = ''
-    destino = ''
-    form = DependenciasForm()
-    formd = []
+    """Esta deficnicion es la encargada de cargar la pantalla de login y de la
+    preparacion del entorno para la misma"""
+    #Inicializacion de variables para generar el entorno
+    state = ''                      #estado
+    name=''                         #nombre
+    username = password = ''        #usuario y password
+    destino = ''                    #destino
+    form = DependenciasForm()       #formulario de dependencias
+    formd = []                      #arreglo formd
+    #renderiza la pagina de inicio con las variables de inicializacion del entorno
     return render(request, 'index.html', {'formd':formd,'state':state,'destino':destino,'form':form})
 
+#definicion para loguear un usuario
 def login_user(request):
-    state = []
-    name=''
-    username = password = ''
-    destino = ''
-    changePass = ''
-    birthday=False
-    form = DependenciasForm()
-    formpass = CambiarPassForm()
-    if request.POST.get('username')=='':
-         formj = ActuantesForm()
+    """ esta definicion realiza el logueo del usuario y las verificaciones
+    necesarias para saber que tipo de usuario es el que se esta logueando
+    tambien prepara el entorno correspondiente para cada tipo de usuario"""
+    #Definicion e incializacion de variables
+    state = []                      #estado
+    name=''                         #nombre
+    username = password = ''        #usuario y contraseña
+    destino = ''                    #destino
+    changePass = ''                 #bandera de cambio de password
+    birthday=False                  #bandera de cumpleaños
+    form = DependenciasForm()       #formulario de dependencias
+    formpass = CambiarPassForm()    #formulario de cambio de contraseña
 
+    #Comienzo de la logica
+    #si no se recibe el nombre de usuario
+    if request.POST.get('username')=='':
+         formj = ActuantesForm() # se prepara un formulario de alta de usuario
+         #se redirige hacia la pantalla de solicitud de usuario
          return render(request, 'correocontacto.html', {'state':state,'formj':formj})
+    #si se recibe el nombre de usuario
     else:
+        #si el boton presionado fue conectar
         if request.POST.get('logonea')=='Conectar':
 
-         username = request.POST.get('username')
-         password = request.POST.get('password')
-         depe = request.POST.get('dependencias')
-         ureg = request.POST.get('ureg')
-         ultimo_ingreso = User.objects.get(username = username).last_login
-         profile = User.objects.get(username=username).get_profile()
-         profile.ultimo_ingreso = ultimo_ingreso
-         profile.save()
+         username = request.POST.get('username')                                #obtiene el nombre de usuario
+         password = request.POST.get('password')                                #obtiene la contraseña
+         depe = request.POST.get('dependencias')                                #obtiene la dependencia
+         ureg = request.POST.get('ureg')                                        #obtiene la unidad regional
+         ultimo_ingreso = User.objects.get(username = username).last_login      #obtiene la fecha de ultimo ingreso
+         profile = User.objects.get(username=username).get_profile()            #obtiene el perfil del usuario
+         profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
+         profile.save()                                                         #guarda el valor
+         #si el nombre de usuario es numerico
          if username.isdigit():
-          user = auth.authenticate(username=username, password=password)
+          user = auth.authenticate(username=username, password=password)        #autentica el usuario
+          #si la autenticacion es valida
           if user is not None:
-
+           #Verifica si es el cumpleaños del usuario
            if Personas.objects.get(nro_doc=username).fecha_nac.day == date.today().day and Personas.objects.get(nro_doc=username).fecha_nac.month == date.today().month:
-              birthday = True
+              birthday = True                                                   #asigna true a la bandera de cumpleaños
 
+         #si se obtuvo unidad regional y dependencia
          if ureg and depe:
-            uregi1=UnidadesRegionales.objects.get(id=ureg)
-            uregis1=uregi1.id
-            depen1=Dependencias.objects.get(id=depe)
-            depeni1=depen1.id
+            uregi1=UnidadesRegionales.objects.get(id=ureg)                      #obtiene la unidad regional
+            uregis1=uregi1.id                                                   #obtiene el id de la unidad regional
+            depen1=Dependencias.objects.get(id=depe)                            #obtiene la dependencia
+            depeni1=depen1.id                                                   #obtiene el id de la dependencia
 
+         #si no se obtuvo la dependencia y unidad regional
          else:
-            uregis1='1'
-            depeni1='1'
-            destino="Jefatura"
+            uregis1='1'                                                         #a la variable de id de unidad regional le asigna 1
+            depeni1='1'                                                         #a la variable de id de dependencia le asigna 1
+            destino="Jefatura"                                                  #al destino le asigna "jefatura"
 
+         #si depe es numerico
          if depe.isdigit():
-            destino = Dependencias.objects.get(id = depe)
-            ur=UnidadesRegionales.objects.get(id = ureg)
-            destino= '%s / %s' %(destino,ur)
-            user = auth.authenticate(username=username, password=password)
+            destino = Dependencias.objects.get(id = depe)                       #obtiene en destino la dependencia
+            ur=UnidadesRegionales.objects.get(id = ureg)                        #obtiene en ur la unidad regional
+            destino= '%s / %s' %(destino,ur)                                    #prepara una cadena con la dependencia y unidad regional
+            user = auth.authenticate(username=username, password=password)      #autentica al usuario
 
+            #si se pudo autenticar
             if user is not None:
+              #y el usuario esta activo
               if user.is_active:
-                #print user.last_login,user.date_joined
-
-                #fecha_login=datetime.datetime.strftime(user.last_login, "%Y-%m-%d %H:%M:%S")
-                #fecha_joined=datetime.datetime.strftime(user.date_joined, "%Y-%m-%d %H:%M:%S")
-                #print type(datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")),fecha_login,fecha_joined
-                #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")<=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
+                #verifica si en el perfil esta levantada la bandera que indica primer inicio de sesion
                 if user.get_profile().last_login:
-                   changePass = 'si'
+                   changePass = 'si'                                            #si esta levantada prepara una bandera que indica que debe cambiar la contraseña
 
-                auth.login(request, user)
-                userp=user.get_profile()
-                profiles = user.get_profile()
-                uregs=profiles.ureg
-                depes=profiles.depe
-                uregi=UnidadesRegionales.objects.get(descripcion=uregs)
-                uregis=uregi.id
-                depen=Dependencias.objects.get(descripcion=depes)
-                depeni=depen.id
+                auth.login(request, user)                                       #realiza el login del usuario
+                userp=user.get_profile()                                        #obtiene el perfil
+                profiles = user.get_profile()                                   #obtiene el perfil
+                uregs=profiles.ureg                                             #obtiene la unidad regional del usuario
+                depes=profiles.depe                                             #obtiene la dependencia del usuario
+                uregi=UnidadesRegionales.objects.get(descripcion=uregs)         #crea una instancia de la unidad regional
+                uregis=uregi.id                                                 #obtiene el id de la unidad regional
+                depen=Dependencias.objects.get(descripcion=depes)               #crea una instancia de la dependencia
+                depeni=depen.id                                                 #obtiene el id de la dependencia
 
 
-                gr=user.groups.values_list('name', flat=True)
-                #.exclude(name__contains=u'repar')
-                #print (gr)
+                gr=user.groups.values_list('name', flat=True)                   #obtiene los grupos que tiene asignado el usuario
+
+                #para cada grupo
                 for varios in gr:
-                    state.append(str(Group.objects.get(name=varios)))
+                    state.append(str(Group.objects.get(name=varios)))           #agrega el grupo a la variable de estado
 
-                #print (state)
-
-                #state=gr
+                #Verifica que el usuario se este logueando en su dependencia destino
                 if uregis == uregis1 and depeni == depeni1:
-                  #for varios in gr:
-                  #  state = str(Group.objects.get(name=varios))
-                  request.session['state']=state
-                  request.session['destino']=destino
-                  no_enviados = False
+                  request.session['state']=state                                #si es correcto carga en la sesion la variable estado
+                  request.session['destino']=destino                            #carga en la sesion la variable destino
+                  no_enviados = False                                           #inicializa una variable de no enviados
+                  #verifica si el usuario es preventor
                   if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
-                    no_enviados = obtener_cantidad_no_enviados(request)
-                  no_autorizados = obtener_cantidad_no_autorizados(request)
-                  radio_user = False
+                    no_enviados = obtener_cantidad_no_enviados(request)         #obtiene la cantidad de preventivos no enviados
+                  no_autorizados = obtener_cantidad_no_autorizados(request)     #obtiene la cantidad de preventivos no autorizados
+                  radio_user = False                                            #crea una variable radio user para identificar si el usuario pertenece a una radiocabecera
 
+                  #verifica si dentro de los grupos del usuario se encuentra radio
                   if user.groups.filter(name='radio'):
-                        radio_user = True
+                        radio_user = True                                       #pone en tru radio user
 
-                  autorizados = 0
+                  autorizados = 0                                               #establece un contador de preventivos autorizados en 0
+
+                  #si es usuario de radiocabecera
                   if radio_user:
-                      dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = user.get_profile().depe.id))
-                      preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)
-                      if preventivos.count() > 0:
-                          autorizados = preventivos.count()
+                      dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = user.get_profile().depe.id)) #obtiene las dependencias de su influencia
+                      preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
 
+                      #si hay preventivos no enviados
+                      if preventivos.count() > 0:
+                          autorizados = preventivos.count()                     #obtiene la cantidad de preventivos autorizados para enviar
+
+                  #Renderiza el template index1 logueo correcto, con todas las variables de entorno inicializadas
                   return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
+
+                #si el usuario intenta loguearse en una dependencia que no corresponde a su destino actual
                 else:
-                  state="Dependencias seleccionadas INCONRRECTAS"
+                  state="Dependencias seleccionadas INCONRRECTAS"               #se indica que las dependencia es incorrecta
+
                   return render(request, 'index.html', {'state':state,'form':form})
 
+              #si el usuario no esta activo
               else:
-                state = "Ud. es un Usuario inactivo. Comuniquese con el Administrador del Sistema"
+                state = "Su Usuario fue desactivado. Comuniquese con el Administrador del Sistema" #se indica que el usuario no esta activo
+            #si la autenticacion no es correcta
             else:
 
-               state = "Su usuario y/o password son incorrectos"
+               state = "Su usuario y/o password son incorrectos"                #se indica que el usuario o contraseña son incorrectos
 
             return render(request, 'index.html', {'state':state,'form':form})
+
+         #Si el nombre de usuario no es un numero
          else:
-            user = auth.authenticate(username=username, password=password)
-            if user is not None:
+
+            user = auth.authenticate(username=username, password=password)      #autentica el usuario
+            if user is not None:                                                #si se pudo autenticar
+              #si el usuario no esta activo
               if user.is_active:
-                #fecha_login=datetime.datetime.strftime(user.last_login, "%Y-%m-%d %H:%M:%S")
-                #fecha_joined=datetime.datetime.strftime(user.date_joined, "%Y-%m-%d %H:%M:%S")
-                #print type(datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")),fecha_login,fecha_joined
-                #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")!=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
+                #Verifica si es el primer ingreso
                 if user.get_profile().last_login:
-                   changePass = 'si'
+                   changePass = 'si'                                            #si es el primer ingreso levanta la bandera de cambio de contraseña
 
-                auth.login(request, user)
-                userp=user.get_profile()
-                profiles = user.get_profile()
-                uregs=profiles.ureg
-                depes=profiles.depe
-                uregi=UnidadesRegionales.objects.get(descripcion=uregs)
-                uregis=uregi.id
-                depen=Dependencias.objects.get(descripcion=depes)
-                depeni=depen.id
+                auth.login(request, user)                                       #realiza el logueo del usuario
+                userp=user.get_profile()                                        #obtiene el perfil del usuario
+                profiles = user.get_profile()                                   #obtiene el perfil del usuario
+                uregs=profiles.ureg                                             #obtiene la unidad regional del usuario
+                depes=profiles.depe                                             #obtiene la dependencia del usuario
+                uregi=UnidadesRegionales.objects.get(descripcion=uregs)         #genera una instancia de la unidad regional del usuario
+                uregis=uregi.id                                                 #obtiene el id de la unidad regional
+                depen=Dependencias.objects.get(descripcion=depes)               #genera una instancia de la dependencia del usuario
+                depeni=depen.id                                                 #obtiene el id de la dependencia
 
-                gr=user.groups.values_list('name', flat=True)
-                #.exclude(name__contains=u'repar')
-
-                #state=gr
+                gr=user.groups.values_list('name', flat=True)                   #obtiene los grupos del usuario
+                #para cada grupo
                 for varios in gr:
-                     state.append(str(Group.objects.get(name=varios)))
-                #    state = str(Group.objects.get(name=varios))
-                #print (state)
+                     state.append(str(Group.objects.get(name=varios)))          #lo agrega a la variable de estado
+
+                #Verifica que el usuario se este logueando en su dependencia destino
                 if uregis == uregis1 and depeni == depeni1:
-                   #for varios in gr:
-                   #  state = str(Group.objects.get(name=varios))
-                   request.session['state']=state
-                   request.session['destino']=destino
+                   request.session['state']=state                               #carga en la sesion la variable de estado
+                   request.session['destino']=destino                           #carga en la sesion la variable de destino
+
+                #si no se esta logueando en su dependencia
                 else:
 
-                  if state=="administrador" or state=="visita":
-                     state = str(Group.objects.get(name=gr))
-                     request.session['state']=state
-                     destino='Jefatura'
-                     request.session['destino']=destino
+                  #verifica que el usuario sea administrador o visita
+                  if "administrador" in state or "visita" in state:
+                     state = str(Group.objects.get(name=gr))                    #obtiene el grupo en la variable estado
+                     request.session['state']=state                             #carga la variable de estado en la sesion
+                     destino='Jefatura'                                         #indica como destino la jefatura
+                     request.session['destino']=destino                         #carga la variable de destino a la sesion
+                  #si no es ni administrador ni visita
                   else:
-                    state="Usuario no Autorizado"
-                    return render(request, 'index.html', {'state':state,'form':form})
+                    state="Usuario no Autorizado"                               #carga en estado el valor no autorizado
+                    return render(request, 'index.html', {'state':state,'form':form}) #retorna a la pagina de inicio
 
 
 
-
+              #si el usuario no esta activo
               else:
                 state="Usuario no Autorizado"
                 return render(request, 'index.html', {'state':state,'form':form})
@@ -230,6 +256,7 @@ def login_user(request):
 
         else:
             return render(request, 'index.html', {'name':name,'form':form})
+
 
 def registro(request):
     info_enviado = False

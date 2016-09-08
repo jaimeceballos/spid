@@ -9,33 +9,30 @@
         var toLoad;
 
         var estado= $('#estado').val();
-       
+
         var valor = $('#ureg').val();
         var options;
-  
-        if (estado!=''){
-         toLoad= '../depes/'+valor+'/';
-        }else{
-         toLoad= 'depes/'+valor+'/';
-        }
-       
+
+        toLoad= '/spid/depes/'+valor+'/';
+
+
         $.get(toLoad, function(data){
          options = '<option value="">Seleccione Dependencia</option>';
-       
+
          for (var i = 0; i < data.length; i++){
           options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
          }
-   
+
          $('#dependencias').html(options);
          $("#dependencias option:first").attr('selected', 'selected');
        }, "json");
-     
+
       });
    });
-     $(document).ajaxStart(function(){
-    $('#spinner').show();
-}).ajaxStop(function(){
-    $('#spinner').hide();
-});
+   $(document).ajaxStart(function(){
+      $('#spinner').show();
+  }).ajaxStop(function(){
+      $('#spinner').hide();
+  });
     </script>
     {%endblock%}
