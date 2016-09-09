@@ -89,11 +89,20 @@
         <a href="{% url 'ampliacion' idprev %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_editp.png" style="border:0" title="Permite generar radios ampliatorios." /></a>
        {%endif%}
       {%endif%}
+        <a href="{% url 'reportes' idprev %}" target="_blank" style="display:none" id="imprimir"><input type="button" class="botonprint"
+            title="Imprimir Preventivo"/></input></a>
 
-      {% if preventivo.fecha_autorizacion%}
-        <a href="{% url 'reportes' idprev %}" target="_blank" ><input type="button" class="botonprint"
-            title="Imprimir Preventivo"/></input></a></div>
-      {% endif %}      
+            <script type="text/javascript">
+              var preventor = {{preventivo.preventor.documento}};
+              var actuante = {{preventivo.actuante.documento}};
+              var usuario = {{user.username}};
+              if(preventor == usuario || actuante == usuario){
+                  $("#imprimir").show();
+              }
+
+            </script>
+     </div>
+
 <hr>
 
 

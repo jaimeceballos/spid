@@ -6,45 +6,113 @@
 {% endblock %}
 
 {% block main %}
+<div class="content-fluid">
 
-  <p>Bienvenido {{ user.first_name }}&nbsp;{{ user.last_name }}, tu &uacute;ltimo ingreso fue el {{ user.get_profile.ultimo_ingreso }} </p>
+  <div class="row-fluid">
 
-  {% if no_enviados %}
-    <!--div style="width:50%;margin-top:15px;margin-bottom:15px;padding:10px;border-radius:5px;background-color:#5EA94C;border:1px solid #e3e3e3;-webkit-box-shadow: 2px 2px 2px 2px #ccc;box-shadow:2px 2px 2px 2px #ccc;">
-    <center><p style="font:15px;"><strong>Usted tiene {{ no_enviados }} preventivos pendientes de envio por favor revise el <a href="{% url 'pendientes_envio' %}">listado</a>.</strong></p></center>
-    </div-->
-  {% endif %}
+    <div class="col-md-6">
 
-  {% if no_autorizados %}
-    <div style="width:50%;margin-top:15px;margin-bottom:15px;padding:10px;border-radius:5px;background-color:#5EA94C;border:1px solid #e3e3e3;-webkit-box-shadow: 2px 2px 2px 2px #ccc;box-shadow:2px 2px 2px 2px #ccc;">
-    <center><p style="font:15px;"><strong>Usted tiene {{ no_autorizados }} preventivos pendientes de autorizacion por favor revise el <a href="{% url 'pendientes_autorizacion' %}">listado</a>.<strong></p></center>
+
+      <div class="row">
+        <div class="col-md-12 alert alert-success">
+          <h5> <i class="glyphicon glyphicon-user"></i> Bienvenido {{ user.first_name }}&nbsp;{{ user.last_name }} <small> tu &uacute;ltimo ingreso fue el {{ user.get_profile.ultimo_ingreso }} </small>  </h5>
+        </div>
+      </div>
+      <div class="row well">
+
+
+
+          {% if no_autorizados %}
+          <div class="col-md-4">
+            <div class="thumbnail">
+              <img src="{{STATIC_URL}}imagenes/preventivos/autorizar.png" style="height: 80px; " />
+              <div class="caption">
+                  <p>Usted tiene <span class="badge">{{ no_autorizados }}</span> preventivos pendientes de autorizaci&oacute;n.</p>
+                <center>  <p>
+                      <a href="{% url 'pendientes_autorizacion' %}" class="btn btn-primary" role="button" > Ver Listado </a>
+                  </p></center>
+              </div>
+
+            </div>
+          </div>
+          {% endif %}
+          {% if autorizados %}
+          <div class="col-md-4">
+            <div class="thumbnail">
+              <img src="{{STATIC_URL}}imagenes/preventivos/enviar.png" style="height: 80px; " />
+              <div class="caption">
+                <p>
+                  Hay <span class="badge"> {{autorizados}} </span> preventivos autorizados en espera de envio.
+                </p>
+                <center><p>
+                  <a href="{% url 'autorizados_envio' %}" class="btn btn-primary" role="button">Ver listado</a>.
+                </p></center>
+              </div>
+
+            </div>
+          </div>
+            {%  endif %}
+            {% if no_enviados %}
+            <div class="col-md-4">
+                <div class="thumbnail">
+                  <img src="{{STATIC_URL}}imagenes/preventivos/envio_demora.png" style="height: 80px; " />
+                  <div class="caption">
+                      <p>Hay <span class="badge">{{ no_enviados }}</span> preventivos no enviados.</p>
+                    <center>  <p>
+                          <a href="{% url 'pendientes_envio' %}" class="btn btn-primary" role="button" > Ver Listado </a>
+                      </p></center>
+                  </div>
+
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+
+
+
+      </div>
+
+
+      <script type="text/javascript">
+
+      </script>
+
+    <div class="col-md-6">
+      {% if 'radio' in state or 'policia' in state %}
+      <div class="alert alert-info" role="alert">
+        <h3> <i class="glyphicon glyphicon-info-sign"></i> Informaci&oacute;n Importante</h3><hr>
+        <p >
+          Se informa que se realizaron las siguientes modificaciones en el sistema.<br>
+          <ul>
+            <li>Al momento de finalizar la carga del preventivo, el jefe de la dependencia solo marcar&aacute; como autorizado el preventivo.</li>
+            <li>Una vez autorizado el preventivo por parte del jefe de la dependencia, ser&aacute; visible para el operador de la Cabecera correspondiente,<br>
+              quien ser&aacute el responsable de aforarlo y realizar el envio del mismo a las autoridades correspondientes.</li>
+          </ul>
+        </p>
+        <p>
+          Dudas y consultas a: <a href="mailto:divsistemasjp@policia.chubut.gov.ar?subject=Consulta">divsistemasjp@policia.chubut.gov.ar</a>.
+        </p>
+      </div>
+
+      {% endif %}
+
     </div>
-  {% endif %}
-  <!---->
-  {% if 'radio' in state or 'policia' in state %}
-  <div id="informacion"><blockquote style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;">
-    <p id="salutation" style="color:black">
-      Se informa que se realizaron las siguientes modificaciones en el sistema.<br>
-      <ul>
-        <li>Al momento de finalizar la carga del preventivo, el jefe de la dependencia solo marcar&aacute; como autorizado el preventivo.</li>
-        <li>Una vez autorizado el preventivo por parte del jefe de la dependencia, ser&aacute; visible para el operador de la Cabecera correspondiente,<br>
-          quien ser&aacute el responsable de aforarlo y realizar el envio del mismo a las autoridades correspondientes.</li>
-      </ul>
-    </p></blockquote>
-    <p>
-      Dudas y consultas a: <a href="mailto:divsistemasjp@policia.chubut.gov.ar?subject=Consulta">divsistemasjp@policia.chubut.gov.ar</a>.
-    </p>
   </div>
+</div>
 
-  {% endif %}
 
-  {% if autorizados %}
-    <div class="alert alert-info" role="alert">
-      <p>
-        Hay <span class="badge"> {{autorizados}} </span> preventivos autorizados en espera de envio. <a href="{% url 'autorizados_envio' %}">Ver listado</a>.
-      </p>
-    </div>
-  {%  endif %}
+
+
+
+
+
+
+
+
+  <!---->
+
+
 {% endblock %}
 {% block contenido %}
 

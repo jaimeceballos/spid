@@ -15435,7 +15435,7 @@ def obtener_no_enviados(request):
 @login_required
 def obtener_cantidad_no_enviados(request):
     depe = request.user.get_profile().depe
-    return  EnvioPreJudicial.objects.filter(enviado=0,dependencia=depe).count()
+    return  Preventivos.objects.filter(fecha_autorizacion__isnull=False, fecha_envio__isnull=True).count()
 
 @login_required
 def obtener_cantidad_no_autorizados(request):
@@ -15451,7 +15451,7 @@ def pendientes_envio(request):
     destino= request.session.get('destino')
     user = request.user
     depe = user.get_profile().depe
-    pendientes = EnvioPreJudicial.objects.filter(enviado=0,dependencia=depe)
+    pendientes = Preventivos.objects.filter(fecha_autorizacion__isnull=False, fecha_envio__isnull=True)
     info = {
         'state'         : state,
         'destino'       : destino,

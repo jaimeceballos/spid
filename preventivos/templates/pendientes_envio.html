@@ -1,25 +1,39 @@
 {% extends "base.html" %}
 {% block main %}
- <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
-    <thead>
-      <tr>
-        <th>Nro</th>
-        <th>Fecha Carga</th>
-        <th>Fecha Autorizado</th>
-        <th>Causa</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for pendiente in pendientes %}
-        <tr>
-          <td> {{ pendiente.preventivo.nro }} </td>
-          <td> {{ pendiente.preventivo.fecha_carga }} </td>
-          <td> {{ pendiente.preventivo.fecha_autorizacion }} </td>
-          <td> {{ pendiente.preventivo.caratula }} </td>
-          <td> <a href="{% url 'selectPrev' pendiente.preventivo.id %}">Ver</a> <a href="{% url 'enviarws' pendiente.preventivo.id %}">enviar</a> </td>
-        </tr>
-      {% endfor %}
-    </tbody>
- </table>  
+<div class="content">
+  <div class="row-fluid">
+    <div class="col-md-8">
+      <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
+         <thead>
+           <tr>
+             <th>Nro</th>
+             <th>Fecha Autorizado</th>
+             <th>Causa</th>
+
+           </tr>
+         </thead>
+         <tbody>
+           {% for preventivo in pendientes %}
+             <tr>
+               <td> {{ preventivo.nro }} </td>
+               <td> {{ preventivo.fecha_autorizacion }} </td>
+               <td> {{ preventivo.caratula }} </td>
+
+             </tr>
+           {% endfor %}
+         </tbody>
+      </table>
+    </div>
+    <div class="col-md-4">
+      <div class="alert alert-warning" role="alert">
+        <h3> <i class="glyphicon glyphicon-info-sign"></i> Informaci&oacute;n Importante</h3><hr>
+        <p>
+          En caso de demoras en el envio de los preventivos autorizados, por favor comunicarse con la cabecera correspondiente a su jurisdicci&oacute;n.
+          Tenga en cuenta que el preventivo llegara a sus destinatarios cuando el se realice el envio desde la cabecera.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
