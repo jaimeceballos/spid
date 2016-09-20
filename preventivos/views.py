@@ -7175,7 +7175,9 @@ def informe(request,idhec,idprev,aforo):
 
             informa=datos.autoridades.values_list('email',flat=True)
             #agregar email 2jefeacei para que reciba los preventivos
-            direcciones=[]
+            envio=1
+            envio,nstring,subject,text_content,from_email=envioemail(envio,informa,subject,text_content,from_email)
+            """direcciones=[]
             indice=0
             nstring=''
             acumula=''
@@ -7193,21 +7195,21 @@ def informe(request,idhec,idprev,aforo):
                                          indice = indice +1
 
                                     else:
-
-                                         envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                                         print nstring
+                                         #envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
                                          indice=indice+1
                                          nstring=''
 
 
                              if nstring:
 
-                                    envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                                    #envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
                                     nstring=''
 
                     else:
                              nstring=dire
-                             envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
-                             nstring=''
+                             #envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                             nstring=''"""
 
         info={'nro':nro,'anio':anio,'fecha_denuncia':fecha_denuncia,'fecha_carga':fecha_carga,'tieneelementos':tieneelementos,
              'caratula':caratula,'idhec':idhec,'involus':involus,'involuscra':involuscra,'datosper':datosper,
@@ -12808,7 +12810,7 @@ def verificardni(request,tdni,dni):
 
 def envioemail(envio,nstring,subject,text_content,from_email):
     try:
-            msg = EmailMultiAlternatives(subject,text_content,from_email, [nstring])
+            msg = EmailMultiAlternatives(subject,text_content,from_email, nstring)
             msg.attach_alternative(text_content,'text/html')
             msg.send(fail_silently=False)
 
