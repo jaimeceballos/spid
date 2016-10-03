@@ -990,6 +990,18 @@ def ngrupos(request):
          return render_to_response('./newuser.html',{'form':form,'formp':formp,'user_groups':user_groups,'grupos':grupos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 
+@login_required
+@transaction.commit_on_success
+@permission_required('user.is_staff','administrador')
+def user_create(request):
+    state= request.session.get('state')
+    destino= request.session.get('destino')
+    
+    return render_to_response("./user_create.html")
+
+
+
+
 
 @login_required
 @transaction.commit_on_success
@@ -1005,7 +1017,7 @@ def new_user(request):
         esvisita=''
         visitaes=False
         dni=request.POST.get('username')
-        if request.POST.get('grabarg')=="Grabar":
+        """if request.POST.get('grabarg')=="Grabar":
                      form = GroupForm(request.POST)
                      grupo = request.POST.get('name')
 
@@ -1248,8 +1260,8 @@ def new_user(request):
             formnew = UserForm()
             form = UserProfileForm()
             lista = UserProfile.objects.all()
-            listaper = Personas.objects.all()
-            return render_to_response('./newuser.html', {'listaper':listaper,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
+            listaper = Personas.objects.all()"""
+        return render_to_response('./newuser.html', {'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 @login_required
 @transaction.commit_on_success
@@ -1343,7 +1355,6 @@ def usuarios(request, iduser):
     errors = []
     usuarios=""
     reenvio=False
-
     if iduser.isnumeric():
             if request.POST.get('cancelar')=="Cancelar":
                  return HttpResponseRedirect('../')
@@ -7176,7 +7187,12 @@ def informe(request,idhec,idprev,aforo):
             informa=datos.autoridades.values_list('email',flat=True)
             #agregar email 2jefeacei para que reciba los preventivos
             envio=1
-            envio,nstring,subject,text_content,from_email=envioemail(envio,informa,subject,text_content,from_email)
+            nstring = []
+            for dire in informa:
+                if dire not in nstring:
+                    nstring.append(dire)
+
+            envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
             """direcciones=[]
             indice=0
             nstring=''

@@ -1,7 +1,7 @@
  function mensajes(){
        $.msgBox({
        title:"Jefatura de Policia Chubut        Sistemas Informaticos Rawson",
-       content:"Programadores : Cabo 1° Ceballos Jaime A. Cabo Dorado Fernando E.",
+       content:"Programadores : Of. Ayte. Dorado Fernando E. - Cabo 1° Ceballos Jaime A.",
         type:"info"});
       }
       function validaCuit(sCUIT){

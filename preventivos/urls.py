@@ -20,6 +20,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
   	(r'^user/$','preventivos.views.new_user'),
+    (r'^user/create/$','preventivos.views.user_create'),
    #(r'^permgroups/$','preventivos.views.permisos'),
     (r'^climas/$', 'preventivos.views.climas'),
     (r'^climas/(?P<idcli>[0-9A-Za-z]+)/$','preventivos.views.nclimas'),
