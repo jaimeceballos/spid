@@ -12815,7 +12815,9 @@ def envioemail(envio,nstring,subject,text_content,from_email):
             msg.send(fail_silently=False)
 
     except smtplib.SMTPException as e:
-        print e
+        #print e
+        #Logger.exception(e)
+        pass
     return(envio,nstring,subject,text_content,from_email)
 
 @login_required
@@ -15657,7 +15659,7 @@ def reenvio(request):
 @login_required
 def reenviar(request,idprev):
     hecho = Preventivos.objects.get(id=idprev).hecho.all()[0].id
-    return HttpResponseRedirect(reverse('informa',args=[hecho,idprev]))
+    return HttpResponseRedirect(reverse('informa',args=[hecho,idprev,0]))
 
 def obtener_preventivo(request,depe,numero,anio):
     preventivo = Preventivos.objects.get(dependencia=depe,nro=numero,anio=anio)
