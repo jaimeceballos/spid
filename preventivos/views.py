@@ -37,7 +37,7 @@ from django.utils.encoding import smart_str, smart_unicode
 #logging.basicConfig()
 import locale
 locale.setlocale(locale.LC_ALL, ('es_AR', 'utf8'))
-from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404
+from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response,get_object_or_404
 from django.contrib.auth import authenticate, login,logout
 from django.contrib import auth
@@ -6934,11 +6934,6 @@ def informe(request,idhec,idprev,aforo):
         destino= request.session.get('destino')
         preventivo = Preventivos.objects.get(id = idprev)
         #grabo la fecha de autorizacion solo la primera vez que se informa el preventivo
-        if not preventivo.fecha_envio:
-            fecha_envio=preventivo.fecha_envio
-            grabarfa = Preventivos.objects.filter(id = idprev).update(fecha_envio=datetime.datetime.now())
-        if not preventivo.aforo:
-            grabarAforo = Preventivos.objects.filter(id = idprev).update(aforo=aforo)
         ciudad= preventivo.dependencia.ciudad
         depe=preventivo.dependencia
         #Datos del Hecho delicitivo atraves del nro de preventivo
@@ -7176,7 +7171,25 @@ def informe(request,idhec,idprev,aforo):
             informa=datos.autoridades.values_list('email',flat=True)
             #agregar email 2jefeacei para que reciba los preventivos
             envio=1
-            envio,nstring,subject,text_content,from_email=envioemail(envio,informa,subject,text_content,from_email)
+            try:
+                envio,nstring,subject,text_content,from_email=envioemail(envio,informa,subject,text_content,from_email,request)
+                if not preventivo.fecha_envio:
+                    fecha_envio=preventivo.fecha_envio
+                    grabarfa = Preventivos.objects.filter(id = idprev).update(fecha_envio=datetime.datetime.now())
+                if not preventivo.aforo:
+                    grabarAforo = Preventivos.objects.filter(id = idprev).update(aforo=aforo)
+            except smtplib.SMTPException as e:
+                error = Errores()
+                error.usuario = request.user
+                error.descripcion = e
+                error.save()
+                return HttpResponseBadRequest()
+            except Exception as e:
+                error = Errores()
+                error.usuario = request.user
+                error.descripcion = e
+                error.save()
+                return HttpResponseBadRequest()
             """direcciones=[]
             indice=0
             nstring=''
@@ -12768,18 +12781,18 @@ def enviar(request,idprev,idamp):
 
                                     else:
 
-                                         envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                                         envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email,request)
                                          indice=indice+1
                                          nstring=''
 
                              if nstring:
 
-                                    envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                                    envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email,request)
                                     nstring=''
 
                         else:
                              nstring=dire
-                             envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
+                             envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email,request)
                              nstring=''
 
 
@@ -12808,16 +12821,11 @@ def verificardni(request,tdni,dni):
     data = serializers.serialize("json", persona)
     return HttpResponse(data, mimetype='application/json')
 
-def envioemail(envio,nstring,subject,text_content,from_email):
-    try:
-            msg = EmailMultiAlternatives(subject,text_content,from_email, nstring)
-            msg.attach_alternative(text_content,'text/html')
-            msg.send(fail_silently=False)
+def envioemail(envio,nstring,subject,text_content,from_email,request):
+    msg = EmailMultiAlternatives(subject,text_content,from_email, nstring)
+    msg.attach_alternative(text_content,'text/html')
+    msg.send(fail_silently=False)
 
-    except smtplib.SMTPException as e:
-        #print e
-        #Logger.exception(e)
-        pass
     return(envio,nstring,subject,text_content,from_email)
 
 @login_required

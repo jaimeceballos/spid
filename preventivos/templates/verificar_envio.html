@@ -116,6 +116,9 @@
                   }
                   contarElementos({{preventivo.dependencia.id}});
                 })
+                .fail(function() {
+                  $("#resultado").empty().append('<div class="alert alert-danger" role="alert"><center> <h5><i class="glyphicon glyphicon-warning-sign"></i> No se pudo realizar el Envio.<br>Por favor vuelva a intentarlo mas tarde, si el error persiste comuniquese con la Division Desarrollo.</h5></center> </div>');
+                })
             }
         });
         </script>

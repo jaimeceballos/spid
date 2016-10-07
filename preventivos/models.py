@@ -1458,3 +1458,11 @@ class CambiarContrasenia(models.Model):
 
 	class Meta:
 		db_table = 'reset_passwords'
+
+class Errores(models.Model):
+	usuario 			= models.ForeignKey(User)
+	descripcion 		= models.CharField(max_length=150)
+	fecha 				= models.DateTimeField(auto_now=True)
+
+	class Meta:
+		db_table = 'errores'
