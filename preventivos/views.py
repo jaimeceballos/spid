@@ -1,6 +1,7 @@
  #!/usr/bin/python
  # -*- coding: iso-8859-15 -*-
  #branch webservice
+import re
 from preventivos.models import *
 from preventivos.forms import *
 from django.core import serializers
@@ -7171,6 +7172,9 @@ def informe(request,idhec,idprev,aforo):
             informa=datos.autoridades.values_list('email',flat=True)
             #agregar email 2jefeacei para que reciba los preventivos
             envio=1
+            mailsrch = re.compile(r'[\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4}')
+            informa = mailsrch.findall(str(informa))
+            informa = eliminarduplicados(informa)
             try:
                 envio,nstring,subject,text_content,from_email=envioemail(envio,informa,subject,text_content,from_email,request)
                 if not preventivo.fecha_envio:
@@ -15707,3 +15711,10 @@ def envio(request,idprev):
     info['autoridades'] = info['preventivo'].autoridades.all()
 
     return render_to_response('./verificar_envio.html',info,context_instance=RequestContext(request))
+
+def eliminarduplicados(arreglo):
+    resultado = []
+    for elemento in arreglo:
+        if elemento not in resultado:
+            resultado.append(elemento)
+    return resultado

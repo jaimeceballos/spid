@@ -8,15 +8,17 @@
 				<div class="panel panel-primary" id="depe-{{dependencia.id}}">
           <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-622474" href="#panel-element-{{dependencia.id}}">{{dependencia}} <span class="badge" id="contador{{dependencia.id}}"></span></a>
 					<div id="panel-element-{{dependencia.id}}" class="panel-collapse collapse">
+            <div style="height: 150px;overflow: scroll;">
+              {% for preventivo in preventivos   %}
+                {% if preventivo.dependencia == dependencia%}
 
-            {% for preventivo in preventivos   %}
-              {% if preventivo.dependencia == dependencia%}
+                  <div class="panel-body element-depe-{{preventivo.dependencia.id}}" id="element{{preventivo.id}}">
+                    <a href="javascript:verPreventivo({{preventivo.id}});">{{preventivo.nro}}/{{preventivo.anio}} - {{preventivo.caratula}}</a>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
 
-              	<div class="panel-body element-depe-{{preventivo.dependencia.id}}" id="element{{preventivo.id}}">
-                  <a href="javascript:verPreventivo({{preventivo.id}});">{{preventivo.nro}}/{{preventivo.anio}} - {{preventivo.caratula}}</a>
-    						</div>
-              {% endif %}
-            {% endfor %}
             <script type="text/javascript">
               contarElementos({{dependencia.id}})
             </script>
