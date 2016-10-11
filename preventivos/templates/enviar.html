@@ -8,7 +8,7 @@
 				<div class="panel panel-primary" id="depe-{{dependencia.id}}">
           <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-622474" href="#panel-element-{{dependencia.id}}">{{dependencia}} <span class="badge" id="contador{{dependencia.id}}"></span></a>
 					<div id="panel-element-{{dependencia.id}}" class="panel-collapse collapse">
-            <div style="height: 150px;overflow: scroll;">
+            <div style="height: 150px;overflow: scroll;overflow-x:hidden;">
               {% for preventivo in preventivos   %}
                 {% if preventivo.dependencia == dependencia%}
 
