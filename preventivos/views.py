@@ -15689,7 +15689,7 @@ def autorizados_envio(request):
     usuario = request.user
     unidad = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id)
     dependencias = Dependencias.objects.filter(unidades_regionales = unidad)
-    preventivos = Preventivos.objects.filter(fecha_autorizacion__isnull = False, fecha_envio__isnull = True,dependencia__in = dependencias).order_by('dependencia')
+    preventivos = Preventivos.objects.filter(fecha_autorizacion__isnull = False, fecha_envio__isnull = True,dependencia__in = dependencias).order_by('-id')
 
     depes = preventivos.values('dependencia').distinct()
     dependencias = dependencias.filter(id__in=depes)
