@@ -28,6 +28,26 @@ class CambiarPassForm(forms.Form):
 
 		return pass2
 
+
+class UserCreateForm(forms.Form):
+	documento 				= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','onkeyup':'javascript:format(this);','aria-describedby':'inputError'})))
+	nombre					= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Nombre'})))
+	apellido				= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Apellido'})))
+	fecha_nacimiento		= forms.DateField(required=True,widget=forms.DateInput(attrs=dict({'class':'form-control','placeholder':'dd/mm/aaaa'})),label="Fecha Nacimiento")
+	ciudad_nacimiento		= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Nombre de la ciudad'})))
+	ciudad_nacimiento_id    = forms.CharField(required=True,widget=forms.HiddenInput())
+	estados_civiles			= forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}),choices=RefEstadosciv.objects.all().values_list('id','descripcion'))
+	ciudad_residencia		= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Nombre de la ciudad'})))
+	ciudad_residencia_id    = forms.CharField(required=True,widget=forms.HiddenInput())
+	jerarquia				= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Jerarquía'})))
+	jerarquia_id			= forms.CharField(required=True,widget=forms.HiddenInput())
+	lugar_trabajo			= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Dependencia'})))
+	lugar_trabajo_id		= forms.CharField(required=True,widget=forms.HiddenInput())
+	email					= forms.EmailField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'mail@example.com'})))
+	sexo 					= forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}),choices=RefSexo.objects.all().values_list('id','descripcion'))
+	grupos 					= forms.MultipleChoiceField(widget = forms.SelectMultiple(attrs={'class':'form-control'}), choices= Group.objects.all().values_list('id','name'))
+	activo 					= forms.BooleanField()
+
 class GroupForm(forms.ModelForm):
 	#name = forms.CharField(required=True)
 	class Meta:

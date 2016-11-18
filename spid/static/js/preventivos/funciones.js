@@ -1,3 +1,6 @@
+
+
+
  function mensajes(){
        $.msgBox({
        title:"Jefatura de Policia Chubut        Sistemas Informaticos Rawson",
@@ -662,6 +665,9 @@ function contarElementos(depe){
 }
 
 $(document).ready(function() {
+
+
+
         $('#nro_doc').change(function(event){
             if($('#tipo_doc').val() == ''){
               alert('Debe seleccionar Tipo de documento');

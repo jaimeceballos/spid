@@ -37,7 +37,7 @@ from django.utils.encoding import smart_str, smart_unicode
 #logging.basicConfig()
 import locale
 locale.setlocale(locale.LC_ALL, ('es_AR', 'utf8'))
-from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404
+from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response,get_object_or_404
 from django.contrib.auth import authenticate, login,logout
 from django.contrib import auth
@@ -76,7 +76,7 @@ from xml.sax import make_parser, SAXException
 from xml.sax.handler import feature_namespaces
 from django.utils.dateparse import parse_datetime
 import pytz
-
+from django.db import connections
 
 def normalize_query(query_string,
                                         findterms=re.compile(r'"([^"]+)"|(\S+)').findall,
@@ -996,12 +996,108 @@ def ngrupos(request):
 def user_create(request):
     state= request.session.get('state')
     destino= request.session.get('destino')
-    
-    return render_to_response("./user_create.html")
+    form = UserCreateForm()
+    return render_to_response("./user_create.html",{'form':form},context_instance=RequestContext(request))
+
+@login_required
+@transaction.commit_on_success
+@permission_required('user.is_staff','administrador')
+def user_create_save(request):
+    if request.is_ajax:
+        if request.method == 'POST':
+            form = UserCreateForm(request.POST)
+            msg=""
+            if form.is_valid():
+
+                if not User.objects.filter(email = form.cleaned_data['email']):
+
+                    persona     = Personas()
+                    usuario     = User()
+                    profile     = UserProfile()
+                    personal    = Personal()
+                    documento   = form.cleaned_data['documento']
+                    password    = User.objects.make_random_password(length=10)
+                    dependencia = Dependencias.objects.get(id=form.cleaned_data['lugar_trabajo_id'])
+                    try:
+                        persona = Personas.objects.get(nro_doc = documento)
+                        personal = Personal.objects.get(persona_id = persona.id)
+                    except:
+                        persona.nro_doc = documento
+                    finally:
+                        persona.nombres         = form.cleaned_data['nombre'].upper()
+                        persona.apellidos       = form.cleaned_data['apellido'].upper()
+                        persona.fecha_nac       = form.cleaned_data['fecha_nacimiento']
+                        persona.ciudad_nac      = RefCiudades.objects.get(id = form.cleaned_data['ciudad_nacimiento_id'])
+                        persona.sexo_id         = RefSexo.objects.get(id=form.cleaned_data['sexo'])
+                        persona.estado_civil    = RefEstadosciv.objects.get(id=form.cleaned_data['estados_civiles'])
+                        persona.ciudad_res      = RefCiudades.objects.get(id = form.cleaned_data['ciudad_residencia_id'])
+                        persona.tipo_doc        = RefTipoDocumento.objects.get(descripcion='DNI')
+                        persona.ocupacion       = RefOcupacion.objects.get(descripcion = 'EMPLEADO POLICIAL')
+
+                    usuario.set_password(password)
+                    usuario.username        = documento
+                    usuario.email           = form.cleaned_data['email']
+                    usuario.first_name      = persona.nombres
+                    usuario.last_name       = persona.apellidos
+                    usuario.is_active       = form.cleaned_data['activo']
+                    usuario.is_staff        = False
+                    usuario.is_superuser    = False
+
+                    try:
+                        persona.save()
+                        personal.persona_id     = persona
+                        if not personal.id:
+                            personal.credencial = 0
+                            personal.legajo = personal.nro_cuenta_bco = personal.nro_seros = ""
+                        personal.save()
+                        usuario.save()
+                        for rol in form.cleaned_data['grupos']:
+                            usuario.groups.add(Group.objects.get(id=rol))
+                        profile         = usuario.get_profile()
+                        profile.depe    = dependencia
+                        profile.ureg    = dependencia.unidades_regionales
+                        profile.save()
+                        enviar_correo_usuario(usuario,password)
+                    except Exception as e:
+                        print e
+                        return HttpResponseBadRequest("No se pudo realizar la operacion solicitada.")
+                else:
+                    msg = "El Email ingresado ya esta siendo utilizado. Por favor indique otro."
+                    return HttpResponseBadRequest(msg)
+            else:
+                return render_to_response("./user_create.html",{'form':form},context_instance=RequestContext(request))
 
 
 
+    return HttpResponse('<div class="col-md-12"><h2>Usuario creado correctamente-</h2></div>')
 
+def enviar_correo_usuario(usuario,password):
+    """Envia el correo de nuevo usuario, recibe
+    el usuario y el password sin haber sido hasheado,
+    si recibe una cadena vacia genera un nuevo password"""
+
+    if password == "":
+        password    = User.objects.make_random_password(length=10)
+        usuario.set_password(Password)
+        usuario.save()
+    roles = []
+    for rol in usuario.groups.all():
+        roles.append(rol.name)
+    profile = usuario.get_profile()
+    subject, from_email, to = 'Asunto : Usuario y Password - SPID' ,'divsistemasjp@policia.chubut.gov.ar',usuario.email
+    text_content = ("Este email es creado por Div. Sistemas Informaticos Rw."\
+    "<br>Ureg. : %s <br> Dependencia : %s <br> Usuario: %s <br> Password: %s <br><strong> Grupo Usuarios : %s </strong>"\
+    "<br>  <strong>Link Sistema :</strong> <a href='policia.chubut.gov.ar/spid/'>SPID</a><br>Por cualquier consulta y/o reclamos al:\n\n\n<br> "\
+    "email: divsistemasjp@policia.chubut.gov.ar.-"% (profile.ureg.descripcion,profile.depe.descripcion,usuario.username,str(password),str(roles)))
+
+    msg = EmailMultiAlternatives(subject,text_content,from_email, [to])
+    msg.attach_alternative(text_content,'text/html')
+
+    try:
+         msg.send(fail_silently=False)
+         return True
+    except Exception as e:
+        return False
 
 @login_required
 @transaction.commit_on_success
@@ -1261,7 +1357,8 @@ def new_user(request):
             form = UserProfileForm()
             lista = UserProfile.objects.all()
             listaper = Personas.objects.all()"""
-        return render_to_response('./newuser.html', {'state':state, 'destino': destino},context_instance=RequestContext(request))
+        create_user =True
+        return render_to_response('./newuser.html', {'state':state, 'destino': destino,'create_user':create_user},context_instance=RequestContext(request))
 
 @login_required
 @transaction.commit_on_success
@@ -13306,7 +13403,7 @@ def enviadop(request):
                                             dictpersona.update(padys)
                              else:
                                  if p.juridica=='si':
-                                    persona={'ApellidoyNombres':p.razon_social,'IdTipoDocumento':str(p.cuit_id),'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),'NroDocumento':p.nrocuit,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
+                                     persona={'ApellidoyNombres':p.razon_social,'IdTipoDocumento':str(p.cuit_id),'DescripcionTipoDoc':str(RefTipoDocumento.objects.get(id=p.cuit_id)),'NroDocumento':p.nrocuit,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':ocupacion,'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
                                  else:
                                     persona={'Apellido':p.persona.apellidos,'Nombre':p.persona.nombres,'IdTipoDocumento':tp_doc,'DescripcionTipoDoc':str(p.persona.tipo_doc),'NroDocumento':p.persona.nro_doc,'Alias':p.persona.alias,'IdTipoOcupacion':idTipoOcupacion,'IdEstadoCivil':idEstadocivil,'PersonaFisica':str(pf),'DescripcionPersonaJuridica':perjuridica,'IdRolPersona':idRolPersona,'DescripcionRol':str(p.roles),'Telefonos':p.persona.celular,'Ocupacion':str(p.persona.ocupacion),'DescripcionEstadoCivil':str(p.persona.estado_civil),'FechaNacimiento': p.persona.fecha_nac.strftime("%d/%m/%Y %H:%m:%S"),'LugarNacimiento':str(p.persona.pais_nac)+'-'+unicode(str(p.persona.ciudad_nac),'utf8'),'IdNacionalidad':naciona}
 
@@ -15713,3 +15810,196 @@ def envio(request,idprev):
     info['autoridades'] = info['preventivo'].autoridades.all()
 
     return render_to_response('./verificar_envio.html',info,context_instance=RequestContext(request))
+
+
+def verificar_persona(request,dni):
+    msg=""
+    try:
+        User.objects.get(username=dni)
+        msg="El usuario ya existe."
+        return HttpResponseBadRequest(msg)
+    except:
+        try:
+            cursor = connections['default'].cursor()
+            cursor.execute("select p.nro_doc as documento, p.nombres as nombre, p.apellidos as apellido, p.fecha_nac as fecha_nacimiento, cn.descripcion as ciudad_nacimiento,"\
+            "rec.descripcion as estado_civil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia "\
+            "from personas p right join personal pp ON p.id = pp.persona_id_id "\
+            "join ref_ciudades cn ON p.ciudad_nac_id = cn.id "\
+            "join ref_estadociv rec ON p.estado_civil_id = rec.id "\
+            "join ref_ciudades cr ON p.ciudad_res_id = cr.id "\
+            "join ref_provincia rpn ON cn.provincia_id = rpn.id "\
+            "join ref_provincia rpr ON cr.provincia_id = rpr.id "\
+            "where nro_doc = %s" % dni)
+            columns = [col[0] for col in cursorRh.description]
+            personas = [
+            	dict(zip(columns, row))
+                for row in cursorRh.fetchall()
+            ]
+            if len(personas<1):
+                cursor = connections['default'].cursor()
+                cursor.execute("select p.nro_doc as documento, p.nombres as nombre, p.apellidos as apellido, p.fecha_nac as fecha_nacimiento, cn.descripcion as ciudad_nacimiento,"\
+                "rec.descripcion as estado_civil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia "\
+                "from personas p right join personal pp ON p.id = pp.persona_id_id "\
+                "left join ref_ciudades cn ON p.ciudad_nac_id = cn.id "\
+                "left join ref_estadociv rec ON p.estado_civil_id = rec.id "\
+                "left join ref_ciudades cr ON p.ciudad_res_id = cr.id "\
+                "left join ref_provincia rpn ON cn.provincia_id = rpn.id "\
+                "left join ref_provincia rpr ON cr.provincia_id = rpr.id "\
+                "where nro_doc = %s "\
+                "union all "\
+                "select p.nro_doc as documento, p.nombres as nombre, p.apellidos as apellido, p.fecha_nac as fecha_nacimiento, cn.descripcion as ciudad_nacimiento,"\
+                "rec.descripcion as estado_civil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia "\
+                "from personas p right join personal pp ON p.id = pp.persona_id_id "\
+                "right join ref_ciudades cn ON p.ciudad_nac_id = cn.id "\
+                "right join ref_estadociv rec ON p.estado_civil_id = rec.id "\
+                "right join ref_ciudades cr ON p.ciudad_res_id = cr.id "\
+                "right join ref_provincia rpn ON cn.provincia_id = rpn.id "\
+                "right join ref_provincia rpr ON cr.provincia_id = rpr.id "\
+                "where nro_doc = %s" % (dni,dni))
+                columns = [col[0] for col in cursorRh.description]
+                personas = [
+                	dict(zip(columns, row))
+                    for row in cursorRh.fetchall()
+                ]
+                if len(personas) < 1:
+                    raise Exception('sin datos')
+            obtenerReferencias(personas)
+            data = json.dumps(personas, default=date_handler)
+            mimetype = 'application/json'
+            return HttpResponse(data,mimetype)
+        except:
+            try:
+                cursorRh = connections['rrhh'].cursor()
+                cursorRh.execute("select p.documento as documento, p.nombre as nombre, p.apellido as apellido, p.fecha_nacimiento as fecha_nacimiento, cn.descripcion as ciudad_nacimiento,"\
+                "rec.descripcion as estado_civil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia "\
+                "from personas p right join personal_policial pp ON p.id = pp.persona_id join referencias.ref_ciudades cn ON p.ciudad_nacimiento_id = cn.id "\
+                "join referencias.ref_estado_civil rec ON p.estado_civil_id = rec.id join referencias.ref_ciudades cr ON p.ciudad_domicilio_id = cr.id "\
+                "join referencias.ref_provincia rpn ON cn.provincia_id = rpn.id join referencias.ref_provincia rpr ON cr.provincia_id = rpr.id "\
+                "where documento = %s" % dni)
+                columns = [col[0] for col in cursorRh.description]
+                personas = [
+                	dict(zip(columns, row))
+                    for row in cursorRh.fetchall()
+                ]
+                if len(personas) < 1:
+                    cursorRh = connections['rrhh'].cursor()
+                    cursorRh.execute("select p.documento as documento, p.nombre as nombre, p.apellido as apellido, p.fecha_nacimiento as fecha_nacimiento, "\
+                    "cn.descripcion as ciudad_nacimiento, rec.descripcion as estado_civil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, "\
+                    "rpr.descripcion as provincia_residencia from personas p right join personal_policial pp ON p.id = pp.persona_id "\
+                    "left join referencias.ref_ciudades cn ON p.ciudad_nacimiento_id = cn.id left join referencias.ref_estado_civil rec ON p.estado_civil_id = rec.id "\
+                    "left join referencias.ref_ciudades cr ON p.ciudad_domicilio_id = cr.id left join referencias.ref_provincia rpn ON cn.provincia_id = rpn.id "\
+                    "left join referencias.ref_provincia rpr ON cr.provincia_id = rpr.id where documento = %s "\
+                    "union all select p.documento as documento, p.nombre as nombre, p.apellido as apellido, p.fecha_nacimiento as fecha_nacimiento, cn.descripcion as ciudad_nacimiento,"\
+                    "rec.descripcion as estadoCivil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia from personas p "\
+                    "right join personal_policial pp ON p.id = pp.persona_id right join referencias.ref_ciudades cn ON p.ciudad_nacimiento_id = cn.id "\
+                    "right join referencias.ref_estado_civil rec ON p.estado_civil_id = rec.id right join referencias.ref_ciudades cr ON p.ciudad_domicilio_id = cr.id "\
+                    "right join referencias.ref_provincia rpn ON cn.provincia_id = rpn.id right join referencias.ref_provincia rpr ON cr.provincia_id = rpr.id "\
+                    "where documento = %s" % (dni,dni))
+                    columns = [col[0] for col in cursorRh.description]
+                    personas = [
+                    	dict(zip(columns, row))
+                        for row in cursorRh.fetchall()
+                    ]
+                    if len(personas) < 1:
+                        raise Exception('sin datos')
+
+                obtenerReferencias(personas)
+                data = json.dumps(personas, default=date_handler)
+                mimetype = 'application/json'
+                return HttpResponse(data,mimetype)
+
+            except Exception as e:
+                print e
+                msg = 'La busqueda no arrojó ninugn resultado, deberá cargar los datos manualmente'
+                return HttpResponseBadRequest(msg)
+
+@login_required
+def ciudades_ajax(request):
+    if request.is_ajax():
+        q = request.GET.get('term','')
+
+        ciudades = RefCiudades.objects.filter(descripcion__icontains = q)[:20]
+        results = []
+        for ciudad in ciudades:
+            ciudad_json = {}
+            ciudad_json['id'] = ciudad.id
+            if ciudad.provincia:
+                ciudad_json['label'] =  ciudad.descripcion +' - '+ ciudad.provincia.descripcion +' - '+ ciudad.pais.descripcion
+            else:
+                ciudad_json['label'] = ciudad.descripcion +' - '+ ciudad.pais.descripcion
+            ciudad_json['value'] = ciudad.descripcion
+            results.append(ciudad_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data,mimetype)
+
+
+@login_required
+def dependencias_ajax(request):
+    if request.is_ajax():
+        q = request.GET.get('term','')
+        dependencias = Dependencias.objects.filter(descripcion__icontains = q)[:20]
+        results = []
+        for dependencia in dependencias:
+            dependencia_json = {}
+            dependencia_json['id'] = dependencia.id
+            dependencia_json['label'] = dependencia.descripcion + ' - ' + dependencia.unidades_regionales.descripcion
+            dependencia_json['value'] = dependencia.descripcion + ' - ' + dependencia.unidades_regionales.descripcion
+            results.append(dependencia_json)
+        data = json.dumps(results)
+    else:
+        data = 'error'
+    mimetype = 'application/json'
+    return HttpResponse(data,mimetype)
+
+@login_required
+def estados_civiles(request):
+    if request.is_ajax():
+        data = request.POST
+        estados = RefEstadosciv.objects.all()
+        data = serializers.serialize("json", estados)
+        return HttpResponse(data, mimetype='application/json')
+    else:
+        return HttpResponseBadRequest()
+
+@login_required
+def jerarquias_ajax(request):
+    if request.is_ajax():
+        q = request.GET.get('term','')
+        jerarquias = RefJerarquias.objects.filter(descripcion__icontains=q)[:20]
+        results = []
+        for jerarquia in jerarquias:
+            jerarquia_json = {}
+            jerarquia_json['id'] = jerarquia.id
+            jerarquia_json['label'] = jerarquia.descripcion
+            jerarquia_json['value'] = jerarquia.descripcion
+            results.append(jerarquia_json)
+        data = json.dumps(results)
+    else:
+        data = 'error'
+    mimetype = 'application/json'
+    return HttpResponse(data,mimetype)
+
+
+def date_handler(obj):
+    """
+    Definicion para transformar el formato date en la serializacion de fechas"""
+    return obj.isoformat() if hasattr(obj, 'isoformat') else obj
+
+def obtenerReferencias(personas):
+    for persona in personas:
+        if persona['ciudad_nacimiento'] and persona['provincia_nacimiento']:
+            persona['ciudad_nacimiento_id'] = RefCiudades.objects.get(descripcion = persona['ciudad_nacimiento'], provincia = RefProvincia.objects.get(descripcion = persona['provincia_nacimiento']).id ).id
+        else:
+            persona['ciudad_nacimiento_id'] = ""
+        if persona['ciudad_residencia'] and persona['provincia_residencia']:
+            persona['ciudad_residencia_id'] = RefCiudades.objects.get(descripcion = persona['ciudad_residencia'], provincia = RefProvincia.objects.get(descripcion = persona['provincia_residencia']).id).id
+        else:
+            persona['ciudad_residencia_id'] = ""
+        if persona['estado_civil']:
+            estadoCivil = RefEstadosciv.objects.get(descripcion = persona['estado_civil']).id
+            persona['estado_civil'] = estadoCivil
+        else:
+            persona['estado_civil'] = ""
