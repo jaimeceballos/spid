@@ -7289,7 +7289,6 @@ def informe(request,idhec,idprev,aforo):
             informa=datos.autoridades.values_list('email',flat=True)
             #agregar email 2jefeacei para que reciba los preventivos
             envio=1
-<<<<<<< HEAD
             mailsrch = re.compile(r'[\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4}')
             informa = mailsrch.findall(str(informa))
             informa = eliminarduplicados(informa)
@@ -7312,14 +7311,7 @@ def informe(request,idhec,idprev,aforo):
                 error.descripcion = e
                 error.save()
                 return HttpResponseBadRequest()
-=======
-            nstring = []
-            for dire in informa:
-                if dire not in nstring:
-                    nstring.append(dire)
 
-            envio,nstring,subject,text_content,from_email=envioemail(envio,nstring,subject,text_content,from_email)
->>>>>>> pantallas
             """direcciones=[]
             indice=0
             nstring=''
