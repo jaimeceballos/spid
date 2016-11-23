@@ -174,8 +174,14 @@ def login_user(request):
 
                   #si es usuario de radiocabecera
                   if radio_user:
-                      dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = user.get_profile().depe.id)) #obtiene las dependencias de su influencia
-                      preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
+                      preventivos = ""
+                      dependencias = ""
+                      try:
+                          dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = user.get_profile().depe.id)) #obtiene las dependencias de su influencia
+                          preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
+                      except Exception as e:
+                          dependencias = Dependencias.objects.filter(id = user.get_profile().depe.id) #obtiene las dependencias de su influencia
+                          preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preven
 
                       #si hay preventivos no enviados
                       if preventivos.count() > 0:

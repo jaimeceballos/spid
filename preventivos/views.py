@@ -948,8 +948,12 @@ def inicial(request):
     if usuario.groups.filter(name='radio'):
         radio_user = True
     if radio_user:
-        dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id))
-        preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)
+        try:
+            dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id)) #obtiene las dependencias de su influencia
+            preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
+        except Exception as e:
+            dependencias = Dependencias.objects.filter(id = usuario.get_profile().depe.id) #obtiene las dependencias de su influencia
+            preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preven
         if preventivos.count() > 0:
             autorizados = preventivos.count()
     return render(request,'./index1.html',{'state':state, 'destino': destino,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'radio_user':radio_user,'autorizados':autorizados})
@@ -15805,9 +15809,13 @@ def autorizados_envio(request):
         'destino':destino,
     }
     usuario = request.user
-    unidad = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id)
-    dependencias = Dependencias.objects.filter(unidades_regionales = unidad)
-    preventivos = Preventivos.objects.filter(fecha_autorizacion__isnull = False, fecha_envio__isnull = True,dependencia__in = dependencias).order_by('-id')
+    try:
+        unidad = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id)
+        dependencias = Dependencias.objects.filter(unidades_regionales = unidad)
+        preventivos = Preventivos.objects.filter(fecha_autorizacion__isnull = False, fecha_envio__isnull = True,dependencia__in = dependencias).order_by('-id')
+    except Exception as e:
+        dependencias = Dependencias.objects.filter(id = usuario.get_profile().depe.id) #obtiene las dependencias de su influencia
+        preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True).order_by('-id')           #para esas dependencias obtiene los preven
 
     depes = preventivos.values('dependencia').distinct()
     dependencias = dependencias.filter(id__in=depes)
