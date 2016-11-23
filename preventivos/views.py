@@ -1008,7 +1008,6 @@ def user_create_save(request):
             form = UserCreateForm(request.POST)
             msg=""
             if form.is_valid():
-
                 if not User.objects.filter(email = form.cleaned_data['email']):
 
                     persona     = Personas()
@@ -1057,6 +1056,16 @@ def user_create_save(request):
                         profile.depe    = dependencia
                         profile.ureg    = dependencia.unidades_regionales
                         profile.save()
+                        if form.cleaned_data['funcion'] !="":
+                            actuante = Actuantes()
+                            actuante.funcion        = form.cleaned_data['funcion']
+                            actuante.documento      = persona.nro_doc
+                            actuante.apeynombres    = "%s, %s" % (persona.apellidos,persona.nombres)
+                            actuante.jerarquia_id   =  RefJerarquias.objects.get(id=form.cleaned_data['jerarquia_id'])
+                            actuante.persona_id     = persona
+                            actuante.unidadreg_id   = dependencia.unidades_regionales
+                            actuante.dependencia_id = dependencia
+                            actuante.save()
                         enviar_correo_usuario(usuario,password)
                     except Exception as e:
                         print e
@@ -1069,7 +1078,7 @@ def user_create_save(request):
 
 
 
-    return HttpResponse('<div class="col-md-12"><h2>Usuario creado correctamente-</h2></div>')
+    return HttpResponse('<div class="col-md-12"><h2>Usuario creado correctamente.</h2></div>')
 
 def enviar_correo_usuario(usuario,password):
     """Envia el correo de nuevo usuario, recibe
@@ -15871,7 +15880,7 @@ def verificar_persona(request,dni):
             try:
                 cursorRh = connections['rrhh'].cursor()
                 cursorRh.execute("select p.documento as documento, p.nombre as nombre, p.apellido as apellido, p.fecha_nacimiento as fecha_nacimiento, cn.descripcion as ciudad_nacimiento,"\
-                "rec.descripcion as estado_civil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia "\
+                "rec.descripcion as estado_civil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia, p.sexo_id as sexo "\
                 "from personas p right join personal_policial pp ON p.id = pp.persona_id join referencias.ref_ciudades cn ON p.ciudad_nacimiento_id = cn.id "\
                 "join referencias.ref_estado_civil rec ON p.estado_civil_id = rec.id join referencias.ref_ciudades cr ON p.ciudad_domicilio_id = cr.id "\
                 "join referencias.ref_provincia rpn ON cn.provincia_id = rpn.id join referencias.ref_provincia rpr ON cr.provincia_id = rpr.id "\
@@ -15885,12 +15894,12 @@ def verificar_persona(request,dni):
                     cursorRh = connections['rrhh'].cursor()
                     cursorRh.execute("select p.documento as documento, p.nombre as nombre, p.apellido as apellido, p.fecha_nacimiento as fecha_nacimiento, "\
                     "cn.descripcion as ciudad_nacimiento, rec.descripcion as estado_civil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, "\
-                    "rpr.descripcion as provincia_residencia from personas p right join personal_policial pp ON p.id = pp.persona_id "\
+                    "rpr.descripcion as provincia_residencia, p.sexo_id as sexo from personas p right join personal_policial pp ON p.id = pp.persona_id "\
                     "left join referencias.ref_ciudades cn ON p.ciudad_nacimiento_id = cn.id left join referencias.ref_estado_civil rec ON p.estado_civil_id = rec.id "\
                     "left join referencias.ref_ciudades cr ON p.ciudad_domicilio_id = cr.id left join referencias.ref_provincia rpn ON cn.provincia_id = rpn.id "\
                     "left join referencias.ref_provincia rpr ON cr.provincia_id = rpr.id where documento = %s "\
                     "union all select p.documento as documento, p.nombre as nombre, p.apellido as apellido, p.fecha_nacimiento as fecha_nacimiento, cn.descripcion as ciudad_nacimiento,"\
-                    "rec.descripcion as estadoCivil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia from personas p "\
+                    "rec.descripcion as estadoCivil, cr.descripcion as ciudad_residencia, rpn.descripcion as provincia_nacimiento, rpr.descripcion as provincia_residencia, p.sexo_id as sexo from personas p "\
                     "right join personal_policial pp ON p.id = pp.persona_id right join referencias.ref_ciudades cn ON p.ciudad_nacimiento_id = cn.id "\
                     "right join referencias.ref_estado_civil rec ON p.estado_civil_id = rec.id right join referencias.ref_ciudades cr ON p.ciudad_domicilio_id = cr.id "\
                     "right join referencias.ref_provincia rpn ON cn.provincia_id = rpn.id right join referencias.ref_provincia rpr ON cr.provincia_id = rpr.id "\

@@ -30,6 +30,8 @@ class CambiarPassForm(forms.Form):
 
 
 class UserCreateForm(forms.Form):
+	fcio_opciones=(('1','ACTUANTE'),('2','PREVENTOR'),('3','ACT / PREV'))
+
 	documento 				= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','onkeyup':'javascript:format(this);','aria-describedby':'inputError'})))
 	nombre					= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Nombre'})))
 	apellido				= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Apellido'})))
@@ -47,6 +49,7 @@ class UserCreateForm(forms.Form):
 	sexo 					= forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}),choices=RefSexo.objects.all().values_list('id','descripcion'))
 	grupos 					= forms.MultipleChoiceField(widget = forms.SelectMultiple(attrs={'class':'form-control'}), choices= Group.objects.all().values_list('id','name'))
 	activo 					= forms.BooleanField()
+	funcion					= forms.CharField(required=False,widget = forms.RadioSelect(choices = fcio_opciones))
 
 class GroupForm(forms.ModelForm):
 	#name = forms.CharField(required=True)

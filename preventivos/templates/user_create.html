@@ -6,152 +6,169 @@
     </div>
   </div>
 </div>
+<div class="" id="formulario">
+  <form class="" action="{% url 'user_create_save'%}" method="post" id="user_create">{%csrf_token%}
 
-<form class="" action="{% url 'user_create_save'%}" method="post" id="user_create">{%csrf_token%}
-
-  <div class="row-fluid">
-    <div class="col-md-12 form-inline">
-      <div class="form-group form-group-lg">
-          <label class="sr-only" for="documento">DNI</label>
-          <div class="input-group">
-            <div class="input-group-addon">DNI</div>
-            <!--input type="text" id="documento" value="" onkeyup="javascript:format(this);" class="form-control" aria-describedby="inputError"-->
-            {{form.documento}}
-            <div id="error" style="display:none">
-              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-              <span id="inputError" class="sr-only">(error)</span>
+    <div class="row-fluid">
+      <div class="col-md-12 form-inline">
+        <div class="form-group form-group-lg">
+            <label class="sr-only" for="documento">DNI</label>
+            <div class="input-group">
+              <div class="input-group-addon">DNI</div>
+              <!--input type="text" id="documento" value="" onkeyup="javascript:format(this);" class="form-control" aria-describedby="inputError"-->
+              {{form.documento}}
+              <div id="error" style="display:none">
+                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                <span id="inputError" class="sr-only">(error)</span>
+              </div>
             </div>
-          </div>
 
-      </div>
-      <button type="button" id="verificar" class="btn btn-xs btn-danger" data-loading-text="Verificando...">Verificar</button>
-    </div>
-  </div>
-
-  <div class="row-fluid" id="detalle" style="display:none">
-    <div class="row form-group">
-      <div class="col-md-1">
-        <label for="">Nombre</label>
-      </div>
-      <div class="col-md-3">
-        {{form.nombre}}
-
-      </div>
-      <div class="col-md-1">
-        <label for="">Apellido</label>
-      </div>
-      <div class="col-md-3">
-
-        {{form.apellido}}
-
+        </div>
+        <button type="button" id="verificar" class="btn btn-xs btn-danger" data-loading-text="Verificando...">Verificar</button>
       </div>
     </div>
-    <div class="row form-group">
-      <div class="col-md-1">
-        <label for="">Fecha Nacimiento</label>
-      </div>
-      <div class="col-md-3">
-        {{form.fecha_nacimiento}}
 
-      </div>
+    <div class="row-fluid" id="detalle" style="display:none">
+      <div class="row form-group">
+        <div class="col-md-1">
+          <label for="">Nombre</label>
+        </div>
+        <div class="col-md-3">
+          {{form.nombre}}
 
-      <div class="col-md-1 ">
-        <label for="">Lugar Nacimiento</label>
-      </div>
-      <div class="col-md-3" >
-        {{form.ciudad_nacimiento}}
-        {{form.ciudad_nacimiento_id}}
+        </div>
+        <div class="col-md-1">
+          <label for="">Apellido</label>
+        </div>
+        <div class="col-md-3">
 
-      </div>
-    </div>
-    <div class="row form-group">
-      <div class="col-md-1">
-        <label for="">Sexo</label>
-      </div>
-      <div class="col-md-3">
-        {{form.sexo}}
-      </div>
-    </div>
-    <div class="row form-group">
-      <div class="col-md-1">
-        <label for="">Estado Civil</label>
-      </div>
-      <div class="col-md-3">
-        {{form.estados_civiles}}
-      </div>
-      <div class="col-md-1">
-        <label for="">Lugar Residencia</label>
-      </div>
-      <div class="col-md-3">
-        {{form.ciudad_residencia}}
-        {{form.ciudad_residencia_id}}
-      </div>
-    </div>
-    <div class="row form-group">
-      <div class="col-md-1">
-        <label for="">Jerarquia</label>
-      </div>
-      <div class="col-md-3">
-        {{form.jerarquia}}
-        {{form.jerarquia_id}}
-      </div>
-      <div class="col-md-1">
-        <label for="">Lugar Trabajo</label>
-      </div>
-      <div class="col-md-3">
-        {{form.lugar_trabajo}}
-        {{form.lugar_trabajo_id}}
-      </div>
-    </div>
-    <div class="row form-group">
-      <div class="col-md-1">
-        <label for="">Email</label>
-      </div>
-      <div class="col-md-7">
-        {{form.email}}
-      </div>
-    </div>
-    <div class="row form-group">
-      <div class="col-md-1">
-        <label for="">Asignar Grupo</label>
-      </div>
-      <div class="col-md-3">
-        {{form.grupos}}
-      </div>
-      <div class="col-md-3 checkbox">
-					 <label>
-						{{form.activo}} Usuario Activo
-					</label>
-				</div>
-    </div>
-    <div class="row form-group">
-      <div class="col-md-8">
-        <button type="submit" id="crear" class="btn btn-primary btn-xs pull-right">Crear Usuario</button>
-      </div>
-    </div>
-  </div>
+          {{form.apellido}}
 
-</form>
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-1">
+          <label for="">Fecha Nacimiento</label>
+        </div>
+        <div class="col-md-3">
+          {{form.fecha_nacimiento}}
+
+        </div>
+
+        <div class="col-md-1 ">
+          <label for="">Lugar Nacimiento</label>
+        </div>
+        <div class="col-md-3" >
+          {{form.ciudad_nacimiento}}
+          {{form.ciudad_nacimiento_id}}
+
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-1">
+          <label for="">Sexo</label>
+        </div>
+        <div class="col-md-3">
+          {{form.sexo}}
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-1">
+          <label for="">Estado Civil</label>
+        </div>
+        <div class="col-md-3">
+          {{form.estados_civiles}}
+        </div>
+        <div class="col-md-1">
+          <label for="">Lugar Residencia</label>
+        </div>
+        <div class="col-md-3">
+          {{form.ciudad_residencia}}
+          {{form.ciudad_residencia_id}}
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-1">
+          <label for="">Jerarquia</label>
+        </div>
+        <div class="col-md-3">
+          {{form.jerarquia}}
+          {{form.jerarquia_id}}
+        </div>
+        <div class="col-md-1">
+          <label for="">Lugar Trabajo</label>
+        </div>
+        <div class="col-md-3">
+          {{form.lugar_trabajo}}
+          {{form.lugar_trabajo_id}}
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-1">
+          <label for="">Email</label>
+        </div>
+        <div class="col-md-7">
+          {{form.email}}
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-1">
+          <label for="">Asignar Grupo</label>
+        </div>
+        <div class="col-md-3">
+          {{form.grupos}}
+        </div>
+        <div class="col-md-3 checkbox">
+  					 <label>
+  						{{form.activo}} Usuario Activo
+  					</label>
+  				</div>
+      </div>
+      <div class="row form-group" id="funcion" style="display:none">
+        <div class="col-md-1">
+          <label for="">Funci&oacute;n</label>
+        </div>
+        <div class="col-md-3">
+          {{form.funcion}}
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-8">
+          <button type="submit" id="crear" class="btn btn-primary btn-xs pull-right" data-loading-text="Trabajando en eso...">Crear Usuario</button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
 <div class="row-fluid alert-primary" id="success" style="display:none">
-  <div class="col-md-12">
-    <h2>Usuario creado correctamente-</h2>
-  </div>
+
 </div>
 <script type="text/javascript">
 
+  $("#id_grupos").change(function(){
+
+    var arr = $(this).val();
+    if(jQuery.inArray('2',arr) >= 0 || jQuery.inArray('7',arr) >= 0 ){
+      $("#funcion").show("slow");
+    }else{
+      $("#funcion").hide("slow");
+    }
+  });
 
   $("#verificar").click(function(event){
     $(this).button('loading');
     var dni = $("#id_documento").val();
     if(!dni || dni.length < 7){
       $("#id_documento").parent().addClass('has-error has-feedback');
-        $("#error").show();
+        $("#error").show("slow");
     }else{
       $("#id_documento").parent().removeClass('has-error');
       var dni = $("#id_documento").val();
       var url = '/preventivos/verificar_persona/'+dni+'/';
       $.get(url,function(data){
-
+        $("#success").empty().hide("slow");
 
       })
       .done(function(data){
@@ -163,27 +180,29 @@
         $("#id_ciudad_nacimiento_id").val(data[0]["ciudad_nacimiento_id"]);
         $("#id_ciudad_residencia").val(data[0]["ciudad_residencia"]);
         $("#id_ciudad_residencia_id").val(data[0]["ciudad_residencia_id"]);
+        $("#id_sexo").val(data[0]["sexo"]);
         $("#id_estados_civiles option[value ="+ data[0]['estado_civil']+"]").attr("selected",true);
         $("#verificar").button('reset');
       })
       .fail(function(jqXHR, textStatus, msg){
         var contenedor = $("#mensajes");
         var mensaje = '<h4>'+jqXHR.responseText+'</h4>';
-        contenedor.addClass("alert-warning").empty().append(mensaje).show();
+        contenedor.addClass("alert-warning").empty().append(mensaje).show("slow");
         var documento = $("#id_documento").val();
         $("#user_create").trigger("reset");
         $("#id_documento").val(documento);
         $("#verificar").button('reset');
+
       })
       .always(function(){
 
-        $("#detalle").show();
+        $("#detalle").show("slow");
       });
     }
 
   });
   $("#id_documento").keypress(function(event){
-    $("#error").hide();
+    $("#error").hide("slow");
 
   });
 
@@ -226,21 +245,26 @@
   });
   $("#crear").click(function(event){
     event.preventDefault();
+    $(this).button('loading');
     var form = $("#user_create");
     if(validar()){
       $.ajax({
         type:form.attr('method'),
         url:form.attr('action'),
         data:form.serialize(),
-        success: function(jqXHR, textStatus, msg){
-          $("#detalle").hide();
-          $("#success").empty().append(jqXHR.responseText).show();
+        success: function(data){
+          $("#mensajes").empty().hide("slow");
+          $("#formulario").hide("slow");
+          $("#formulario").empty().append("<h3>Seleccione Una acci&oacute;n.</h3>").show("slow");
+          $("#success").empty().append(data).show("slow");
         },
         error:function(jqXHR, textStatus, msg){
           var contenedor = $("#mensajes");
           var mensaje = '<h4>'+jqXHR.responseText+'</h4>';
-          contenedor.addClass("alert-danger").empty().append(mensaje).show();
+          contenedor.addClass("alert-danger").empty().append(mensaje).show("slow");
           $('html, body').animate({ scrollTop: contenedor.offset().top }, 'slow');
+          $("#crear").button('reset');
+          $("#funcion").hide();
         }
       });
     }
