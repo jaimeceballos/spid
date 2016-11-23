@@ -8,8 +8,18 @@
  <title>SISTEMA POLICIAL DE INFORMACIÓN DELICTUAL</title>
 {% include "fnciones.html"%}
 <script type="text/javascript">
+        var idleTime = 0;//variable de control de minutos para el logout automatico
         $(document).ready(function () {
 
+            var idleInterval = setInterval(timerIncrement, 60000); // 1 minut
+
+            //Zero the idle timer on mouse movement.
+            $(this).mousemove(function (e) {
+                idleTime = 0;
+            });
+            $(this).keypress(function (e) {
+                idleTime = 0;
+            });
             //Demo code
             $('.password-container').pschecker({ onPasswordValidate: validatePassword, onPasswordMatch: matchPassword });
 
@@ -41,6 +51,16 @@
                 }
             }
         });
+        //Funcion para generar el logout automatico despues de 15 minutos
+        function timerIncrement() {
+            idleTime = idleTime + 1;
+            if (idleTime > 14) { // 14 minutes
+              setTimeout(function(){//provocoun retraso de 1 segundo para esperar el auto logout de django
+                window.location.reload(); //Recargo la pantalla para generar el logout
+              },1000);
+
+            }
+        }
     </script>
 </head>
 <body oncontextmenu="return false" oncopy="return false" oncut="return false" onpaste="return false">
@@ -90,7 +110,6 @@
 
 <!-- main content area -->
 <div class="wrapper" id="main">
-
 <!-- content area -->
 
     <div id="main">
