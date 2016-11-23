@@ -21,8 +21,8 @@
           <ul>
             <li><a href="#" id="nuevoUsuario"><i class="glyphicon glyphicon-user"></i> Nuevo Usuario</a></li>
             <li><a href="#"><i class="glyphicon glyphicon-cog"></i> Modificaci&oacute;n Usuario</a></li>
-            <li><a href="#"><i class="glyphicon glyphicon-refresh"></i> Reset de Contrase&ntilde;a</a></li>
-            <li><a href="#"><i class="glyphicon glyphicon-eye-open"></i> Actividad de usuarios</a></li>
+            <li><a href="{%url 'cambiar_password'%}"><i class="glyphicon glyphicon-refresh"></i> Reset de Contrase&ntilde;a</a></li>
+            <li><a href="/preventivos/controller/"><i class="glyphicon glyphicon-eye-open"></i> Actividad de usuarios</a></li>
           </ul>
         </div>
       </div>
@@ -43,6 +43,6 @@
           $("#display-action").empty().append(data);
         });
       });
-      
+
 </script>
 {% endblock %}
