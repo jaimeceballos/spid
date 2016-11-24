@@ -176,13 +176,15 @@ def login_user(request):
                   if radio_user:
                       preventivos = ""
                       dependencias = ""
-                      try:
+                      """try:
                           dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = user.get_profile().depe.id)) #obtiene las dependencias de su influencia
                           preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
                       except Exception as e:
                           dependencias = Dependencias.objects.filter(id = user.get_profile().depe.id) #obtiene las dependencias de su influencia
                           preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preven
-
+                      """
+                      dependencias = Dependencias.objects.filter(ciudad = user.get_profile().depe.ciudad )
+                      preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
                       #si hay preventivos no enviados
                       if preventivos.count() > 0:
                           autorizados = preventivos.count()                     #obtiene la cantidad de preventivos autorizados para enviar
@@ -192,7 +194,7 @@ def login_user(request):
 
                 #si el usuario intenta loguearse en una dependencia que no corresponde a su destino actual
                 else:
-                  state="Dependencias seleccionadas INCONRRECTAS"               #se indica que las dependencia es incorrecta
+                  state="Dependencias seleccionadas INCORRECTAS"               #se indica que las dependencia es incorrecta
 
                   return render(request, 'index.html', {'state':state,'form':form})
 

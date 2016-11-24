@@ -948,12 +948,15 @@ def inicial(request):
     if usuario.groups.filter(name='radio'):
         radio_user = True
     if radio_user:
-        try:
+        """try:
             dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id)) #obtiene las dependencias de su influencia
             preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
         except Exception as e:
             dependencias = Dependencias.objects.filter(id = usuario.get_profile().depe.id) #obtiene las dependencias de su influencia
             preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preven
+        """
+        dependencias = Dependencias.objects.filter(ciudad = usuario.get_profile().depe.ciudad )
+        preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True).order_by('-id')
         if preventivos.count() > 0:
             autorizados = preventivos.count()
     return render(request,'./index1.html',{'state':state, 'destino': destino,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'radio_user':radio_user,'autorizados':autorizados})
@@ -996,13 +999,21 @@ def ngrupos(request):
 
 
 @login_required
-@transaction.commit_on_success
 @permission_required('user.is_staff','administrador')
 def user_create(request):
     state= request.session.get('state')
     destino= request.session.get('destino')
     form = UserCreateForm()
     return render_to_response("./user_create.html",{'form':form},context_instance=RequestContext(request))
+
+@login_required
+@permission_required('user.is_staff','administrador')
+def user_edit(request):
+    state   = request.session.get('state')
+    destino = request.session.get('destino')
+    form    = UserCreateForm()
+    return render_to_response("./user_edit.html",{'form':form},context_instance=RequestContext(request))
+
 
 @login_required
 @transaction.commit_on_success
@@ -1457,7 +1468,7 @@ def gruposperm(request):
         return render_to_response('./gruposper.html', {'grupos':grupos,'listapg':listapg,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 
-@login_required
+"""@login_required
 @transaction.commit_on_success
 @permission_required('user.is_staff','administrador')
 def usuarios(request, iduser):
@@ -1604,28 +1615,14 @@ def usuarios(request, iduser):
                                                 profiles.depe=depes
 
                                                 profiles.save()
-                                                """
-                                                info_enviado= True
-                                                subject, from_email, to = 'Asunto : Usuario y Password - SPID' ,'divsistemasjp@policia.chubut.gov.ar',request.POST.get('email')
-                                                text_content = ("Este email es creado por Div. Sistemas Informaticos Rw.<br>Usuario: %s <br> Password: %s <br><strong> Grupo Usuarios : %s </strong><br>  <strong>Link Sistema :</strong> <a href='policia.chubut.gov.ar:8000/spid/'>SPID</a><br>Por cualquier consulta y/o reclamos al:\n\n\n<br> email: divsistemasjp@policia.chubut.gov.ar.-"% (request.POST.get('username'),str(password),str(roles)))
 
-                                                msg = EmailMultiAlternatives(subject,text_content,from_email, [to])
-                                                msg.attach_alternative(text_content,'text/html')
-
-                                                try:
-                                                 msg.send(fail_silently=False)
-                                                 mensaje=""
-                                                 mensaje = ('Usuario y contraseña del sistema SPID fueron enviadas a su email')
-
-                                                errors.append(mensaje)"""
                                                 #errors.append('Los datos del Usuarios fueron actualizados.-')
 
                                                 formnew = UserForm()
                                                 form = UserProfileForm()
                                                 lista = UserProfile.objects.all()
                                                 return render_to_response('./newuser.html', {'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
-                                                """except:
-                                                    return render_to_response('./500.html')"""
+
 
                                              else:
                                                     errors.append('Verifique los datos esten completos')
@@ -1801,154 +1798,9 @@ def usuarios(request, iduser):
         form = UserProfileForm()
         lista = UserProfile.objects.all()
 
-        return render_to_response('./newuser.html', {'reenvio':reenvio,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render_to_response('./newuser.html', {'reenvio':reenvio,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))"""
 
-"""
-asignar permisos a grupos de usuarios
-antes se debe crear el grupo
 
-@login_required
-@transaction.commit_on_success
-@permission_required('user.is_staff')
-def permisos(request):
-        state= request.session.get('state')
-        destino= request.session.get('destino')
-        errors=[]
-        usuarios=""
-        estado=''
-        ocupacion=''
-        listap=[]
-
-        dni=request.POST.get('username')
-        if dni:
-
-            if request.POST.get('buscar')=="BUSCAR":
-             if User.objects.filter(username=dni).values('username','first_name','last_name',):
-                    errors.append('Usuario Existente. Confirme el Email del usuario')
-                    usuarios = User.objects.get(username=dni)
-                    idem = usuarios.get_profile()
-                    ids= usuarios.id
-                    dnis = usuarios.username
-                    apellidos=usuarios.last_name
-                    nombres=usuarios.first_name
-                    email=usuarios.email
-                    formnew = UserForm(instance=usuarios)
-                    #form = UserProfileForm()
-                    lista = User.objects.all()
-                    form = UserProfileForm(instance=idem)
-                    datos=UserProfile.objects.get(user=ids)
-                    ure=datos.ureg
-                    formd = Dependencias.objects.filter(unidades_regionales_id=ure).values('id','descripcion')
-                    form.fields['depe'].queryset=Dependencias.objects.filter(unidades_regionales=datos.ureg)
-                    form.fields['depe'].initial=datos.depe
-
-                    if ure:
-                     ocupacion='1'
-
-                    return render_to_response('./newuser.html', {'listap':listap,'formd':formd,'ocupacion':ocupacion,'apellidos':apellidos,'nombres':nombres,'dni':dnis,'estado':estado,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
-
-             else:
-                cuantos= Personas.objects.filter(nro_doc=dni).count()
-                listap=Personas.objects.filter(nro_doc=dni)
-                if cuantos==1:
-                    if Personas.objects.filter(nro_doc=dni).values('nro_doc','apellidos','nombres',):
-                         usuarios = Personas.objects.get(nro_doc=dni)
-                         dnis = usuarios.nro_doc
-                         apellidos=usuarios.apellidos
-                         nombres=usuarios.nombres
-                         ocupa=usuarios.ocupacion
-                         formnew = UserForm()
-                         form = UserProfileForm()
-                         lista = User.objects.all()
-                         if ocupa.descripcion.find('POLICI')>=0:
-                                 ocupacion='1'
-                         return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'apellidos':apellidos,'nombres':nombres,'dni':dnis,'estado':estado,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
-                else:
-                         errors.append('Nro de Dni ingresado no es unico y/o no corresponde con una Persona')
-                         formnew = UserForm()
-                         form = UserProfileForm()
-                         lista = User.objects.all()
-
-                return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'estado':estado,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
-
-            else:
-                if request.POST.get('new')=="Nuevo":
-                    formnew = UserForm(request.POST, request.FILES)
-                    profile = UserProfileForm(request.POST, request.FILES)
-                    username = request.POST.get('username')
-                    first_name = request.POST.get('first_name')
-                    last_name = request.POST.get('last_name')
-                    email = request.POST.get('email')
-
-                    is_active=request.POST.get('activo')
-                    password = User.objects.make_random_password(length=10)
-                    if request.POST.get('user_groups'):
-                            grupo = request.POST.get('user_groups')
-                            ureg=request.POST.get('ureg')
-                            depe=request.POST.get('depe')
-                    else:
-                            namegru=Group.objects.get(name='visita')
-                            grupo=namegru.id
-                            ureg='1'
-                            depe='1'
-                    if not username:
-                         errors.append('Ingrese dni de usuario Usuario')
-                    else:
-                        if ureg == 'Seleccione Unidad Regional':
-                             errors.append('Debe seleccionar una Unidad Regional')
-                        else:
-
-                             if formnew.is_valid():
-
-                                user=formnew.save()
-                                user.groups.add(grupo)
-                                user.has_perm(formnew.cleaned_data['user_permissions'])
-                                user.is_active=True
-                                user.set_password(password)
-                                user.save()
-                                user = User.objects.get(username=username)
-                                profiles = user.get_profile()
-                                uregs=UnidadesRegionales.objects.get(pk=ureg)
-
-                                depes=Dependencias.objects.get(pk=depe)
-                                profiles.ureg=uregs
-                                profiles.depe=depes
-                                profiles.save()
-
-                                info_enviado= True
-                                subject, from_email, to = 'Asunto : Usuario y Password - SPID' ,'divsistemasjp@policia.chubut.gov.ar',request.POST.get('email')
-                                text_content = ("Este email es creado por Div. Sistemas Informaticos Rw.\n\nUsuario: %s\nPassword: %s \n\n\nPor cualquier consulta y/o reclamos \n\n\n email: divsistemasjp@policia.chubut.gov.ar.-"% (request.POST.get('username'),str(password)))
-                                msg = EmailMultiAlternatives(subject,text_content,from_email, [to])
-                                msg.attach_alternative(text_content,'text/html')
-                                try:
-                                 msg.send(fail_silently=False)
-                                 mensaje=""
-                                 mensaje = ('Usuario y contraseña del sistema SPID fueron enviadas a su email')
-                                 errors.append(mensaje)
-                                 form = UserProfileForm()
-                                 lista = User.objects.all()
-                                 return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
-                                except:
-                                 return render_to_response('./500.html')
-                             else:
-                                    errors.append('Verifique los datos esten completos')
-                                    form = UserProfileForm()
-                                    lista = User.objects.all()
-                                    return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
-
-                else:
-                    formnew = UserForm()
-                    form = UserProfileForm()
-                    lista = User.objects.all()
-                    return render_to_response('./newuser.html', {'listap':listap,'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
-
-        else:
-
-        formnew = UserForm()
-        form = UserProfileForm()
-        lista = User.objects.all()
-        return render_to_response('./darpergroups.html', {'ocupacion':ocupacion,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
-"""
 """
 grupo de funciones que
 controla el ABM de grupos
@@ -15809,14 +15661,16 @@ def autorizados_envio(request):
         'destino':destino,
     }
     usuario = request.user
-    try:
+    """try:
         unidad = UnidadesRegionales.objects.get(cabecera_envio = usuario.get_profile().depe.id)
         dependencias = Dependencias.objects.filter(unidades_regionales = unidad)
         preventivos = Preventivos.objects.filter(fecha_autorizacion__isnull = False, fecha_envio__isnull = True,dependencia__in = dependencias).order_by('-id')
     except Exception as e:
         dependencias = Dependencias.objects.filter(id = usuario.get_profile().depe.id) #obtiene las dependencias de su influencia
         preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True).order_by('-id')           #para esas dependencias obtiene los preven
-
+    """
+    dependencias = Dependencias.objects.filter(ciudad = usuario.get_profile().depe.ciudad )
+    preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True).order_by('-id')           #para esas dependencias obtiene los preven
     depes = preventivos.values('dependencia').distinct()
     dependencias = dependencias.filter(id__in=depes)
     info['preventivos'] = preventivos
@@ -16016,6 +15870,24 @@ def jerarquias_ajax(request):
     mimetype = 'application/json'
     return HttpResponse(data,mimetype)
 
+
+@login_required
+def usuarios_ajax(request):
+    if request.is_ajax():
+        q = request.GET.get('term','')
+        usuarios = User.objects.filter(username__icontains=q)[:20]
+        results = []
+        for usuario in usuarios:
+            usuario_json = {}
+            usuario_json['id'] = usuario.id
+            usuario_json['label'] = "%s - %s, %s" %(usuario.username, usuario.last_name,usuario.first_name)
+            usuario_json['value'] = "%s - %s, %s" %(usuario.username, usuario.last_name,usuario.first_name)
+            results.append(usuario_json)
+        data = json.dumps(results)
+    else:
+        data = 'error'
+    mimetype = 'application/json'
+    return HttpResponse(data,mimetype)
 
 def date_handler(obj):
     """

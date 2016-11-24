@@ -20,7 +20,7 @@
         <div class="panel-body">
           <ul>
             <li><a href="#" id="nuevoUsuario"><i class="glyphicon glyphicon-user"></i> Nuevo Usuario</a></li>
-            <li><a href="#"><i class="glyphicon glyphicon-cog"></i> Modificaci&oacute;n Usuario</a></li>
+            <li><a href="#" id="editarUsuario"><i class="glyphicon glyphicon-cog"></i> Modificaci&oacute;n Usuario</a></li>
             <li><a href="{%url 'cambiar_password'%}"><i class="glyphicon glyphicon-refresh"></i> Reset de Contrase&ntilde;a</a></li>
             <li><a href="/preventivos/controller/"><i class="glyphicon glyphicon-eye-open"></i> Actividad de usuarios</a></li>
           </ul>
@@ -43,6 +43,12 @@
           $("#display-action").empty().append(data);
         });
       });
-
+      /*$("#editarUsuario").click(function(event){
+        event.preventDefault();
+        var url = '/preventivos/user/edit/';
+        $.get(url,function(data){
+          $("#display-action").empty().append(data);
+        });
+      });*/
 </script>
 {% endblock %}

@@ -7,27 +7,25 @@
   </div>
 </div>
 <div class="" id="formulario">
-  <form class="" action="{% url 'user_create_save'%}" method="post" id="user_create">{%csrf_token%}
+  <form class="" action="" method="post" id="user_edit">{%csrf_token%}
 
     <div class="row-fluid">
-      <div class="col-md-4 form-group ">
-            <label class="sr-only" for="documento">DNI</label>
+      <div class="col-md-8 form-group form-group-lg">
             <div class="input-group">
-              <span class="input-group-addon">DNI</span>
-              {{form.documento}}
-              <span class="input-group-btn"><button class="btn btn-danger btn-xs" type="button" id="verificar" data-loading-text="Verificando...">Verificar</button></span>
+              <span class="input-group-addon">Buscar</span>
+              <input type="text" id="buscar" class="form-control" value="">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
               <div id="error" style="display:none">
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
                 <span id="inputError" class="sr-only">(error)</span>
               </div>
             </div>
 
+        </div>
 
-
-      </div>
     </div>
 
-    <div class="row-fluid" id="detalle" style="display:none">
+    <div class="row-fluid" id="detalle" >
       <div class="row form-group">
         <div class="col-md-1">
           <label for="">Nombre</label>
@@ -64,6 +62,12 @@
         </div>
       </div>
       <div class="row form-group">
+        <div class="col-md-1">
+          <label for="">Documento</label>
+        </div>
+        <div class="col-md-3">
+          {{form.documento}}
+        </div>
         <div class="col-md-1">
           <label for="">Sexo</label>
         </div>
@@ -123,7 +127,7 @@
   					</label>
   				</div>
       </div>
-      <div class="row form-group" id="funcion" style="display:none">
+      <div class="row form-group" id="funcion" >
         <div class="col-md-1">
           <label for="">Funci&oacute;n</label>
         </div>
@@ -156,18 +160,10 @@
     }
   });
 
-  $("#verificar").click(function(event){
-    $(this).button('loading');
-    var dni = $("#id_documento").val();
-    if(!dni || dni.length < 7){
-      $("#id_documento").parent().addClass('has-error has-feedback');
-        $("#error").show("slow");
-    }else{
-      $("#id_documento").parent().removeClass('has-error');
-      var dni = $("#id_documento").val();
-      var url = '/preventivos/verificar_persona/'+dni+'/';
+  function buscar(usuario){
+
+      var url = '/preventivos/buscar_usuario/'+usuario+'/';
       $.get(url,function(data){
-        $("#success").empty().hide("slow");
 
       })
       .done(function(data){
@@ -197,14 +193,22 @@
 
         $("#detalle").show("slow");
       });
-    }
 
-  });
+
+  }
   $("#id_documento").keypress(function(event){
     $("#error").hide("slow");
 
   });
+  $("#buscar").autocomplete({
+    source: "/preventivos/usuarios_ajax/",
+    minLength: 2,
+    select:function (event,ui) {
+      var user_id = ui.item.id;
+      alert(user_id);
 
+    }
+  });
   $("#id_ciudad_nacimiento").autocomplete({
     source: "/preventivos/ciudades_ajax/",
     minLength: 2,
