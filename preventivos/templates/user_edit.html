@@ -6,150 +6,80 @@
     </div>
   </div>
 </div>
-<div class="" id="formulario">
-  <form class="" action="" method="post" id="user_edit">{%csrf_token%}
-
+<div class="" id="formulario" >
     <div class="row-fluid">
       <div class="col-md-8 form-group form-group-lg">
             <div class="input-group">
               <span class="input-group-addon">Buscar</span>
-              <input type="text" id="buscar" class="form-control" value="">
+              <input type="text" id="buscar" class="form-control" value="" placeholder="Nombre, Apellido o Documento">
               <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
               <div id="error" style="display:none">
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
                 <span id="inputError" class="sr-only">(error)</span>
               </div>
             </div>
-
+            <input type="hidden" id="id_usuario" value="">
         </div>
 
     </div>
 
-    <div class="row-fluid" id="detalle" >
-      <div class="row form-group">
-        <div class="col-md-1">
-          <label for="">Nombre</label>
-        </div>
-        <div class="col-md-3">
-          {{form.nombre}}
+    <div class="row-fluid" id="detalle" style="display:none">
+      <div class="row">
+        <div class="col-md-4">
+          <p id="nombre">
 
+          </p>
         </div>
-        <div class="col-md-1">
-          <label for="">Apellido</label>
-        </div>
-        <div class="col-md-3">
+      </div>
+      <div class="row">
+        <div class="col-md-2 ">
 
-          {{form.apellido}}
+          <p id="usuario">
 
+          </p>
         </div>
-      </div>
-      <div class="row form-group">
-        <div class="col-md-1">
-          <label for="">Fecha Nacimiento</label>
-        </div>
-        <div class="col-md-3">
-          {{form.fecha_nacimiento}}
+        <div class="col-md-4 ">
 
-        </div>
+          <p id="email">
 
-        <div class="col-md-1 ">
-          <label for="">Lugar Nacimiento</label>
+          </p>
         </div>
-        <div class="col-md-3" >
-          {{form.ciudad_nacimiento}}
-          {{form.ciudad_nacimiento_id}}
+      </div>
+      <div class="row" id="divBtnDestino">
+        <div class="col-md-2">
+          <button type="button"  class="btn btn-xs btn-primary" id="btnDestino">Destino/Funcion</button>
+        </div>
+        <div class="col-md-2" id="divBtnReenvio">
+          <button type="button"  class="btn btn-xs btn-success" id="btnReenvio">Reenvio usuario</button>
+        </div>
+        <div class="col-md-2" id="divBtnMail">
+          <button type="button"  class="btn btn-xs btn-warning" id="btnMail">Moficar mail</button>
+        </div>
+        <div class="col-md-2" id="divBtnActivar">
+          <button type="button"  class="btn btn-xs btn-danger" id="btnActivar">Activar</button>
+        </div>
+      </div>
 
-        </div>
-      </div>
-      <div class="row form-group">
-        <div class="col-md-1">
-          <label for="">Documento</label>
-        </div>
-        <div class="col-md-3">
-          {{form.documento}}
-        </div>
-        <div class="col-md-1">
-          <label for="">Sexo</label>
-        </div>
-        <div class="col-md-3">
-          {{form.sexo}}
-        </div>
-      </div>
-      <div class="row form-group">
-        <div class="col-md-1">
-          <label for="">Estado Civil</label>
-        </div>
-        <div class="col-md-3">
-          {{form.estados_civiles}}
-        </div>
-        <div class="col-md-1">
-          <label for="">Lugar Residencia</label>
-        </div>
-        <div class="col-md-3">
-          {{form.ciudad_residencia}}
-          {{form.ciudad_residencia_id}}
-        </div>
-      </div>
-      <div class="row form-group">
-        <div class="col-md-1">
-          <label for="">Jerarquia</label>
-        </div>
-        <div class="col-md-3">
-          {{form.jerarquia}}
-          {{form.jerarquia_id}}
-        </div>
-        <div class="col-md-1">
-          <label for="">Lugar Trabajo</label>
-        </div>
-        <div class="col-md-3">
-          {{form.lugar_trabajo}}
-          {{form.lugar_trabajo_id}}
-        </div>
-      </div>
-      <div class="row form-group">
-        <div class="col-md-1">
-          <label for="">Email</label>
-        </div>
-        <div class="col-md-7">
-          {{form.email}}
-        </div>
-      </div>
-      <div class="row form-group">
-        <div class="col-md-1">
-          <label for="">Asignar Grupo</label>
-        </div>
-        <div class="col-md-3">
-          {{form.grupos}}
-        </div>
-        <div class="col-md-3 checkbox">
-  					 <label>
-  						{{form.activo}} Usuario Activo
-  					</label>
-  				</div>
-      </div>
-      <div class="row form-group" id="funcion" >
-        <div class="col-md-1">
-          <label for="">Funci&oacute;n</label>
-        </div>
-        <div class="col-md-3">
-          {{form.funcion}}
-        </div>
-      </div>
-      <div class="row form-group">
-        <div class="col-md-8">
-          <button type="submit" id="crear" class="btn btn-primary btn-xs pull-right" data-loading-text="Trabajando en eso...">Crear Usuario</button>
-        </div>
-      </div>
     </div>
-
-  </form>
+    <div id="success" style="display:none">
+      
+    </div>
 </div>
 
-<div class="row-fluid alert-primary" id="success" style="display:none">
 
-</div>
+
 <script type="text/javascript">
 
+  $("#btnDestino").click(function(event){
+    var usuario = $("#id_usuario").val();
+    var url = "/preventivos/user/edit/destino/"+usuario+"/";
+    $.get(url,function(data){
+
+    })
+    .done(function(data){
+      $("#success").empty().append(data).show("slow");
+    })
+  });
   $("#id_grupos").change(function(){
 
     var arr = $(this).val();
@@ -167,64 +97,31 @@
 
       })
       .done(function(data){
-        $("#mensajes").empty();
-        $("#id_nombre").val(data[0]["nombre"]);
-        $("#id_apellido").val(data[0]["apellido"]);
-        $("#id_fecha_nacimiento").val(data[0]["fecha_nacimiento"].substring(8,10)+'/'+data[0]["fecha_nacimiento"].substring(5,7)+'/'+data[0]["fecha_nacimiento"].substring(0,4));
-        $("#id_ciudad_nacimiento").val(data[0]["ciudad_nacimiento"]);
-        $("#id_ciudad_nacimiento_id").val(data[0]["ciudad_nacimiento_id"]);
-        $("#id_ciudad_residencia").val(data[0]["ciudad_residencia"]);
-        $("#id_ciudad_residencia_id").val(data[0]["ciudad_residencia_id"]);
-        $("#id_sexo").val(data[0]["sexo"]);
-        $("#id_estados_civiles option[value ="+ data[0]['estado_civil']+"]").attr("selected",true);
-        $("#verificar").button('reset');
-      })
-      .fail(function(jqXHR, textStatus, msg){
-        var contenedor = $("#mensajes");
-        var mensaje = '<h4>'+jqXHR.responseText+'</h4>';
-        contenedor.addClass("alert-warning").empty().append(mensaje).show("slow");
-        var documento = $("#id_documento").val();
-        $("#user_create").trigger("reset");
-        $("#id_documento").val(documento);
-        $("#verificar").button('reset');
-
-      })
-      .always(function(){
-
+        var activo = data[0]["fields"]["is_active"];
+        $("#usuario").empty().append("<strong>Nombre y apellido: </strong> "+data[0]["fields"]["username"]);
+        $("#email").empty().append("<strong ><i class='glyphicon glyphicon-user'></i> Usuario:</strong>"+data[0]["fields"]["email"]);
+        $("#nombre").empty().append("<strong><i class='glyphicon glyphicon-envelope'></i> Email:</strong>"+data[0]["fields"]["last_name"]+', '+data[0]["fields"]["first_name"]);
+        if(!activo){
+          $("#divBtnActivar").show();
+        }else{
+          $("#divBtnActivar").hide();
+        }
         $("#detalle").show("slow");
       });
 
-
   }
-  $("#id_documento").keypress(function(event){
-    $("#error").hide("slow");
 
-  });
   $("#buscar").autocomplete({
     source: "/preventivos/usuarios_ajax/",
     minLength: 2,
     select:function (event,ui) {
-      var user_id = ui.item.id;
-      alert(user_id);
+      $("#id_usuario").val(ui.item.id);
+      buscar($("#id_usuario").val());
 
     }
   });
-  $("#id_ciudad_nacimiento").autocomplete({
-    source: "/preventivos/ciudades_ajax/",
-    minLength: 2,
-    select:function (event,ui) {
-      $("#id_ciudad_nacimiento_id").val(ui.item.id);
 
-    }
-  });
-  $("#id_ciudad_residencia").autocomplete({
-    source: "/preventivos/ciudades_ajax/",
-    minLength: 2,
-    select:function (event,ui) {
-      $("#id_ciudad_residencia_id").val(ui.item.id);
 
-    }
-  });
   $("#id_lugar_trabajo").autocomplete({
     source: "/preventivos/dependencias_ajax/",
     minLength: 2,
@@ -241,89 +138,8 @@
 
     }
   });
-  $("#id_fecha_nacimiento").datepicker({
-    dateFormat: "dd/mm/yy",
-    dayNamesMin: [ "D", "L", "M", "M", "J", "V", "S" ],
-    monthNames: ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
-  });
-  $("#crear").click(function(event){
-    event.preventDefault();
-    $(this).button('loading');
-    var form = $("#user_create");
-    if(validar()){
-      $.ajax({
-        type:form.attr('method'),
-        url:form.attr('action'),
-        data:form.serialize(),
-        success: function(data){
-          $("#mensajes").empty().hide("slow");
-          $("#formulario").hide("slow");
-          $("#formulario").empty().append("<h3>Seleccione Una acci&oacute;n.</h3>").show("slow");
-          $("#success").empty().append(data).show("slow");
-        },
-        error:function(jqXHR, textStatus, msg){
-          var contenedor = $("#mensajes");
-          var mensaje = '<h4>'+jqXHR.responseText+'</h4>';
-          contenedor.addClass("alert-danger").empty().append(mensaje).show("slow");
-          $('html, body').animate({ scrollTop: contenedor.offset().top }, 'slow');
-          $("#crear").button('reset');
-          $("#funcion").hide();
-        }
-      });
-    }
-  });
-  function validar(){
-    var valido = true;
-    if($("#id_nombre").val()==""){
-      valido = false;
-      $("#id_nombre").parent().addClass('has-error has-feedback');
 
 
-    }
-    if($("#id_apellido").val()==""){
-      valido = false;
-      $("#id_apellido").parent().addClass('has-error has-feedback');
 
-    }
-    if($("#id_fecha_nacimiento").val()==""){
-      valido = false;
-      $("#id_fecha_nacimiento").parent().addClass('has-error has-feedback');
 
-    }
-    if($("#id_ciudad_nacimiento_id").val()==""){
-      valido = false;
-      $("#id_ciudad_nacimiento").parent().addClass('has-error has-feedback');
-
-    }
-    if($("#id_estados_civiles").val()=="0"){
-      valido = false;
-      $("#id_estados_civiles").parent().addClass('has-error has-feedback');
-
-    }
-    if($("#id_ciudad_residencia_id").val()==""){
-      valido = false;
-      $("#id_ciudad_residencia").parent().addClass('has-error has-feedback');
-
-    }
-    if($("#id_jerarquia_id").val()==""){
-      valido = false;
-      $("#id_jerarquia").parent().addClass('has-error has-feedback');
-
-    }
-    if($("#id_lugar_trabajo_id").val()==""){
-      valido = false;
-      $("#id_lugar_trabajo").parent().addClass('has-error has-feedback');
-
-    }
-    if($("#id_email").val()=="" || !isEmail($("#id_email").val())){
-      valido = false;
-      $("#id_email").parent().addClass('has-error has-feedback');
-
-    }
-    return valido;
-  }
-  function isEmail(email) {
-    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    return regex.test(email);
-  }
 </script>

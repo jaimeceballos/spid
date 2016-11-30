@@ -1,0 +1,23 @@
+<hr>
+<div class="row">
+  <div class="col-md-1">
+    <label>Unidad Regional</label>
+  </div>
+  <div class="col-md-3">
+    {% if actuante %}
+      {{form.unidadreg_id}}
+    {% else %}
+      {{form.ureg}}
+    {% endif %}
+  </div>
+  <div class="col-md-1">
+    <label>Dependencia</label>
+  </div>
+  <div class="col-md-3">
+    {% if actuante %}
+      {{form.dependencia_id}}
+    {% else %}
+      {{form.depe}}
+    {% endif %}
+  </div>
+</div>

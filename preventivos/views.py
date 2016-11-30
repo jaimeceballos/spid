@@ -1015,6 +1015,23 @@ def user_edit(request):
     return render_to_response("./user_edit.html",{'form':form},context_instance=RequestContext(request))
 
 
+def user_edit_destino(request,usuario):
+    if request.is_ajax():
+        usuario = User.objects.get(id=usuario).username
+        form=""
+        actuante = True
+        try:
+            actuante    = Actuantes.objects.get(documento=usuario)
+            form        = ActuantesForm(instance=actuante)
+
+        except:
+            profile = User.objects.get(username=usuario).get_profile()
+            form    = UserProfileForm(instance=profile)
+            actuante = False
+        finally:
+            return render_to_response("./user_edit-destino.html",{'form':form,'actuante':actuante},context_instance=RequestContext(request))
+    return HttpResponseBadRequest()
+
 @login_required
 @transaction.commit_on_success
 @permission_required('user.is_staff','administrador')
@@ -15875,7 +15892,7 @@ def jerarquias_ajax(request):
 def usuarios_ajax(request):
     if request.is_ajax():
         q = request.GET.get('term','')
-        usuarios = User.objects.filter(username__icontains=q)[:20]
+        usuarios = User.objects.filter(Q(username__icontains=q)|Q(first_name__icontains=q)|Q(last_name__icontains=q))[:20]
         results = []
         for usuario in usuarios:
             usuario_json = {}
@@ -15909,3 +15926,11 @@ def obtenerReferencias(personas):
             persona['estado_civil'] = estadoCivil
         else:
             persona['estado_civil'] = ""
+
+def buscar_usuario(request,id):
+    if request.is_ajax():
+        usuario = User.objects.get(id=id)
+        data = serializers.serialize("json", [usuario,])
+        return HttpResponse(data, mimetype='application/json')
+    else:
+        return HttpResponseBadRequest("El usuario no existe.")
