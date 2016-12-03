@@ -1014,23 +1014,89 @@ def user_edit(request):
     form    = UserCreateForm()
     return render_to_response("./user_edit.html",{'form':form},context_instance=RequestContext(request))
 
-
+@login_required
 def user_edit_destino(request,usuario):
     if request.is_ajax():
         usuario = User.objects.get(id=usuario).username
         form=""
         actuante = True
         try:
-            actuante    = Actuantes.objects.get(documento=usuario)
-            form        = ActuantesForm(instance=actuante)
+            actuantes   = Actuantes.objects.get(documento=usuario)
+            form        = ActuantesForm(instance=actuantes)
 
         except:
             profile = User.objects.get(username=usuario).get_profile()
             form    = UserProfileForm(instance=profile)
             actuante = False
         finally:
-            return render_to_response("./user_edit-destino.html",{'form':form,'actuante':actuante},context_instance=RequestContext(request))
+            return render_to_response("./user_edit-destino.html",{'form':form,'actuante':actuante,'usuario':usuario},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
+
+def user_edit_save_destino(request,usuario):
+    if request.is_ajax():
+        msg = ""
+        if request.method == 'POST':
+            funcion     = ""
+            unidad      = ""
+            dependencia = ""
+            actuante = False
+            esActuante=""
+            if request.POST['actuante'] == 'True':
+                funcion = request.POST['funcion']
+                unidad = request.POST['unidadreg_id']
+                dependencia = request.POST['dependencia_id']
+                jerarquia = request.POST['jerarquia_id']
+                try:
+                    actuante = Actuantes.objects.get(documento = usuario)
+                except:
+                    actuante = Actuantes()
+                    actuante.documento       = usuario
+                    actuante.apeynombres     = "%s, %s" % (User.objects.get(username=usuario).last_name,User.objects.get(username=usuario).first_name)
+                    actuante.persona_id      = Personas.objects.get(nro_doc=usuario)
+
+                actuante.funcion = funcion
+                actuante.unidadreg_id = UnidadesRegionales.objects.get(id=unidad)
+                actuante.dependencia_id = Dependencias.objects.get(id=dependencia)
+                actuante.jerarquia_id = RefJerarquias.objects.get(id=jerarquia)
+            else:
+                unidad = request.POST['ureg']
+                dependencia = request.POST['depe']
+            profile = User.objects.get(username = usuario).get_profile()
+            profile.depe = Dependencias.objects.get(id=dependencia)
+            profile.ureg = UnidadesRegionales.objects.get(id=unidad)
+            try:
+                if actuante:
+                    actuante.save()
+                profile.save()
+                return HttpResponse('<div class="col-md-12"><h2>Usuario modificado correctamente.</h2></div>')
+            except Exception as e:
+                 msg = '<div class="col-md-12"><h2>'+ e +'</h2></div>'
+    return HttpResponseBadRequest(msg)
+
+def user_edit_actuante(request,usuario):
+    msg=""
+    if request.is_ajax():
+        form = ActuantesForm()
+        grupos = User.objects.get(username = usuario).groups.filter(Q(name__icontains="policia")|Q(name__icontains="jefes"))
+        if grupos:
+            try:
+                actuante = Actuantes.objects.get(documento=usuario)
+                form = ActuantesForm(instance=actuante)
+            except:
+                data ={}
+                data['documento']       = usuario
+                data['apeynombres']     = "%s, %s" % (User.objects.get(username=usuario).last_name,User.objects.get(username=usuario).first_name)
+                data['persona_id']      = Personas.objects.get(nro_doc=usuario)
+                data['unidadreg_id']    = User.objects.get(username=usuario).get_profile().ureg
+                data['dependencia_id']  = User.objects.get(username=usuario).get_profile().depe
+                form = ActuantesForm(initial=data)
+                print form
+                return render_to_response("./user_edit-destino.html",{'form':form,'actuante':True,'usuario':usuario},context_instance=RequestContext(request))
+        else:
+            msg = "<h4> Verifique los roles asignados al usuario.</h4>"
+    return HttpResponseBadRequest(msg)
+
+
 
 @login_required
 @transaction.commit_on_success

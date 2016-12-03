@@ -1,23 +1,130 @@
-<hr>
-<div class="row">
-  <div class="col-md-1">
-    <label>Unidad Regional</label>
-  </div>
-  <div class="col-md-3">
+<div id="detalleSuccess">
+  <hr>
+  <form class="" id="formDestino" action="{% url 'user_edit_save_destino' usuario %}" method="post">{%csrf_token%}
+    <input type="hidden" name="actuante" id="actuante" value="{{actuante}}">
+    <div class="row">
+      <div class="col-md-1">
+        <label>Unidad Regional</label>
+      </div>
+      <div class="col-md-3">
+        {% if actuante %}
+          {{form.unidadreg_id}}
+        {% else %}
+          {{form.ureg}}
+        {% endif %}
+      </div>
+      <div class="col-md-1">
+        <label>Dependencia</label>
+      </div>
+      <div class="col-md-3">
+        {% if actuante %}
+          {{form.dependencia_id}}
+        {% else %}
+          {{form.depe}}
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="checkbox">
+
+					<label>
+						<input type="checkbox" {% if actuante %} checked {% endif %} id="esActuante" name="esActuante" /> <strong>es Actuante/Preventor?</strong>
+					</label>
+				</div>
+      </div>
+    </div>
+    <div id="error" style="display:none">
+
+    </div>
     {% if actuante %}
-      {{form.unidadreg_id}}
-    {% else %}
-      {{form.ureg}}
+    <div class="row">
+      <div class="col-md-1">
+        <label>Jerarqu&iacute;a</label>
+      </div>
+      <div class="col-md-3">
+        {{form.jerarquia_id}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1">
+        <label>Funci&oacute;n</label>
+      </div>
+      <div class="col-md-3">
+        {{form.funcion}}
+      </div>
+    </div>
     {% endif %}
-  </div>
-  <div class="col-md-1">
-    <label>Dependencia</label>
-  </div>
-  <div class="col-md-3">
-    {% if actuante %}
-      {{form.dependencia_id}}
-    {% else %}
-      {{form.depe}}
-    {% endif %}
-  </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <button type="submit" id="sbmtDestino" class="btn btn-primary btn-xs pull-right" data-loading-text="Trabajando en eso...">Guardar</button>
+      </div>
+    </div>
+  </form>
 </div>
+
+
+<script type="text/javascript">
+$("#sbmtDestino").click(function(event){
+  event.preventDefault();
+  $(this).button('loading');
+  var form = $("#formDestino");
+  $.ajax({
+    type:form.attr('method'),
+    url:form.attr('action'),
+    data:form.serialize(),
+    success:function(data){
+      $("#success").empty().append(data);
+    },
+    error:function(jqXHR, textStatus, msg){
+      alert(jqXHR.responseText);
+    }
+  });
+});
+$("#id_ureg, #id_depe,#id_unidadreg_id,#id_dependencia_id,#id_jerarquia_id").addClass("form-control")
+
+$('#id_ureg,#id_unidadreg_id').change(function(event){
+
+  if($('#id_ureg').length){
+    var idure= $('#id_ureg').val();
+  }else{
+    var idure= $('#id_unidadreg_id').val();
+  }
+  var toLoad;
+  toLoad= '/preventivos/ure/'+idure+'/';
+
+  $.get(toLoad, function(data){
+    var options = '<option value="">Seleccione dependencia</option>';
+    for (var i = 0; i < data.length; i++){
+      options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+    }
+    if($("#id_depe").length){
+      $('#id_depe').empty().html(options)
+      $("#id_depe option:first").attr('selected', 'selected');
+    }else{
+      $('#id_dependencia_id').empty().html(options)
+      $("#id_dependencia_id option:first").attr('selected', 'selected');
+    }
+
+  }, "json");
+});
+$("#esActuante").change(function(event){
+  if(!$("#esActuante:checked").length && $("#actuante").val() == 'True' ){
+      $("#id_jerarquia_id,#id_funcion_0,#id_funcion_1,#id_funcion_2").attr("disabled","disabled");
+  }else if($("#esActuante:checked").length && $("#actuante").val() == 'True' ){
+      $("#id_jerarquia_id,#id_funcion_0,#id_funcion_1,#id_funcion_2").removeAttr("disabled","disabled");
+  }else if($("#esActuante:checked").length && $("#actuante").val() == 'False' ){
+    var url = "/preventivos/user/edit/actuante/"+{{usuario}}+"/";
+    $.get(url,function(data){
+      
+    })
+    .done(function(data){
+      $("#success").empty().append(data);
+    })
+    .fail(function(jqXHR, textStatus, msg){
+      $("#mensajesBody").empty().append(jqXHR.responseText).parent().show();
+    })
+  }
+});
+</script>
