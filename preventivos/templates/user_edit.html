@@ -48,20 +48,33 @@
           <p id="email">
 
           </p>
+          <div id="modificarMail"  style="display:none">
+            <form class="" id="formMail" action="/preventivos/user/modificarMail/" method="post">{%csrf_token%}
+              <div class="col-md-9">
+                  <input type="text" class="form-control" name="mailChange" value="" id="mailChange">
+              </div>
+              <div class="col-md-3">
+                <button type="button" class="btn btn-xs btn-prymary"  id ="sbmtMail" name="button"><i class="glyphicon glyphicon-ok"></i></button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
       <div class="row" id="divBtnDestino">
         <div class="col-md-2">
-          <button type="button"  class="btn btn-xs btn-primary" id="btnDestino">Destino/Funcion</button>
+          <button type="button"  class="btn btn-xs btn-primary pull-left" id="btnDestino">Destino/Funcion</button>
         </div>
         <div class="col-md-2" id="divBtnReenvio">
-          <button type="button"  class="btn btn-xs btn-success" id="btnReenvio">Reenvio usuario</button>
+          <button type="button"  class="btn btn-xs btn-success" id="btnReenvio" data-loading-text="Trabajando en eso...">Reenvio usuario</button>
         </div>
         <div class="col-md-2" id="divBtnMail">
           <button type="button"  class="btn btn-xs btn-warning" id="btnMail">Moficar mail</button>
         </div>
         <div class="col-md-2" id="divBtnActivar">
-          <button type="button"  class="btn btn-xs btn-danger" id="btnActivar">Activar</button>
+          <button type="button"  class="btn btn-xs btn-danger" id="btnActivar" data-loading-text="Trabajando en eso...">Activar</button>
+        </div>
+        <div class="col-md-2">
+          <button type="button" name="btnRoles" id="btnRoles" class="btn btn-xs btn-default">Roles</button>
         </div>
       </div>
 
@@ -74,7 +87,70 @@
 
 
 <script type="text/javascript">
+  $("#btnRoles").click(function(event){
+    var usuario = $("#id_usuario").val();
+    var url = "/preventivos/user/roles/"+usuario+"/";
+    $.get(url,function(data){
+      $("#success").empty().append(data).show("slow");
+    });
+  });
+  $("#btnActivar").click(function(event){
+    $(this).button('loading');
+    var usuario = $("#id_usuario").val();
+    var url = "/preventivos/user/activar/"+usuario+"/";
+    $.get(url,function(data){
 
+    })
+    .done(function(data){
+      $("#success").empty().append(data).show();
+      $("#divBtnActivar").hide("slow");
+    })
+    .fail(function(){
+      $("#btnActivar").button('reset');
+    })
+  });
+  $("#btnReenvio").click(function(event){
+    $(this).button('loading');
+    var usuario = $("#id_usuario").val();
+    var url = "/preventivos/user/reenviar_mail/"+usuario+"/";
+    $.get(url,function(data){
+
+    })
+    .done(function(data){
+      $("#success").empty().append(data).show("slow");
+    })
+    .fail(function(){
+      $("#success").empty().append("<h4>No se pudo realizar la operacion</h4>").show("slow");
+
+    })
+    .always(function(){
+      $("#btnReenvio").button('reset');
+    })
+  });
+  $("#btnMail").click(function(event){
+    $("#sbmtMail").css("text-align","left")
+    $("#email").hide("slow");
+    $("#modificarMail").show("slow");
+  });
+  $("#sbmtMail").click(function(event){
+    var form = $("#formMail");
+    $.ajax({
+      type:form.attr('method'),
+      url:form.attr('action'),
+      data:form.serialize(),
+      success:function(data){
+        $("#success").empty().append(data).show();
+        var email = $("#mailChange").val();
+        $("#email").empty().append("<strong ><i class='glyphicon glyphicon-envelope'></i> Email:</strong>"+email);
+        $("#email").show("slow");
+        $("#modificarMail").hide("slow");
+      },
+      error:function(jqXHR, textStatus, msg){
+        $("#success").empty().append(jqXHR.responseText).show();
+
+      }
+    });
+  });
   $("#btnDestino").click(function(event){
     var usuario = $("#id_usuario").val();
     var url = "/preventivos/user/edit/destino/"+usuario+"/";
@@ -103,9 +179,12 @@
       })
       .done(function(data){
         var activo = data[0]["fields"]["is_active"];
-        $("#usuario").empty().append("<strong>Nombre y apellido: </strong> "+data[0]["fields"]["username"]);
-        $("#email").empty().append("<strong ><i class='glyphicon glyphicon-user'></i> Usuario:</strong>"+data[0]["fields"]["email"]);
-        $("#nombre").empty().append("<strong><i class='glyphicon glyphicon-envelope'></i> Email:</strong>"+data[0]["fields"]["last_name"]+', '+data[0]["fields"]["first_name"]);
+        $("#usuario").empty().append("<strong><i class='glyphicon glyphicon-user'></i> Usuario: </strong> "+data[0]["fields"]["username"]);
+        $("#email").empty().append("<strong ><i class='glyphicon glyphicon-envelope'></i> Email:</strong>"+data[0]["fields"]["email"]);
+        $("#nombre").empty().append("<strong>Nombre y apellido:</strong>"+data[0]["fields"]["last_name"]+', '+data[0]["fields"]["first_name"]);
+        $("#mailChange").val(data[0]["fields"]["email"]);
+        var action = "/preventivos/user/modificar_mail/"+data[0]["pk"]+"/";
+        $("#formMail").attr("action",action);
         if(!activo){
           $("#divBtnActivar").show();
         }else{

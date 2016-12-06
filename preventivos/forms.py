@@ -73,6 +73,7 @@ class GroupForm(forms.ModelForm):
 
 class UserForm(forms.ModelForm):
 
+	groups 	= forms.ModelMultipleChoiceField(widget = forms.SelectMultiple(),queryset = Group.objects.all())
 	class Meta:
 		model = User
 		exclude = ('password','last_login','is_superuser','date_joined')
@@ -85,9 +86,15 @@ class UserForm(forms.ModelForm):
 		self.fields["user_permissions"].widget = forms.SelectMultiple()
 		self.fields["user_permissions"].queryset = Permission.objects.filter(content_type__app_label__contains='preventivos')
 
-		self.fields["groups"].widget = forms.SelectMultiple()
-		self.fields["groups"].queryset = Group.objects.all()
+		#self.fields["groups"].widget = forms.SelectMultiple()
+		#self.fields["groups"].queryset = Group.objects.all()
 
+class UserGroupsForm(forms.ModelForm):
+
+	class Meta:
+		model = User
+		exclude = ('password','last_login','is_superuser','date_joined','user_permissions','username','first_name','last_name','last_login','email','is_active')
+		fields = ('groups','is_staff')
 
 class UserProfileForm(forms.ModelForm):
 

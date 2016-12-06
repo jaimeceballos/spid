@@ -1,0 +1,53 @@
+<div id="detalleSuccess">
+  <hr><hr>
+  <form class="" id="formRoles" action="/preventivos/user/roles_save/" method="post">{%csrf_token%}
+    <div class="row">
+      <div class="col-md-2">
+        <label>Roles</label>
+      </div>
+      <div class="col-md-6">
+        {{form.groups}}
+        <div class="alert alert-warning" role="alert">
+            {{form.groups.help_text}}
+        </div>
+
+        <input type="hidden" name="usuario" id="usuario" value="{{usuario.id}}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 checkbox">
+           <label>
+            {{form.is_staff}} <strong>es Administrador?</strong>
+          </label>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-8">
+        <button type="button" id="sbmtRoles" class="btn btn-primary btn-xs pull-right" data-loading-text="Trabajando en eso...">Guardar</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<script type="text/javascript">
+$("#id_groups").addClass("form-control");
+
+$("#sbmtRoles").click(function(event){
+  var usuario = $("#usuario").val();
+  var form = $("#formRoles");
+  $.ajax({
+    type:form.attr('method'),
+    url:form.attr('action'),
+    data:form.serialize(),
+    success:function(data){
+      $("#success").empty().append(data).show();
+    },
+    error:function(jqXHR, textStatus, msg){
+      $("#success").empty().append(jqXHR.responseText).show();
+
+    }
+  });
+});
+</script>

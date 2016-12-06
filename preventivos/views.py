@@ -1179,6 +1179,68 @@ def user_create_save(request):
 
     return HttpResponse('<div class="col-md-12"><h2>Usuario creado correctamente.</h2></div>')
 
+@login_required
+@permission_required('user.is_staff','administrador')
+def user_reenviar_mail(request,usuario):
+    if request.is_ajax():
+        enviar_correo_usuario(User.objects.get(id=usuario),"")
+        return HttpResponse('<h4>Se reenviaron los datos al usuario correctamente.</h4>')
+    return HttpResponseBadRequest()
+
+@login_required
+@permission_required('user.is_staff','administrador')
+def user_modificar_mail(request,usuario):
+    if request.is_ajax():
+        if request.method == 'POST':
+            mail = request.POST['mailChange']
+            user = ""
+            try:
+                user = User.objects.get(email=mail).id
+            except Exception as e:
+                user = usuario
+
+            if usuario != user:
+                return HttpResponseBadRequest("<h4>El correo ya esta siendo utilizado por otro usuario</h4>")
+            else:
+                usuario = User.objects.get(id=usuario)
+                usuario.email = mail
+                usuario.save()
+                return HttpResponse("<h4>Correo modificado correctamente.</h4>")
+    return HttpResponseBadRequest("<h4>No se puede realizar la operacion. Vuelva a intentarlo mas tarde</h4>")
+
+@login_required
+@permission_required('user.is_staff','administrador')
+def user_activar(request,usuario):
+    if request.is_ajax():
+        usuario = User.objects.get(id=usuario)
+        usuario.is_active = True
+        usuario.save()
+        return HttpResponse("<h4>Usuario Activado.</h4>")
+    return HttpResponseBadRequest("<h4>No se puede realizar la operacion. Vuelva a intentarlo mas tarde</h4>")
+
+@login_required
+@permission_required('user.is_staff','administrador')
+def user_roles(request,usuario):
+    if request.is_ajax():
+        usuario = User.objects.get(id = usuario)
+        form = UserGroupsForm(instance = usuario)
+        return render_to_response('./user_edit-roles.html',{'form':form,'usuario':usuario},context_instance=RequestContext(request))
+    return HttpResponseBadRequest()
+
+@login_required
+@permission_required('user.is_staff','administrador')
+def user_roles_save(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            form = UserGroupsForm(request.POST)
+            if form.is_valid():
+                usuario = User.objects.get(id=request.POST['usuario'])
+                usuario.is_staff = form.cleaned_data['is_staff']
+                usuario.save()
+                usuario.groups = form.cleaned_data['groups']
+                return HttpResponse('<h4>La operacion se realizo con exito.</h4>')
+    return HttpResponseBadRequest("<h4>No se puede realizar la operacion. Vuelva a intentarlo mas tarde</h4>")
+
 def enviar_correo_usuario(usuario,password):
     """Envia el correo de nuevo usuario, recibe
     el usuario y el password sin haber sido hasheado,
@@ -1186,7 +1248,7 @@ def enviar_correo_usuario(usuario,password):
 
     if password == "":
         password    = User.objects.make_random_password(length=10)
-        usuario.set_password(Password)
+        usuario.set_password(password)
         usuario.save()
     roles = []
     for rol in usuario.groups.all():
@@ -1200,7 +1262,8 @@ def enviar_correo_usuario(usuario,password):
 
     msg = EmailMultiAlternatives(subject,text_content,from_email, [to])
     msg.attach_alternative(text_content,'text/html')
-
+    profile.last_login = 1
+    profile.save()
     try:
          msg.send(fail_silently=False)
          return True
