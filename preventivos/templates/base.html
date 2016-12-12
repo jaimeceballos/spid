@@ -56,7 +56,7 @@
         //Funcion para generar el logout automatico despues de 15 minutos
         function timerIncrement() {
             idleTime = idleTime + 1;
-            if(idleTime > 1){
+            if(idleTime > 12){
                 $("#inactivo").empty().append(idleTime).parent().parent().show();
             }
 
