@@ -14,11 +14,13 @@
             var idleInterval = setInterval(timerIncrement, 60000); // 1 minut
 
             //Zero the idle timer on mouse movement.
-            $(this).mousemove(function (e) {
+            $(this).mouseup(function (e) {
                 idleTime = 0;
+                $("#inactivo").empty().parent().parent().hide();
             });
             $(this).keypress(function (e) {
                 idleTime = 0;
+                $("#inactivo").empty().parent().parent().hide();
             });
             //Demo code
             $('.password-container').pschecker({ onPasswordValidate: validatePassword, onPasswordMatch: matchPassword });
@@ -54,6 +56,10 @@
         //Funcion para generar el logout automatico despues de 15 minutos
         function timerIncrement() {
             idleTime = idleTime + 1;
+            if(idleTime > 1){
+                $("#inactivo").empty().append(idleTime).parent().parent().show();
+            }
+
             if (idleTime > 14) { // 14 minutes
               setTimeout(function(){//provoco un retraso de 1 segundo para esperar el auto logout de django
                 window.location.reload(); //Recargo la pantalla para generar el logout
@@ -64,6 +70,7 @@
     </script>
 </head>
 <body oncontextmenu="return false" oncopy="return false" oncut="return false" onpaste="return false">
+
   {% if 'si' in changePass %}
         {% include "validator.html"%}
 
@@ -106,8 +113,15 @@
 <!-- header area -->
             {% include "menuver.html"%}
 
-
-
+<div class="row">
+  <div class="col-md-12">
+    <div class="alert alert-warning" role="alert" id="alertaInactividad" style="display:none">
+      <h4>
+        <strong>Atenci&oacute;n!</strong> Su sesi&oacute;n registra <label id="inactivo" class="label label-danger"></label> minutos de inactividad. <small>M&aacute;ximo permitido 15 minutos.</small>
+      </h4>
+    </div>
+  </div>
+</div>
 <!-- main content area -->
 <div class="wrapper" id="main">
 <!-- content area -->
