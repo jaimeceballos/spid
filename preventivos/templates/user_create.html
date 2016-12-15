@@ -172,15 +172,46 @@
       })
       .done(function(data){
         $("#mensajes").empty();
-        $("#id_nombre").val(data[0]["nombre"]);
-        $("#id_apellido").val(data[0]["apellido"]);
-        $("#id_fecha_nacimiento").val(data[0]["fecha_nacimiento"].substring(8,10)+'/'+data[0]["fecha_nacimiento"].substring(5,7)+'/'+data[0]["fecha_nacimiento"].substring(0,4));
-        $("#id_ciudad_nacimiento").val(data[0]["ciudad_nacimiento"]);
-        $("#id_ciudad_nacimiento_id").val(data[0]["ciudad_nacimiento_id"]);
-        $("#id_ciudad_residencia").val(data[0]["ciudad_residencia"]);
-        $("#id_ciudad_residencia_id").val(data[0]["ciudad_residencia_id"]);
-        $("#id_sexo").val(data[0]["sexo"]);
-        $("#id_estados_civiles option[value ="+ data[0]['estado_civil']+"]").attr("selected",true);
+        if(data[0]["nombre"]){
+          $("#id_nombre").val(data[0]["nombre"]);
+        }else{
+          $("#id_nombre").val("");
+        }
+        if(data[0]["apellido"]){
+          $("#id_apellido").val(data[0]["apellido"]);
+        }else{
+          $("#id_apellido").val("");
+        }
+        if(data[0]["fecha_nacimiento"]){
+          $("#id_fecha_nacimiento").val(data[0]["fecha_nacimiento"].substring(8,10)+'/'+data[0]["fecha_nacimiento"].substring(5,7)+'/'+data[0]["fecha_nacimiento"].substring(0,4));
+        }else{
+          $("#id_fecha_nacimiento").val("");
+        }
+        if(data[0]["ciudad_nacimiento"]){
+          $("#id_ciudad_nacimiento").val(data[0]["ciudad_nacimiento"]);
+          $("#id_ciudad_nacimiento_id").val(data[0]["ciudad_nacimiento_id"]);
+        }else{
+          $("#id_ciudad_nacimiento").val("");
+          $("#id_ciudad_nacimiento_id").val("");
+        }
+        if(data[0]["ciudad_residencia"]){
+          $("#id_ciudad_residencia").val(data[0]["ciudad_residencia"]);
+          $("#id_ciudad_residencia_id").val(data[0]["ciudad_residencia_id"]);
+        }else{
+          $("#id_ciudad_residencia").val("");
+          $("#id_ciudad_residencia_id").val("");
+        }
+        if(data[0]["sexo"]){
+          $("#id_sexo").val(data[0]["sexo"]);
+        }else{
+          $("#id_sexo").val("");
+        }
+        if(data[0]['estado_civil']){
+          $("#id_estados_civiles option[value ="+ data[0]['estado_civil']+"]").attr("selected",true);
+        }else{
+          $("#id_estados_civiles option[value ='']").attr("selected",true);
+        }
+
         $("#verificar").button('reset');
       })
       .fail(function(jqXHR, textStatus, msg){
