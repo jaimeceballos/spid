@@ -30,7 +30,7 @@ class FotosPersona(models.Model):
 class Identificacion(models.Model):
     persona                     = models.ForeignKey(Personas)
     fecha_identificacion        = models.DateField()
-    prontuario                  = models.CharField(max_length=7)
+    prontuario_local            = models.CharField(max_length=7)
     dependencia_identificacion  = models.ForeignKey(Dependencias)
     ocupacion_especifica        = models.ForeignKey(RefOcupacionEspecifica)
     altura                      = models.IntegerField()
@@ -46,3 +46,12 @@ class Identificacion(models.Model):
 
     class Meta:
         db_table = 'identificacion'
+
+
+class Prontuario(models.Model):
+    nro                 = models.CharField(max_length=7)
+    persona             = models.OneToOneField(Personas)
+    identificaciones    = models.ManyToManyField(Identificacion)
+    
+    class Meta:
+        db_table = 'prontuario'
