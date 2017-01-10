@@ -113,7 +113,7 @@
         Motivo :<strong> {{idmodo}}</strong>
         &nbsp;&nbsp;Fecha y Hora Inicio : <strong  style="font-size:12px;">{{fecha_desde|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong>
         &nbsp;&nbsp;Fecha y Hora Final : <strong  style="font-size:12px;vertical-align: middle; ">{{fecha_hasta|date:"SHORT_DATETIME_FORMAT"}} Hs.</strong> </p>
-        
+
       <p  style="font-size:12px;">
        Delito/s Cometido/s :
                {% for y in delito %}
@@ -260,7 +260,9 @@
 
           </div>
         {% else %}
-          <strong style="color:red;">Prev. Autorizado el : {{fecha_autorizacion|date:"d/m/y H:i:s"}} Hrs.</strong>
+          {% if fecha_autorizacion %}
+            <strong style="color:red;">Prev. Autorizado el : {{fecha_autorizacion|date:"d/m/y H:i:s"}} Hrs.</strong>
+          {% endif %}
           {% if preventivo.fecha_envio %}
               <p>
                 <strong style="color:red;">Prev. Enviado el : {{preventivo.fecha_envio|date:"d/m/y"}}</strong>
