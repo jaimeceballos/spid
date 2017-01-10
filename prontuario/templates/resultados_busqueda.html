@@ -1,0 +1,77 @@
+<div class="container well col-md-6" id="resultados">
+  <h4><u>Resultados de la busqueda</u>
+    <small>
+      <a href="#" class="btn btn-primary btn-xs" id="ocultar"> Ocultar formulario busqueda </a>
+      <a href="#" class="btn btn-success btn-xs" style="display:none" id="mostrar"> Mostrar formulario busqueda </a>
+    </small></h4>
+
+    <div class="row">
+      <table class="table table-hover table-condensed table-bordered" id="tblResult">
+        <thead>
+          <th>
+            Nombre
+          </th>
+          <th>
+            DNI
+          </th>
+          <th>
+            Ciudad Nac
+          </th>
+          <th>
+            Pais
+          </th>
+          <th>
+            F.Nac.
+          </th>
+          <th>
+            Ciudad Res
+          </th>
+          <th>
+            Prontuario
+          </th>
+        </thead>
+        <tbody style="height:50%;overflow-y:auto;">
+            {% for resultado in resultados %}
+              {% include 'detalle_resultado.html' with detalle=resultado %}
+            {% endfor %}
+        </tbody>
+      </table>
+
+
+    </div>
+
+</div>
+<script type="text/javascript">
+
+  $("#tblResult").dataTable({
+    "language": {
+            "lengthMenu": "Mostrar _MENU_ filas por pagina",
+            "zeroRecords": "No hay resultados",
+            "info": "Pagina _PAGE_ de _PAGES_",
+            "infoEmpty": "No hay resultados",
+            "infoFiltered": "(filtered from _MAX_ total records)",
+            "paginate": {
+              "previous": "Anterior",
+              "next":"Siguiente"
+            }
+
+        },
+    "bFilter": false
+  });
+  $("#ocultar").click(function(event){
+    event.preventDefault();
+    $("#busqueda").toggle("slide");
+    $(this).toggle();
+    $("#mostrar").toggle();
+    $("#resultados").removeClass("col-md-6").addClass("col-md-12");
+
+  });
+  $("#mostrar").click(function(event){
+    event.preventDefault();
+    $("#busqueda").toggle("slide");
+    $(this).toggle();
+    $("#ocultar").toggle();
+    $("#resultados").removeClass("col-md-12").addClass("col-md-6");
+
+  });
+</script>

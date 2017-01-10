@@ -1,0 +1,21 @@
+header{
+		position: absolute;
+        width: 100%;
+        top:0;
+        background-color:#E5BC7A;
+        height:6%;
+}
+main{
+		position: absolute;
+        top:8%;
+        height:75%;
+        width:100%;
+
+}
+
+footer{
+		position: fixed;
+        height:6%;
+        width:100%;
+        bottom: 0;
+}

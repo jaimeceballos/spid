@@ -1,0 +1,121 @@
+<div class="container well col-md-6" id="busqueda">
+  <div class="alert alert-info" role="alert">
+    <center><h5> <i class="glyphicon glyphicon-info-sign"></i> Realice una busqueda previa de la persona que va a identificar.</h5></center>
+  </div>
+  <form id="search" action="{% url 'search_persona' %}" method="post">{% csrf_token %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        {{form.apellido}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        {{form.nombre}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        {{form.fecha_nacimiento}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        {{form.ciudad_nacimiento}}
+        {{form.ciudad_nacimiento_id}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        {{form.pais_nacimiento}}
+        {{form.pais_nacimiento_id}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        {{form.documento}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        {{form.alias}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <button type="submit" class="btn btn-block btn-lg btn-info" id="btnSearch"> <i class="glyphicon glyphicon-search"></i> Buscar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+
+      </div>
+
+    </div>
+  </form>
+</div>
+<script src="{{STATIC_URL}}/prontuario/js/bootstrap-datepicker.min.js"></script>
+<script src="{{STATIC_URL}}/prontuario/js/bootstrap-datepicker.es.min.js"></script>
+<script type="text/javascript">
+
+$("#id_ciudad_nacimiento").autocomplete({
+  source: "/preventivos/ciudades_ajax/",
+  minLength: 2,
+  select:function (event,ui) {
+    $("#id_ciudad_nacimiento_id").val(ui.item.id);
+    if($("#id_pais_nacimiento_id").val()==""){
+      $("#id_pais_nacimiento_id").val(ui.item.pais_id);
+      $("#id_pais_nacimiento").val(ui.item.pais);
+    }
+  }
+});
+$("#id_pais_nacimiento").autocomplete({
+  source: "/preventivos/paises_ajax/",
+  minLength: 2,
+  select:function (event,ui) {
+    $("#id_pais_nacimiento").val(ui.item.id);
+  }
+});
+$('#id_fecha_nacimiento').datepicker({
+  format: "dd/mm/yyyy",
+  weekStart: 0,
+  language: "es",
+  daysOfWeekHighlighted: "0",
+  endDate: '-18y'
+});
+$("#btnSearch").click(function(event){
+  event.preventDefault();
+  $(this).prop('disabled', true);
+  $("#loading").show();
+
+  var form = $("#search");
+  if(validar()){
+    $('input[type=text]').parent().removeClass('has-error');
+    $.ajax({
+      type:form.attr('method'),
+      url:form.attr('action'),
+      data:form.serialize(),
+      success: function(data){
+        $("#btnSearch").prop('disabled', false);
+        $("#loading").hide();
+        $("#contenido").append(data);
+      },
+      error:function(jqXHR, textStatus, msg){
+        $("#btnSearch").prop('disabled', false);
+        $("#loading").hide();
+
+      }
+    });
+
+  }else{
+    $('input[type=text]').parent().addClass('has-error');
+
+  }
+
+});
+
+function validar(){
+  if($("#id_apellido").val()=="" && $("#id_nombre").val() == "" && $("#id_fecha_nacimiento").val()=="" && $("#id_ciudad_nacimiento_id").val()=="" && $("#id_pais_nacimiento_id").val()=="" && $("#id_alias").val()==""  && $("#id_documento").val() =="" ){
+      return false;
+  }
+  return true;
+
+}
+
+
+</script>

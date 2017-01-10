@@ -137,6 +137,7 @@
                             {% if user.is_authenticated and user.is_staff %}
                                 <li class='has-sub'><a href='#'><span>Bases de Datos</span></a>
                                      <ul>
+                                          <li> <a href="{% url 'prontuario' %}">Prontuario</a> </li>
                                            <li><a href='/preventivos/persona/'><span>Personas</span></a></li>
                                           <li><a href='/preventivos/user/'><span>Usuarios</span></a></li>
                                          <!-- <li><a href='/preventivos/groupusers/'><span>Grupos de Usuarios</span></a></li>-->

@@ -1,6 +1,6 @@
  #!/usr/bin/python
  # -*- coding: iso-8859-15 -*-
- #branch webservice
+
 import re
 from preventivos.models import *
 from preventivos.forms import *
@@ -8,7 +8,6 @@ from django.core import serializers
 from django.contrib.auth.models import Group,Permission,User
 from django.contrib.admin.models import LogEntry
 from django.core.context_processors import csrf
-from django.template import RequestContext
 import smtplib
 import httplib,urllib,httplib2
 import urllib2
@@ -21,7 +20,6 @@ from httplib2 import Http
 from urllib import urlencode
 from base64 import b64encode
 import base64
-#import pycurl
 import dict2xml
 import html2text
 from django.http import QueryDict
@@ -31,18 +29,12 @@ from django.template.loader import get_template,render_to_string
 from openpyxl import Workbook
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.utils.encoding import smart_str, smart_unicode
-#import ho.pisa as pisa
-#import cStringIO as StringIO
-#import cgi
-#import logging
-#logging.basicConfig()
 import locale
 locale.setlocale(locale.LC_ALL, ('es_AR', 'utf8'))
 from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response,get_object_or_404
 from django.contrib.auth import authenticate, login,logout
 from django.contrib import auth
-#from reportlab.pdfgen import canvas
 from datetime import date,timedelta
 import datetime
 from time import strptime
@@ -69,7 +61,6 @@ from django.contrib.formtools.wizard.views import SessionWizardView
 from django.template import Context, loader
 from haystack.query import SearchQuerySet
 from django.db.models import Q
-#from reportlab.pdfgen import canvas
 from django.utils.translation import ugettext
 from wkhtmltopdf.views import PDFResponse, PDFTemplateView, PDFTemplateResponse
 from django.forms.util import ErrorList
@@ -1173,8 +1164,8 @@ def gruposperm(request):
              if filtrado:
                     formnew=UserForm(instance=filtrado[0])
         else:
-                formnew=UserForm()
 
+                formnew=UserForm()
 
 
 
@@ -1223,7 +1214,7 @@ def gruposperm(request):
 
 
 
-
+        print form
         return render_to_response('./gruposper.html', {'grupos':grupos,'listapg':listapg,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
 
 """
@@ -14640,7 +14631,28 @@ def ciudades_ajax(request):
             else:
                 ciudad_json['label'] = ciudad.descripcion +' - '+ ciudad.pais.descripcion
             ciudad_json['value'] = ciudad.descripcion
+            ciudad_json['pais']  = ciudad.pais.descripcion
+            ciudad_json['pais_id']  = ciudad.pais.id
             results.append(ciudad_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data,mimetype)
+
+@login_required
+def paises_ajax(request):
+    if request.is_ajax():
+        q = request.GET.get('term','')
+
+        paises = RefPaises.objects.filter(descripcion__icontains = q)[:20]
+        results = []
+        for pais in paises:
+            pais_json = {}
+            pais_json['id'] = pais.id
+            pais_json['label'] = pais.descripcion
+            pais_json['value'] = pais.descripcion
+            results.append(pais_json)
         data = json.dumps(results)
     else:
         data = 'fail'

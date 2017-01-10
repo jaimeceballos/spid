@@ -8,7 +8,7 @@ from repar import views
 from repar.forms import *
 from preventivos.forms import *
 from django.conf import settings
-
+from django.conf.urls import include, url
 
 handler404 = 'preventivos.views.page_not_found'
 handler500 = 'preventivos.views.server_error'
@@ -34,6 +34,7 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     (r'^admin/config/', include(admin.site.urls)),
     (r'^preventivos/', include('preventivos.urls')),
     url(r'^NIF/',include('NIF.urls')),
+    url(r'^prontuario/',include('prontuario.urls')),
     (r'^repar/', include('repar.urls')),
     (r'^','preventivos.views.page_not_found'),
 

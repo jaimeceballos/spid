@@ -66,7 +66,7 @@ class GroupForm(forms.ModelForm):
 
 
 		self.fields["permissions"].widget = forms.SelectMultiple()
-		self.fields["permissions"].queryset = Permission.objects.filter(content_type__app_label__contains='preventivos')
+		self.fields["permissions"].queryset = Permission.objects.filter(Q(content_type__app_label__contains='preventivos')|Q(content_type__app_label__contains='prontuario'))
 
 
 

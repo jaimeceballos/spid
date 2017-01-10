@@ -150,7 +150,7 @@ def login_user(request):
 
 
                 gr=user.groups.values_list('name', flat=True)                   #obtiene los grupos que tiene asignado el usuario
-
+                print gr
                 #para cada grupo
                 for varios in gr:
                     state.append(str(Group.objects.get(name=varios)))           #agrega el grupo a la variable de estado
@@ -190,6 +190,8 @@ def login_user(request):
                           autorizados = preventivos.count()                     #obtiene la cantidad de preventivos autorizados para enviar
 
                   #Renderiza el template index1 logueo correcto, con todas las variables de entorno inicializadas
+                  if 'prontuario' in gr:
+                      return HttpResponseRedirect('/prontuario/')
                   return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
 
                 #si el usuario intenta loguearse en una dependencia que no corresponde a su destino actual
@@ -375,7 +377,7 @@ def nologin(request):
         state = "SE DESCONECTO DEL SISTEMA"
     form = DependenciasForm()
     formd = []
-    return render(request, 'index.html', {'formd':formd,'state':state,'form':form})
+    return HttpResponseRedirect('/spid/')
 
 
 
