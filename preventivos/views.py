@@ -720,6 +720,7 @@ def obtener_datosfirst(request,idprev):
 
 def nologin(request):
         logout(request)
+        print 'logout preventivo'
         try:
                 del request.session['state']
                 del request.session['destino']
@@ -14612,7 +14613,6 @@ def verificar_persona(request,dni):
                 return HttpResponse(data,mimetype)
 
             except Exception as e:
-                print e
                 msg = 'La busqueda no arrojó ninugn resultado, deberá cargar los datos manualmente'
                 return HttpResponseBadRequest(msg)
 

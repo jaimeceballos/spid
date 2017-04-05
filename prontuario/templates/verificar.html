@@ -1,0 +1,81 @@
+<div class="well">
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Listado de Identificaciones cargadas para verificar.</h3>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-md-12">
+        <table class="table-hover table-condensed table-bordered" id="">
+          <thead>
+            <th>
+              Nombre
+            </th>
+            <th>
+              DNI
+            </th>
+            <th>
+              Lugar identificacion
+            </th>
+            <th>
+              Identificador
+            </th>
+            <th>
+              Fecha
+            </th>
+            <th>
+
+            </th>
+          </thead>
+          <tbody>
+            {% for registro in verificar %}
+            <tr>
+              <td>
+                {{registro.persona.apellidos}}, {{registro.persona.nombres}}
+              </td>
+              <td>
+                {{registro.persona.nro_doc}}
+              </td>
+              <td>
+                {{registro.identificacion.dependencia_identificacion}}
+              </td>
+              <td>
+                {{registro.usuario.last_name}}, {{registro.usuario.first_name}}
+              </td>
+              <td>
+                {{registro.fecha}}
+              </td>
+              <td>
+                <a href="javascript:ver({{registro.id}})">ver</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>
+<script type="text/javascript">
+
+function ver(id){
+  var url ="/prontuario/datos_verificar/"+id+"/";
+  $.get(url,function(data){
+    $("#contenido").empty().append(data);
+  });
+}
+$("#tblResult").dataTable({
+  "language": {
+          "lengthMenu": "Mostrar _MENU_ filas por pagina",
+          "zeroRecords": "No hay resultados",
+          "info": "Pagina _PAGE_ de _PAGES_",
+          "infoEmpty": "No hay resultados",
+          "infoFiltered": "(filtered from _MAX_ total records)",
+          "paginate": {
+            "previous": "Anterior",
+            "next":"Siguiente"
+          }
+
+      },
+  "bFilter": false
+});
+</script>

@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col-md-12">
+    {% if fotos.count > 0 %}
+    <div class="carousel slide" id="fotos-{{id}}">
+      <ol class="carousel-indicators">
+        {% for foto in fotos %}
+        {% if forloop.first %}
+        <li class="active" data-slide-to="{{forloop.counter}}" data-target="#fotos-{{id}}">
+        </li>
+        {% else %}
+        <li data-slide-to="{{forloop.counter}}" data-target="#fotos-{{id}}">
+        </li>
+        {% endif %}
+        {% endfor %}
+      </ol>
+      <div class="carousel-inner">
+        {% for foto in fotos %}
+        {% if forloop.first %}
+        <div class="item active">
+          <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="/media/{{foto.foto}}" height="100%" style="max-height:400px; min-height:400px" /></center>
+          <div class="carousel-caption">
+            <h4>
+
+            </h4>
+
+          </div>
+        </div>
+        {% else %}
+        <div class="item">
+          <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="/media/{{foto.foto}}" height="100%" style="max-height:400px" /></center> 
+          <div class="carousel-caption">
+            <h4>
+
+            </h4>
+            <p>
+
+            </p>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div> <a class="left carousel-control" href="#fotos-{{id}}" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control" href="#fotos-{{id}}" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </div>
+    {% endif %}
+  </div>
+
+</div>

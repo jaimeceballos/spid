@@ -1,0 +1,38 @@
+<div class="row">
+  <div class="col-md-12">
+    <table id="procesales_list" class="table table-bordered table-condensed">
+      <thead>
+        <th>
+          Documento
+        </th>
+        <th>
+          Nombre
+        </th>
+        <th>
+          Prontuario
+        </th>
+        <th>
+
+        </th>
+      </thead>
+      <tbody>
+          {% for elemento in resultado %}
+          <tr>
+            <td>
+              {{elemento.dni}}
+            </td>
+            <td>
+              {{elemento.n_c}}
+            </td>
+            <td>
+              {{elemento.n_p}} {{elemento.tipo_p}}
+            </td>
+            <td>
+              <a href="javascript:utilizarProntuario({{id}},{{elemento.n_p}})" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-copy"></i> Copiar Numero Prontuario</a>
+            </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,269 @@
+<div class="well">
+  <div class="row">
+      <div class="col-md-6" style="border-right: 1px solid #eee;">
+        <div class="row">
+          <div class="col-md-12">
+            <label for="">Nombre</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            {{persona.apellidos}}, {{persona.nombres}}
+          </div>
+        </div><hr>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="">Documento</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            {{persona.nro_doc}}
+          </div>
+        </div><hr>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="">Fecha Nacimiento</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            {{persona.fecha_nac}}
+          </div>
+        </div><hr>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="">Ocupaci&oacute;n</label>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+              {{persona.ocupacion}} - {{identificacion.ocupacion_especifica}}
+            </div>
+        </div><hr>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="">Lugar de nacimiento</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            {{persona.ciudad_nac.descripcion}} - {{persona.ciudad_nac.pais.descripcion}}
+          </div>
+        </div><hr>
+        {% if domicilios%}
+        <div class="row">
+          <div class="col-md-12">
+            <label for="">Domicilio</label>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                  {% if domicilios.calle %}
+                  {{domicilios.calle.descripcion}}
+                  {% endif %}
+                  {% if domicilios.altura %}
+                     {{domicilios.altura}}
+                  {% endif %}
+                  {% if domicilios.calle and domicilio.entre %}
+                   y {{domicilios.entre.descripcion}}
+                  {% endif %}
+                  {% if domicilios.barrio_codigo %}
+                    {{domicilios.barrio_codigo.descripcion}}
+                  {% endif %}
+                </p>
+            </div>
+        </div><hr>
+
+        {% endif %}
+        {% if padres %}
+        <div class="row">
+          <div class="col-md-12">
+            <label for="">Nombre de los padres</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <p>
+              Hijo de: {{padres.padre_apellidos}}, {{padres.padre_nombres}} y de {{padres.madre_apellidos}}, {{padres.madre_nombres}}.
+            </p>
+          </div>
+        </div><hr>
+        {% endif %}
+      </div>
+      <div class="col-md-6 bg-info">
+        <div class="row" style="display:none" id="blckProntuario">
+          <div class="col-md-3">
+            Prontuario N°
+          </div>
+          <div class="col-md-9">
+            <label for="" id="nroProntuario"></label>
+          </div>
+        </div>
+        <div class="row">
+          {% if fotos.count > 0%}
+          <div class="carousel slide" id="fotos-{{id}}">
+            <ol class="carousel-indicators">
+              {% for foto in fotos %}
+              {% if forloop.first %}
+              <li class="active" data-slide-to="{{forloop.counter}}" data-target="#fotos-{{id}}">
+              </li>
+              {% else %}
+              <li data-slide-to="{{forloop.counter}}" data-target="#fotos-{{id}}">
+              </li>
+              {% endif %}
+              {% endfor %}
+            </ol>
+            <div class="carousel-inner">
+              {% for foto in fotos %}
+              {% if forloop.first %}
+              <div class="item active">
+                <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" height="240" width="320" /></center>
+                <div class="carousel-caption">
+                  <h4>
+
+                  </h4>
+
+                </div>
+              </div>
+              {% else %}
+              <div class="item">
+                <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" height="240 " width="320" /></center>
+                <div class="carousel-caption">
+                  <h4>
+
+                  </h4>
+                  <p>
+
+                  </p>
+                </div>
+              </div>
+              {% endif %}
+              {% endfor %}
+            </div> <a class="left carousel-control" href="#fotos-{{id}}" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control" href="#fotos-{{id}}" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+          </div>
+          {% else %}
+            <p>
+              No se encontro imagen de la persona.
+            </p>
+          {% endif %}
+        </div>
+
+        <div class="row">
+          <div class="col-md-2">
+            <label for="" class="pull-right">N&uacute;mero de prontuario: </label>
+          </div>
+          <div class="col-md-10">
+            <div class="row">
+              <div class="col-md-4">
+                <a href="javascript:buscar({{persona.id}})" class="btn btn-xs btn-primary" id="buscar-pront">Buscar en los sistemas <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></a>
+              </div>
+              <form id="save-form" action="{% url 'vincular' identificacion.id %}" method="post" style="display:none">{% csrf_token %}
+                <div class="col-md-4">
+                  {{form.nro}}
+                </div>
+                <div class="col-md-3">
+
+                  <button type="submit" class="btn btn-xs btn-success pull-right" id="save"> <i class="glyphicon glyphicon-link"></i> Vincular <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+</div>
+<script type="text/javascript">
+  $('input[type=text]').addClass('form-control');
+  $("#id_nro").attr("disabled",true);
+  function buscar(persona){
+    $("#buscar-pront").attr('disabled',true);
+    $("#loading").show();
+    var url = "/prontuario/verificar_existe/"+persona+"/";
+    $.get(url,function(data){
+      $("#id_nro").val(data);
+
+    })
+    .fail(function(jqXHR, textStatus, msg){
+      $( "#dialog-confirm" ).dialog({
+        closeOnEscape: false,
+        open: function(event, ui) {
+            $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+        },
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+          }
+        }
+      }).empty().append("<center><p>No se encontró numero de prontuario para la persona, deberá ingresarlo manualmente.</p><p>Por favor verifique que la persona corresponda al prontuario que esta generando.</p></center>");
+    })
+    .always(function(){
+      $("#id_nro").attr('disabled',false);
+      $("#buscar-pront").attr('disabled',false);
+      $("#loading").hide();
+      $("#buscar-pront").hide();
+      $("#save-form").show();
+    })
+  }
+  $("#save-form").submit(function(event){
+    event.preventDefault();
+    $("#save").prop('disabled',true);
+    $("#loading").show();
+    var form = $("#save-form");
+    $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: form.serialize(),
+      success: function(data){
+        $("#save").prop('disabled', false);
+        $("#loading").hide();
+        $("#dialog").empty().dialog("close");
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $("#nroProntuario").append($("#id_nro").val());
+              $("#save-form").parent().parent().parent().hide();
+              $("#blckProntuario").show();
+              $( this ).dialog( "close" );
+
+            }
+          }
+        }).empty().append("<center><p>Datos guardados correctamente.</p></center>");
+      },
+      error: function(jqXHR, textStatus,msg){
+        $("#save").prop('disabled', false);
+        $("#loading").hide();
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+            }
+          }
+        }).empty().append("<center><p>No se pudo guardar. Verifique los datos ingresados, haga una nueva verificacion de la persona a cargar y vuelva a intentarlo. Si el error persiste, pongase en contacto con la División Desarrollo.</p></center>");
+      }
+    });
+  })
+</script>

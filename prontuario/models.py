@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
 from django.forms import ModelForm
@@ -7,21 +8,27 @@ from django.db.models import signals
 import random,datetime,time
 from django.core.validators import MinValueValidator,MaxValueValidator
 from preventivos.models import *
+from preventivos.models import RefCiudades,RefPaises
 # Create your models here.
 
 def upload_name(instance, filename):
-    return '{}/{}/{}'.format(prontuarios, instance.persona.documento, filename)
+    return '{}/{}'.format(instance.persona.nro_doc, filename)
 
 class RefOcupacionEspecifica(models.Model):
     descripcion = models.CharField(max_length=50,unique=True)
+
+    def __unicode__(self):
+	  return  u'%s' % (self.descripcion)
+	  self.descripcion = self.descripcion.upper()
 
     class Meta:
         db_table = 'ref_ocupacion_especifica'
 
 class FotosPersona(models.Model):
-    persona        = models.ForeignKey(Personas)
+    persona        = models.ForeignKey(Personas,related_name='fotos_persona')
     tipo_foto      = models.CharField(max_length=25)
     foto           = models.ImageField(upload_to=upload_name)
+    fecha          = models.DateField(auto_now=True)
 
     class Meta:
         db_table = 'fotos_persona'
@@ -29,11 +36,19 @@ class FotosPersona(models.Model):
 class RefContextura(models.Model):
     descripcion     = models.CharField(max_length = 25, unique=True)
 
+    def __unicode__(self):
+	  return  u'%s' % (self.descripcion)
+	  self.descripcion = self.descripcion.upper()
+
     class Meta:
         db_table = 'ref_contextura'
 
 class RefTipoCabello(models.Model):
     descripcion     = models.CharField(max_length=50, unique=True)
+
+    def __unicode__(self):
+	  return  u'%s' % (self.descripcion)
+	  self.descripcion = self.descripcion.upper()
 
     class Meta:
         db_table = 'ref_tipo_cabello'
@@ -44,16 +59,17 @@ class Identificacion(models.Model):
     prontuario_local            = models.CharField(max_length=7)
     dependencia_identificacion  = models.ForeignKey(Dependencias)
     ocupacion_especifica        = models.ForeignKey(RefOcupacionEspecifica)
-    altura                      = models.IntegerField()
+    altura_metros               = models.IntegerField()
+    altura_centimetros          = models.IntegerField()
     contextura                  = models.ForeignKey(RefContextura)
     cutis                       = models.CharField(max_length=25)
     cabello_tipo                = models.ForeignKey(RefTipoCabello)
     cabello_color               = models.CharField(max_length=25)
-    es_tenido                   = models.BooleanField()
-    posee_tatuajes              = models.BooleanField()
-    posee_cicatrices            = models.BooleanField()
+    es_tenido                   = models.BooleanField(default=False)
+    posee_tatuajes              = models.BooleanField(default=False)
+    posee_cicatrices            = models.BooleanField(default=False)
     observaciones               = models.CharField(max_length=250)
-    fotos                       = models.ManyToManyField('FotosPersona',related_name='fotos',blank=True,null=True)
+
 
     class Meta:
         db_table = 'identificacion'
@@ -62,7 +78,8 @@ class Identificacion(models.Model):
 class Prontuario(models.Model):
     nro                 = models.CharField(max_length=7,unique=True)
     persona             = models.OneToOneField(Personas)
-    identificaciones    = models.ManyToManyField(Identificacion)
+    identificaciones    = models.ManyToManyField(Identificacion,null=True)
+    fotos               = models.ManyToManyField('FotosPersona',related_name='fotos',blank=True,null=True)
 
     class Meta:
         db_table = 'prontuario'
@@ -212,10 +229,19 @@ class RefTipoDocumentoRh(models.Model):
         db_table = 'ref_tipo_documento'
 
 
+class SearchHistory(models.Model):
+    busqueda        = models.CharField(max_length=300,null=True,blank=True)
+    usuario         = models.ForeignKey(User)
+    class Meta:
+        db_table = 'historial_busqueda'
+
 class SearchResults(models.Model):
     id_busqueda             = models.IntegerField()
-    base                    = models.CharField(max_length=10)
-    id_original             = models.IntegerField(null=True, blank=True)
+    id_spid                 = models.IntegerField(null=True, blank=True)
+    id_rrhh                 = models.IntegerField(null=True, blank=True)
+    id_acei                 = models.IntegerField(null=True, blank=True)
+    id_prontuario           = models.IntegerField(null=True, blank=True)
+    es_policia              = models.BooleanField(default=False)
     apellido_nombre         = models.CharField(max_length = 150, null=True, blank=True)
     documento               = models.CharField(max_length = 20, null=True, blank=True)
     ciudad_nacimiento       = models.CharField(max_length = 50, null=True, blank=True)
@@ -226,9 +252,23 @@ class SearchResults(models.Model):
     pais_nacimiento_id      = models.IntegerField(null=True, blank=True)
     fecha_nacimiento        = models.CharField(max_length=12,null=True, blank=True)
     alias                   = models.CharField(max_length = 50, null=True, blank=True)
-    prontuario              = models.CharField(max_length = 30, null=True,blank=True)
+    prontuario_acei         = models.CharField(max_length = 30, null=True,blank=True)
+    prontuario_spid       = models.CharField(max_length = 30, null=True,blank=True)
     usuario                 = models.ForeignKey(User)
     fecha_hora_creado       = models.DateTimeField(auto_now_add = True)
 
     class Meta:
         db_table = 'resultados_busqueda'
+
+
+class Verificar(models.Model):
+    persona             = models.ForeignKey(Personas)
+    identificacion      = models.ForeignKey(Identificacion)
+    fecha               = models.DateField()
+    usuario             = models.ForeignKey(User)
+    verificado          = models.BooleanField(default= False)
+    verificado_dia      = models.DateField(null=True)
+    verifica_usuario    = models.ForeignKey(User,null=True,blank=True,related_name="usuario_verifica")
+
+    class Meta:
+        db_table = 'prontuario_verificar'

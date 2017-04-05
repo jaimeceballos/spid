@@ -9,6 +9,7 @@ from repar.forms import *
 from preventivos.forms import *
 from django.conf import settings
 from django.conf.urls import include, url
+from django.conf.urls.static import static
 
 handler404 = 'preventivos.views.page_not_found'
 handler500 = 'preventivos.views.server_error'
@@ -36,6 +37,5 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     url(r'^NIF/',include('NIF.urls')),
     url(r'^prontuario/',include('prontuario.urls')),
     (r'^repar/', include('repar.urls')),
-    (r'^','preventivos.views.page_not_found'),
 
- )
+ ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,9 @@
 
-<tr>
+<tr id="{{detalle.id}}">
   <td>
+    {%if detalle.es_policia%}
+      <small><span class="label label-default">Polic&iacute;a</span></small>
+    {% endif %}
     {{detalle.apellido_nombre}}
   </td>
   <td>
@@ -16,10 +19,43 @@
     {{detalle.fecha_nacimiento}}
   </td>
   <td>
-    {{detalle_ciudad_residencia}}
+    {{detalle.ciudad_residencia}}
+  </td>
+  <td id="{{detalle.id}}-pront">
+    {% if detalle.prontuario_spid %}
+      {{detalle.prontuario_spid}}
+    {% elif detalle.prontuario_acei %}
+        {{detalle.prontuario_acei}}
+      {% endif %}
+
+    {% if request.user.get_profile.depe.unidades_regionales.descripcion == "INVESTIGACIONES"%}
+      {% if not detalle.id_acei and  not detalle.prontuario_spid %}
+        <a href="javascript:procesales({{detalle.id}},{{detalle.documento}})" ><span class="label label-info">Buscar en Com. Procesales</span></a>
+
+      {% endif %}
+    {% endif %}
+
   </td>
   <td>
-    {{detalle.prontuario}}
+    {% if detalle.prontuario_spid%}
+      <a href="javascript:verDetalle('SPID',{{detalle.id_spid}});"><span class="label label-primary">SPID</span></a>
+    {% else %}
+      {% if detalle.id_spid %}
+        <a href="javascript:verDetalle('SPID',{{detalle.id_spid}});"><span class="label label-primary">SPID</span></a>
+      {% endif %}
+      {% if detalle.id_rrhh%}
+        <a href="javascript:verDetalle('RRHH',{{detalle.id_rrhh}});"><span class="label label-success">Recursos Humanos</span></a>
+      {% endif %}
+      {% if detalle.id_acei %}
+        <a href="javascript:verDetalle('INDICE',{{detalle.id_acei}});"><span class="label label-danger">Indice</span></a>
+      {% endif %}
+    {% endif %}
+  </td>
+  <td>
+    {% if detalle.prontuario_spid %}
+      <a href="javascript:identificacion({{detalle.id_spid}})" class="btn btn-xs btn-primary">Nueva identificaci&oacute;n</a>
+    {% else %}
+      <input type="radio" name="utilizar" value="{{detalle.id}}">
+    {% endif %}
   </td>
 </tr>
-  

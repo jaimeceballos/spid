@@ -25,7 +25,7 @@ from django.http import HttpResponse
 from django.template import Context, loader
 from django.forms.util import ErrorList
 from preventivos.views import obtener_cantidad_no_enviados, obtener_cantidad_no_autorizados
-
+from prontuario.models import SearchResults, SearchHistory
 
 def some_view(request):
    full= os.path.dirname(__file__)+"/static/pdfs/"
@@ -366,8 +366,21 @@ def inicial(request):
   return render(request,'./index1.html',{'form':form, 'state':state, 'destino': destino})
 
 
+def verificar_grupo(grupo,usuario):
+    if grupo != "":
+        group = Group.objects.get(name=grupo)
+        return True if group in usuario.groups.all() else False
+    return False
+
 def nologin(request):
+    usuario = request.user
     logout(request)
+    if verificar_grupo("prontuario",usuario):
+        for resultado in SearchResults.objects.filter(usuario = usuario):
+            resultado.delete()
+
+        for busqueda in SearchHistory.objects.filter(usuario = usuario):
+            busqueda.delete()
     try:
         del request.session['state']
         del request.session['destino']

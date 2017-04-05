@@ -49,10 +49,13 @@
     </div>
   </form>
 </div>
+
+
+
 <script src="{{STATIC_URL}}/prontuario/js/bootstrap-datepicker.min.js"></script>
 <script src="{{STATIC_URL}}/prontuario/js/bootstrap-datepicker.es.min.js"></script>
-<script type="text/javascript">
 
+<script type="text/javascript">
 $("#id_ciudad_nacimiento").autocomplete({
   source: "/preventivos/ciudades_ajax/",
   minLength: 2,
@@ -68,7 +71,7 @@ $("#id_pais_nacimiento").autocomplete({
   source: "/preventivos/paises_ajax/",
   minLength: 2,
   select:function (event,ui) {
-    $("#id_pais_nacimiento").val(ui.item.id);
+    $("#id_pais_nacimiento_id").val(ui.item.id);
   }
 });
 $('#id_fecha_nacimiento').datepicker({
@@ -94,17 +97,38 @@ $("#btnSearch").click(function(event){
         $("#btnSearch").prop('disabled', false);
         $("#loading").hide();
         $("#contenido").append(data);
+
       },
       error:function(jqXHR, textStatus, msg){
         $("#btnSearch").prop('disabled', false);
         $("#loading").hide();
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+              var url = "/prontuario/cargar_nuevo/";
+              $.get(url,function(data){
+                $("#contenido").hide().empty().append(data).show();
+              });
 
+            }
+          }
+        }).empty().append("<center><p>No se encuentra la persona.</p></center>");
       }
     });
 
   }else{
     $('input[type=text]').parent().addClass('has-error');
-
+    $(this).prop('disabled', false);
+    $("#loading").hide();
   }
 
 });
@@ -116,6 +140,86 @@ function validar(){
   return true;
 
 }
+function verDetalle(sistema,id){
+  var url = "/prontuario/search_detalle/"+sistema+"/"+id+"/";
+  $.get(url,function(data){
+    $("#ui-dialog-title-dialog").empty().append('Datos registrados en el sistema: '+sistema);
+    $("#dialog").html(data);
+    $("#dialog").dialog(
+    {
+      width: 600,
+      height: 400,
+      modal:true,
+      open: function(event, ui)
+      {
+
+      }
+    });
+  });
 
 
+}
+
+function procesales(id,documento){
+  var url ="/prontuario/search_procesales/"+id+"/"+documento+"/";
+  $.get(url,function(data){
+    $("#ui-dialog-title-dialog").empty().append('Datos registrados en el sistema: Comunicaciones Procesales');
+    $("#dialog").html(data);
+    $("#dialog").dialog(
+    {
+      width: 600,
+      height: 400,
+      modal:true,
+      open: function(event, ui)
+      {
+
+      }
+    });
+  }).fail(function(e){
+if(e.status == '404'){
+  $( "#dialog-confirm" ).dialog({
+    resizable: false,
+    height: "auto",
+    width: 400,
+    modal: true,
+    buttons: {
+      Cerrar: function() {
+        $( this ).dialog( "close" );
+      }
+    }
+  }).empty().append("<center><p>No se encuentra la persona en el sistema Comunicaciones Procesales.</p></center>");
+
+}
+  })
+}
+
+function utilizarProntuario(id,prontuario){
+  url = "/prontuario/utilizar_prontuario/"+id+"/"+prontuario+"/";
+  $.get(url,function(data){
+      $("#"+id+"-pront").empty().append(prontuario);
+      $("#dialog").dialog("close");
+  }).fail(function(e){
+    $("#dialog").dialog("close");
+    $( "#dialog-confirm" ).dialog({
+      resizable: false,
+      height: "auto",
+      width: 400,
+      modal: true,
+      buttons: {
+        Cerrar: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    }).empty().append("<center><p>No se pudo realizar la operación.</p></center>");
+
+
+  })
+}
+function identificacion(id){
+  var url = "/prontuario/identificacion/"+id+"/";
+  $.get(url,function(data){
+    $("#contenido").empty().append(data);
+    $("#carga").show();
+  })
+}
 </script>

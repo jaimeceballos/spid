@@ -16,6 +16,20 @@ from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.db.models import Q
 
+TIPO_FOTOS_CHOICES = (
+        ('1','FRENTE'),
+        ('2','PERFIL DERECHO'),
+        ('3','PERFIL IZQUIERDO'),
+        ('4','CUERPO COMPLETO'),
+        ('5','OTRO'),
+)
+
+class FotosPersonaForm(forms.ModelForm):
+    tipo_foto = forms.ChoiceField(choices=TIPO_FOTOS_CHOICES)
+    foto      = forms.ImageField()
+    class Meta:
+        model = FotosPersona
+        exclude = 'persona'
 
 class RefOcupacionEspecificaForm(forms.ModelForm):
     descripcion = forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Descripcion'})))
@@ -27,6 +41,7 @@ class ProntuarioForm(forms.ModelForm):
 
     class Meta:
         model = Prontuario
+        exclude = ['persona','identificaciones']
 
 class SearchForm(forms.Form):
     apellido                = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Apellido','style':'text-align: center;'})))
@@ -38,3 +53,21 @@ class SearchForm(forms.Form):
     pais_nacimiento         = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'pais','style':'text-align: center;'})))
     pais_nacimiento_id      = forms.CharField(required = False, widget=forms.HiddenInput())
     alias                   = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Alias','style':'text-align: center;'})))
+
+class IdentificacionForm(forms.ModelForm):
+    prontuario_local = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Registro Local','style':'text-align: center;'})))
+    ocupacion_especifica = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'form-control'}), queryset= RefOcupacionEspecifica.objects.all()  )
+    altura_metros = forms.IntegerField(required=True,widget = forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Mts.','style':'text-align: center;'})))
+    altura_centimetros = forms.IntegerField(required=True,widget = forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Cms.','style':'text-align: center;'})))
+    contextura = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'form-control'}), queryset= RefContextura.objects.all()  )
+    cutis = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'cutis','style':'text-align: center;'})))
+    cabello_tipo = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'form-control'}), queryset= RefTipoCabello.objects.all()  )
+    cabello_color = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Color','style':'text-align: center;'})))
+    es_tenido = forms.BooleanField(required=False)
+    posee_tatuajes = forms.BooleanField(required=False)
+    posee_cicatrices = forms.BooleanField(required=False)
+    observaciones = forms.CharField(required=False,widget=forms.Textarea(attrs=dict({'class':'form-control','placeholder':'Observaciones','style':'text-align: center;'})))
+
+    class Meta:
+        model = Identificacion
+        exclude = ['persona','fecha_identificacion','dependencia_identificacion','fotos']

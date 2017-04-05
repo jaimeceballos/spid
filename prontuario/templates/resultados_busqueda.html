@@ -7,7 +7,7 @@
 
     <div class="row">
       <table class="table table-hover table-condensed table-bordered" id="tblResult">
-        <thead>
+        <thead class="thead-inverse">
           <th>
             Nombre
           </th>
@@ -29,6 +29,12 @@
           <th>
             Prontuario
           </th>
+          <th>
+            Sistema
+          </th>
+          <th>
+            Utilizar
+          </th>
         </thead>
         <tbody style="height:50%;overflow-y:auto;">
             {% for resultado in resultados %}
@@ -42,8 +48,33 @@
 
 </div>
 <script type="text/javascript">
+  $("input[name=utilizar]:radio").change(function(event){
+      var checkbox = $(this);
+      var id = $(this).val();
+      $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          Si: function() {
+            var url = "/prontuario/cargar_nuevo_existe/"+id+"/";
+            $.get(url,function(data){
+                $("#contenido").empty().append(data);
+                $("#carga").show();
+                $("#dialog-confirm").dialog( "close" );
+            });
 
+          },
+          Cancelar: function() {
+            checkbox.attr('checked',false);
+            $( this ).dialog( "close" );
+          }
+        }
+      }).empty().append("<center><p>Esta seguro que desea utilizar esta persona para generar un nuevo prontuario?.</p></center>");
+  });
   $("#tblResult").dataTable({
+    "responsive":true,
     "language": {
             "lengthMenu": "Mostrar _MENU_ filas por pagina",
             "zeroRecords": "No hay resultados",
@@ -74,4 +105,5 @@
     $("#resultados").removeClass("col-md-12").addClass("col-md-6");
 
   });
+  $("#ocultar").trigger("click");
 </script>

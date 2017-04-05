@@ -1,0 +1,216 @@
+<fieldset>
+  <legend>Nuevo domicilio</legend>
+  <div class="row well">
+    <form id="save-form" action="{% url 'cargar_domicilios' id %}" method="post">{% csrf_token %}
+      <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Ciudad</label>
+            </div>
+            <div class="col-md-3">
+              <label for="">Tipo Domicilio</label>
+            </div>
+            <div class="col-md-3">
+              <label for="">Zona</label>
+            </div>
+            <div class="col-md-3">
+              <label for="">Barrio</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              {{form.ref_ciudades}}
+            </div>
+            <div class="col-md-3">
+              {{form.tipos_domicilio}}
+            </div>
+            <div class="col-md-3">
+              {{form.ref_zona}}
+            </div>
+            <div class="col-md-3">
+              {{form.barrio_codigo}}
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Sector</label>
+            </div>
+            <div class="col-md-3">
+              <label for="">Manzana</label>
+            </div>
+            <div class="col-md-3">
+              <label for="">Lote</label>
+            </div>
+
+          </div>
+          <div class="row">
+
+            <div class="col-md-3">
+              {{form.sector}}
+            </div>
+            <div class="col-md-3">
+              {{form.manzana}}
+            </div>
+            <div class="col-md-3">
+              {{form.lote}}
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Calle</label>
+            </div>
+            <div class="col-md-3">
+              <label for="">Altura</label>
+            </div>
+            <div class="col-md-3">
+              <label for="">Interseccion</label>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              {{form.calle}}
+            </div>
+            <div class="col-md-3">
+              {{form.altura}}
+            </div>
+            <div class="col-md-3">
+              {{form.entre}}
+            </div>
+
+
+
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Piso</label>
+            </div>
+            <div class="col-md-3">
+              <label for="">Departamento</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              {{form.piso}}
+            </div>
+            <div class="col-md-3">
+              {{form.departamento}}
+            </div>
+          </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-large btn-success  pull-right" id="save"> <i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+        </div>
+      </div>
+    </form>
+
+
+  </div>
+</fieldset>
+<hr>
+<h3>Domicilios registrados</h3>
+  <div class="row well">
+    <div class="col-md-12">
+      <table class="table table-hover table-condensed table-bordered">
+        <tbody>
+          {%for domicilio in domicilios %}
+          <tr>
+            <td>
+              {{domicilio.ref_ciudades.descripcion}}
+            </td>
+            <td>
+              {% if domicilio.barrio_codigo%}
+                {{domicilio.barrio_codigo.descripcion}}
+              {% endif %}
+            </td>
+            <td>
+              {% if domicilio.calle and domicilio.entre and domicilio.altura %}
+                {{domicilio.calle}} {{domicilio.altura}} y {{domicilio.entre}}
+              {% elif domicilio.calle and domicilio.entre and not domicilio.altura %}
+                {{domicilio.calle}} y {{domicilio.entre}}
+              {% elif domicilio.calle and domicilio.altura and not domicilio.entre%}
+                {{domicilio.calle}} {{domicilio.altura}}
+              {% endif %}
+            </td>
+            <td>
+              {% if not domicilio.fecha_hasta %}
+                Actual
+              {% else %}
+                {{domicilio.fecha_hasta}}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<script type="text/javascript">
+$('input[type=text]').addClass('form-control');
+$('select').addClass('form-control');
+$("#save-form").submit(function(event){
+  event.preventDefault();
+  $("#save").prop('disabled',true);
+  $("#loading").show();
+  var form = $("#save-form");
+  $.ajax({
+    type: form.attr('method'),
+    url: form.attr('action'),
+    data: form.serialize(),
+    success: function(data){
+      $("#save").prop('disabled', false);
+      $("#loading").hide();
+      $("#dialog").empty().html(data);
+    },
+    error: function(jqXHR, textStatus,msg){
+      $("#btnSearch").prop('disabled', false);
+      $("#loading").hide();
+      $( "#dialog-confirm" ).dialog({
+        closeOnEscape: false,
+        open: function(event, ui) {
+            $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+        },
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+
+          }
+        }
+      }).empty().append("<center><p>No se pudo guardar. Verifique los datos ingresados, haga una nueva verificacion de la persona a cargar y vuelva a intentarlo. Si el error persiste, pongase en contacto con la División Desarrollo.</p></center>");
+    }
+  });
+});
+
+$("#id_ref_ciudades").change(function(event){
+  var url = "/preventivos/persona/town/"+$("#id_ref_ciudades").val()+"/";
+  $.get(url,function(data){
+    var select = $("#id_barrio_codigo");
+    var options = '';
+    for (var i = 0; i < data.length; i++) {
+      options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+    }
+    select.html(options);
+    select.removeAttr('disabled');
+  }, "json");
+  var url2 = "/preventivos/persona/street/"+$("#id_ref_ciudades").val()+"/";
+  $.get(url2,function(data){
+    var select = $("#id_calle");
+    var select2 = $("#id_entre");
+    var options = '';
+    for (var i = 0; i < data.length; i++) {
+      options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+    }
+    select.html(options);
+    select.removeAttr('disabled');
+    select2.html(options);
+  }, "json");
+});
+</script>

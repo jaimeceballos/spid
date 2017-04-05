@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="col-md-12">
+    <img src="/media/{{foto.foto}}" alt="{{foto.tipo_foto}}" class="img-circle" height="200px" width="200px"/>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+              Ocupaci&oacute;n
+            </a>
+          </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            {{identificacion.ocupacion_especifica}}
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+          <h4 class="panel-title">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Se&ntilde;as Particulares
+            </a>
+          </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            <dl class="dl-horizontal">
+              <dt>Contextura</dt>
+              <dd>{{identificacion.contextura}}</dd>
+              <dt>Altura</dt>
+              <dd>{{identificacion.altura_metros}},{{identificacion.altura_centimetros}} mts.</dd>
+              <dt>Color de Piel</dt>
+              <dd>{{identificacion.cutis}}</dd>
+              <dt>Cabello</dt>
+              <dd>{{identificacion.cabello_tipo}} {{identificacion.cabello_color}} {% if identificacion.es_tenido %} Te&ntilde;ido {% endif %}</dd>
+              <dt>Tatuajes</dt>
+              <dd>{% if not identificacion.posee_tatuajes %} No {% endif %} Posee Tatuajes visibles</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingThree">
+          <h4 class="panel-title">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Observaciones
+            </a>
+          </h4>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            {{identificacion.Observaciones}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

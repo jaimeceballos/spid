@@ -1,0 +1,114 @@
+<div class="row">
+    <div class="col-md-12">
+      <form id="save-form" action="{% url 'cargar_padres' id %}" method="post">{% csrf_token %}
+        <fieldset>
+          <legend>Padre</legend>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Apellido</label>
+            </div>
+            <div class="col-md-9">
+              {{form.padre_apellidos}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Nombres</label>
+            </div>
+            <div class="col-md-9">
+              {{form.padre_nombres}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-9 col-md-offset-3">
+              <label for=""> {{form.padre_vive}} Vive a&uacute;n.</label>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Madre</legend>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Apellido</label>
+            </div>
+            <div class="col-md-9">
+              {{form.madre_apellidos}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Nombre</label>
+            </div>
+            <div class="col-md-9">
+              {{form.madre_nombres}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-9 col-md-offset-3">
+              <label for=""> {{form.padre_vive}} Vive a&uacute;n.</label>
+            </div>
+          </div>
+        </fieldset>
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <button type="submit" class="btn btn-large btn-success  pull-right" id="save"> <i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+          </div>
+        </div>
+      </form>
+    </div>
+</div>
+<script type="text/javascript">
+  $('input[type=text]').addClass('form-control');
+  $("#save-form").submit(function(event){
+    event.preventDefault();
+    $("#save").prop('disabled',true);
+    $("#loading").show();
+    var form = $("#save-form");
+    $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: form.serialize(),
+      success: function(data){
+        $("#save").prop('disabled', false);
+        $("#loading").hide();
+        $("#dialog").empty().dialog("close");
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+
+            }
+          }
+        }).empty().append("<center><p>Datos guardados correctamente.</p></center>");
+      },
+      error: function(jqXHR, textStatus,msg){
+        $("#save").prop('disabled', false);
+        $("#loading").hide();
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+            }
+          }
+        }).empty().append("<center><p>No se pudo guardar. Verifique los datos ingresados, haga una nueva verificacion de la persona a cargar y vuelva a intentarlo. Si el error persiste, pongase en contacto con la División Desarrollo.</p></center>");
+      }
+    });
+  })
+</script>

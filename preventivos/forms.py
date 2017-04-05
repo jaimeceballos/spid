@@ -595,6 +595,15 @@ class DomiciliosForm(forms.ModelForm):
 		model = Domicilios
 		exclude = ('personas','ref_ciudades',)
 
+class DomicilioProntuarioForm(forms.ModelForm):
+	
+
+
+	class Meta:
+		model = Domicilios
+		exclude = 'personas'
+
+
 class DetenidosForm(forms.ModelForm):
 
 	def clean_fechahoradetencion(self):

@@ -783,8 +783,11 @@ class Padres(models.Model):
 	persona = models.ForeignKey('Personas',related_name='padre')
 	padre_nombres=models.CharField(max_length=150,null=True,blank=True,default="")
 	padre_apellidos=models.CharField(max_length=100,null=True,blank=True,default="")
+	padre_vive = models.BooleanField(default=True)
 	madre_apellidos=models.CharField(max_length=100,null=True,blank=True,default="")
 	madre_nombres=models.CharField(max_length=150,null=True,blank=True,default="")
+	madre_vive=models.BooleanField(default=True)
+
 
 	def __unicode__(self):
 		return u'%s %s %s %s %s' % (self.padre_nombres,self.padre_apellidos,self.madre_nombres,self.madre_apellidos,self.persona)
