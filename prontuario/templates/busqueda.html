@@ -1,0 +1,133 @@
+<div class="row">
+
+  <div class="col-md-5 col-md-offset-1 well">
+    <div class="row alert alert-info">
+      <center><h3> <i class="glyphicon glyphicon-search"></i> Formulario de busqueda</h3> <small>consulta de prontuario</small></center>
+    </div>
+    <form class="" action="{% url 'busqueda' %}" method="post" id="busquedaForm">{% csrf_token %}
+      <div class="row">
+        <div class="col-md-12">
+          {{form.documento}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          {{form.apellido}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          {{form.nombre}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          {{form.ciudad_nacimiento}}
+          {{form.ciudad_nacimiento_id}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          {{form.ciudad_residencia}}
+          {{form.ciudad_residencia_id}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          {{form.anio_nacimiento}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button type="submit" id="buscar" class="btn btn-block btn-success">Buscar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<script type="text/javascript">
+$("#id_ciudad_nacimiento").autocomplete({
+  source: "/preventivos/ciudades_ajax/",
+  minLength: 2,
+  select:function (event,ui) {
+    $("#id_ciudad_nacimiento_id").val(ui.item.id);
+  }
+});
+$("#id_ciudad_residencia").autocomplete({
+  source: "/preventivos/ciudades_ajax/",
+  minLength: 2,
+  select:function (event,ui) {
+    $("#id_ciudad_residencia_id").val(ui.item.id);
+  }
+});
+function validar(){
+  if($("#id_apellido").val()=="" && $("#id_nombre").val() == "" && $("#id_documento").val()=="" && $("#id_ciudad_nacimiento_id").val()=="" && $("#id_ciudad_residencia_id").val()=="" && $("#id_documento").val() =="" ){
+      return false;
+  }
+  return true;
+
+}
+$("#busquedaForm").submit(function(event){
+  event.preventDefault();
+  $("#buscar").prop('disabled',true);
+  $("#loading").show();
+  alert(validar());
+  if(validar()){
+    var form = $("#busquedaForm");
+    $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: form.serialize(),
+      success: function(data){
+        $("#btnSearch").prop('disabled', false);
+        $("#loading").hide();
+        $("#contenido").empty().append(data);
+
+      },
+      error: function(jqXHR, textStatus,msg){
+        $("#btnSearch").prop('disabled', false);
+        $("#loading").hide();
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+              $("#btnSearch").prop('disabled', false);
+              $("#loading").hide();
+            }
+          }
+        }).empty().append("<center><p>No se pudo guardar. Verifique los datos ingresados, haga una nueva verificacion de la persona a cargar y vuelva a intentarlo. Si el error persiste, pongase en contacto con la División Desarrollo.</p></center>");
+      }
+    });
+  }else{
+    $("#buscar").prop('disabled',false);
+    $("#loading").hide();
+    $("#dialog").html("<p>Debe ingresar al menos un criterio de busqueda</p>");
+    $("#dialog").dialog(
+    {
+      width: 'auto',
+      height: 'auto',
+      modal:true,
+      open: function(event, ui)
+      {
+
+      },
+      buttons: {
+        Cerrar: function() {
+          $( this ).dialog( "close" );
+
+        }
+      }
+    });
+  }
+});
+</script>

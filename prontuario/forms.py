@@ -54,6 +54,16 @@ class SearchForm(forms.Form):
     pais_nacimiento_id      = forms.CharField(required = False, widget=forms.HiddenInput())
     alias                   = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Alias','style':'text-align: center;'})))
 
+class BuscarForm(forms.Form):
+    documento               = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Numero Documento','style':'text-align: center;'})))
+    nombre                  = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Nombre','style':'text-align: center;'})))
+    apellido                = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Apellido','style':'text-align: center;'})))
+    ciudad_nacimiento       = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Nacido en:','style':'text-align: center;'})))
+    ciudad_nacimiento_id    = forms.CharField(required = False, widget=forms.HiddenInput())
+    ciudad_residencia       = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Vive en:','style':'text-align: center;'})))
+    ciudad_residencia_id    = forms.CharField(required = False, widget=forms.HiddenInput())
+    anio_nacimiento         = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifica', 'placeholder':'Año de Nacimiento','style':'text-align:center;'})))
+
 class IdentificacionForm(forms.ModelForm):
     prontuario_local = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Registro Local','style':'text-align: center;'})))
     ocupacion_especifica = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'form-control'}), queryset= RefOcupacionEspecifica.objects.all()  )

@@ -949,3 +949,27 @@ def ver_identificacion(request,id):
         foto = FotosPersona.objects.filter(persona = identificacion.persona,tipo_foto = "1")[0]
         return render_to_response("./ver_identificacion.html",{'identificacion':identificacion,'foto':foto})
     return HttpResponseBadRequest()
+
+def buscar(request):
+    if request.is_ajax:
+        form = BuscarForm()
+        return render_to_response("./busqueda.html",{'form':form},context_instance=RequestContext(request))
+    return HttpResponseBadRequest()
+
+
+def busqueda(request):
+    if request.user.is_authenticated:
+        if request.is_ajax:
+            if request.method == "POST":
+                form = BuscarForm(request.POST)
+                if form.is_valid():
+                    apellido = form.cleaned_data['apellido']
+                    nombre = form.cleaned_data['nombre']
+                    documento = form.cleaned_data['documento']
+                    lugar_nacimiento = form.cleaned_data['lugar_nacimiento']
+                    lugar_residencia = form.cleaned_data['lugar_residencia']
+                    anio_nacimiento = form.cleaned_data['anio_nacimiento']
+                    personas = Personas.objects.all()
+
+        return HttpResponseBadRequest()
+    return HttpResponseRedirect("/")

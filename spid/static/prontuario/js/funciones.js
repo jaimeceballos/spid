@@ -15,7 +15,7 @@ $(document).ready(function(){
   });
   $("#buscar").click(function(event){
       event.preventDefault();
-      var url = '/prontuario/nuevo/';
+      var url = '/prontuario/buscar/';
       $.get(url,function(data){
         $("#contenido").hide().empty().append(data).slideDown(1000);
       })

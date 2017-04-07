@@ -36,4 +36,6 @@ urlpatterns = patterns('',
     url(r'^obtener_fotos/(?P<id>[0-9A-Za-z]+)/$','prontuario.views.obtener_fotos',name='obtener_fotos'),
     url(r'^identificacion/(?P<id>[0-9A-Za-z]+)/$','prontuario.views.identificacion',name='identificacion'),
     url(r'^ver_identificacion/(?P<id>[0-9A-Za-z]+)/$','prontuario.views.ver_identificacion',name='ver_identificacion'),
+    url(r'^buscar/$','prontuario.views.buscar',name='buscar'),
+    url(r'^busqueda/$','prontuario.views.busqueda',name='busqueda'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
