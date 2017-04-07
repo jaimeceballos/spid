@@ -7255,8 +7255,8 @@ def informe(request,idhec,idprev,aforo):
         for a in autoridades:
                 autoridad=autoridad+'*'+str(a)+'<br>'
         informa=datos.autoridades.values_list('email',flat=True)
-        jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=actuante).values('jerarquia_id'))
-        jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(apeynombres=preventor).values('jerarquia_id'))
+        jerarqui_a=RefJerarquias.objects.get(id=Actuantes.objects.filter(id=actuante.id).values('jerarquia_id'))
+        jerarqui_p=RefJerarquias.objects.get(id=Actuantes.objects.filter(id=preventor.id).values('jerarquia_id'))
         form1=Hechos.objects.filter(preventivo=idprev)
 
         for value in form1:
