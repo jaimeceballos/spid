@@ -969,7 +969,12 @@ def busqueda(request):
                     lugar_nacimiento = form.cleaned_data['lugar_nacimiento']
                     lugar_residencia = form.cleaned_data['lugar_residencia']
                     anio_nacimiento = form.cleaned_data['anio_nacimiento']
+                    if not documento =="":
+                        personas = Personas.objects.filter(nro_doc = documento)
+                        return render_to_response("./resultado_busqueda.hml", {'personas':personas},context_instance=RequestContext(request))
                     personas = Personas.objects.all()
+                    if not apellido == "":
+                        personas = personas.filter(apellido = apellido)
 
         return HttpResponseBadRequest()
     return HttpResponseRedirect("/")
