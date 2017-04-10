@@ -1,7 +1,7 @@
 {% extends "mapasver.html" %}
 {% block main %}
- 
-   <form action="." method="post">{% csrf_token %} 
+
+   <form action="." method="post">{% csrf_token %}
 
    <h1>Formulario Vista del Mapa del Delito</h1>
    {% if form.non_field_errors %}
@@ -13,13 +13,13 @@
                        </p>
                        </div>
                {% endfor %}
-             
-    {% endif %}  
-     
-    
-       
+
+    {% endif %}
+
+
+
         <input type="hidden" id="latv" name="latv" value="{{preventivo.ciudad.lat}}" />
-        <input type="hidden" id="longiv" name="longiv" value="{{preventivo.ciudad.longi}}" /> 
+        <input type="hidden" id="longiv" name="longiv" value="{{preventivo.ciudad.longi}}" />
         <input type="hidden" id="cdav" name="cdav" value="{{preventivo.ciudad.descripcion}}" />
         <br>
         <section style="margin: 10px;">
@@ -28,9 +28,8 @@
                     <br>
                    <strong style="margin-left:10px;">DEPENDENCIAS POLICIALES</strong>&nbsp;&nbsp;&nbsp;<input type="checkbox" id = "depes" name="depes" />
                    <strong style="margin-left:30px;">CIUDADES</strong>&nbsp;&nbsp;&nbsp;<input type="checkbox" id = "ciu" name="ciu" />
-     
           </fieldset>
-      
+
           <br>
         <div id="combodepe" style="display:none;">
         <p>
@@ -38,13 +37,13 @@
             <select name = "ureg" id="ureg" style="width:250px;">
               <option name="ureg" {{form.ureg}}</option>
             </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        
-             
+
+
           <strong> DEPENDENCIAS : </strong>
             <select name = "depe" id="depe"  style="width:250px;" >
               <option name="depe" {{form.depe}}</option>
             </select> </p><br>
-           
+
       </div>
       <div id="combociu" style="display:none;">
         <p>
@@ -52,52 +51,52 @@
             <select name = "ciudades" id="ciudades" style="width:250px;">
               <option name="ciudades" {{form.ciudades}} </option>
             </select> </p> <br>
-           
+
       </div>
       <div align="center">
 
  {%if haydatos%}
-       
 
-            <input type="hidden" id="lista" name="lista" value="{{preven}}" /> 
-         
+
+            <input type="hidden" id="lista" name="lista" value="{{preven}}" />
+
               <p><u><strong>REFERENCIA DE DELITOS COMETIDOS EN JURISDICCION DE</strong></u></p>
                <p><u><strong> {{buscar}} </strong></u></p>
             <p><strong>   PERIODO DE FECHAS: {{hoyes}}  AL  {{ayerfue}}</strong></p>
               <p><strong style="color:red;">
-    
+
      <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitospropiedad.png" style="background: transparent;"> <strong>ROBO</strong>
      <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitoscontrapeople.png" style="background: transparent;">  <strong>HOMICIDIOS</strong>
      <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitoscontrahonor.png" style="background: transparent;">  <strong>OTROS DELITOS</strong>
     <!-- {% for y in refdelitosdes %}
         <p>
                 {%if 'ROBO' in y%}
-                      <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitospropiedad.png" style="background: transparent;"> {{y}} 
-                 {%else%}     
+                      <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitospropiedad.png" style="background: transparent;"> {{y}}
+                 {%else%}
                         {%if 'HOMICIDIO' in y%}
-                             <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitoscontrapeople.png" style="background: transparent;"> {{y}} 
-                         {%else%}   
-                            <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitoscontrahonor.png" style="background: transparent;"> {{y}} 
-                         {%endif%}   
+                             <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitoscontrapeople.png" style="background: transparent;"> {{y}}
+                         {%else%}
+                            <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitoscontrahonor.png" style="background: transparent;"> {{y}}
+                         {%endif%}
                 {%endif%}
-          </p>        
-            
+          </p>
 
-            
+
+
      {% endfor%}    -->
-    </strong> </p> 
-       
+    </strong> </p>
+
       {%else%}
         <input type="hidden" id="lista" name="lista" value="{{preven}}"/>
        {%endif%}
        </div>
-            
+
         <div class="forma">
         <div id="mapa" name="mapa" class="capasmf"> </div>
 
-           
-                
-           
+
+
+
                <div class="capasmpf"> <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/powered-by-google-on-white.png"></div></div><br><br>
                 <p>
             <h1>Seleccione los Delitos a consultar</h1>
@@ -120,8 +119,8 @@
           <select data-placeholder="Seleccione delitos" style="width:350px;" name="delito" id="delito" multiple class="search-choice" style="width:400px;">
               <option value="{{form.id}}" {{form.delito}}</option>
             </select>
-      
-      
+
+
       </p><br><hr><br>
       <p><u><strong>PERIDOS DE FECHAS</STRONG></u></p>
      <p>
@@ -129,32 +128,32 @@
     <input type="text" id="fecha_desde" name="fecha_desde" autocomplete="off" size="9" value="{{fecha_desde | date:"d/m/Y"}}"
      placeholder="dd/mm/aaaa" />
       <input class="botoncalendar"  type="button" id="lanzador" title="Seleccione Fecha de Carga Denuncia">
-      
-      <script type="text/javascript"> 
-        Calendar.setup({ 
-          inputField : "fecha_desde", // id del campo de texto 
-          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
-          button : "lanzador" // el id del botón que lanzará el calendario 
-        }); 
-      </script> 
+
+      <script type="text/javascript">
+        Calendar.setup({
+          inputField : "fecha_desde", // id del campo de texto
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto
+          button : "lanzador" // el id del botón que lanzará el calendario
+        });
+      </script>
 
     &nbsp;&nbsp;
     <strong> Hasta :</strong>
-    <input type="text" id="fecha_hasta" name="fecha_hasta" autocomplete="off" size="9" 
+    <input type="text" id="fecha_hasta" name="fecha_hasta" autocomplete="off" size="9"
      placeholder="dd/mm/aaaa" />
       <input class="botoncalendar"  type="button" id="lanzadora" title="Seleccione Fecha de Carga de Denuncia">
-    
-      <script type="text/javascript"> 
-        Calendar.setup({ 
-          inputField : "fecha_hasta", // id del campo de texto 
-          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto 
-          button : "lanzadora" // el id del botón que lanzará el calendario 
-        }); 
+
+      <script type="text/javascript">
+        Calendar.setup({
+          inputField : "fecha_hasta", // id del campo de texto
+          ifFormat : "%d/%m/%Y", // formato de la fecha que se escriba en el campo de texto
+          button : "lanzadora" // el id del botón que lanzará el calendario
+        });
       </script>
      </p>
      <br><hr><br>
      <div align="center">
-   
+
           <input class="new-aqua" type="submit" id="ver" name="ver" value="Visualizar"/></div>
 
       </form>
