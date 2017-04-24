@@ -38,4 +38,6 @@ urlpatterns = patterns('',
     url(r'^ver_identificacion/(?P<id>[0-9A-Za-z]+)/$','prontuario.views.ver_identificacion',name='ver_identificacion'),
     url(r'^buscar/$','prontuario.views.buscar',name='buscar'),
     url(r'^busqueda/$','prontuario.views.busqueda',name='busqueda'),
+    url(r'^obtener_miniatura/(?P<id>[0-9A-Za-z]+)/$','prontuario.views.obtener_miniatura',name='obtener_miniatura'),
+    url(r'^ver_prontuario/(?P<id>[0-9]+)/$','prontuario.views.ver_prontuario',name='ver_prontuario'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

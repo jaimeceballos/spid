@@ -63,7 +63,7 @@ $("#id_ciudad_residencia").autocomplete({
   }
 });
 function validar(){
-  if($("#id_apellido").val()=="" && $("#id_nombre").val() == "" && $("#id_documento").val()=="" && $("#id_ciudad_nacimiento_id").val()=="" && $("#id_ciudad_residencia_id").val()=="" && $("#id_documento").val() =="" ){
+  if($("#id_apellido").val()=="" && $("#id_nombre").val() == "" && $("#id_documento").val()=="" && $("#id_ciudad_nacimiento_id").val()=="" && $("#id_ciudad_residencia_id").val()=="" && $("#id_documento").val() =="" && $("#id_anio_nacimiento").val()=="" ){
       return false;
   }
   return true;
@@ -73,17 +73,26 @@ $("#busquedaForm").submit(function(event){
   event.preventDefault();
   $("#buscar").prop('disabled',true);
   $("#loading").show();
-  alert(validar());
   if(validar()){
     var form = $("#busquedaForm");
+    var ajaxTime= new Date().getTime();
     $.ajax({
       type: form.attr('method'),
       url: form.attr('action'),
       data: form.serialize(),
       success: function(data){
+        var totalTime = (new Date().getTime()-ajaxTime)/1000;
         $("#btnSearch").prop('disabled', false);
         $("#loading").hide();
-        $("#contenido").empty().append(data);
+        $("#contenido").empty();
+        if(data.length > 0){
+          $("#contenido").append("<div class='row' id='encabezado'></div>");
+          $("#encabezado").append("<div class='col-md-4'><h3>Resultados de la busqueda</h3><p class='text-muted'>"+data.length+" registros encontrados en " + totalTime +" segundos.</p></div>")
+          desplegarInfo(data);
+        }else{
+          $("#contenido").append("<div class='row' id='encabezado'></div>");
+          $("#encabezado").append("<div class='col-md-4'><h3>Resultados de la busqueda</h3><p class='text-muted'>0 registros encontrados en " + totalTime +" segundos.</p></div>")
+        }
 
       },
       error: function(jqXHR, textStatus,msg){
@@ -130,4 +139,57 @@ $("#busquedaForm").submit(function(event){
     });
   }
 });
+
+function desplegarInfo(data){
+  var contenido = $("#contenido");
+  var fila = 1;
+  var id;
+  var url = ""
+  var miniaturas = []
+  for(var i =0  ; i <  data.length; i++){
+    id = data[i].pk;
+    url = "/prontuario/obtener_miniatura/"+id+"/";
+    if(i == 1){
+      fila1 = fila;
+     contenido.append("<div class='row' id='fila"+ fila +"'></div>");
+     $.ajax({
+       async: false,
+       type: 'GET',
+       url: url,
+       success: function(dato){
+         $("#fila"+fila).append(dato);
+       }
+     });
+   }else if(i % 3 == 0){
+     fila += 1;
+     fila2 = fila;
+     contenido.append("<div class='row' id='fila"+ fila +"'></div>");
+     $.ajax({
+       async: false,
+       type: 'GET',
+       url: url,
+       success: function(dato){
+         $("#fila"+fila).append(dato);
+       }
+     });
+   }else{
+     fila3 = fila;
+     $.ajax({
+       async: false,
+       type: 'GET',
+       url: url,
+       success: function(dato){
+         $("#fila"+fila).append(dato);
+       }
+     });
+   }
+  }
+}
+
+function verProntuario(id){
+  var url = "/prontuario/ver_prontuario/"+id+"/";
+  $.get(url,function(data){
+    $("#contenido").empty().append(data);
+  })
+}
 </script>

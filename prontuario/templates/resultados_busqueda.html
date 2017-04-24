@@ -48,9 +48,10 @@
 
 </div>
 <script type="text/javascript">
-  $("input[name=utilizar]:radio").change(function(event){
-      var checkbox = $(this);
-      var id = $(this).val();
+  //$("input[name=utilizar]:radio").change(function(event){
+  function utilizar(id){
+      //var checkbox = $(this);
+      var id = id;//$(this).val();
       $( "#dialog-confirm" ).dialog({
         resizable: false,
         height: "auto",
@@ -67,12 +68,12 @@
 
           },
           Cancelar: function() {
-            checkbox.attr('checked',false);
             $( this ).dialog( "close" );
           }
         }
       }).empty().append("<center><p>Esta seguro que desea utilizar esta persona para generar un nuevo prontuario?.</p></center>");
-  });
+  }
+  //});
   $("#tblResult").dataTable({
     "responsive":true,
     "language": {

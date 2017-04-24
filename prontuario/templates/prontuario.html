@@ -1,0 +1,158 @@
+<div class="row bg-success">
+  <div class="col-md-4 col-md-offset-3">
+    <h1>Prontuario N° {{prontuario.nro}} </h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 well">
+    <div class="row">
+      <div class="col-md-12 bg-danger">
+        <h3 class='text-default'>Datos Personales</h3>
+      </div>
+      <dl class="dl-horizontal">
+        <dt>Nombre</dt>
+        <dd>{{prontuario.persona.nombres}}</dd>
+        <dt>Apellido</dt>
+        <dd>{{prontuario.persona.apellidos}}</dd>
+        <dt>Nro. Documento</dt>
+        <dd>{{prontuario.persona.nro_doc}}</dd>
+        <dt>Fecha Nacimiento</dt>
+        <dd>{{prontuario.persona.fecha_nac|date:"d/m/Y"}}</dd>
+        <dt>Ocupaci&oacute;n</dt>
+        <dd>{{prontuario.persona.ocupacion}}</dd>
+      </dl>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-primary">
+            <div class="panel-heading" role="tab" id="padres">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#padresDetalle" aria-expanded="true" aria-controls="padresDetalle">
+                  Padres
+                </a>
+              </h4>
+            </div>
+            <div id="padresDetalle" class="panel-collapse collapse" role="tabpanel" aria-labelledby="padres">
+              <div class="panel-body">
+                <dl class="dl-horizontal">
+                  <dt>Padre</dt>
+                  <dd>{{padres.padre_apellidos}}, {{padres.padre_nombres}}</dd>
+                  <dt>Madre</dt>
+                  <dd>{{padres.madre_apellidos}}, {{padres.madre_nombres}}</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-success">
+            <div class="panel-heading" role="tab" id="domicilios">
+              <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#domiciliosDetalle" aria-expanded="false" aria-controls="domiciliosDetalle">
+                  Domicilios
+                </a>
+              </h4>
+            </div>
+            <div id="domiciliosDetalle" class="panel-collapse collapse" role="tabpanel" aria-labelledby="domicilios">
+              <div class="panel-body">
+                <table class="table table-hover table-condensed table-bordered">
+                  <tbody>
+                    {%for domicilio in domicilios %}
+                    <tr>
+                      <td>
+                        {{domicilio.ref_ciudades.descripcion}}
+                      </td>
+                      <td>
+                        {% if domicilio.barrio_codigo%}
+                          {{domicilio.barrio_codigo.descripcion}}
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if domicilio.calle and domicilio.entre and domicilio.altura %}
+                          {{domicilio.calle}} {{domicilio.altura}} y {{domicilio.entre}}
+                        {% elif domicilio.calle and domicilio.entre and not domicilio.altura %}
+                          {{domicilio.calle}} y {{domicilio.entre}}
+                        {% elif domicilio.calle and domicilio.altura and not domicilio.entre%}
+                          {{domicilio.calle}} {{domicilio.altura}}
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if not domicilio.fecha_hasta %}
+                          Actual
+                        {% else %}
+                          {{domicilio.fecha_hasta}}
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-danger">
+            <div class="panel-heading" role="tab" id="identificaciones">
+              <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#identificacionesDetalle" aria-expanded="false" aria-controls="identificacionesDetalle">
+                  Identificaciones
+                </a>
+              </h4>
+            </div>
+            <div id="identificacionesDetalle" class="panel-collapse collapse" role="tabpanel" aria-labelledby="identificaciones">
+              <div class="panel-body">
+                {{identificaciones}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 well">
+    {% if fotos.count > 0 %}
+    <div class="carousel slide" id="fotos-{{id}}">
+      <ol class="carousel-indicators">
+        {% for foto in fotos %}
+        {% if forloop.first %}
+        <li class="active" data-slide-to="{{forloop.counter}}" data-target="#fotos-{{id}}">
+        </li>
+        {% else %}
+        <li data-slide-to="{{forloop.counter}}" data-target="#fotos-{{id}}">
+        </li>
+        {% endif %}
+        {% endfor %}
+      </ol>
+      <div class="carousel-inner">
+        {% for foto in fotos %}
+        {% if forloop.first %}
+        <div class="item active">
+          <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" style="height:400px; width:auto" /></center>
+          <div class="carousel-caption">
+            <h4>
+
+            </h4>
+
+          </div>
+        </div>
+        {% else %}
+        <div class="item">
+          <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" style="height:400px; width:auto" /></center>
+          <div class="carousel-caption">
+            <h4>
+
+            </h4>
+            <p>
+
+            </p>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div> <a class="left carousel-control" href="#fotos-{{id}}" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control" href="#fotos-{{id}}" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </div>
+    {% else %}
+      <center><h3 class="text-muted">Sin Fotos</h3></center>
+      <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{STATIC_URL}}prontuario/images/avatar.png" style="height:400px; width:auto" /></center>
+    {% endif %}
+  </div>
+</div>

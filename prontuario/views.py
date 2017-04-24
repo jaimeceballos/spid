@@ -88,7 +88,6 @@ def search_persona(request):
             parametros['documento']         = form.cleaned_data['documento']
             parametros['alias']             = form.cleaned_data['alias']
             strParametros = str(parametros)
-            print strParametros
             try:
                 resultados = SearchResults.objects.filter(id_busqueda=SearchHistory.objects.get(busqueda = strParametros).id)
             except ObjectDoesNotExist:
@@ -862,6 +861,11 @@ def cargar_fotos(request,id):
                 foto.foto = form.cleaned_data['foto']
                 try:
                     foto.save()
+                    try:
+                        prontuario = Prontuario.objects.get(persona = persona)
+                        prontuario.fotos.add(foto)
+                    except Exception as e:
+                        pass
                 except Exception as e:
                     return HttpResponseBadRequest()
         fotos = FotosPersona.objects.filter(persona = persona)
@@ -888,6 +892,7 @@ def verificar_existe(request,id):
 
 def vincular(request,id):
     if request.is_ajax():
+        print "ingresa a vincular"
         identificacion = Identificacion.objects.get(id = id)                        # obtengo la identificacion a vincular con un prontuario
         if request.method == 'POST':
             form = None
@@ -906,9 +911,14 @@ def vincular(request,id):
                     prontuario.save()                                                 # guardo la nueva instancia en la BD
                 prontuario.identificaciones.add(identificacion)                       # asigno la identificacion al prontuario
                 fotos = FotosPersona.objects.filter(persona = identificacion.persona) # busco si existen fotos asociadas a la persona
+                print fotos.count
                 if fotos.count > 0:                                                   # en el caso que existan
                     for foto in fotos:
-                        prontuario.fotos.add(foto)                                    # las agrego al prontuario
+                        try:
+                            prontuario.fotos.add(foto)                                    # las agrego al prontuario
+                        except Exception as e:
+                            print e
+
                 verificar = Verificar.objects.get(identificacion = identificacion)
                 verificar.verificado = True                                           # marco la identificacion como verificada
                 verificar.verificado_dia = datetime.datetime.now()
@@ -916,7 +926,7 @@ def vincular(request,id):
                 verificar.save()
                 return HttpResponse("ok")                                             # devuelvo "ok" para notificar que la operacion termino correctamente
             except Exception as e:
-                pass
+                print e
     return HttpResponseBadRequest()
 
 
@@ -966,15 +976,48 @@ def busqueda(request):
                     apellido = form.cleaned_data['apellido']
                     nombre = form.cleaned_data['nombre']
                     documento = form.cleaned_data['documento']
-                    lugar_nacimiento = form.cleaned_data['lugar_nacimiento']
-                    lugar_residencia = form.cleaned_data['lugar_residencia']
+                    lugar_nacimiento = form.cleaned_data['ciudad_nacimiento_id']
+                    lugar_residencia = form.cleaned_data['ciudad_residencia_id']
                     anio_nacimiento = form.cleaned_data['anio_nacimiento']
                     if not documento =="":
                         personas = Personas.objects.filter(nro_doc = documento)
-                        return render_to_response("./resultado_busqueda.hml", {'personas':personas},context_instance=RequestContext(request))
-                    personas = Personas.objects.all()
-                    if not apellido == "":
-                        personas = personas.filter(apellido = apellido)
-
+                    else:
+                        personas = Personas.objects.all().order_by('id')
+                        if not apellido == "":
+                            personas = personas.filter(apellidos__icontains = apellido)
+                        if not nombre == "":
+                            personas = personas.filter(nombres__icontains = nombre)
+                        if not lugar_nacimiento == "":
+                            personas = personas.filter(ciudad_nac = lugar_nacimiento)
+                        if not lugar_residencia == "":
+                            personas = personas.filter(ciudad_res = lugar_residencia)
+                        if not anio_nacimiento == "":
+                            personas = personas.filter(fecha_nac__year = anio_nacimiento )
+                    resultados = Prontuario.objects.filter(persona__in = personas)
+                    data = serializers.serialize("json", resultados)
+                    return HttpResponse(data, mimetype='application/json')
         return HttpResponseBadRequest()
     return HttpResponseRedirect("/")
+
+def obtener_miniatura(request,id):
+    prontuario = Prontuario.objects.get(id=id)
+    foto = prontuario.fotos.filter(tipo_foto=1)
+    if len(foto) > 0:
+        foto = '/media/'+str(foto[0].foto)
+    else:
+        foto = '/static/prontuario/images/avatar.png'
+    return render_to_response("./miniatura.html",{'prontuario':prontuario,'foto':foto},context_instance = RequestContext(request))
+
+
+def ver_prontuario(request,id):
+    if request.is_ajax():
+        values = {}
+        values['prontuario'] = Prontuario.objects.get(id=id)
+        values['fotos'] = values['prontuario'].fotos.all()
+        values['identificaciones'] = values['prontuario'].identificaciones.all()
+        values['domicilios'] = values['prontuario'].persona.persodom.all()
+        values['padres'] = values['prontuario'].persona.padre.all()
+        if values['padres'].count() > 0:
+            values['padres'] = values['prontuario'].persona.padre.all()[0]
+        return render_to_response("./prontuario.html",values,context_instance = RequestContext(request))
+    return HttpResponseBadRequest()
