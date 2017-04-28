@@ -66,7 +66,7 @@ class GroupForm(forms.ModelForm):
 
 
 		self.fields["permissions"].widget = forms.SelectMultiple()
-		self.fields["permissions"].queryset = Permission.objects.filter(content_type__app_label__contains='preventivos')
+		self.fields["permissions"].queryset = Permission.objects.filter(Q(content_type__app_label__contains='preventivos')|Q(content_type__app_label__contains='prontuario'))
 
 
 
@@ -594,6 +594,15 @@ class DomiciliosForm(forms.ModelForm):
 	class Meta:
 		model = Domicilios
 		exclude = ('personas','ref_ciudades',)
+
+class DomicilioProntuarioForm(forms.ModelForm):
+	
+
+
+	class Meta:
+		model = Domicilios
+		exclude = 'personas'
+
 
 class DetenidosForm(forms.ModelForm):
 

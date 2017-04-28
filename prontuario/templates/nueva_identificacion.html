@@ -1,0 +1,323 @@
+<div class="well">
+  <div class="row">
+    <div class="col-md-4">
+        <div class="row bg-primary">
+          <div class="col-md-6">
+            Prontuario N°
+          </div>
+          <div class="col-md-6">
+            {% if not request.user.get_profile.depe.unidades_regionales.descripcion == "INVESTIGACIONES" %}
+                {% if identificacion.id %}
+                {{identificacion.prontuario_local}}
+                {% else %}
+                <strong class="pull-left">Pendiente de verificaci&oacute;n</strong>
+                {% endif %}
+            {% else %}
+              {{prontuario.nro}}
+            {% endif %}
+          </div>
+        </div>
+        <div class="row bg-success">
+          <div class="col-md-12">
+            <h3>{{persona.apellidos}}, {{persona.nombres}}</h3>
+          </div>
+        </div>
+        <div class="row bg-success">
+          <div class="col-md-6">
+            <h3><small>Documento {{persona.nro_doc}}</small></h3>
+          </div>
+        </div>
+        {% if identificacion.id %}
+          <div class="row">
+            <div class="col-md-12">
+              <p>
+                Altura: {{identificacion.altura_metros}},{{identificacion.altura_centimetros}} mts.,
+                Contextura: {{identificacion.contextura.descripcion}},
+                Ocupacion: {{identificacion.ocupacion_especifica.descripcion}},
+
+              </p>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <label for=""></label>
+            </div>
+          </div>
+        {% endif %}
+        <div class="row">
+          <div class="col-md-3">
+            <center><a href="javascript:cargar_padres({{persona.id}})" class="btn btn-xs btn-success"> {% if existe %} Ver Padres {% else %} Cargar Padres {% endif %} </a></center>
+          </div>
+          <div class="col-md-4">
+            <center><a href="javascript:cargar_domicilios({{persona.id}})" class="btn btn-xs btn-success"> <i class="glyphicon glyphicon-map-marker"></i> {% if existe %} Ver Domicilios {% else %} Cargar domicilio {% endif %} </a></center>
+          </div>
+          <div class="col-md-3">
+            <center><a href="javascript:cargar_fotos({{persona.id}})" class="btn btn-xs btn-success"> <i class="glyphicon glyphicon-camera"></i> {% if existe %} Ver Fotos {% else %} Cargar Fotos {% endif %} </a></center>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <br>
+            <h4>Identificaciones Anteriores</h4>
+            <div id="identificaciones-anteriores">
+
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+      <div id="carga" style="display:none">
+        <form id="identificacion-save" action="{% url 'identificacion_save'%}" method="post">{%csrf_token%}
+          <input type="hidden" name="prontuario" value="{{prontuario.id}}">
+          <input type="hidden" name="persona" value="{{persona.id}}">
+          {% if not request.user.get_profile.depe.unidades_regionales.descripcion == "INVESTIGACIONES" %}
+          <div class="row">
+            <div class="col-md-2">
+              <label for="">Registro Local</label>
+            </div>
+            <div class="col-md-9">
+              {{form.prontuario_local}}
+            </div>
+          </div>
+          {% endif %}
+          <div class="row">
+            <div class="col-md-2">
+              <label for="">Ocupacion Especifica</label>
+            </div>
+            <div class="col-md-9">
+              {{form.ocupacion_especifica}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <label for="">Altura</label>
+            </div>
+            <div class="col-md-5">
+              <div class="input-group">
+                {{form.altura_metros}}
+                <div class="input-group-addon">,</div>
+                {{form.altura_centimetros}}
+                <div class="input-group-addon">Mts.</div>
+              </div>
+              <br>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <label for="">Contextura</label>
+            </div>
+            <div class="col-md-9">
+              {{form.contextura}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <label for="">Color de piel</label>
+            </div>
+            <div class="col-md-9">
+              {{form.cutis}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <label for="">Cabello</label>
+            </div>
+            <div class="col-md-4">
+              {{form.cabello_tipo}}
+            </div>
+            <div class="col-md-3">
+              {{form.cabello_color}}
+            </div>
+            <div class="col-md-2">
+              <label for="">{{form.es_tenido}} teñido</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2">
+              <label for="">{{form.posee_tatuajes}} Tiene tatuajes visibles</label>
+            </div>
+            <div class="col-md-5">
+              <label for="">{{form.posee_cicatrices}} Tiene cicatrices visibles</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="">Observaciones</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              {{form.observaciones}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-large btn-success  pull-right" id="save"> <i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+      <div id="fotos" style="display:none;">
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+<script type="text/javascript">
+  $("#identificacion-save").submit(function(event){
+    event.preventDefault();
+    $("#save").prop('disabled',true);
+    $("#loading").show();
+    var form = $("#identificacion-save");
+    $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: form.serialize(),
+      success: function(data){
+        $("#btnSearch").prop('disabled', false);
+        $("#loading").hide();
+        $("#contenido").empty().append(data);
+        var url = "/prontuario/obtener_fotos/{{persona.id}}/";
+        $.get(url,function(data){
+          $("#fotos").show();
+        })
+        .done(function(data){
+          $("#fotos").append(data);
+        })
+      },
+      error: function(jqXHR, textStatus,msg){
+        $("#btnSearch").prop('disabled', false);
+        $("#loading").hide();
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+              $("#btnSearch").prop('disabled', false);
+              $("#loading").hide();
+            }
+          }
+        }).empty().append("<center><p>No se pudo guardar. Verifique los datos ingresados, haga una nueva verificacion de la persona a cargar y vuelva a intentarlo. Si el error persiste, pongase en contacto con la División Desarrollo.</p></center>");
+      }
+    });
+  });
+  function cargar_padres(id){
+    var url = "/prontuario/cargar_padres/"+id+"/";
+    $.get(url,function(data){
+      $("#dialog").html(data);
+      $("#dialog").dialog(
+      {
+        width: 'auto',
+        height: 'auto',
+        modal:true,
+        open: function(event, ui)
+        {
+
+        }
+      });
+    });
+  }
+  function cargar_domicilios(id){
+    var url = "/prontuario/cargar_domicilios/"+id+"/";
+    $.get(url,function(data){
+      $("#dialog").html(data);
+      $("#dialog").dialog(
+      {
+        width: 'auto',
+        height: 'auto',
+        modal:true,
+        open: function(event, ui)
+        {
+
+        },
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+
+          }
+        }
+      });
+    })
+  }
+  function cargar_fotos(id){
+    var url = "/prontuario/cargar_fotos/"+id+"/";
+    $.get(url,function(data){
+      $("#dialog").html(data);
+      $("#dialog").dialog(
+      {
+        width: 'auto',
+        height: 'auto',
+        modal:true,
+        open: function(event, ui)
+        {
+
+        },
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+
+          }
+        }
+      });
+    });
+  }
+  $("#identificaciones-anteriores").ready(function(){
+    var persona = "{{persona.id}}";
+    var url = "/prontuario/identificaciones_anteriores/"+persona+"/";
+    $.get(url,function(data){
+
+    })
+    .done(function(data){
+      for(var i=0; i < data.length; i ++){
+        var id = data[i]["pk"];
+        var url = "/prontuario/obtener_identificacion/"+id+"/";
+        $.get(url,function(data){
+          $("#identificaciones-anteriores").append(data);
+        })
+      }
+    })
+    .fail(function(){
+      $("#identificaciones-anteriores").append("<div class='row alert alert-danger'>No registra identificaciones previas.</div>");
+    })
+  });
+  function verIdentificacion(id){
+    var url = "/prontuario/ver_identificacion/"+id+"/";
+    $.get(url,function(data){
+
+    })
+    .done(function(data){
+      $("#dialog").html(data);
+      $("#dialog").dialog(
+      {
+        width: 'auto',
+        height: 'auto',
+        modal:true,
+        open: function(event, ui)
+        {
+
+        },
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+
+          }
+        }
+      });
+    })
+    .fail(function(){
+      alert("Hubo un error en la solicitud. Por favor vuelva a intentarlo.")
+    })
+  }
+</script>

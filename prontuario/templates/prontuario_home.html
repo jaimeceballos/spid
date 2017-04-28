@@ -1,0 +1,111 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/style.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/bootstrap-datepicker.min.css">
+
+    <script src="{{STATIC_URL}}prontuario/js/jquery-1.11.3.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/bootstrap.min.js"></script>
+    <script src="{{STATIC_URL}}/prontuario/js/funciones.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/bootstrap-datepicker.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/bootstrap-datepicker.es.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript">
+    </script> <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="{{STATIC_URL}}prontuario/js/jquery.dataTables.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/dataTables.bootstrap.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/dataTables.responsive.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/responsive.bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/dataTables.min.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/responsive.bootstrap.min.css">
+  
+    <title></title>
+  </head>
+  <body>
+    <header class="container">
+        {% include './navbar.html' %}
+    </header>
+    <main >
+
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-2 main">
+                {% include './main_body.html' %}
+          </div>
+          <div class="col-md-10 " id="contenido" style="height:100%;overflow-y:auto;overflow-x:hidden">
+              {% if verificar %}
+                <div class="alert alert-info" role="alert">
+                    <p>
+                      Hay <span class="badge">{{verificar.count}}</span> nueva{% if verificar.count > 1 %}s{% endif %} identificacion{% if verificar.count > 1 %}es{% endif %} cargada{% if verificar.count > 1 %}s{% endif %} para verificar. Click <a href="{% url 'verificar' %}" id="verificar">aqui</a>.
+                    </p>
+                </div>
+              {% endif %}
+          </div>
+        </div>
+        <div class="row">
+      		<div class="col-md-12">
+
+
+      			<div class="modal fade" id="modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      				<div class="modal-dialog">
+      					<div class="modal-content">
+      						<div class="modal-header">
+
+      							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+      								×
+      							</button>
+      							<h4 class="modal-title" id="modal-title">
+
+      							</h4>
+      						</div>
+      						<div class="modal-body">
+      							...
+      						</div>
+      						<div class="modal-footer">
+
+      							<button type="button" class="btn btn-default" data-dismiss="modal">
+      								Close
+      							</button>
+      							<button type="button" class="btn btn-primary">
+      								Save changes
+      							</button>
+      						</div>
+      					</div>
+
+      				</div>
+
+      			</div>
+
+      		</div>
+      	</div>
+        <div class="row">
+          <div class="col-md-12">
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+
+
+
+
+    </main>
+    <footer>
+      <div class="well">
+        <a class="pull-right"><strong>Policia de Chubut - Div. Sistemas Informaticos - &copy;2017</strong> &nbsp;&nbsp;</a>  </div>
+    </footer>
+    <div id="dialog" title="" style="display: none;"></div>
+    <div id="dialog-confirm" title="">
+
+    </div>
+  </body>
+</html>

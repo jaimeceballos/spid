@@ -1,0 +1,328 @@
+<div class="row">
+  <div class="col-md-12">
+    <h3>Cargar Prontuario <small><i class="glyphicon glyphicon-info-sign"></i> Todos los datos de este formulario son obligatorios.</small></h3>
+  </div>
+</div>
+
+<form method="post" id="save-form" action="{% url 'nuevo_prontuario_save'%}">{%csrf_token%}
+  <input type="hidden" name="persona_id" id="persona_id" value="{{persona}}">
+{% if request.user.get_profile.depe.unidades_regionales.descripcion == "INVESTIGACIONES"%}
+<div class="well">
+  <div class="row">
+    <div class="col-md-1">
+      <label for="">Nro. Prontuario</label>
+    </div>
+    <div class="col-md-3">
+      {{prontuarioForm.nro}}
+    </div>
+    <div class="col-md-2">
+      <a href="javascript:verificar();" class="btn btn-xs btn-danger"> <i class="glyphicon glyphicon-search"></i> Verficar N&uacute;mero</a>
+    </div>
+  </div>
+{% endif %}
+
+</div>
+<div class="well">
+  <div class="row">
+    <div class="col-md-1">
+      <label for="">Apellido/s</label>
+    </div>
+    <div class="col-md-3">
+      {{form.apellidos}}
+    </div>
+    <div class="col-md-1">
+      <label for="">Nombre</label>
+    </div>
+    <div class="col-md-3">
+      {{form.nombres}}
+    </div>
+    <div class="col-md-1">
+      <label for="">Fecha Nacimiento</label>
+    </div>
+    <div class="col-md-3">
+      {{form.fecha_nac}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1">
+      <label for="">Tipo y Numero Documento</label>
+    </div>
+    <div class="col-md-3">
+      <div class="col-md-6">
+          {{form.tipo_doc}}
+      </div>
+      <div class="col-md-6">
+        {{form.nro_doc}}
+      </div>
+
+    </div>
+    <div class="col-md-1">
+      <label for="">Lugar Nacimiento</label>
+    </div>
+    <div class="col-md-3">
+      <div class="col-md-6">
+          {{form.pais_nac}} <a href="javascript:agregarPais('nac');"><i class="glyphicon glyphicon-plus"></i></a>
+      </div>
+      <div class="col-md-6">
+          {{form.ciudad_nac}} <a href="javascript:agregarCiudad('nac');"><i class="glyphicon glyphicon-plus"></i></a>
+      </div>
+
+    </div>
+    <div class="col-md-1">
+      <label for="">Sexo</label>
+    </div>
+    <div class="col-md-3">
+      {{form.sexo_id}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1">
+      <label for="">Estado Civil</label>
+    </div>
+    <div class="col-md-3">
+      {{form.estado_civil}}
+    </div>
+    <div class="col-md-1">
+      <label for="">Lugar Residencia</label>
+    </div>
+    <div class="col-md-3">
+      <div class="col-md-6">
+          {{form.pais_res}} <a href="javascript:agregarPais('res');"><i class="glyphicon glyphicon-plus"></i></a>
+      </div>
+      <div class="col-md-6">
+          {{form.ciudad_res}} <a href="javascript:agregarCiudad('res');"><i class="glyphicon glyphicon-plus"></i></a>
+      </div>
+
+    </div>
+    <div class="col-md-1">
+      <label for="">Ocupaci&oacute;n</label>
+    </div>
+    <div class="col-md-3">
+      {{form.ocupacion}}
+    </div>
+  </div>
+</div>
+<div class="well">
+  <div class="row">
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-large btn-success  pull-right" id="save"> <i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+    </div>
+  </div>
+</div>
+</form>
+<script type="text/javascript">
+  $("#id_pais_res").removeAttr('onChange');
+  $('input[type=text]').addClass('form-control');
+  $('select').addClass('form-control');
+  $("#id_pais_res").removeAttr('size');
+  $("#save-form").submit(function(event){
+    event.preventDefault();
+    var validado;
+    $("#save").prop('disabled',true);
+    $("#loading").show();
+    var form = $("#save-form")
+    if("{{request.user.get_profile.depe.unidades_regionales.descripcion}}"=="INVESTIGACIONES"){
+      validado = ($("#id_nro").val()!="" && $("#id_apellidos").val() !="" && $("#id_nombres").val()!="" && $("#id_fecha_nac").val()!="" &&
+        $("#id_tipo_doc").val()!="" && $("#id_nro_doc").val()!="" && $("#id_ciudad_nac").val() !="" && $("#id_pais_nac").val()!="" &&
+        $("#id_sexo_id").val() !="" && $("#id_estado_civil").val() !="" && $("#id_ciudad_res").val()!="" && $("#id_pais_res").val() !="" &&
+        $("#id_ocupacion").val()!="");
+    }else{
+      validado = ($("#id_apellidos").val() !="" && $("#id_nombres").val()!="" && $("#id_fecha_nac").val()!="" &&
+        $("#id_tipo_doc").val()!="" && $("#id_nro_doc").val()!="" && $("#id_ciudad_nac").val() !="" && $("#id_pais_nac").val()!="" &&
+        $("#id_sexo_id").val() !="" && $("#id_estado_civil").val() !="" && $("#id_ciudad_res").val()!="" && $("#id_pais_res").val() !="" &&
+        $("#id_ocupacion").val()!="");
+    }
+
+    if(validado){
+      $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize(),
+        success: function(data){
+          $("#btnSearch").prop('disabled', false);
+          $("#loading").hide();
+          $("#contenido").empty().append(data);
+          $("#carga").show();
+        },
+        error: function(jqXHR, textStatus,msg){
+          $("#btnSearch").prop('disabled', false);
+          $("#loading").hide();
+          $( "#dialog-confirm" ).dialog({
+            closeOnEscape: false,
+            open: function(event, ui) {
+                $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+            },
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+              Cerrar: function() {
+                $( this ).dialog( "close" );
+                var url = "/prontuario/cargar_nuevo/";
+                $.get(url,function(data){
+                  $("#contenido").hide().empty().append(data).show();
+                });
+
+              }
+            }
+          }).empty().append("<center><p>No se pudo guardar. Verifique los datos ingresados, haga una nueva verificacion de la persona a cargar y vuelva a intentarlo. Si el error persiste, pongase en contacto con la División Desarrollo.</p></center>");
+        }
+      });
+
+    }else{
+      $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+            $("#save").prop("disabled",false);
+            $("#loading").hide();
+          }
+        }
+      }).empty().append("<center><p>Verifique que haya completado correctamente el formulario.</p></center>");
+    }
+  });
+  $('#id_fecha_nac').datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 0,
+    todayBtn: "linked",
+    language: "es",
+    daysOfWeekHighlighted: "0",
+    autoclose: true,
+    todayHighlight: true
+  });
+
+  if("{{persona}}" == ""){
+    $("#id_ciudad_nac,#id_ciudad_res").attr('disabled','disabled').html('<option value="">Seleccione Pais</option>');
+  }
+
+  $("#id_pais_nac").change(function(event){
+    var url = "/preventivos/persona/"+$(this).val()+"/";
+    $.get(url,function(data){
+      var select = $("#id_ciudad_nac");
+      var options = '';
+      for (var i = 0; i < data.length; i++) {
+        options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+      }
+      select.html(options);
+      select.removeAttr('disabled');
+    }, "json");
+  });
+  $("#id_pais_res").change(function(event){
+    var url = "/preventivos/persona/"+$(this).val()+"/";
+    $.get(url,function(data){
+      var select = $("#id_ciudad_res");
+      var options = '';
+      for (var i = 0; i < data.length; i++) {
+        options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+      }
+      select.html(options);
+      select.removeAttr('disabled');
+
+
+    }, "json");
+  });
+  function agregarPais(tipo){
+    var url = "/prontuario/nuevo_pais/"+tipo+"/";
+    $.get(url,function(data){
+      $("#dialog").html(data);
+      $("#dialog").dialog(
+      {
+        width: 'auto',
+        height: 'auto',
+        modal:true,
+        open: function(event, ui)
+        {
+
+        }
+      });
+    })
+  }
+  function agregarCiudad(tipo){
+    var pais;
+    if(tipo == "res"){
+      pais = $("#id_pais_res").val();
+    }else{
+      pais = $("#id_pais_nac").val();
+    }
+    if(pais != ""){
+      var url = "/prontuario/nueva_ciudad/"+tipo+"/"+pais+"/";
+      $.get(url,function(data){
+        $("#dialog").html(data);
+        $("#dialog").dialog(
+        {
+          width: 'auto',
+          height: 'auto',
+          modal:true,
+          open: function(event, ui)
+          {
+
+          }
+        });
+      })
+    }else {
+      $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+          }
+        }
+      }).empty().append("<center><p>Debe seleccionar un pais.</p></center>");
+    }
+  }
+  function verificar(){
+    if($("#id_nro").val()!=""){
+      var url = "/prontuario/verificar_prontuario/"+$("#id_nro").val()+"/";
+      $.get(url,function(data){
+        $("#dialog").html(data);
+        $("#dialog").dialog(
+        {
+          width: 'auto',
+          height: 'auto',
+          modal:true,
+          open: function(event, ui)
+          {
+
+          }
+        });
+      }).fail(function(e){
+        if(e.status == '404'){
+          $( "#dialog-confirm" ).dialog({
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+              Cerrar: function() {
+                $( this ).dialog( "close" );
+              }
+            }
+          }).empty().append("<center><p>Este número no se encuentra registrado en los sitemas.</p></center>");
+
+        }
+      })
+    }else{
+      $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+          }
+        }
+      }).empty().append("<center><p>Debe ingresar un número de prontuario.</p></center>");
+    }
+  }
+
+
+</script>

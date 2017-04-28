@@ -1,0 +1,144 @@
+{% load static %}
+<div class="row">
+  <div class="col-md-12">
+  <fieldset>
+    <legend>Agregar Foto</legend>
+    <form id="save-form" action="{% url 'cargar_fotos' id %}" method="POST" runat="server" enctype="multipart/form-data">{% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-12">
+              <label for="">Tipo Foto</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              {{form.tipo_foto}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              {{form.foto}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 well">
+          <center><img id="foto-preview" src="#" alt="" style="display:none" height="200"/></center>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-large btn-success  pull-right" id="save"> <i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+        </div>
+      </div>
+    </form>
+  </fieldset>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <fieldset>
+      <legend>Fotos anteriores</legend>
+      {% if fotos.count > 0 %}
+      <div class="carousel slide" id="fotos-{{id}}">
+        <ol class="carousel-indicators">
+          {% for foto in fotos %}
+          {% if forloop.first %}
+          <li class="active" data-slide-to="{{forloop.counter}}" data-target="#fotos-{{id}}">
+          </li>
+          {% else %}
+          <li data-slide-to="{{forloop.counter}}" data-target="#fotos-{{id}}">
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ol>
+        <div class="carousel-inner">
+          {% for foto in fotos %}
+          {% if forloop.first %}
+          <div class="item active">
+            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" height="200px" /></center>
+            <div class="carousel-caption">
+              <h4>
+
+              </h4>
+
+            </div>
+          </div>
+          {% else %}
+          <div class="item">
+            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" height="200px" /></center>
+            <div class="carousel-caption">
+              <h4>
+
+              </h4>
+              <p>
+
+              </p>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div> <a class="left carousel-control" href="#fotos-{{id}}" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control" href="#fotos-{{id}}" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+      </div>
+      {% endif %}
+    </fieldset>
+  </div>
+</div>
+<script type="text/javascript">
+$('input[type=text]').addClass('form-control');
+$('select').addClass('form-control');
+
+function readURL(input){
+  if(input.files && input.files[0]){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      $('#foto-preview').attr('src',e.target.result).show();
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+  $("#id_foto").change(function(){
+    readURL(this);
+  });
+
+  $("#save-form").submit(function(event){
+    event.preventDefault();
+    $("#save").prop('disabled',true);
+    $("#loading").show();
+    var form = $("#save-form");
+    var data =  new FormData(form.get(0));
+    $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: data,
+      cache:false,
+      processData: false,
+      contentType: false,
+      success: function(data){
+        $("#save").prop('disabled', false);
+        $("#loading").hide();
+        $("#dialog").empty().html(data);
+      },
+      error: function(jqXHR, textStatus,msg){
+        $("#btnSearch").prop('disabled', false);
+        $("#loading").hide();
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+
+            }
+          }
+        }).empty().append("<center><p>No se pudo guardar. Verifique los datos ingresados, haga una nueva verificacion de la persona a cargar y vuelva a intentarlo. Si el error persiste, pongase en contacto con la División Desarrollo.</p></center>");
+      }
+    });
+  });
+</script>

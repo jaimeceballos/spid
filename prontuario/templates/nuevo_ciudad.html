@@ -1,0 +1,102 @@
+<div class="well">
+  <center><h4>Nueva Ciudad</h4></center>
+
+  <form method = 'POST' action="{%url 'nueva_ciudad' tipo pais.id %}" id="nuevo_ciudad">{%csrf_token%}
+    <div class='row'>
+      <div class='col-md-3'>
+        <label>Pais</label>
+      </div>
+      <div class="col-md-8">
+        {{form.pais}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <label for="">Ciudad</label>
+      </div>
+      <div class="col-md-8">
+        {{form.descripcion}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 pull-right">
+        <button type="submit" class="btn btn-xs btn-success" id="btn-save"><i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+      </div>
+    </div>
+  </form>
+
+</div>
+<script type="text/javascript">
+$("#id_pais").prop('disabled',true).addClass("form-control");
+$("#id_descripcion").addClass("form-control");
+$("#nuevo_ciudad").submit(function(event){
+  event.preventDefault();
+  $("#btn-save").prop('disabled', true);
+  $("#loading").show();
+  var form = $("#nuevo_ciudad");
+  if($("#id_descripcion").val() != ""){
+    $("#id_pais").prop('disabled',false);
+    var pais = $("#id_pais").val();
+    var ciudad = $("#id_descripcion").val();
+    $.ajax({
+      type:form.attr('method'),
+      url:form.attr('action'),
+      data:form.serialize(),
+      success: function(data){
+        var select;
+        var select2;
+        if("{{tipo}}" == "res"){
+          select = $("#id_ciudad_res");
+          select2 = $("#id_ciudad_nac");
+        }else{
+          select = $("#id_ciudad_nac");
+          select2 = $("#id_ciudad_res");
+        }
+
+        select.empty();
+        var options = '<option value=""></option>';
+        for (var i = 0; i < data.length; i++) {
+          options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+        }
+        select.html(options);
+        if(select2.val() == ""){
+          select2.empty().html(options);
+        }
+        $("#btn-save").prop('disabled', false);
+        $("#loading").hide();
+        if("{{tipo}}" == "res"){
+          $("#id_ciudad_res option:contains("+ciudad.toUpperCase()+")").attr('selected','selected');
+        }else{
+          $("#id_ciudad_nac option:contains("+ciudad.toUpperCase()+")").attr('selected','selected');
+        }
+        $("#dialog").dialog( "close" );
+      },
+      error:function(jqXHR, textStatus, msg){
+        $("#btn-save").prop('disabled', false);
+        $("#loading").hide();
+        $("#dialog").dialog("close");
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+            }
+          }
+        }).empty().append("<center><p>Ocurrio un error al guardar. Por favor verifique que la ciudad que intenta cargar no existe en el listado.</p></center>");
+      }
+    });
+  }else{
+    $("#id_descripcion").addClass('has-error')
+    $("#btn-save").prop('disabled', false);
+    $("#loading").hide();
+  }
+});
+
+</script>

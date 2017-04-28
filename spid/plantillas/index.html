@@ -6,11 +6,16 @@
                        <tr><td class="lefttitle"><b>INICIAR SESION</b>
                                  <tr><td class="box_middle" >
                                  <table>
-
+                                   {% if name %}
+                                   <p style="color:red;font-size:12px;">
+                                     {{name}}
+                                   </p>
+                                   {% endif %}
                                 	<form id="form" action="/spid/login/" method="POST">{% csrf_token %}
                                 		{% if next %}
 		                                <input type="hidden" name="next" value="{{ next }}" />
 		                                {% endif %}
+
                                     <input type="hidden" name="estado" id="estado" value="{{ state }}" />
                                     <p><span class="rojo"></span>Unidad Regional
                                     <select name="ureg" id="ureg" class="combopeq" size="1"/>
@@ -21,6 +26,7 @@
                                     <select name="dependencias" id="dependencias" class="combopeq"  size="1"/>
                                     <option name="dependencias">{{formd.descripcion}}</option>
                                   </select>   </p>
+
 		                                <p><span class="rojo"></span>Usuario</p>
 		                                <input type="text" name="username" class="ame" value="{{ username }}" autocomplete="off"/>
 		                                <p><span class="rojo"></span>Contraseña</p>
@@ -28,7 +34,8 @@
 		                                <br><br>
 
 		                                  <input class="new-aqua" class="btn btn-success" type="submit" value="Conectar" name="logonea"/>
-                                                <input type="submit" class="new-aqua" name="registrar" value="Registrarse" />
+                                                <!--input type="submit" class="new-aqua" name="registrar" value="Registrarse" /-->
+                                                &nbsp;&nbsp;<a href="/solicitud/" >Registrarse</a>
 
                                 </form><br><br>
                                   <p>Olvido su contraseña? <a href="/resetpassword/"> <img src="{% get_static_prefix %}imagenes/spid/forget.png" style="border:0px solid #C0C0C0; width:20px; height:20px;"></a></p>

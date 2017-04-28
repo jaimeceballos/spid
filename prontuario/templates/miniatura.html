@@ -1,0 +1,16 @@
+<div class="col-md-3">
+  <div class="thumbnail miniatura">
+    <center>  <img class="img-responsive" src="{{foto}}" style="width:200px;height:200px"></center>
+    <hr>
+    <a href=""><div class="caption">
+      <h3>Prontuario N° {{prontuario.nro}}</h3>
+      <p>
+        {{prontuario.persona.apellidos}}, {{prontuario.persona.nombres}}
+      </p>
+      <p>
+        Nro. documento {{prontuario.persona.nro_doc}}
+      </p>
+      <p><a href="javascript:verProntuario({{prontuario.id}})" class="btn btn-xs btn-danger" role="button"> <i class="glyphicon glyphicon-eye-open"></i> Ver Prontuario</a></p>
+    </div></a>
+  </div>
+</div>

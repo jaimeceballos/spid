@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Selecci&oacute;n de Sistema</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/style.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/bootstrap-datepicker.min.css">
+
+    <script src="{{STATIC_URL}}prontuario/js/jquery-1.11.3.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/bootstrap.min.js"></script>
+    <script src="{{STATIC_URL}}/prontuario/js/funciones.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/bootstrap-datepicker.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/bootstrap-datepicker.es.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript">
+    </script> <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="{{STATIC_URL}}prontuario/js/jquery.dataTables.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/dataTables.bootstrap.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/dataTables.responsive.min.js"></script>
+    <script src="{{STATIC_URL}}prontuario/js/responsive.bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/dataTables.min.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/responsive.bootstrap.min.css">
+
+    <style media="screen">
+      .contenedor{
+        margin: 8%;
+        padding: 0 80px 0 0;
+      }
+    </style>
+  </head>
+  <body>
+      <div class="container-fluid contenedor">
+        <div class="row bg-info">
+          <div class="col-md-8 col-md-offset-2">
+            <center><h3 >Seleccione el Sistema que desea utilizar</h3></center>
+          </div>
+        </div>
+        <div class="row well">
+          <div class="col-md-4 col-md-offset-2">
+              <div class="thumbnail">
+                <center><h3>Preventivos</h3></center>
+                <div class="caption">
+
+                  <p>
+                    <a class="btn btn-lg btn-block btn-success" href="/preventivos/inicio/">Ir al sistema</a>
+                  </p>
+                </div>
+              </div>
+          </div>
+          <div class="col-md-4 ">
+            <div class="thumbnail">
+              <center><h3>Prontuarios</h3></center>
+              <div class="caption">
+                <p>
+                  <a class="btn btn-lg btn-block btn-info" href="/prontuario/">Ir al sistema</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,83 @@
+#encoding:utf-8
+from django.forms import ModelForm, TimeField
+from django import forms
+from datetime import datetime
+from django.contrib import admin
+from django.utils import timezone
+from django.conf import settings
+from django.contrib.auth.models import  Group,Permission,User
+from django.contrib.admin import widgets
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.forms.widgets import CheckboxSelectMultiple,RadioSelect
+from prontuario.models import *
+from preventivos.models import *
+from django.core.exceptions import ValidationError
+from django.utils.encoding import force_unicode
+from django.utils.safestring import mark_safe
+from django.db.models import Q
+
+TIPO_FOTOS_CHOICES = (
+        ('1','FRENTE'),
+        ('2','PERFIL DERECHO'),
+        ('3','PERFIL IZQUIERDO'),
+        ('4','CUERPO COMPLETO'),
+        ('5','OTRO'),
+)
+
+class FotosPersonaForm(forms.ModelForm):
+    tipo_foto = forms.ChoiceField(choices=TIPO_FOTOS_CHOICES)
+    foto      = forms.ImageField()
+    class Meta:
+        model = FotosPersona
+        exclude = 'persona'
+
+class RefOcupacionEspecificaForm(forms.ModelForm):
+    descripcion = forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Descripcion'})))
+
+    class Meta:
+        model = RefOcupacionEspecifica
+
+class ProntuarioForm(forms.ModelForm):
+
+    class Meta:
+        model = Prontuario
+        exclude = ['persona','identificaciones']
+
+class SearchForm(forms.Form):
+    apellido                = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Apellido','style':'text-align: center;'})))
+    nombre                  = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'nombre','style':'text-align: center;'})))
+    documento               = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Numero Documento','style':'text-align: center;'})))
+    fecha_nacimiento        = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Fecha de nacimiento','style':'text-align: center;','title':'Solo se puede Realizar busqueda de personas mayores de 18 años.'})))
+    ciudad_nacimiento       = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Ciudad','style':'text-align: center;'})))
+    ciudad_nacimiento_id    = forms.CharField(required = False, widget=forms.HiddenInput())
+    pais_nacimiento         = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'pais','style':'text-align: center;'})))
+    pais_nacimiento_id      = forms.CharField(required = False, widget=forms.HiddenInput())
+    alias                   = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Alias','style':'text-align: center;'})))
+
+class BuscarForm(forms.Form):
+    documento               = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Numero Documento','style':'text-align: center;'})))
+    nombre                  = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Nombre','style':'text-align: center;'})))
+    apellido                = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Apellido','style':'text-align: center;'})))
+    ciudad_nacimiento       = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Nacido en:','style':'text-align: center;'})))
+    ciudad_nacimiento_id    = forms.CharField(required = False, widget=forms.HiddenInput())
+    ciudad_residencia       = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Vive en:','style':'text-align: center;'})))
+    ciudad_residencia_id    = forms.CharField(required = False, widget=forms.HiddenInput())
+    anio_nacimiento         = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifica', 'placeholder':'Año de Nacimiento','style':'text-align:center;'})))
+
+class IdentificacionForm(forms.ModelForm):
+    prontuario_local = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Registro Local','style':'text-align: center;'})))
+    ocupacion_especifica = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'form-control'}), queryset= RefOcupacionEspecifica.objects.all()  )
+    altura_metros = forms.IntegerField(required=True,widget = forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Mts.','style':'text-align: center;'})))
+    altura_centimetros = forms.IntegerField(required=True,widget = forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Cms.','style':'text-align: center;'})))
+    contextura = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'form-control'}), queryset= RefContextura.objects.all()  )
+    cutis = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'cutis','style':'text-align: center;'})))
+    cabello_tipo = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'form-control'}), queryset= RefTipoCabello.objects.all()  )
+    cabello_color = forms.CharField(required=False,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Color','style':'text-align: center;'})))
+    es_tenido = forms.BooleanField(required=False)
+    posee_tatuajes = forms.BooleanField(required=False)
+    posee_cicatrices = forms.BooleanField(required=False)
+    observaciones = forms.CharField(required=False,widget=forms.Textarea(attrs=dict({'class':'form-control','placeholder':'Observaciones','style':'text-align: center;'})))
+
+    class Meta:
+        model = Identificacion
+        exclude = ['persona','fecha_identificacion','dependencia_identificacion','fotos']
