@@ -105,7 +105,34 @@ def get_query(query_string, search_fields):
 
         return query
 
+def inicio(request):
+    user = request.user
+    profile = user.get_profile()
+    destino = "%s / %s" % (profile.depe,profile.ureg)
+    state = user.groups.values_list('name', flat=True)
+    no_enviados = False                                           #inicializa una variable de no enviados
+    #verifica si el usuario es preventor
+    if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
+        no_enviados = obtener_cantidad_no_enviados(request)         #obtiene la cantidad de preventivos no enviados
+        no_autorizados = obtener_cantidad_no_autorizados(request)     #obtiene la cantidad de preventivos no autorizados
+        radio_user = False                                            #crea una variable radio user para identificar si el usuario pertenece a una radiocabecera
+    #verifica si dentro de los grupos del usuario se encuentra radio
+    if user.groups.filter(name='radio'):
+        radio_user = True                                       #pone en tru radio user
+    autorizados = 0                                               #establece un contador de preventivos autorizados en 0
+    #si es usuario de radiocabecera
+    if radio_user:
+        preventivos = ""
+        dependencias = ""
+        dependencias = Dependencias.objects.filter(ciudad = user.get_profile().depe.ciudad )
+        preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
+        #si hay preventivos no enviados
+        if preventivos.count() > 0:
+            autorizados = preventivos.count()                     #obtiene la cantidad de preventivos autorizados para enviar
+    form = DependenciasForm()       #formulario de dependencias
+    formpass = CambiarPassForm()    #formulario de cambio de contraseña
 
+    return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'formpass':formpass,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'radio_user':radio_user,'autorizados':autorizados})
 
 def search_caratula(request):
     if request.method == "POST":

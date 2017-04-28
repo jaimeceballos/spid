@@ -36,6 +36,7 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     (r'^preventivos/', include('preventivos.urls')),
     url(r'^NIF/',include('NIF.urls')),
     url(r'^prontuario/',include('prontuario.urls')),
+    url(r'^spid/dependencias_ajax/','spid.views.dependencias_ajax',name='dependencias_ajax'),
     (r'^repar/', include('repar.urls')),
 
  ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

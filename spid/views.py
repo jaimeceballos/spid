@@ -1,6 +1,7 @@
 #encoding:utf-8
 from preventivos.models import *
 from preventivos.forms import *
+from .forms import *
 from django.core.context_processors import csrf
 from django.template import Context, Template, RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
@@ -26,6 +27,8 @@ from django.template import Context, loader
 from django.forms.util import ErrorList
 from preventivos.views import obtener_cantidad_no_enviados, obtener_cantidad_no_autorizados
 from prontuario.models import SearchResults, SearchHistory
+from preventivos.models import Dependencias, UnidadesRegionales
+import json
 
 def some_view(request):
    full= os.path.dirname(__file__)+"/static/pdfs/"
@@ -56,7 +59,7 @@ def help_view(request):
 #Definicion que carga la pantalla de login
 def iniciar(request):
     """Esta deficnicion es la encargada de cargar la pantalla de login y de la
-    preparacion del entorno para la misma"""
+    preparacion del entorno para la misma
     #Inicializacion de variables para generar el entorno
     state = ''                      #estado
     name=''                         #nombre
@@ -65,13 +68,114 @@ def iniciar(request):
     form = DependenciasForm()       #formulario de dependencias
     formd = []                      #arreglo formd
     #renderiza la pagina de inicio con las variables de inicializacion del entorno
-    return render(request, 'index.html', {'formd':formd,'state':state,'destino':destino,'form':form})
+    return render(request, 'index.html', {'formd':formd,'state':state,'destino':destino,'form':form})"""
+    form = LoginForm()
+
+    return render_to_response('./login.html',{'form':form},context_instance= RequestContext(request))
 
 #definicion para loguear un usuario
 def login_user(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        user = None
+        error = ""
+        changePass = ""
+        if form.is_valid():
+            usuario             = form.cleaned_data['usuario']
+            password            = form.cleaned_data['password']
+            dependencia         = form.cleaned_data['dependencia_id']
+            unidad_regional     = form.cleaned_data['unidad_regional_id']
+            try:
+                user            = User.objects.get(username = usuario)
+            except Exception as e:
+                error = "El usuario no existe."
+            if user.is_active:
+                if str(user.get_profile().depe.id) == dependencia:
+                    if user.get_profile().last_login:
+                        changePass = 'si'                                            #si esta levantada prepara una bandera que indica que debe cambiar la contraseña
+                    grupos = user.groups.values_list('name', flat=True)
+                    if len(grupos) == 1 or (len(grupos) == 2 and "administrador" in grupos) :
+                        if "prontuario" in grupos:
+                            ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
+                            profile = User.objects.get(username=usuario).get_profile()            #obtiene el perfil del usuario
+                            profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
+                            profile.save()                                                         #guarda el valor
+                            user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
+                            auth.login(request, user)                                       #realiza el login del usuario
+                            return HttpResponseRedirect("/prontuario/")
+                        else:
+                            destino = "%s / %s" % (user.get_profile().depe,user.get_profile().ureg)
+                            state = grupos
+                            no_enviados = False                                           #inicializa una variable de no enviados
+                            #verifica si el usuario es preventor
+                            if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
+                                no_enviados = obtener_cantidad_no_enviados(request)         #obtiene la cantidad de preventivos no enviados
+                                no_autorizados = obtener_cantidad_no_autorizados(request)     #obtiene la cantidad de preventivos no autorizados
+                                radio_user = False                                            #crea una variable radio user para identificar si el usuario pertenece a una radiocabecera
+                            #verifica si dentro de los grupos del usuario se encuentra radio
+                            if user.groups.filter(name='radio'):
+                                radio_user = True                                       #pone en tru radio user
+                            autorizados = 0                                               #establece un contador de preventivos autorizados en 0
+                            #si es usuario de radiocabecera
+                            if radio_user:
+                                preventivos = ""
+                                dependencias = ""
+                                dependencias = Dependencias.objects.filter(ciudad = user.get_profile().depe.ciudad )
+                                preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
+                                #si hay preventivos no enviados
+                                if preventivos.count() > 0:
+                                    autorizados = preventivos.count()                     #obtiene la cantidad de preventivos autorizados para enviar
+                            form = DependenciasForm()       #formulario de dependencias
+                            formpass = CambiarPassForm()    #formulario de cambio de contraseña
+                            ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
+                            profile = User.objects.get(username=usuario).get_profile()            #obtiene el perfil del usuario
+                            profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
+                            profile.save()                                                         #guarda el valor
+                            user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
+                            auth.login(request, user)
+                            return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
+                    elif len(grupos) > 1:
+                        ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
+                        profile = User.objects.get(username=usuario).get_profile()            #obtiene el perfil del usuario
+                        profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
+                        profile.save()                                                         #guarda el valor
+                        user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
+                        auth.login(request, user)                                       #realiza el login del usuario
+                        return render_to_response("./seleccionar_sistema.html",{'usuario':usuario},context_instance=RequestContext(request))
+
+
+
+        return render_to_response("./login.html",{'form':form},context_instance=RequestContext(request))
+    return HttpResponseRedirect("/spid/")
+
+    """error = ""
+    state = []                      #estado
+    name=''                         #nombre
+    username = password = ''        #usuario y contraseña
+    destino = ''                    #destino
+    changePass = ''                 #bandera de cambio de password
+    birthday=False                  #bandera de cumpleaños
+    form = DependenciasForm()       #formulario de dependencias
+    formpass = CambiarPassForm()    #formulario de cambio de contraseña
+    if request.POST.get('logonea')=='Conectar':
+        try:
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            depe = request.POST.get('dependencias')
+            ureg = request.POST.get('ureg')
+            ultimo_ingreso = User.objects.get(username = username).last_login      #obtiene la fecha de ultimo ingreso
+            profile = User.objects.get(username=username).get_profile()            #obtiene el perfil del usuario
+            profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
+            profile.save()                                                         #guarda el valor
+        except Exception as e:
+            error = "Acceso incorrecto al sistema."
+
+    return render_to_response('index.html', {'name':error,'form':form},context_instance = RequestContext(request))"""
+
+
     """ esta definicion realiza el logueo del usuario y las verificaciones
     necesarias para saber que tipo de usuario es el que se esta logueando
-    tambien prepara el entorno correspondiente para cada tipo de usuario"""
+    tambien prepara el entorno correspondiente para cada tipo de usuario
     #Definicion e incializacion de variables
     state = []                      #estado
     name=''                         #nombre
@@ -83,15 +187,9 @@ def login_user(request):
     formpass = CambiarPassForm()    #formulario de cambio de contraseña
 
     #Comienzo de la logica
-    #si no se recibe el nombre de usuario
-    if request.POST.get('username')=='':
-         formj = ActuantesForm() # se prepara un formulario de alta de usuario
-         #se redirige hacia la pantalla de solicitud de usuario
-         return render(request, 'correocontacto.html', {'state':state,'formj':formj})
-    #si se recibe el nombre de usuario
-    else:
-        #si el boton presionado fue conectar
-        if request.POST.get('logonea')=='Conectar':
+    #si el boton presionado fue conectar
+    if request.POST.get('logonea')=='Conectar':
+     try:
 
          username = request.POST.get('username')                                #obtiene el nombre de usuario
          password = request.POST.get('password')                                #obtiene la contraseña
@@ -150,7 +248,6 @@ def login_user(request):
 
 
                 gr=user.groups.values_list('name', flat=True)                   #obtiene los grupos que tiene asignado el usuario
-                print gr
                 #para cada grupo
                 for varios in gr:
                     state.append(str(Group.objects.get(name=varios)))           #agrega el grupo a la variable de estado
@@ -176,13 +273,7 @@ def login_user(request):
                   if radio_user:
                       preventivos = ""
                       dependencias = ""
-                      """try:
-                          dependencias = Dependencias.objects.filter(unidades_regionales = UnidadesRegionales.objects.get(cabecera_envio = user.get_profile().depe.id)) #obtiene las dependencias de su influencia
-                          preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
-                      except Exception as e:
-                          dependencias = Dependencias.objects.filter(id = user.get_profile().depe.id) #obtiene las dependencias de su influencia
-                          preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preven
-                      """
+
                       dependencias = Dependencias.objects.filter(ciudad = user.get_profile().depe.ciudad )
                       preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
                       #si hay preventivos no enviados
@@ -191,7 +282,10 @@ def login_user(request):
 
                   #Renderiza el template index1 logueo correcto, con todas las variables de entorno inicializadas
                   if 'prontuario' in gr:
-                      return HttpResponseRedirect('/prontuario/')
+                      if 'policia' in gr or 'jefes' in gr or 'radio' in gr or 'investigaciones' in gr:
+                          return render_to_response('./seleccionar_sistema.html',{'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados},context_instance = RequestContext(request))
+                      else:
+                          return HttpResponseRedirect('/prontuario/')
                   return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
 
                 #si el usuario intenta loguearse en una dependencia que no corresponde a su destino actual
@@ -210,63 +304,33 @@ def login_user(request):
 
             return render(request, 'index.html', {'state':state,'form':form})
 
-         #Si el nombre de usuario no es un numero
-         else:
 
-            user = auth.authenticate(username=username, password=password)      #autentica el usuario
-            if user is not None:                                                #si se pudo autenticar
-              #si el usuario no esta activo
-              if user.is_active:
-                #Verifica si es el primer ingreso
-                if user.get_profile().last_login:
-                   changePass = 'si'                                            #si es el primer ingreso levanta la bandera de cambio de contraseña
-
-                auth.login(request, user)                                       #realiza el logueo del usuario
-                userp=user.get_profile()                                        #obtiene el perfil del usuario
-                profiles = user.get_profile()                                   #obtiene el perfil del usuario
-                uregs=profiles.ureg                                             #obtiene la unidad regional del usuario
-                depes=profiles.depe                                             #obtiene la dependencia del usuario
-                uregi=UnidadesRegionales.objects.get(descripcion=uregs)         #genera una instancia de la unidad regional del usuario
-                uregis=uregi.id                                                 #obtiene el id de la unidad regional
-                depen=Dependencias.objects.get(descripcion=depes)               #genera una instancia de la dependencia del usuario
-                depeni=depen.id                                                 #obtiene el id de la dependencia
-
-                gr=user.groups.values_list('name', flat=True)                   #obtiene los grupos del usuario
-                #para cada grupo
-                for varios in gr:
-                     state.append(str(Group.objects.get(name=varios)))          #lo agrega a la variable de estado
-
-                #Verifica que el usuario se este logueando en su dependencia destino
-                if uregis == uregis1 and depeni == depeni1:
-                   request.session['state']=state                               #carga en la sesion la variable de estado
-                   request.session['destino']=destino                           #carga en la sesion la variable de destino
-
-                #si no se esta logueando en su dependencia
-                else:
-
-                  #verifica que el usuario sea administrador o visita
-                  if "administrador" in state or "visita" in state:
-                     state = str(Group.objects.get(name=gr))                    #obtiene el grupo en la variable estado
-                     request.session['state']=state                             #carga la variable de estado en la sesion
-                     destino='Jefatura'                                         #indica como destino la jefatura
-                     request.session['destino']=destino                         #carga la variable de destino a la sesion
-                  #si no es ni administrador ni visita
-                  else:
-                    state="Usuario no Autorizado"                               #carga en estado el valor no autorizado
-                    return render(request, 'index.html', {'state':state,'form':form}) #retorna a la pagina de inicio
+     except Exception as e:
+         error = "Usuario o Contraseña Incorrecta"
+         return render(request, 'index.html', {'name':error,'form':form})
+    else:
+        state="Usuario no Autorizado"
+        return render(request, 'index.html', {'state':state,'form':form})"""
 
 
+def dependencias_ajax(request):
+    if request.is_ajax():
+        q = request.GET.get('term','')
 
-              #si el usuario no esta activo
-              else:
-                state="Usuario no Autorizado"
-                return render(request, 'index.html', {'state':state,'form':form})
-
-              return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'ultimo_ingreso':ultimo_ingreso})
-
-        else:
-            return render(request, 'index.html', {'name':name,'form':form})
-
+        dependencias = Dependencias.objects.filter(descripcion__icontains = q)[:20]
+        results = []
+        for dependencia in dependencias:
+            dependencia_json = {}
+            dependencia_json['id'] = dependencia.id
+            dependencia_json['label'] =  dependencia.descripcion + ' - ' + dependencia.unidades_regionales.descripcion
+            dependencia_json['value'] = dependencia.descripcion + ' - ' + dependencia.unidades_regionales.descripcion
+            dependencia_json['unidad_regional_id']  = dependencia.unidades_regionales.id
+            results.append(dependencia_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data,mimetype)
 
 def registro(request):
     info_enviado = False

@@ -175,6 +175,7 @@ urlpatterns = patterns('',
     url(r'^user/roles/(?P<usuario>[0-9]+)/$','preventivos.views.user_roles',name='user_roles'),
     url(r'^user/roles_save/$','preventivos.views.user_roles_save',name='user_roles_save'),
     url(r'^obtener_preventivo/(?P<depe>[0-9]+)/(?P<numero>[0-9]+)/(?P<anio>[0-9]+)/$','preventivos.views.obtener_preventivo',name='obtener_preventivo'),
+    url(r'^inicio/$','preventivos.views.inicio',name='inicio'),
     (r'^', 'preventivos.views.page_not_found'),
     (r'^', 'preventivos.views.server_error'),
 
