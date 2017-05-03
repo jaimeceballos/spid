@@ -116,6 +116,7 @@ def login_user(request):
                             if user.groups.filter(name='radio'):
                                 radio_user = True                                       #pone en tru radio user
                             autorizados = 0                                               #establece un contador de preventivos autorizados en 0
+                            no_autorizados = 0
                             #si es usuario de radiocabecera
                             if radio_user:
                                 preventivos = ""
