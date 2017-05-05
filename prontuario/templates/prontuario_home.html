@@ -24,7 +24,38 @@
     <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/dataTables.min.css">
     <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/responsive.bootstrap.min.css">
+    <script type="text/javascript">
+    var idleTime = 0;//variable de control de minutos para el logout automatico
+    $(document).ready(function () {
 
+        var idleInterval = setInterval(timerIncrement, 60000); // 1 minut
+
+        //Zero the idle timer on mouse movement.
+        $(this).mouseup(function (e) {
+            idleTime = 0;
+            $("#inactivo").empty().parent().parent().hide();
+        });
+        $(this).keypress(function (e) {
+            idleTime = 0;
+            $("#inactivo").empty().parent().parent().hide();
+        });
+
+    });
+    //Funcion para generar el logout automatico despues de 15 minutos
+    function timerIncrement() {
+        idleTime = idleTime + 1;
+        if(idleTime > 12){
+            $("#inactivo").empty().append(idleTime).parent().parent().show();
+        }
+
+        if (idleTime > 14) { // 14 minutes
+          setTimeout(function(){//provoco un retraso de 1 segundo para esperar el auto logout de django
+            window.location.replace("/spid/salir/"); //Recargo la pantalla para generar el logout
+          },1000);
+
+        }
+    }
+    </script>
     <title></title>
   </head>
   <body>
@@ -34,6 +65,15 @@
     <main >
 
       <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="alert alert-warning" role="alert" id="alertaInactividad" style="display:none">
+              <h4>
+                <strong>Atenci&oacute;n!</strong> Su sesi&oacute;n registra <label id="inactivo" class="label label-danger"></label> minutos de inactividad. <small>M&aacute;ximo permitido 15 minutos.</small>
+              </h4>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col-md-2 main">
                 {% include './main_body.html' %}

@@ -22,7 +22,7 @@
                 idleTime = 0;
                 $("#inactivo").empty().parent().parent().hide();
             });
-            
+
         });
         //Funcion para generar el logout automatico despues de 15 minutos
         function timerIncrement() {
@@ -33,7 +33,7 @@
 
             if (idleTime > 14) { // 14 minutes
               setTimeout(function(){//provoco un retraso de 1 segundo para esperar el auto logout de django
-                window.location.reload(); //Recargo la pantalla para generar el logout
+                window.location.replace("/spid/salir/"); //Recargo la pantalla para generar el logout
               },1000);
 
             }
