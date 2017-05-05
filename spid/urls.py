@@ -15,7 +15,7 @@ handler404 = 'preventivos.views.page_not_found'
 handler500 = 'preventivos.views.server_error'
 admin.autodiscover()
 
-urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', name="changePass"),
+urlpatterns = patterns('',  url(r'^spid/change/(?P<id>[0-9A-Za-z]+)/$', 'spid.views.passwordChange', name="changePass"),
     (r'^spid/$', 'spid.views.iniciar'),
     (r'^spid/depes/(?P<depes>[0-9A-Za-z]+)/$', 'spid.views.obtener_dependencias'),
     (r'^spid/login/$', 'spid.views.login_user'),
@@ -37,6 +37,7 @@ urlpatterns = patterns('',  url(r'^spid/change/$', 'spid.views.passwordChange', 
     url(r'^NIF/',include('NIF.urls')),
     url(r'^prontuario/',include('prontuario.urls')),
     url(r'^spid/dependencias_ajax/','spid.views.dependencias_ajax',name='dependencias_ajax'),
+    url(r'^spid/primer_ingreso/(?P<id>[0-9A-Za-z]+)/$','spid.views.primer_ingreso',name='primer_ingreso'),
     (r'^repar/', include('repar.urls')),
 
  ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

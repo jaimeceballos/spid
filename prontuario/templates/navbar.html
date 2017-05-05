@@ -22,12 +22,17 @@
                   <a href='/preventivos/user/'><span>Usuarios</span></a>
                 </li>
                 {% endif %}
+								{% if request.session.cambia_sistema %}
 								<li>
+									<a href="/spid/inicio/">Ir a Preventivo</a>
+								</li>
+								{% endif %}
+								<!--li>
 									<a href="#">Another action</a>
 								</li>
 								<li>
 									<a href="#">Something else here</a>
-								</li>
+								</li-->
 								<li class="divider">
 								</li>
 								<li>

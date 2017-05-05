@@ -22,36 +22,7 @@
                 idleTime = 0;
                 $("#inactivo").empty().parent().parent().hide();
             });
-            //Demo code
-            $('.password-container').pschecker({ onPasswordValidate: validatePassword, onPasswordMatch: matchPassword });
-
-            var submitbutton = $('.submit-button');
-            var errorBox = $('.error');
-            var errorBox1 = $('.errorpass');
-            errorBox.css('visibility', 'hidden');
-            errorBox1.css('visibility', 'hidden');
-            submitbutton.attr("disabled", "disabled");
-
-            //this function will handle onPasswordValidate callback, which mererly checks the password against minimum length
-            function validatePassword(isValid) {
-                if (!isValid)
-                    errorBox.css('visibility', 'visible');
-                else
-                    errorBox.css('visibility', 'hidden');
-            }
-            //this function will be called when both passwords match
-            function matchPassword(isMatched) {
-                if (isMatched) {
-                    submitbutton.addClass('unlocked').removeClass('locked');
-                    submitbutton.removeAttr("disabled", "disabled");
-                    errorBox1.css('visibility', 'hidden');
-                }
-                else {
-                    submitbutton.attr("disabled", "disabled");
-                    submitbutton.addClass('locked').removeClass('unlocked');
-                    errorBox1.css('visibility', 'visible');
-                }
-            }
+            
         });
         //Funcion para generar el logout automatico despues de 15 minutos
         function timerIncrement() {

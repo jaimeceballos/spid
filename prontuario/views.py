@@ -29,7 +29,11 @@ from prontuario.forms import *
 def home(request):
     """ Definicion que redirige al usuario al home de Prontuario"""
     values = {}
-
+    user = request.user
+    destino = "%s / %s" % (user.get_profile().depe,user.get_profile().ureg)
+    state = user.groups.values_list('name', flat=True)
+    request.session['state']=state                                #si es correcto carga en la sesion la variable estado
+    request.session['destino']=destino                            #carga en la sesion la variable destino
     if request.user.get_profile().depe.unidades_regionales.descripcion == "INVESTIGACIONES":
         verificar = Verificar.objects.filter(verificado = False)
         values['verificar'] = verificar
@@ -956,7 +960,7 @@ def obtener_fotos(request,id):
 def ver_identificacion(request,id):
     if request.is_ajax:
         identificacion = Identificacion.objects.get(id=id)
-        foto = FotosPersona.objects.filter(persona = identificacion.persona,tipo_foto = "1")[0]
+        foto = FotosPersona.objects.filter(persona = identificacion.persona,tipo_foto = "1")[0] if FotosPersona.objects.filter(persona = identificacion.persona,tipo_foto = "1").count() > 0 else None
         return render_to_response("./ver_identificacion.html",{'identificacion':identificacion,'foto':foto})
     return HttpResponseBadRequest()
 

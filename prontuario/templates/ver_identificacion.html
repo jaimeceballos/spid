@@ -1,6 +1,10 @@
 <div class="row">
   <div class="col-md-12">
-    <img src="/media/{{foto.foto}}" alt="{{foto.tipo_foto}}" class="img-circle" height="200px" width="200px"/>
+    {% if foto %}
+      <img src="/media/{{foto.foto}}" alt="{{foto.tipo_foto}}" class="img-circle" height="200px" width="200px"/>
+    {% else %}
+      <center>  <img class="img-responsive" src="/static/prontuario/images/avatar.png" style="width:200px;height:200px"></center>
+    {% endif %}
   </div>
 </div>
 <div class="row">

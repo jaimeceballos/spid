@@ -132,7 +132,8 @@ def inicio(request):
             autorizados = preventivos.count()                     #obtiene la cantidad de preventivos autorizados para enviar
     form = DependenciasForm()       #formulario de dependencias
     formpass = CambiarPassForm()    #formulario de cambio de contraseña
-
+    request.session['state']=state                                #si es correcto carga en la sesion la variable estado
+    request.session['destino']=destino                            #carga en la sesion la variable destino
     return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'formpass':formpass,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'radio_user':radio_user,'autorizados':autorizados})
 
 def search_caratula(request):
@@ -819,8 +820,9 @@ def reporactivity(request, user):
 @login_required
 def inicial(request):
     ciudades = ""
-    state= request.session.get('state')
-    destino= request.session.get('destino')
+    destino = "%s / %s" % (request.user.get_profile().depe,request.user.get_profile().ureg)
+    state = request.user.groups.values_list('name', flat=True)
+    
     no_enviados = False
     if Actuantes.objects.filter(funcion__gt=1,documento=request.user.username):
         no_enviados = obtener_cantidad_no_enviados(request)

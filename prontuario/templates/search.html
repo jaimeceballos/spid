@@ -96,6 +96,9 @@ $("#btnSearch").click(function(event){
       success: function(data){
         $("#btnSearch").prop('disabled', false);
         $("#loading").hide();
+        if($("#resultados")){
+            $("#resultados").remove();
+        }
         $("#contenido").append(data);
 
       },

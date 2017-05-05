@@ -87,6 +87,8 @@ def login_user(request):
             unidad_regional     = form.cleaned_data['unidad_regional_id']
             try:
                 user            = User.objects.get(username = usuario)
+                if user.get_profile().last_login:
+                    return HttpResponseRedirect('/spid/primer_ingreso/%d/' % user.id)
             except Exception as e:
                 error = "El usuario no existe."
             if user.is_active:
@@ -94,6 +96,7 @@ def login_user(request):
                     if user.get_profile().last_login:
                         changePass = 'si'                                            #si esta levantada prepara una bandera que indica que debe cambiar la contraseña
                     grupos = user.groups.values_list('name', flat=True)
+
                     if len(grupos) == 1 or (len(grupos) == 2 and "administrador" in grupos) :
                         if "prontuario" in grupos:
                             ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
@@ -102,6 +105,10 @@ def login_user(request):
                             profile.save()                                                         #guarda el valor
                             user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
                             auth.login(request, user)                                       #realiza el login del usuario
+                            destino = "%s / %s" % (profile.depe,profile.ureg)
+                            state = user.groups.values_list('name', flat=True)
+                            request.session['state']=state                                #si es correcto carga en la sesion la variable estado
+                            request.session['destino']=destino                            #carga en la sesion la variable destino
                             return HttpResponseRedirect("/prontuario/")
                         else:
                             destino = "%s / %s" % (user.get_profile().depe,user.get_profile().ureg)
@@ -134,8 +141,11 @@ def login_user(request):
                             profile.save()                                                         #guarda el valor
                             user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
                             auth.login(request, user)
+                            request.session['state']=state                                #si es correcto carga en la sesion la variable estado
+                            request.session['destino']=destino                            #carga en la sesion la variable destino
                             return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
-                    elif len(grupos) > 1:
+                    elif len(grupos) > 1 and ('prontuario' in grupos):
+                        request.session['cambia_sistema'] = 'radio' in grupos or 'policia' in grupos or 'investigaciones' in grupos or 'jefes' in grupos
                         ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
                         profile = User.objects.get(username=usuario).get_profile()            #obtiene el perfil del usuario
                         profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
@@ -143,7 +153,40 @@ def login_user(request):
                         user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
                         auth.login(request, user)                                       #realiza el login del usuario
                         return render_to_response("./seleccionar_sistema.html",{'usuario':usuario},context_instance=RequestContext(request))
-
+                    else:
+                        destino = "%s / %s" % (user.get_profile().depe,user.get_profile().ureg)
+                        state = grupos
+                        no_enviados = False                                           #inicializa una variable de no enviados
+                        #verifica si el usuario es preventor
+                        if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
+                            no_enviados = obtener_cantidad_no_enviados(request)         #obtiene la cantidad de preventivos no enviados
+                            no_autorizados = obtener_cantidad_no_autorizados(request)     #obtiene la cantidad de preventivos no autorizados
+                            radio_user = False                                            #crea una variable radio user para identificar si el usuario pertenece a una radiocabecera
+                        #verifica si dentro de los grupos del usuario se encuentra radio
+                        if user.groups.filter(name='radio'):
+                            radio_user = True                                       #pone en tru radio user
+                        autorizados = 0                                               #establece un contador de preventivos autorizados en 0
+                        no_autorizados = 0
+                        #si es usuario de radiocabecera
+                        if radio_user:
+                            preventivos = ""
+                            dependencias = ""
+                            dependencias = Dependencias.objects.filter(ciudad = user.get_profile().depe.ciudad )
+                            preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
+                            #si hay preventivos no enviados
+                            if preventivos.count() > 0:
+                                autorizados = preventivos.count()                     #obtiene la cantidad de preventivos autorizados para enviar
+                        form = DependenciasForm()       #formulario de dependencias
+                        formpass = CambiarPassForm()    #formulario de cambio de contraseña
+                        ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
+                        profile = User.objects.get(username=usuario).get_profile()            #obtiene el perfil del usuario
+                        profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
+                        profile.save()                                                         #guarda el valor
+                        user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
+                        auth.login(request, user)
+                        request.session['state']=state                                #si es correcto carga en la sesion la variable estado
+                        request.session['destino']=destino                            #carga en la sesion la variable destino
+                        return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
 
 
         return render_to_response("./login.html",{'form':form},context_instance=RequestContext(request))
@@ -313,6 +356,12 @@ def login_user(request):
         state="Usuario no Autorizado"
         return render(request, 'index.html', {'state':state,'form':form})"""
 
+def primer_ingreso(request,id):
+    form = CambiarPassForm()
+    usuario = User.objects.get(id = id)
+    state = "R" if "repar" in usuario.groups.values_list('name', flat=True) else ""
+    return render_to_response('./primer_ingreso.html',{'form':form,'state':state,'usuario':usuario.id},context_instance = RequestContext(request))
+
 
 def dependencias_ajax(request):
     if request.is_ajax():
@@ -459,15 +508,14 @@ def nologin(request):
 
 
 
-def passwordChange(request):
+def passwordChange(request,id):
   formpass = CambiarPassForm(request.POST)
   changePass = 'si'
 
-  state = request.session['state']
-  destino = request.session['destino']
+
   form = DependenciasForm()
 
-  user = User.objects.get(username=request.user)
+  user = User.objects.get(id=id)
   #if formpass.is_valid():
   pass1 = request.POST.get('pass1')
 
@@ -485,6 +533,8 @@ def passwordChange(request):
      changePass = ''
   logout(request)
   try:
+      state = request.session['state']
+      destino = request.session['destino']
       del request.session['state']
       del request.session['destino']
       request.session.flush()
@@ -494,5 +544,5 @@ def passwordChange(request):
   form = DependenciasForm()
   formd = []
   #print form,formd
-  return render(request, 'index.html', {'formd':formd,'form':form,'state':state,})
+  return HttpResponseRedirect("/spid/")
   #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})

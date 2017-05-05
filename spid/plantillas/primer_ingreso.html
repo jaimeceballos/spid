@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="{{STATIC_URL}}pschecker/js/jquery-1.4.4.min.js"></script>
+    <link rel="stylesheet" href="{{STATIC_URL}}pschecker/style/demo.css" type="text/css" />
+    <link rel="stylesheet" href="{{STATIC_URL}}pschecker/style/style.css" type="text/css" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/preventivos/pschecker.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        //Demo code
+        $('.password-container').pschecker({ onPasswordValidate: validatePassword, onPasswordMatch: matchPassword });
+
+        var submitbutton = $('.submit-button');
+        var errorBox = $('.error');
+        var errorBox1 = $('.errorpass');
+        errorBox.css('visibility', 'hidden');
+        errorBox1.css('visibility', 'hidden');
+        submitbutton.attr("disabled", "disabled");
+
+        //this function will handle onPasswordValidate callback, which mererly checks the password against minimum length
+        function validatePassword(isValid) {
+            if (!isValid)
+                errorBox.css('visibility', 'visible');
+            else
+                errorBox.css('visibility', 'hidden');
+        }
+        //this function will be called when both passwords match
+        function matchPassword(isMatched) {
+            if (isMatched) {
+                submitbutton.addClass('unlocked').removeClass('locked');
+                submitbutton.removeAttr("disabled", "disabled");
+                errorBox1.css('visibility', 'hidden');
+            }
+            else {
+                submitbutton.attr("disabled", "disabled");
+                submitbutton.addClass('locked').removeClass('unlocked');
+                errorBox1.css('visibility', 'visible');
+            }
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+    <div id="fade" class="overlay"  style="display: block;"></div>
+        <div id="light" class="modals" style="display: block;height:270px;width:60%;">
+          <div align="right"> <strong>Ayuda / Consejos </strong>
+             <a onclick="abrirModal();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/spid/ayuda.png"
+           width="18px" title="Ayuda de creacion de contraseña"></a>
+          </div>
+          <p style="color: red;" > Este es su primer ingreso al Sistema SPID, Por favor genere una nueva Clave:</p>
+          <form {% if not 'R' in state %} action="{% url 'changePass' usuario %}" {% else %} action="{% url 'changePassR' %}" {% endif %} method="post">{% csrf_token %}
+
+           <!-- {{formpass.as_p}}
+            <p><input class="new-aqua" type="submit" value= "Aceptar" name="aceptar"></p>-->
+            <p >
+              <span  class="error">Contraseña puede contener minimo 6 caracteres</span>
+          </p>
+
+            <div class="password-container">
+                <p>
+                    <label>
+                         Nueva Password :</label>
+                    <input class="strong-password" type="password" id="pass1" name="pass1"/>
+                </p>
+                <p>
+                    <label>
+                        Confirme Password:</label>
+                    <input class="strong-password" type="password" id="pass2" name="pass2"/>
+                </p>
+                <p>
+                    <input class="submit-button locked" type="submit" value= "Aceptar " name="aceptar">
+                <p >
+              <p >
+                <span  class="errorpass">La Contraseña debe tener seguridad fuerte</span>
+            </p>
+                <div class="strength-indicator">
+                    <div class="meter">
+                    </div>
+                    Una contraseña de seguridad Fuerte contiene
+                    entre 6 y 12 caracteres.
+                    No incluya palabras comunes ni nombres.
+                    Combine letras mayusculas, minusculas,
+                    numeros y simbolos(Ej: @,#,%,$,&).-
+                </div>
+            </div>
+
+
+
+
+          </form>
+        </div>
+      </div>
+  </body>
+</html>

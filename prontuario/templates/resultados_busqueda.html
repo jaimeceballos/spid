@@ -4,50 +4,78 @@
       <a href="#" class="btn btn-primary btn-xs" id="ocultar"> Ocultar formulario busqueda </a>
       <a href="#" class="btn btn-success btn-xs" style="display:none" id="mostrar"> Mostrar formulario busqueda </a>
     </small></h4>
-
     <div class="row">
-      <table class="table table-hover table-condensed table-bordered" id="tblResult">
-        <thead class="thead-inverse">
-          <th>
-            Nombre
-          </th>
-          <th>
-            DNI
-          </th>
-          <th>
-            Ciudad Nac
-          </th>
-          <th>
-            Pais
-          </th>
-          <th>
-            F.Nac.
-          </th>
-          <th>
-            Ciudad Res
-          </th>
-          <th>
-            Prontuario
-          </th>
-          <th>
-            Sistema
-          </th>
-          <th>
-            Utilizar
-          </th>
-        </thead>
-        <tbody style="height:50%;overflow-y:auto;">
-            {% for resultado in resultados %}
-              {% include 'detalle_resultado.html' with detalle=resultado %}
-            {% endfor %}
-        </tbody>
-      </table>
-
-
+      <div class="col-md-12">
+        <a href="javascript:nuevo();" class="btn btn-xs btn-block btn-default">La persona que busco no esta en el listado, Cargar nuevo.</a>
+      </div>
+    </div><hr>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-hover table-condensed table-bordered" id="tblResult">
+          <thead class="thead-inverse">
+            <th>
+              Nombre
+            </th>
+            <th>
+              DNI
+            </th>
+            <th>
+              Ciudad Nac
+            </th>
+            <th>
+              Pais
+            </th>
+            <th>
+              F.Nac.
+            </th>
+            <th>
+              Ciudad Res
+            </th>
+            <th>
+              Prontuario
+            </th>
+            <th>
+              Sistema
+            </th>
+            <th>
+              Utilizar
+            </th>
+          </thead>
+          <tbody style="height:50%;overflow-y:auto;">
+              {% for resultado in resultados %}
+                {% include 'detalle_resultado.html' with detalle=resultado %}
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
+
 
 </div>
 <script type="text/javascript">
+  function nuevo(){
+
+      $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          'Estoy Seguro': function() {
+            var url = "/prontuario/cargar_nuevo/";
+            $.get(url,function(data){
+                $("#contenido").empty().append(data);
+                $("#dialog-confirm").dialog( "close" );
+            });
+
+          },
+          'No, volver a buscar': function() {
+            $( this ).dialog( "close" );
+          }
+        }
+      }).empty().append("<center><p>Esta seguro que la persona que desea cargar no esta en el listado?</p></center>");
+
+  }
   //$("input[name=utilizar]:radio").change(function(event){
   function utilizar(id){
       //var checkbox = $(this);
