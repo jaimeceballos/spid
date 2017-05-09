@@ -80,6 +80,7 @@ def login_user(request):
         user = None
         error = ""
         changePass = ""
+
         if form.is_valid():
             usuario             = form.cleaned_data['usuario']
             password            = form.cleaned_data['password']
@@ -96,7 +97,7 @@ def login_user(request):
                     if user.get_profile().last_login:
                         changePass = 'si'                                            #si esta levantada prepara una bandera que indica que debe cambiar la contraseña
                     grupos = user.groups.values_list('name', flat=True)
-
+                    radio_user = True if 'Radio' in grupos else False
                     if len(grupos) == 1 or (len(grupos) == 2 and "administrador" in grupos) :
                         if "prontuario" in grupos:
                             ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
