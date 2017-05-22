@@ -1,0 +1,132 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="alert" role="alert" id="alerta" style="display:none">
+
+    </div>
+  </div>
+</div>
+<form class="form" action="{% url 'persona_save' persona.id %}" id="persona-save" method="post">{% csrf_token %}
+  <div class="row">
+    <div class="col-md-3">
+        <label for="">Documento</label>
+    </div>
+    <div class="col-md-9">
+        {{form.tipo_doc}}{{form.nro_doc}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+        <label for="">Apellido</label>
+    </div>
+    <div class="col-md-9">
+      {{form.apellidos}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+        <label for="">Nombres</label>
+    </div>
+    <div class="col-md-9">
+        {{form.nombres}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      Sexo
+    </div>
+    <div class="col-md-9">
+      {{form.sexo_id}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      Fecha Nac.
+    </div>
+    <div class="col-md-9">
+      {{form.fecha_nac}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+        <label for="">Ocupaci&oacute;n</label>
+    </div>
+    <div class="col-md-9">
+        {{form.ocupacion}}
+    </div>
+  </div>
+  <div style="diplay:none">
+
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-success btn-block" id="guardar">Guardar</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+  $('select').addClass('form-control');
+  $('input').addClass('form-control');
+  $("#persona-save").submit(function(event){
+    event.preventDefault();
+    $("#save").prop('disabled',true);
+    $("#loading").show();
+    var form = $("#persona-save");
+    $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: form.serialize(),
+      success: function(data){
+        $("#alerta").removeAttr("class").addClass("alert alert-success").empty().append("<h4><small>"+data+"</small></h4>").show();
+        $("#lblNombre").text($("#id_apellidos").val().toUpperCase()+", "+$("#id_nombres").val().toUpperCase());
+        $("#lblDocumento").text("Documento "+$("#id_nro_doc").val());
+      },
+      error: function(jqXHR, textStatus,msg){
+        $("#btnSearch").prop('disabled', false);
+        $("#loading").hide();
+        $( "#dialog-confirm" ).dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          },
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+              $("#btnSearch").prop('disabled', false);
+              $("#loading").hide();
+              alert($("#lblNombre"));
+            }
+          }
+        }).empty().append("<center><p>No se pudo guardar. Verifique los datos ingresados, haga una nueva verificacion de la persona a cargar y vuelva a intentarlo. Si el error persiste, pongase en contacto con la División Desarrollo.</p></center>");
+      }
+    });
+  });
+  $("#id_nro_doc").change(function(event){
+    $("#guardar").addClass("disabled");
+    $('select').prop('disabled',true);
+    $('input').prop('disabled',true);
+    $("#alerta").addClass("alert-info").empty().append("<h4><small>Se esta verificando el documento ingresado <img src='/static/imagenes/preventivos/loading.gif'/></small></h4>").show();
+    var documento = $("#id_nro_doc").val().trim();
+    var url = "/prontuario/verificar_dni/"+{{persona.id}}+"/"+documento+"/";
+    $.get(url,function(data){
+
+    })
+    .done(function(data){
+      if(data['error'] == 1){
+        $('select').prop('disabled',false);
+        $('input').prop('disabled',false);
+        $("#alerta").addClass("alert-danger").empty().append("<h4><small>El DNI ingresado corresponde a una persona ya cargada.<br> Por favor verifiquelo. "+data['error_message']+"</small></h4>").hide().show();
+        $("#id_nro_doc").parent().addClass("has-error");
+      }else{
+        $('select').prop('disabled',false);
+        $('input').prop('disabled',false);
+        $("#guardar").removeClass("disabled");
+        $("#id_nro_doc").parent().removeClass("has-error");
+        $("#alerta").empty().hide();
+      }
+    })
+  });
+</script>

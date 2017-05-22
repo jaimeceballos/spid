@@ -40,4 +40,7 @@ urlpatterns = patterns('',
     url(r'^busqueda/$','prontuario.views.busqueda',name='busqueda'),
     url(r'^obtener_miniatura/(?P<id>[0-9A-Za-z]+)/$','prontuario.views.obtener_miniatura',name='obtener_miniatura'),
     url(r'^ver_prontuario/(?P<id>[0-9]+)/$','prontuario.views.ver_prontuario',name='ver_prontuario'),
+    url(r'^modificar_persona/(?P<id>[0-9]+)/$','prontuario.views.modificar_persona',name='modificar_persona'),
+    url(r'^persona_save/(?P<id>[0-9]+)/$','prontuario.views.persona_save',name='persona_save'),
+    url(r'^verificar_dni/(?P<id>[0-9]+)/(?P<dni>[0-9]+)/$','prontuario.views.verificar_dni',name='verificar_dni'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

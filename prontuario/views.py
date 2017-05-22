@@ -23,6 +23,7 @@ from django.db import transaction,IntegrityError,connection,connections
 from django.core.urlresolvers import reverse
 from prontuario.models import *
 from prontuario.forms import *
+import json
 
 @login_required
 @group_required(["prontuario"])
@@ -205,16 +206,18 @@ def buscar_persona_rrhh(parametros):
     """ Esta definicion realiza la busqueda de la persona segun los parametros ingresados
     en la base de datos de personas del sistema Recursos Humanos"""
 
-    query = "select p.id as id, p.apellido as apellido, p.nombre as nombre, c.descripcion as ciudad_nacimiento,"\
-    " c.id as ciudad_nacimiento_id, cd.descripcion as ciudad_residencia, cd.id as ciudad_residencia_id, "\
-    "pn.descripcion as pais_nacimiento,pn.id as pais_nacimiento_id, documento as documento, fecha_nacimiento as fecha_nacimiento, ec.descripcion as estado_civil, "\
-    "case when pp.id then '1' else '0' end  as personal "\
-    "FROM rrhh.personas p "\
-    "left join referencias.ref_ciudades c on p.ciudad_nacimiento_id = c.id "\
-    "left join referencias.ref_ciudades cd on p.ciudad_domicilio_id = cd.id "\
-    "join referencias.ref_paises pn on p.pais_nacimiento_id = pn.id "\
-    "join referencias.ref_estado_civil ec on p.estado_civil_id = ec.id "\
-    "left join rrhh.personal_policial pp on p.id = pp.persona_id where "
+    query = "select p.id as id, p.apellido as apellido, p.nombre as nombre,"\
+    " case when p.ciudad_nacimiento_id then (select descripcion from referencias.ref_ciudades where id = p.ciudad_nacimiento_id) else 'no registrado' end as ciudad_nacimiento,"\
+    " case when p.ciudad_nacimiento_id then (select id from referencias.ref_ciudades where id = p.ciudad_nacimiento_id) else null end as ciudad_nacimiento_id,"\
+    " case when p.ciudad_domicilio_id then (select descripcion from referencias.ref_ciudades where id = p.ciudad_domicilio_id) else 'no registrado' end as ciudad_residencia,"\
+    " case when p.ciudad_domicilio_id then (select id from referencias.ref_ciudades where id = p.ciudad_domicilio_id) else null end as ciudad_residencia_id,"\
+    " case when p.pais_nacimiento_id then (select descripcion from referencias.ref_paises where id = p.pais_nacimiento_id) else 'no registrado' end as pais_nacimiento,"\
+    " case when p.pais_nacimiento_id then (select id from referencias.ref_paises where id = p.pais_nacimiento_id) else null end as pais_nacimiento_id,"\
+    " p.documento as documento, fecha_nacimiento as fecha_nacimiento,"\
+    " case when p.estado_civil_id then (select descripcion from referencias.ref_estado_civil where id = p.estado_civil_id) else 'no registrado' end as estado_civil,"\
+    " case when pp.id then '1' else '0' end  as personal "\
+    " FROM rrhh.personas p "\
+    " left join rrhh.personal_policial pp on p.id = pp.persona_id where "
     first_condition = ""
     and_condition = ""
     if not parametros['apellido'] == "":
@@ -360,7 +363,7 @@ def preparar_resultados(usuario,strParametros,spid = None,acei = None,rrhh = Non
                 nuevo.ciudad_residencia_id  = elemento['ciudad_residencia_id']
                 nuevo.pais_nacimiento       = elemento['pais_nacimiento'] if elemento['pais_nacimiento'] else registro_spid.ciudad_nac.pais.descripcion if registro_spid and registro_spid.ciudad_nac else registro_acei.nationality if registro_acei and registro_acei.nationality else ""
                 nuevo.pais_nacimiento_id    = elemento['pais_nacimiento_id']
-                nuevo.fecha_nacimiento      = datetime.datetime.strftime(elemento['fecha_nacimiento'],'%d/%m/%Y')
+                nuevo.fecha_nacimiento      = datetime.datetime.strftime(elemento['fecha_nacimiento'],'%d/%m/%Y') if elemento['fecha_nacimiento'] else None
                 nuevo.alias                 = ""
                 nuevo.prontuario_acei       = registro_acei.criminal_record_nro if registro_acei else ""
                 nuevo.usuario               = usuario
@@ -433,6 +436,8 @@ def obtener_id_busqueda(strParametros,usuario):
 
     return historial.id
 
+@login_required
+@group_required(["prontuario"])
 def search_detalle(request,sistema,id):
     """definicion que obtiene detalles de la persona seleccionada"""
 
@@ -491,8 +496,20 @@ def buscar_detalle_persona_rrhh(id):
     """definicion que realiza la busqueda de detalles de la persona en el sistema
     de recursos humanos"""
 
+    query = "select CONCAT(p.apellido,', ',p.nombre) as nombre, "\
+    "case when p.sexo_id then (select descripcion from referencias.ref_sexo where p.sexo_id = id) else 'Sin descripcion' end as sexo, "\
+    "case when p.ciudad_nacimiento_id then (select CONCAT(cn.descripcion,', ',pn.descripcion) from referencias.ref_ciudades cn join referencias.ref_paises pn on cn.pais_id = pn.id where cn.id = p.ciudad_nacimiento_id) else 'No registrado' end as lugar_nacimiento, "\
+    "p.fecha_nacimiento, p.documento, "\
+    "case when p.estado_civil_id then ( select descripcion from referencias.ref_estado_civil where p.estado_civil_id = id) else 'No registrado' end as estado_civil, "\
+    "case when p.ciudad_domicilio_id then (select CONCAT(cr.descripcion,', ',pr.descripcion) from referencias.ref_ciudades cr join referencias.ref_paises pr on cr.pais_id = pr.id where cr.id = p.ciudad_domicilio_id) else 'No registrado' end as lugar_residencia, "\
+    "(select CONCAT(padre.apellido,', ',padre.nombre) from rrhh.grupo_familiar gf join rrhh.personas padre on gf.familiar_id = padre.id "\
+    "where gf.persona_id = p.id and gf.tipo_parentezco_id = 3 and padre.sexo_id = 2) as padre, "\
+    "(select CONCAT(madre.apellido,', ',madre.nombre) from rrhh.grupo_familiar gf2 join rrhh.personas madre on gf2.familiar_id = madre.id "\
+    "where gf2.persona_id = p.id and gf2.tipo_parentezco_id = 3 and madre.sexo_id = 1) as madre "\
+    "from rrhh.personas p where p.id = %s" % id
 
-    query = "select CONCAT(p.apellido,', ',p.nombre) as nombre, s.descripcion as sexo, "\
+
+    """query = "select CONCAT(p.apellido,', ',p.nombre) as nombre, s.descripcion as sexo, "\
     "CONCAT(cn.descripcion,', ',pn.descripcion) as lugar_nacimiento, p.fecha_nacimiento, "\
     "p.documento, ec.descripcion as estado_civil, CONCAT(cr.descripcion,', ',pr.descripcion) as lugar_residencia, "\
     "(select CONCAT(padre.apellido,', ',padre.nombre) from rrhh.grupo_familiar gf join rrhh.personas padre on gf.familiar_id = padre.id "\
@@ -502,7 +519,7 @@ def buscar_detalle_persona_rrhh(id):
     "from rrhh.personas p join referencias.ref_sexo s on p.sexo_id = s.id left join referencias.ref_ciudades cn on p.ciudad_nacimiento_id = cn.id "\
     "left join referencias.ref_paises pn on p.pais_nacimiento_id = pn.id join referencias.ref_estado_civil ec on p.estado_civil_id = ec.id "\
     "left join referencias.ref_ciudades cr on p.ciudad_domicilio_id = cr.id left join referencias.ref_paises pr on cr.pais_id = pr.id "\
-    "where p.id = %s" % id
+    "where p.id = %s" % id"""
     try:
         cursor = connections['rrhh'].cursor()
         cursor.execute(query)
@@ -514,7 +531,8 @@ def buscar_detalle_persona_rrhh(id):
     except Exception as e:
         return []
 
-
+@login_required
+@group_required(["prontuario"])
 def search_procesales(request,id,dni):
     """Esta definicion busca una persona por dni en la base de datos del sistema
     de comunicaciones Procesales"""
@@ -527,6 +545,8 @@ def search_procesales(request,id,dni):
     else:
         return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def utilizar_prontuario(request,id,prontuario):
     """esta definicion obtiene el numero de prontuario y lo utiliza temporalmente
     en la persona encontrada en la tabla de resultados_busqueda"""
@@ -541,6 +561,8 @@ def utilizar_prontuario(request,id,prontuario):
     else:
         return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def nuevo_pais(request,tipo):
     """definicion que sirve para crear un nuevo pais"""
 
@@ -562,6 +584,8 @@ def nuevo_pais(request,tipo):
             return render_to_response("./nuevo_pais.html",{'form':form,'tipo':tipo},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def nueva_ciudad(request,tipo,pais):
     """definicion que sirve para generar una nueva ciudad"""
 
@@ -585,6 +609,8 @@ def nueva_ciudad(request,tipo,pais):
             return render_to_response("./nuevo_ciudad.html",{'form':form,'tipo':tipo,'pais':pais},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def verificar_prontuario(request,n_p):
     """definicion que verifica si el numero de prontuario ingresado existe en la
     base de datos de comunicaciones procesales"""
@@ -598,7 +624,8 @@ def verificar_prontuario(request,n_p):
     else:
         return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def nuevo_save(request):
     """ definicion que guarda un nuevo prontuario y habilita la cracion de una
     nueva identificacion"""
@@ -645,6 +672,8 @@ def nuevo_save(request):
 
     return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def identificacion(request,id):
     if request.is_ajax:
         persona = Personas.objects.get(id=id)
@@ -654,6 +683,8 @@ def identificacion(request,id):
         return render_to_response("./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def nuevo_existe(request,id_detalle):
     """definicion que genera un nuevo prontuario a partir de una persona existente
     en la base de datos de personas del sistema SPID, y habilita la carga de una
@@ -711,7 +742,8 @@ def nuevo_existe(request,id_detalle):
             return render_to_response('./nuevo_prontuario.html',{'form':form,'prontuarioForm':prontuarioForm},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def identificacion_save(request):
     """"Definicion para guardar una nueva identificacion de una persona"""
     if request.is_ajax():
@@ -753,13 +785,16 @@ def identificacion_save(request):
                 return render_to_response("./nueva_identificacion.html",{'persona':identificacion.persona,'prontuario':prontuario,'identificacion':identificacion,'existe':True},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def verificar(request):
     if request.is_ajax():
         verificar = Verificar.objects.filter(verificado = False)
         return render_to_response("./verificar.html",{'verificar':verificar},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def datos_verificar(request,id):
     if request.is_ajax():
         verificar = Verificar.objects.get(id=id)
@@ -781,7 +816,8 @@ def datos_verificar(request,id):
         return render_to_response("./detalle_verificar.html",values,context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def cargar_padres(request,id):
     if request.is_ajax():
         if request.method == 'POST':
@@ -814,7 +850,8 @@ def cargar_padres(request,id):
             return render_to_response("./padres.html",{'form':form,'id':id},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def cargar_domicilios(request,id):
     if request.is_ajax():
         persona = Personas.objects.get(id=id)
@@ -850,7 +887,8 @@ def cargar_domicilios(request,id):
         return render_to_response("./domicilios.html",{'domicilios':domicilios,'form':form,'id':id},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def cargar_fotos(request,id):
     if request.is_ajax():
         persona = Personas.objects.get(id=id)
@@ -877,6 +915,8 @@ def cargar_fotos(request,id):
         return render_to_response("./fotos.html",{'fotos':fotos,'form':form,'id':id},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def verificar_existe(request,id):
     if request.is_ajax():
         persona = Personas.objects.get(id = id)
@@ -893,10 +933,10 @@ def verificar_existe(request,id):
         return HttpResponse(prontuario)
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def vincular(request,id):
     if request.is_ajax():
-        print "ingresa a vincular"
         identificacion = Identificacion.objects.get(id = id)                        # obtengo la identificacion a vincular con un prontuario
         if request.method == 'POST':
             form = None
@@ -915,7 +955,6 @@ def vincular(request,id):
                     prontuario.save()                                                 # guardo la nueva instancia en la BD
                 prontuario.identificaciones.add(identificacion)                       # asigno la identificacion al prontuario
                 fotos = FotosPersona.objects.filter(persona = identificacion.persona) # busco si existen fotos asociadas a la persona
-                print fotos.count
                 if fotos.count > 0:                                                   # en el caso que existan
                     for foto in fotos:
                         try:
@@ -933,7 +972,8 @@ def vincular(request,id):
                 print e
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def identificaciones_anteriores(request,id):
     if request.is_ajax():
         identificaciones = Identificacion.objects.filter(persona=id).order_by("-id")
@@ -943,20 +983,24 @@ def identificaciones_anteriores(request,id):
         return HttpResponseNotFound()
     return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def obtener_identificacion(request,id):
     if request.is_ajax():
         identificacion = Identificacion.objects.get(id=id)
         return render_to_response("./identificacion.html",{'identificacion':identificacion})
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def obtener_fotos(request,id):
     if request.is_ajax():
         fotos = FotosPersona.objects.filter(persona = id)
         return render_to_response("./galeria.html",{"fotos":fotos})
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def ver_identificacion(request,id):
     if request.is_ajax:
         identificacion = Identificacion.objects.get(id=id)
@@ -964,13 +1008,16 @@ def ver_identificacion(request,id):
         return render_to_response("./ver_identificacion.html",{'identificacion':identificacion,'foto':foto})
     return HttpResponseBadRequest()
 
+@login_required
+@group_required(["prontuario"])
 def buscar(request):
     if request.is_ajax:
         form = BuscarForm()
         return render_to_response("./busqueda.html",{'form':form},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
-
+@login_required
+@group_required(["prontuario"])
 def busqueda(request):
     if request.user.is_authenticated:
         if request.is_ajax:
@@ -1003,6 +1050,8 @@ def busqueda(request):
         return HttpResponseBadRequest()
     return HttpResponseRedirect("/")
 
+@login_required
+@group_required(["prontuario"])
 def obtener_miniatura(request,id):
     prontuario = Prontuario.objects.get(id=id)
     foto = prontuario.fotos.filter(tipo_foto=1)
@@ -1012,7 +1061,8 @@ def obtener_miniatura(request,id):
         foto = '/static/prontuario/images/avatar.png'
     return render_to_response("./miniatura.html",{'prontuario':prontuario,'foto':foto},context_instance = RequestContext(request))
 
-
+@login_required
+@group_required(["prontuario"])
 def ver_prontuario(request,id):
     if request.is_ajax():
         values = {}
@@ -1024,4 +1074,70 @@ def ver_prontuario(request,id):
         if values['padres'].count() > 0:
             values['padres'] = values['prontuario'].persona.padre.all()[0]
         return render_to_response("./prontuario.html",values,context_instance = RequestContext(request))
+    return HttpResponseBadRequest()
+
+@login_required
+@group_required(["prontuario"])
+def modificar_persona(request,id):
+    if request.is_ajax():
+        persona = Personas.objects.get(id=id)
+        form    = PersonasForm(instance = persona)
+        return render_to_response("./modificar_persona.html",{'persona':persona,'form':form},context_instance=RequestContext(request))
+    return HttpResponseBadRequest()
+
+def persona_save(request,id):
+    if request.is_ajax():
+        if request.method == "POST":
+            persona = Personas.objects.get(id=id)
+            form = PersonasForm(request.POST,instance=persona)
+            if form.is_valid():
+                persona.tipo_doc    = form.cleaned_data['tipo_doc']
+                persona.nro_doc     = form.cleaned_data['nro_doc']
+                persona.apellidos   = form.cleaned_data['apellidos']
+                persona.nombres     = form.cleaned_data['nombres']
+                persona.sexo_id     = form.cleaned_data['sexo_id']
+                persona.fecha_nac   = form.cleaned_data['fecha_nac']
+                persona.ocupacion   = form.cleaned_data['ocupacion']
+                persona.save()
+                return HttpResponse("La persona se modifico correctamente.")
+    return HttpResponseBadRequest()
+
+@login_required
+@group_required(["prontuario"])
+def verificar_dni(request,id,dni):
+    if request.is_ajax():
+        response_data = {}
+        persona = Personas.objects.get(id=id)
+        parametros = {}
+        parametros['apellido']          = ""
+        parametros['nombre']            = ""
+        parametros['fecha_nacimiento']  = ""
+        parametros['ciudad_nacimiento'] = ""
+        parametros['pais_nacimiento']   = ""
+        parametros['ciudad_nacimiento_id'] = ""
+        parametros['pais_nacimiento_id']   = ""
+        parametros['documento']         = dni
+        parametros['alias']             = ""
+        persona_spid = buscar_persona_spid(parametros)
+        persona_rrhh = buscar_persona_rrhh(parametros)
+        persona_acei = buscar_persona_acei(parametros)
+        if len(persona_spid) > 0:
+            if not persona.id == persona_spid[0].id:
+                response_data['error'] = 1
+                response_data['error_message'] = '%s, %s' %(persona_spid[0].apellidos,persona_spid[0].nombres)
+                return HttpResponse(json.dumps(response_data), content_type="application/json")
+        if len(persona_rrhh) > 0:
+            if not persona.apellidos == persona_rrhh[0]['apellido'] and not persona.nombres == persona_rrhh[0]['nombre']:
+                response_data['error'] = 1
+                response_data['error_message'] = '%s, %s' %(persona_rrhh[0]['apellido'],persona_rrhh[0]['nombre'])
+                return HttpResponse(json.dumps(response_data), content_type="application/json")
+        if len(persona_acei) > 0:
+            if not persona.apellidos == persona_acei[0].surname and not persona.nombres == "%s %s"  %(persona_acei[0].name_1,persona_acei[0].name_2):
+                response_data['error'] = 1
+                response_data['error_message'] = '%s, %s %s' %(persona_acei[0].surname,persona_acei[0].name_1,persona_acei[0].name_2)
+                return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+        response_data['error'] = 2
+        response_data['error_message'] = "se puede modificar."
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
     return HttpResponseBadRequest()
