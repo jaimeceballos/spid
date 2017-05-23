@@ -105,7 +105,6 @@ def search_persona(request):
                                 persona_spid = persona_spid if persona_spid.count()>0 else None,
                                 persona_rrhh = persona_rrhh if len(persona_rrhh) > 0 else None
                                 )
-
                 resultados = SearchResults.objects.filter(
                              id_busqueda=preparar_resultados(
                                              request.user,
@@ -377,6 +376,7 @@ def preparar_resultados(usuario,strParametros,spid = None,acei = None,rrhh = Non
                 es_policia = False
                 documento = registro.dni
                 registro_spid = None
+                registro_rrhh = None
                 if spid:
                     try:
                         registro_spid = spid.get(nro_doc = documento)
