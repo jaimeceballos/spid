@@ -877,14 +877,16 @@ def cargar_domicilios(request,id):
                 domicilio.lote                                          = form.cleaned_data['lote']
                 domicilio.sector                                        = form.cleaned_data['sector']
                 domicilio.manzana                                       = form.cleaned_data['manzana']
+                domicilio.calle2                                        = form.cleaned_data['calle2']
                 domicilio.personas                                      = persona
                 try:
                     domicilio.save()
                 except Exception as e:
                     return HttpResponseBadRequest()
         domicilios = Domicilios.objects.filter(personas=persona)
+        paises = RefPaises.objects.all()
         form = DomicilioProntuarioForm()
-        return render_to_response("./domicilios.html",{'domicilios':domicilios,'form':form,'id':id},context_instance=RequestContext(request))
+        return render_to_response("./domicilios.html",{'domicilios':domicilios,'form':form,'id':id,'paises':paises},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
 
 @login_required

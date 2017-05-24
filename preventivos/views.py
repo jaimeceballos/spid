@@ -822,7 +822,7 @@ def inicial(request):
     ciudades = ""
     destino = "%s / %s" % (request.user.get_profile().depe,request.user.get_profile().ureg)
     state = request.user.groups.values_list('name', flat=True)
-    
+
     no_enviados = False
     if Actuantes.objects.filter(funcion__gt=1,documento=request.user.username):
         no_enviados = obtener_cantidad_no_enviados(request)
@@ -14669,6 +14669,15 @@ def ciudades_ajax(request):
         data = 'fail'
     mimetype = 'application/json'
     return HttpResponse(data,mimetype)
+
+@login_required
+def ciudades_ajax_provincia(request,id):
+    if request.is_ajax():
+        ciudades = RefCiudades.objects.filter(provincia = id)
+        data = serializers.serialize("json",ciudades)
+        return HttpResponse(data,mimetype='application/json')
+    return HttpResponseBadRequest()
+
 
 @login_required
 def paises_ajax(request):

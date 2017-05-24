@@ -843,7 +843,7 @@ class Domicilios(models.Model):
 	lote =models.CharField(max_length=4,default="0",blank = True)
 	sector = models.CharField(max_length = 10,blank = True, null = True,default="")
 	manzana = models.CharField(max_length=4,default="0",blank = True)
-
+	calle2 = models.CharField(max_length=80,blank= True, null=True)
 	def __unicode__(self):
 		return u'%s %s %s %s %s' % (self.personas,self.barrio_codigo,self.calle,self.altura,self.calle)
 

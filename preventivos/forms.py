@@ -596,8 +596,6 @@ class DomiciliosForm(forms.ModelForm):
 		exclude = ('personas','ref_ciudades',)
 
 class DomicilioProntuarioForm(forms.ModelForm):
-	
-
 
 	class Meta:
 		model = Domicilios

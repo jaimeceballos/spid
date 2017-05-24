@@ -2,103 +2,111 @@
   <legend>Nuevo domicilio</legend>
   <div class="row well">
     <form id="save-form" action="{% url 'cargar_domicilios' id %}" method="post">{% csrf_token %}
-      <div class="col-md-12">
-          <div class="row">
-            <div class="col-md-3">
-              <label for="">Ciudad</label>
-            </div>
-            <div class="col-md-3">
-              <label for="">Tipo Domicilio</label>
-            </div>
-            <div class="col-md-3">
-              <label for="">Zona</label>
-            </div>
-            <div class="col-md-3">
-              <label for="">Barrio</label>
-            </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="checkbox">
+
+            <label>
+              <input type="checkbox" id="chkNoProvincia" />Domicilio fuera de la provincia
+            </label>
+
           </div>
-          <div class="row">
-            <div class="col-md-3">
+        </div>
+      </div>
+      <div class="row no_provincia" id="noProvincia">
+        <div class="col-md-12">
+          <label for="">Pais</label>
+          <select class="" id="id_pais">
+            <option value=""></option>
+            {% for pais in paises %}
+            <option value="{{pais.id}}">{{pais.descripcion}}</option>
+            {% endfor%}
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="">Ciudad</label>
               {{form.ref_ciudades}}
-            </div>
-            <div class="col-md-3">
-              {{form.tipos_domicilio}}
-            </div>
-            <div class="col-md-3">
-              {{form.ref_zona}}
-            </div>
-            <div class="col-md-3">
-              {{form.barrio_codigo}}
-            </div>
-
+              <script type="text/javascript">
+                var url = '/preventivos/ciudades_ajax_provincia/1/';
+                $.get(url,function(data){
+                  var select = $("#id_ref_ciudades");
+                  var options = '<option value="">Seleccione ciudad</option>';
+                  for (var i = 0; i < data.length; i++) {
+                    options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+                  }
+                  select.html(options);
+                  select.removeAttr('disabled');
+                }, "json");
+              </script>
           </div>
-          <div class="row">
-            <div class="col-md-3">
-              <label for="">Sector</label>
-            </div>
-            <div class="col-md-3">
-              <label for="">Manzana</label>
-            </div>
-            <div class="col-md-3">
-              <label for="">Lote</label>
-            </div>
-
-          </div>
-          <div class="row">
-
-            <div class="col-md-3">
-              {{form.sector}}
-            </div>
-            <div class="col-md-3">
-              {{form.manzana}}
-            </div>
-            <div class="col-md-3">
-              {{form.lote}}
-            </div>
-
-          </div>
-          <div class="row">
-            <div class="col-md-3">
-              <label for="">Calle</label>
-            </div>
-            <div class="col-md-3">
-              <label for="">Altura</label>
-            </div>
-            <div class="col-md-3">
-              <label for="">Interseccion</label>
-            </div>
-
-          </div>
-          <div class="row">
-            <div class="col-md-3">
-              {{form.calle}}
-            </div>
-            <div class="col-md-3">
-              {{form.altura}}
-            </div>
-            <div class="col-md-3">
-              {{form.entre}}
-            </div>
-
-
-
-          </div>
-          <div class="row">
-            <div class="col-md-3">
-              <label for="">Piso</label>
-            </div>
-            <div class="col-md-3">
-              <label for="">Departamento</label>
+        </div>
+      </div>
+      <div id="enProvincia">
+        <div class="row" id="siCalle">
+          <div class="col-md-4">
+            <label for="">Calle</label>
+            {{form.calle}}
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="chkInterseccion"/>Interseccion
+              </label>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-3">
-              {{form.piso}}
-            </div>
-            <div class="col-md-3">
-              {{form.departamento}}
+          <div class="col-md-1">
+            <label for="">N°</label>
+            {{form.altura}}
+          </div>
+          <div class="col-md-4 interseccion" id="interseccion">
+            <label for="">Intersecci&oacute;n</label>
+            {{form.entre}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="checkbox">
+              <label for=""> </label>
+              <label>
+                <input type="checkbox" id="chkCalle" />La calle no figura
+              </label>
             </div>
           </div>
+        </div>
+        <div class="row  no_calle" id="noCalle">
+          <div class="col-md-12" >
+            <label for="">Calle</label>
+            {{form.calle2}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <label for="">Barrio</label>
+            {{form.barrio_codigo}}
+          </div>
+          <div class="col-md-2">
+            <label for="">Sector</label>
+            {{form.sector}}
+          </div>
+          <div class="col-md-2">
+            <label for="">Manzana</label>
+            {{form.manzana}}
+          </div>
+          <div class="col-md-2">
+            <label for="">lote</label>
+            {{form.lote}}
+          </div>
+          <div class="col-md-2">
+            <label for="">Piso</label>
+            {{form.piso}}
+          </div>
+          <div class="col-md-1">
+            <label for="">Departamento</label>
+            {{form.departamento}}
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-12">
@@ -149,9 +157,40 @@
     </div>
   </div>
 
+<style media="screen">
+  .no_calle,.no_provincia,.interseccion{
+    display:none
+  }
+</style>
+
 <script type="text/javascript">
 $('input[type=text]').addClass('form-control');
 $('select').addClass('form-control');
+$("#chkNoProvincia").change(function(event){
+    if($("#chkNoProvincia:checked").val()=="on"){
+      $("#enProvincia").hide();
+      $("#noProvincia").show();
+    }else{
+      $("#enProvincia").show();
+      $("#noProvincia").hide();
+    }
+});
+$("#chkInterseccion").change(function(event){
+  if($("#chkInterseccion:checked").val()=="on"){
+    $("#interseccion").show();
+  }else{
+    $("#interseccion").hide();
+  }
+});
+$("#chkCalle").change(function(event){
+  if($("#chkCalle:checked").val()=="on"){
+    $("#noCalle").show();
+    $("#siCalle").hide();
+  }else{
+    $("#noCalle").hide();
+    $("#siCalle").show();
+  }
+});
 $("#save-form").submit(function(event){
   event.preventDefault();
   $("#save").prop('disabled',true);
@@ -193,7 +232,7 @@ $("#id_ref_ciudades").change(function(event){
   var url = "/preventivos/persona/town/"+$("#id_ref_ciudades").val()+"/";
   $.get(url,function(data){
     var select = $("#id_barrio_codigo");
-    var options = '';
+    var options = '<option value="">Seleccione barrio</option>';
     for (var i = 0; i < data.length; i++) {
       options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
     }
@@ -202,15 +241,33 @@ $("#id_ref_ciudades").change(function(event){
   }, "json");
   var url2 = "/preventivos/persona/street/"+$("#id_ref_ciudades").val()+"/";
   $.get(url2,function(data){
-    var select = $("#id_calle");
-    var select2 = $("#id_entre");
-    var options = '';
+    if(data.length > 0){
+      var select = $("#id_calle");
+      var select2 = $("#id_entre");
+      var options = '<option value="">Seleccione calle</option>';
+      for (var i = 0; i < data.length; i++) {
+        options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+      }
+      select.html(options);
+      select.removeAttr('disabled');
+      select2.html(options);
+    }else{
+      $("#chkCalle").prop("checked","checked");
+      $("#noCalle").show();
+      $("#siCalle").hide();
+    }
+  }, "json");
+});
+$("#id_pais").change(function(event){
+  var url = '/preventivos/persona/'+$("#id_pais").val()+"/";
+  $.get(url,function(data){
+    var select = $("#id_ref_ciudades");
+    var options = '<option value="">Seleccione ciudad</option>';
     for (var i = 0; i < data.length; i++) {
       options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
     }
     select.html(options);
     select.removeAttr('disabled');
-    select2.html(options);
   }, "json");
 });
 </script>
