@@ -141,6 +141,8 @@
                 {{domicilio.calle}} y {{domicilio.entre}}
               {% elif domicilio.calle and domicilio.altura and not domicilio.entre%}
                 {{domicilio.calle}} {{domicilio.altura}}
+              {% elif domicilio.calle2 %}
+                {{domicilio.calle2}}
               {% endif %}
             </td>
             <td>
