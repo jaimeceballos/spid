@@ -26,7 +26,7 @@ $(document).ready(function(){
 });
 function eliminarHistorial(){
   var url = "/prontuario/eliminar_historial/";
-  $("#dialog").html('<img src="/static/imagenes/preventivos/loading.gif" id="loading" />');
+  $("#dialog").html('<h3> Borrando el historial de busqueda <img src="/static/imagenes/preventivos/loading.gif" id="loading" /> </h3>');
   $("#dialog").dialog(
   {
     width: 'auto',
