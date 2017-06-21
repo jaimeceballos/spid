@@ -26,18 +26,19 @@ $(document).ready(function(){
 });
 function eliminarHistorial(){
   var url = "/prontuario/eliminar_historial/";
-  $.get(url,function(data){
-    $("#dialog").html('<img src="/static/imagenes/preventivos/loading.gif" id="loading" />');
-    $("#dialog").dialog(
+  $("#dialog").html('<img src="/static/imagenes/preventivos/loading.gif" id="loading" />');
+  $("#dialog").dialog(
+  {
+    width: 'auto',
+    height: 'auto',
+    modal:true,
+    open: function(event, ui)
     {
-      width: 'auto',
-      height: 'auto',
-      modal:true,
-      open: function(event, ui)
-      {
 
-      }
-    });
+    }
+  });
+  $.get(url,function(data){
+
   })
   .done(function(data){
     $("#dialog").html(data);
