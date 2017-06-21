@@ -1143,3 +1143,46 @@ def verificar_dni(request,id,dni):
         response_data['error_message'] = "se puede modificar."
         return HttpResponse(json.dumps(response_data), content_type="application/json")
     return HttpResponseBadRequest()
+
+@login_required
+@group_required(["prontuario"])
+def nuevo_elemento(request,tipo):
+    if request.is_ajax():
+        form = None
+        elemento = None
+        if request.method == 'POST':
+            elemento = RefOcupacionEspecifica() if tipo == 'ocupacion' else RefContextura() if tipo == 'contextura' else RefPaises()if tipo == "pais" else RefCiudades()
+            form = OcupacionEspecificaForm(request.POST) if tipo == 'ocupacion' else ContexturaForm(request.POST) if tipo == 'contextura' else PaisesForm(request.POST) if tipo == "pais" else CiudadesForm(request.POST)
+            if form.is_valid():
+                if tipo == "ciudad":
+                    elemento.pais = form.cleaned_data['pais']
+                elemento.descripcion = form.cleaned_data['descripcion'].upper()
+                elemento.save()
+                return HttpResponse(json.dumps({'tipo':tipo,'id':elemento.id,'descripcion':elemento.descripcion}),content_type="application/json")
+        else:
+            if tipo == "ocupacion":
+                form = OcupacionEspecificaForm()
+            if tipo == "contextura":
+                form = ContexturaForm()
+            if tipo == "pais":
+                form = PaisesForm()
+            if tipo == "ciudad":
+                form = CiudadesForm()
+                print form
+            return render_to_response("./nuevo_elemento.html",{'form':form,'tipo':tipo},context_instance=RequestContext(request))
+    return HttpResponseBadRequest()
+
+@login_required
+@group_required(["prontuario"])
+def eliminar_historial(request):
+    if request.is_ajax():
+        usuario = request.user
+        historial = SearchHistory.objects.filter(usuario = usuario)
+        resultados = SearchResults.objects.filter(usuario = usuario)
+        if historial.count() > 0:
+            for registro in historial:
+                registro.delete()
+            for resultado in resultados:
+                resultado.delete()
+        return HttpResponse("Accion realizada con exito.")
+    return HttpResponseBadRequest()

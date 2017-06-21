@@ -91,8 +91,11 @@
             <div class="col-md-2">
               <label for="">Ocupacion Especifica</label>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-8">
               {{form.ocupacion_especifica}}
+            </div>
+            <div class="col-md-1" style="vertical-align:middle">
+              <a href="javascript:nuevo('ocupacion')"><i class="glyphicon glyphicon-plus-sign"></i></a>
             </div>
           </div>
           <div class="row">
@@ -113,8 +116,13 @@
             <div class="col-md-2">
               <label for="">Contextura</label>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-8">
               {{form.contextura}}
+            </div>
+            <div class="col-md-1">
+              <div class="col-md-1" style="vertical-align:middle">
+                <a href="javascript:nuevo('contextura')"><i class="glyphicon glyphicon-plus-sign"></i></a>
+              </div>
             </div>
           </div>
           <div class="row">
@@ -350,4 +358,28 @@
       alert("Hubo un error en la solicitud. Por favor vuelva a intentarlo.")
     })
   }
+  function nuevo(tipo){
+    var url = "/prontuario/nuevo_elemento/"+tipo+"/";
+    $.get(url,function(data){
+      $("#dialog-nuevo").html(data);
+      $("#dialog-nuevo").dialog(
+      {
+        width: 'auto',
+        height: 'auto',
+        modal:true,
+        open: function(event, ui)
+        {
+
+        },
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+
+          }
+        }
+      });
+    });
+
+  }
+
 </script>

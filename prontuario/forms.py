@@ -81,3 +81,20 @@ class IdentificacionForm(forms.ModelForm):
     class Meta:
         model = Identificacion
         exclude = ['persona','fecha_identificacion','dependencia_identificacion','fotos']
+
+
+class ContexturaForm(forms.ModelForm):
+
+    descripcion = forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'descripcion','required':'required'})))
+
+    class Meta:
+        model = RefContextura
+        exclude = []
+
+class OcupacionEspecificaForm(forms.ModelForm):
+
+    descripcion = forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'descripcion','required':'required'})))
+
+    class Meta:
+        model = RefOcupacionEspecifica
+        exclude = []

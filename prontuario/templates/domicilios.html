@@ -23,6 +23,7 @@
             <option value="{{pais.id}}">{{pais.descripcion}}</option>
             {% endfor%}
           </select>
+          <a href="javascript:nuevo('pais')"><i class="glyphicon glyphicon-plus-sign"></i></a>
         </div>
       </div>
       <div class="row">
@@ -42,6 +43,7 @@
                   select.removeAttr('disabled');
                 }, "json");
               </script>
+              <a href="javascript:nuevo('ciudad')"><i class="glyphicon glyphicon-plus-sign"></i></a>
           </div>
         </div>
       </div>

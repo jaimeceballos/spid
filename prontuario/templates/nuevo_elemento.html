@@ -1,0 +1,53 @@
+<div class="row">
+  <div class="col-md-12">
+    <h4>Agregar {{tipo}}</h4>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <form action="{% url 'nuevo_elemento' tipo %}" method="post" id="nuevoElementoForm">{% csrf_token %}
+      {% if tipo == "ciudad" %}
+      <div class="form-group">
+        {{form.pais}}
+      </div>
+      {% endif%}
+      <div class="form-group">
+        {{form.descripcion}}
+      </div>
+      <button type="submit" class="btn btn-success" id="save-elemento"> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading-elemento" /></button>
+    </form>
+  </div>
+</div>
+<script type="text/javascript">
+  $("#nuevoElementoForm").submit(function(event){
+    event.preventDefault();
+    $("#save-elemento").prop('disabled',true);
+    $("#loading-elemento").show();
+    var form = $("#nuevoElementoForm");
+    $.ajax({
+      type:form.attr('method'),
+      url:form.attr('action'),
+      data:form.serialize(),
+      success: function(data){
+        var id = data['id'];
+        var tipo = data['tipo']
+        var descripcion = data['descripcion']
+        var select;
+        if(tipo == "ocupacion"){
+          select = $("#id_ocupacion_especifica");
+        }
+        if(tipo == "contextura"){
+          select = $("#id_contextura");
+        }
+        if(tipo == "pais"){
+          select = $("#id_pais");
+        }
+        if(tipo == "ciudad"){
+          select = $("#id_ref_ciudades");
+        }
+        select.append('<option value="'+id+'" selected>'+descripcion+'</option>');
+        $("#dialog-nuevo").dialog("close");
+      }
+    });
+  });
+</script>
