@@ -8,21 +8,17 @@ $(document).ready(function(){
   });
   $("#nuevo").click(function(event){
       event.preventDefault();
+      $("#contenido").hide().empty().append('<h3> Cargando <img src="/static/imagenes/preventivos/loading.gif" id="loading" /> <h3>').show();
       var url = '/prontuario/nuevo/';
       $.get(url,function(data){
-        $("#contenido").hide().empty().append('<h3> Cargando <img src="/static/imagenes/preventivos/loading.gif" id="loading" /> <h3>').show();
-      })
-      .done(function(data){
-        $("#contenido").hide().empty().append(data).slideDown(1000);
+          $("#contenido").hide().empty().append(data).slideDown(1000);
       })
   });
   $("#buscar").click(function(event){
       event.preventDefault();
+      $("#contenido").hide().empty().append('<h3> Cargando <img src="/static/imagenes/preventivos/loading.gif" id="loading" /> <h3>').show();
       var url = '/prontuario/buscar/';
       $.get(url,function(data){
-        $("#contenido").hide().empty().append('<h3> Cargando <img src="/static/imagenes/preventivos/loading.gif" id="loading" /> <h3>').show();
-      })
-      .done(function(data){
         $("#contenido").hide().empty().append(data).slideDown(1000);
       })
   });
