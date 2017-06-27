@@ -54,6 +54,21 @@ class SearchForm(forms.Form):
     pais_nacimiento_id      = forms.CharField(required = False, widget=forms.HiddenInput())
     alias                   = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Alias','style':'text-align: center;'})))
 
+class BuscarProcesalesForm(forms.Form):
+    apellido                = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Apellido','style':'text-align: center;'})))
+    nombre                  = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'nombre','style':'text-align: center;'})))
+    documento               = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Numero Documento','style':'text-align: center;'})))
+
+    def clean(self):
+
+        cleaned_data = super(BuscarProcesalesForm,self).clean()
+        if cleaned_data['apellido'] == "" and cleaned_data['nombre'] == "" and cleaned_data['documento'] == "":
+            raise forms.ValidationError("Debe ingresar al menos un criterio de busqueda.")
+        return cleaned_data
+
+
+
+
 class BuscarForm(forms.Form):
     documento               = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Numero Documento','style':'text-align: center;'})))
     nombre                  = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Nombre','style':'text-align: center;'})))

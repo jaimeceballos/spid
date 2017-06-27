@@ -1,0 +1,125 @@
+<div class="container well col-md-6">
+  <div class="alert alert-info" role="alert">
+    <center><h5> <i class="glyphicon glyphicon-info-sign"></i> Realice esta busqueda si considera que la persona puede haber estado registrada en el sistema de Comunicaciones Procesales.</h5></center>
+    <form class="" id="buscarForm" action="{% url 'buscar_procesales' %}" method="post" >{% csrf_token %}
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          {{form.apellido}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          {{form.nombre}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          {{form.documento}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <div class="btn-group" role="group">
+            <button id="buscar" type="submit" class="btn btn-info">&nbsp;&nbsp;&nbsp;&nbsp; <i class="glyphicon glyphicon-search"></i> Buscar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /> &nbsp;&nbsp;&nbsp;&nbsp;</button>
+            <a class="btn btn-danger" href="javascript:saltarBusqueda();"> <i class="glyphicon glyphicon-circle-arrow-right"></i> Saltar B&uacute;squeda </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script type="text/javascript">
+  $("#buscarForm").submit(function(event){
+    event.preventDefault();
+    $("#buscar").prop('disabled',true);
+    $("#loading").show();
+    if(validar()){
+      var form = $("#buscarForm");
+      $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize(),
+        success: function(data){
+          $("#buscar").prop('disabled', false);
+          $("#loading").hide();
+          if(data.length > 0){
+            $("#dialog").html(data);
+          }else{
+            $("#dialog").html('<h4>No se encontraron resultados para esta busqueda.</h4>');
+          }
+          $("#dialog").dialog(
+          {
+            width: 600,
+            height: 400,
+            modal:true,
+            open: function(event, ui)
+            {
+
+            }
+          });
+        },
+        error: function(jqXHR, textStatus,msg){
+          $("#btnSearch").prop('disabled', false);
+          $("#loading").hide();
+          $( "#dialog-confirm" ).dialog({
+            closeOnEscape: false,
+            open: function(event, ui) {
+                $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+            },
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+              Cerrar: function() {
+                $( this ).dialog( "close" );
+                $("#btnSearch").prop('disabled', false);
+                $("#loading").hide();
+              }
+            }
+          }).empty().append("<center><p>No se puede realizar la busqueda solicitada.</p></center>");
+        }
+      });
+    }else{
+      $("#buscar").prop('disabled',false);
+      $("#loading").hide();
+      $("#dialog").html("<p>Debe ingresar al menos un criterio de busqueda</p>");
+      $("#dialog").dialog(
+      {
+        width: 'auto',
+        height: 'auto',
+        modal:true,
+        open: function(event, ui)
+        {
+
+        },
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+
+          }
+        }
+      });
+    }
+  })
+
+  function saltarBusqueda(){
+    var url ="/prontuario/cargar_nuevo/";
+    $.get(url,function(data){
+      $("#contenido").hide().empty().append(data).show();
+    });
+  }
+
+  function validar(){
+    return $("#id_apellido").val() != "" || $("#id_nombre").val() != "" || $("#id_documento").val() != "";
+  }
+
+  function utilizarProntuario(id,prontuario){
+    var url ="/prontuario/cargar_nuevo/"+prontuario+"/"+$("#id_apellido").val()+"/"+$("#id_nombre").val()+"/"+$("id_documento").val()+"/";
+    $.get(url,function(data){
+      $("#dialog").dialog("close");
+      $("#contenido").hide().empty().append(data).show();
+    });
+
+  }
+</script>

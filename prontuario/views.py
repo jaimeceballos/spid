@@ -70,6 +70,27 @@ def nuevo(request):
 
 @login_required
 @group_required(["prontuario"])
+def nuevo(request,prontuario,apellido,nombre,dni):
+    """
+    Definicion que devuelve el formulario de carga de un nuevo prontuario
+    """
+    if request.is_ajax():
+        values = {}
+        form            = PersonasForm()
+        prontuarioForm  = ProntuarioForm()
+        prontuarioForm.fields['nro'].initial = prontuario
+        form.fields['apellidos'].initial = apellido
+        form.fields['nombres'].initial = nombre
+        form.fields['nro_doc'].initial = dni
+        values['form'] = form
+        values['prontuarioForm'] = prontuarioForm
+        return render_to_response('./nuevo_prontuario.html',values,context_instance=RequestContext(request))
+    else:
+        return HttpResponseNotFound()
+
+
+@login_required
+@group_required(["prontuario"])
 def search_persona(request):
     """
     Definicion que se encarga de la busqueda de personas en las diferentes bases de datos
@@ -663,6 +684,7 @@ def nuevo_save(request):
                     if request.user.get_profile().depe.unidades_regionales.descripcion == "INVESTIGACIONES":
                         prontuario.nro = prontuarioForm.cleaned_data['nro']
                         prontuario.persona = persona
+                        prontuario.observaciones = prontuarioForm.cleaned_data['observaciones'].upper()
                         prontuario.save()
                     form = IdentificacionForm()
                     existe = False
@@ -1185,4 +1207,29 @@ def eliminar_historial(request):
             for resultado in resultados:
                 resultado.delete()
         return HttpResponse("Accion realizada con exito.")
+    return HttpResponseBadRequest()
+
+@login_required
+@group_required(["prontuario"])
+def buscar_procesales(request):
+    if request.is_ajax():
+        form = BuscarProcesalesForm()
+        if request.method =='POST':
+            form = BuscarProcesalesForm(request.POST)
+            if form.is_valid():
+                n_c = "%s %s"  % (form.cleaned_data['apellido'],form.cleaned_data['nombre'])
+                dni = form.cleaned_data['documento']
+                resultados = Indice.objects.using('prontuario').all()
+                if not n_c == "" and dni =="":
+                    resultados = resultados.filter(n_c__icontains = n_c)
+                if not dni == "" and n_c == "":
+                    resultados = resultados.filter(dni=dni)
+                if not dni == "" and not n_c == "" :
+                    resultados = resultados.filter(dni=dni,n_c__icontains=n_c)
+                print resultados.count()
+                if resultados.count() > 0:
+                    return render_to_response("./listado_procesales.html",{'resultado':resultados,'id':0,'cambia':True},context_instance=RequestContext(request))
+                else:
+                    return HttpResponseNotFound()
+        return render_to_response("./buscar_procesales.html",{'form':form},context_instance=RequestContext(request))
     return HttpResponseBadRequest()

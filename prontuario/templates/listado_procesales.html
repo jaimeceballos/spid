@@ -28,7 +28,7 @@
               {{elemento.n_p}} {{elemento.tipo_p}}
             </td>
             <td>
-              <a href="javascript:utilizarProntuario({{id}},{{elemento.n_p}})" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-copy"></i> Copiar Numero Prontuario</a>
+              <a href="javascript:utilizarProntuario({{id}},{{elemento.n_p}})" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-copy"></i> {% if not cambia %} Copiar Numero Prontuario {% else %} Usar registro {% endif %}</a>
             </td>
           </tr>
           {% endfor %}

@@ -31,7 +31,6 @@
     {% if request.user.get_profile.depe.unidades_regionales.descripcion == "INVESTIGACIONES"%}
       {% if not detalle.id_acei and  not detalle.prontuario_spid %}
         <a href="javascript:procesales({{detalle.id}},{{detalle.documento}})" ><span class="label label-info">Buscar en Com. Procesales</span></a>
-
       {% endif %}
     {% endif %}
 

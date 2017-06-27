@@ -117,7 +117,7 @@ $("#btnSearch").click(function(event){
           buttons: {
             Cerrar: function() {
               $( this ).dialog( "close" );
-              var url = "/prontuario/cargar_nuevo/";
+              var url = "/prontuario/buscar_procesales/";
               $.get(url,function(data){
                 $("#contenido").hide().empty().append(data).show();
               });

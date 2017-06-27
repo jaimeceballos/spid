@@ -7319,7 +7319,7 @@ def repforages(request):
 
              ciudad = datosform.__getitem__('ciudades')
              ureg = datosform.__getitem__('ureg')
-             depes= datosform.__getitem__('depe')
+             depes= datos__getitem__('depe')
              fechadesde=request.POST.get('mes')
              fechahasta=request.POST.get('anios')
             filtrorefd=Hechos.objects.all()

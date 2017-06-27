@@ -80,6 +80,7 @@ class Prontuario(models.Model):
     persona             = models.OneToOneField(Personas)
     identificaciones    = models.ManyToManyField(Identificacion,null=True)
     fotos               = models.ManyToManyField('FotosPersona',related_name='fotos',blank=True,null=True)
+    observaciones       = models.CharField(max_length=100,null=True,blank=True)
 
     class Meta:
         db_table = 'prontuario'
