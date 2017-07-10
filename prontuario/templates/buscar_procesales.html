@@ -115,7 +115,10 @@
   }
 
   function utilizarProntuario(id,prontuario){
-    var url ="/prontuario/cargar_nuevo/"+prontuario+"/"+$("#id_apellido").val()+"/"+$("#id_nombre").val()+"/"+$("id_documento").val()+"/";
+    var nombre = $("#id_nombre").val() == "" ? "Nombre" : $("#id_nombre").val();
+    var apellido = $("#id_apellido").val() == "" ? "Apellido" : $("#id_apellido").val();
+    var documento = $("#id_documento").val() == "" ? 0 : $("#id_documento").val();
+    var url ="/prontuario/cargar_nuevo_procesales/"+prontuario+"/"+apellido+"/"+nombre+"/"+documento+"/";
     $.get(url,function(data){
       $("#dialog").dialog("close");
       $("#contenido").hide().empty().append(data).show();

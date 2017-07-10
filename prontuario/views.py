@@ -59,6 +59,7 @@ def nuevo(request):
     Definicion que devuelve el formulario de carga de un nuevo prontuario
     """
     if request.is_ajax():
+        print 'llega'
         values = {}
         form            = PersonasForm()
         prontuarioForm  = ProntuarioForm()
@@ -70,7 +71,7 @@ def nuevo(request):
 
 @login_required
 @group_required(["prontuario"])
-def nuevo(request,prontuario,apellido,nombre,dni):
+def nuevo_procesales(request,prontuario,apellido,nombre,dni):
     """
     Definicion que devuelve el formulario de carga de un nuevo prontuario
     """
