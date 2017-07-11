@@ -1,0 +1,41 @@
+<table class="table">
+  <tbody>
+    {% for registro in resultados %}
+    <tr>
+      <td>
+        {{registro.preventivo_nro}}/{{registro.anio}}
+      </td>
+      <td>
+          {{registro.dependencia}}
+      </td>
+      <td>
+        {{registro.rol}}
+      </td>
+      <td id="ver{{registro.id}}">
+        <a href="javascript:verDescripcion({{registro.id}});">Ver Descripcion</a>
+      </td>
+      <td style="display:none" id="ocultar{{registro.id}}">
+        <a href="javascript:ocultarDescripcion({{registro.id}});">Ocultar Descripcion</a>
+      </td>
+    </tr>
+    <tr style="display:none" id="row{{registro.id}}">
+      <td colspan="4"  >
+        {{registro.hecho_descripcion}}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  function verDescripcion(id){
+    $("#ver"+id).hide();
+    $("#ocultar"+id).show()
+    $("#row"+id).show();
+  }
+  function ocultarDescripcion(id){
+    $("#ver"+id).show();
+    $("#ocultar"+id).hide()
+    $("#row"+id).hide();
+  }
+</script>

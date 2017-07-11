@@ -273,3 +273,21 @@ class Verificar(models.Model):
 
     class Meta:
         db_table = 'prontuario_verificar'
+
+class PreventivosPersona(models.Model):
+    preventivo_id = models.IntegerField()
+    preventivo_nro = models.IntegerField()
+    anio = models.IntegerField()
+    dependencia_id = models.IntegerField()
+    dependencia = models.CharField(max_length=80L)
+    persona_id = models.IntegerField()
+    documento = models.CharField(max_length=50L)
+    apellido = models.CharField(max_length=100L)
+    nombre = models.CharField(max_length=150L)
+    rol_id = models.IntegerField()
+    rol = models.CharField(max_length=150L)
+    hecho_id = models.IntegerField()
+    hecho_descripcion = models.CharField(max_length=2000L, blank=True)
+    class Meta:
+        managed = False
+        db_table = 'preventivos_persona'

@@ -1,0 +1,50 @@
+<div class="row">
+  <div class="col-md-3">
+    <label for="">Altura</label>
+  </div>
+  <div class="col-md-3">
+    {{identificacion.altura_metros}},{{identificacion.altura_centimetros}} Mts.
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <label for="">Contextura</label>
+  </div>
+  <div class="col-md-9">
+    {{identificacion.contextura}}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <label for="">Color de piel</label>
+  </div>
+  <div class="col-md-9">
+    {{identificacion.cutis}}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <label for="">Cabello</label>
+  </div>
+  <div class="col-md-9">
+    {{identificacion.cabello_tipo}}, {{identificacion.cabello_color}} {% if identificacion.es_tenido %} te&ntilde;ido. {% endif %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <label for="">Se&ntilde;as particulares</label>
+  </div>
+  <div class="col-md-9">
+    {% if not identificacion.posee_tatuajes %} No {% endif %} Posee Tatuajes y {% if not identificacion.posee_cicatrices %} No {% endif %} Posee Cicatrices Visibles.
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <label for="">Observaciones</label>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    {{identificacion.observaciones}}
+  </div>
+</div>

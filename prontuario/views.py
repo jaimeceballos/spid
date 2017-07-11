@@ -1093,11 +1093,12 @@ def ver_prontuario(request,id):
         values = {}
         values['prontuario'] = Prontuario.objects.get(id=id)
         values['fotos'] = values['prontuario'].fotos.all()
-        values['identificaciones'] = values['prontuario'].identificaciones.all()
+        values['identificacion'] = values['prontuario'].identificaciones.latest(field_name = 'id')
         values['domicilios'] = values['prontuario'].persona.persodom.all()
         values['padres'] = values['prontuario'].persona.padre.all()
         if values['padres'].count() > 0:
             values['padres'] = values['prontuario'].persona.padre.all()[0]
+        values['preventivos'] = PreventivosPersona.objects.filter(documento = values['prontuario'].persona.nro_doc)
         return render_to_response("./prontuario.html",values,context_instance = RequestContext(request))
     return HttpResponseBadRequest()
 
@@ -1234,3 +1235,8 @@ def buscar_procesales(request):
                     return HttpResponseNotFound()
         return render_to_response("./buscar_procesales.html",{'form':form},context_instance=RequestContext(request))
     return HttpResponseBadRequest()
+
+
+def preventivos_persona(request,persona):
+    resultados = PreventivosPersona.objects.filter(documento = persona)
+    return render_to_response("./preventivos_persona.html",{'resultados':resultados},context_instance=RequestContext(request))

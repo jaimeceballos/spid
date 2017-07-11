@@ -47,4 +47,5 @@ urlpatterns = patterns('',
     url(r'^nuevo_elemento/(?P<tipo>[A-Za-z]+)/$','prontuario.views.nuevo_elemento',name='nuevo_elemento'),
     url(r'^eliminar_historial/$','prontuario.views.eliminar_historial',name='eliminar_historial'),
     url(r'^buscar_procesales/$','prontuario.views.buscar_procesales',name='buscar_procesales'),
+    url(r'^preventivos_persona/(?P<persona>[0-9]+)/$','prontuario.views.preventivos_persona',name='preventivos_persona'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
