@@ -1,6 +1,7 @@
 #encoding:utf-8 
 from repar.models import *
 from repar.forms import *
+from spid.forms import LoginForm
 from django.core.context_processors import csrf
 from django.template import Context, Template, RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
@@ -60,7 +61,7 @@ def iniciar(request):
     name=''
     username = password = ''
     formd = []
-    return render(request, 'login.html', {'formd':formd,'state':state})
+    return render(request, './loginRepar.html', {'formd':formd,'state':state})
 
 @login_required
 def inicial(request):
@@ -136,15 +137,15 @@ def loguser(request):
                     request.session['destino']=destino
                 else:
                    state="Usuario no Autorizado"
-                   return render(request, 'login.html', {'state':state,'form':form})
+                   return render(request, 'loginRepar.html', {'state':state,'form':form})
                         
             else:    
               state="Usuario no Autorizado"
-              return render(request, 'login.html', {'state':state,'form':form})
+              return render(request, 'loginRepar.html', {'state':state,'form':form})
          return render(request, './repar.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'ultimo_ingreso':ultimo_ingreso})
           
         else:
-            return render(request, 'login.html', {'name':name,'form':form})
+            return render(request, 'loginRepar.html', {'name':name,'form':form})
 
 def nologin(request):
     logout(request)
@@ -157,7 +158,7 @@ def nologin(request):
         state = "SE DESCONECTO DEL SISTEMA"
    
     formd = []  
-    return render(request, 'login.html', {'formd':formd,'state':state})
+    return render(request, 'loginRepar.html', {'formd':formd,'state':state})
 
 def passwordChange(request):
   formpass = CambiarPassForm(request.POST)
@@ -191,7 +192,7 @@ def passwordChange(request):
   #form = DependenciasForm()      
   formd = []  
   #print form,formd
-  return render(request, 'login.html', {'formd':formd,'form':form,'state':state,})
+  return render(request, 'loginRepar.html', {'formd':formd,'form':form,'state':state,})
   #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})
 
 def register(request):
