@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 
 {% block main %}
  
@@ -31,7 +31,7 @@
                     <option  name="categorias" id="categorias" {{form.categoria}} </option>
                     
                 </select> 
-                      <a href="/preventivos/objectsin/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+                      <a href="/preventivos/objectsin/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
                       <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de elementos involucrados en Hechos"/>
 
                     </div>

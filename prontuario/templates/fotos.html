@@ -56,7 +56,7 @@
           {% for foto in fotos %}
           {% if forloop.first %}
           <div class="item active">
-            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" height="200px" /></center>
+            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="/media/{{foto.foto}}" height="200px" /></center>
             <div class="carousel-caption">
               <h4>
 
@@ -66,7 +66,7 @@
           </div>
           {% else %}
           <div class="item">
-            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" height="200px" /></center>
+            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="/media/{{foto.foto}}" height="200px" /></center>
             <div class="carousel-caption">
               <h4>
 

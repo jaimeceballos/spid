@@ -6,9 +6,9 @@
 	<title>Formulario Solicitud Usuario</title>
 	 <link rel="shortcut icon" href="{% get_static_prefix %}imagenes/spid/icono.ico" type="image/x-icon">
 	<link href="{% get_static_prefix %}css/spid/stylos.css" type="text/css" rel="stylesheet" />
- 		<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/jquery.min.js"></script>
-	<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/funciones.js"></script>
-	<script type="text/javascript"  src="{{STATIC_URL}}js/spid/jquery.numeric.js"></script>
+ 		<script language="JavaScript" type="text/javascript" src="{% static 'js/spid/jquery.min.js' %}"></script>
+	<script language="JavaScript" type="text/javascript" src="{% static 'js/spid/funciones.js' %}"></script>
+	<script type="text/javascript"  src="{% static 'js/spid/jquery.numeric.js' %}"></script>
 <script type="text/javascript">
 $(document).ready(function(){
     $('#docu').numeric();

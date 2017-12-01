@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 
  <form id="form" action="." method="post">{% csrf_token %} 
@@ -34,7 +35,7 @@
                                   <option name="delitoe" {{ftiposdelitos.descripcion}}  </option>
                                   </select>
               
-                      <a href="/preventivos/seedelitos/" name="cancelar" style="margin-left:10px;"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+                      <a href="/preventivos/seedelitos/" name="cancelar" style="margin-left:10px;"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
                       <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda en Hechos ocurridos"/>
 
                     </div>

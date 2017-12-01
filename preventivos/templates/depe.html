@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 <form id="form" action="." method="post">{% csrf_token %} 
 
@@ -19,7 +20,7 @@
 
     <p><label for="descripcion" name="descripcion"> Descripcion:
       <input type="text" name="descripcion" id="descripcion" placeholder="Ej: CRIA. PRIMERA - TW" value="{{depes.descripcion}}" autocomplete="off"/>
-      <a href="/preventivos/dependencias/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+      <a href="/preventivos/dependencias/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
       {% if depes in lista %}
           <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">
           <input class="btn btn-success" type="submit" value= "Borrar" name="borrar" title="Eliminar dependencia">

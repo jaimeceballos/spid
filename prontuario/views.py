@@ -8,7 +8,7 @@ from preventivos.forms import *
 from django.core import serializers
 from django.contrib.auth.models import Group,Permission,User
 from django.contrib.admin.models import LogEntry
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, render_to_response,get_object_or_404
@@ -31,14 +31,12 @@ def home(request):
     """ Definicion que redirige al usuario al home de Prontuario"""
     values = {}
     user = request.user
-    destino = "%s / %s" % (user.get_profile().depe,user.get_profile().ureg)
-    state = user.groups.values_list('name', flat=True)
-    request.session['state']=state                                #si es correcto carga en la sesion la variable estado
-    request.session['destino']=destino                            #carga en la sesion la variable destino
-    if request.user.get_profile().depe.unidades_regionales.descripcion == "INVESTIGACIONES":
+    values['destino'] = "%s / %s" % (user.userprofile.depe,user.userprofile.ureg)
+    values['state'] = user.groups.values_list('name', flat=True)
+    if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES":
         verificar = Verificar.objects.filter(verificado = False)
         values['verificar'] = verificar
-    return render_to_response('./prontuario_home.html',values,context_instance=RequestContext(request))
+    return render(request,'./prontuario_home.html',values)
 
 @login_required
 @group_required(["prontuario"])
@@ -48,7 +46,7 @@ def nuevo_search(request):
     """
     if request.is_ajax():
         form = SearchForm()
-        return render_to_response('./search.html',{'form':form},context_instance=RequestContext(request))
+        return render(request,'./search.html',{'form':form})
     else:
         return HttpResponseNotFound()
 
@@ -65,7 +63,7 @@ def nuevo(request):
         prontuarioForm  = ProntuarioForm()
         values['form'] = form
         values['prontuarioForm'] = prontuarioForm
-        return render_to_response('./nuevo_prontuario.html',values,context_instance=RequestContext(request))
+        return render(request,'./nuevo_prontuario.html',values)
     else:
         return HttpResponseNotFound()
 
@@ -85,7 +83,7 @@ def nuevo_procesales(request,prontuario,apellido,nombre,dni):
         form.fields['nro_doc'].initial = dni
         values['form'] = form
         values['prontuarioForm'] = prontuarioForm
-        return render_to_response('./nuevo_prontuario.html',values,context_instance=RequestContext(request))
+        return render(request,'./nuevo_prontuario.html',values)
     else:
         return HttpResponseNotFound()
 
@@ -141,7 +139,7 @@ def search_persona(request):
         ciudades_residencia = resultados.values('ciudad_residencia').distinct()
         paises_nacimiento = resultados.values('pais_nacimiento').distinct()
         if resultados.count() > 0:
-            return render_to_response("./resultados_busqueda.html",{'resultados':resultados},context_instance=RequestContext(request))
+            return render(request,"./resultados_busqueda.html",{'resultados':resultados})
         else:
             return HttpResponseNotFound("No hay Resultados para su busqueda.")
     else:
@@ -509,7 +507,7 @@ def search_detalle(request,sistema,id):
             resultado['alias']              = "No registrado"
             resultado['padre']              = persona['padre'] if not persona['padre'] == None else "No registrado"
             resultado['madre']              = persona['madre'] if not persona['madre'] == None else "No registrado"
-        return render_to_response('./detalle_persona.html',{'resultado':resultado},context_instance=RequestContext(request))
+        return render(request,'./detalle_persona.html',{'resultado':resultado})
     else:
         return HttpResponseBadRequest()
 
@@ -561,7 +559,7 @@ def search_procesales(request,id,dni):
     if request.is_ajax():
         resultado = Indice.objects.using('prontuario').filter(dni = dni)
         if resultado.count() > 0:
-            return render_to_response("./listado_procesales.html",{'resultado':resultado,'id':id},context_instance=RequestContext(request))
+            return render(request,"./listado_procesales.html",{'resultado':resultado,'id':id})
         else:
             return HttpResponseNotFound("No se encontraron resultados")
     else:
@@ -603,7 +601,7 @@ def nuevo_pais(request,tipo):
                 return HttpResponse(data, mimetype='application/json')
         else:
             form = PaisesForm()
-            return render_to_response("./nuevo_pais.html",{'form':form,'tipo':tipo},context_instance=RequestContext(request))
+            return render(request,"./nuevo_pais.html",{'form':form,'tipo':tipo})
     return HttpResponseBadRequest()
 
 @login_required
@@ -628,7 +626,7 @@ def nueva_ciudad(request,tipo,pais):
                 return HttpResponse(data,mimetype="application/json")
         else:
             form = CiudadesForm(initial={'pais':pais})
-            return render_to_response("./nuevo_ciudad.html",{'form':form,'tipo':tipo,'pais':pais},context_instance=RequestContext(request))
+            return render(request,"./nuevo_ciudad.html",{'form':form,'tipo':tipo,'pais':pais})
     return HttpResponseBadRequest()
 
 @login_required
@@ -640,7 +638,7 @@ def verificar_prontuario(request,n_p):
     if request.is_ajax():
         prontuarios = Indice.objects.using('prontuario').filter(n_p = n_p)
         if prontuarios.count() > 0:
-            return render_to_response("./listado_procesales.html",{'resultado':prontuarios,'id':0},context_instance=RequestContext(request))
+            return render(request,"./listado_procesales.html",{'resultado':prontuarios,'id':0})
         else:
             return HttpResponseNotFound()
     else:
@@ -663,7 +661,7 @@ def nuevo_save(request):
                 persona = Personas.objects.get(id=id)
                 form = PersonasForm(request.POST,instance=persona)
             prontuarioForm = ProntuarioForm(request.POST)
-            if request.user.get_profile().depe.unidades_regionales.descripcion == "INVESTIGACIONES":
+            if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES":
                 validacion = form.is_valid() and prontuarioForm.is_valid()
             else:
                 validacion = form.is_valid()
@@ -682,14 +680,14 @@ def nuevo_save(request):
                 persona.estado_civil    = form.cleaned_data['estado_civil']
                 try:
                     persona.save()
-                    if request.user.get_profile().depe.unidades_regionales.descripcion == "INVESTIGACIONES":
+                    if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES":
                         prontuario.nro = prontuarioForm.cleaned_data['nro']
                         prontuario.persona = persona
                         prontuario.observaciones = prontuarioForm.cleaned_data['observaciones'].upper()
                         prontuario.save()
                     form = IdentificacionForm()
                     existe = False
-                    return render_to_response("./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe},context_instance=RequestContext(request))
+                    return render("./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
                 except Exception as e:
                     return HttpResponseBadRequest()
 
@@ -703,7 +701,7 @@ def identificacion(request,id):
         prontuario = Prontuario.objects.get(persona=persona)
         form = IdentificacionForm()
         existe = True
-        return render_to_response("./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe},context_instance=RequestContext(request))
+        return render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
     return HttpResponseBadRequest()
 
 @login_required
@@ -718,13 +716,13 @@ def nuevo_existe(request,id_detalle):
         prontuario_nro = detalle.prontuario_acei if detalle.prontuario_acei else detalle.prontuario_spid if detalle.prontuario_spid else ""
         if detalle.id_spid:
             persona = Personas.objects.get(id = detalle.id_spid)
-            if not prontuario_nro == "" and request.user.get_profile().depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
+            if not prontuario_nro == "" and request.user.userprofile.depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
                 prontuario,create = Prontuario.objects.get_or_create(
                                         nro = prontuario_nro,
                                         persona = persona
                                     )
                 form = IdentificacionForm()
-                return render_to_response("./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':True},context_instance=RequestContext(request))
+                return render("./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':True})
             form = PersonasForm(
                                 initial={
                                     'nombres':persona.nombres,
@@ -742,14 +740,14 @@ def nuevo_existe(request,id_detalle):
 
                                     }
                                 )
-            if request.user.get_profile().depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
+            if request.user.userprofile.depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
                 prontuarioForm  = ProntuarioForm(initial={'nro':prontuario_nro})
             else:
                 prontuarioForm = ProntuarioForm()
-            return render_to_response('./nuevo_prontuario.html',{'form':form,'prontuarioForm':prontuarioForm,'persona':persona.id},context_instance=RequestContext(request))
+            return render(request,'./nuevo_prontuario.html',{'form':form,'prontuarioForm':prontuarioForm,'persona':persona.id})
         else:
             prontuarioForm = ProntuarioForm()
-            if not prontuario_nro == "" and request.user.get_profile().depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
+            if not prontuario_nro == "" and request.user.userprofile.depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
                 prontuarioForm = ProntuarioForm(initial={'nro':prontuario_nro})
             apellido = detalle.apellido_nombre.split(" ")[0]
             nombres = detalle.apellido_nombre.split(" ")[1] if len(detalle.apellido_nombre.split(" ")) == 2 else detalle.apellido_nombre.split(" ")[1]+" "+detalle.apellido_nombre.split(" ")[2]
@@ -762,7 +760,7 @@ def nuevo_existe(request,id_detalle):
 
                                     }
                                 )
-            return render_to_response('./nuevo_prontuario.html',{'form':form,'prontuarioForm':prontuarioForm},context_instance=RequestContext(request))
+            return render(request,'./nuevo_prontuario.html',{'form':form,'prontuarioForm':prontuarioForm})
     return HttpResponseBadRequest()
 
 @login_required
@@ -777,8 +775,8 @@ def identificacion_save(request):
 
                 identificacion.persona                      = Personas.objects.get(id = request.POST['persona'])
                 identificacion.fecha_identificacion         = datetime.datetime.now()
-                identificacion.prontuario_local             = form.cleaned_data['prontuario_local'] if not request.user.get_profile().depe.unidades_regionales.descripcion == "INVESTIGACIONES" else request.POST['prontuario']
-                identificacion.dependencia_identificacion   = request.user.get_profile().depe
+                identificacion.prontuario_local             = form.cleaned_data['prontuario_local'] if not request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES" else request.POST['prontuario']
+                identificacion.dependencia_identificacion   = request.user.userprofile.depe
                 identificacion.ocupacion_especifica         = form.cleaned_data['ocupacion_especifica']
                 identificacion.altura_metros                = form.cleaned_data['altura_metros']
                 identificacion.altura_centimetros           = form.cleaned_data['altura_centimetros']
@@ -792,7 +790,7 @@ def identificacion_save(request):
                 identificacion.observaciones                = form.cleaned_data['observaciones']
                 try:
                     identificacion.save()
-                    if request.user.get_profile().depe.unidades_regionales.descripcion == "INVESTIGACIONES":
+                    if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES":
                         prontuario = Prontuario.objects.get(id=request.POST['prontuario'])
                         prontuario.identificaciones.add(identificacion)
                     else:
@@ -805,7 +803,7 @@ def identificacion_save(request):
                         prontuario = Prontuario()
                 except Exception as e:
                     return HttpResponseBadRequest()
-                return render_to_response("./nueva_identificacion.html",{'persona':identificacion.persona,'prontuario':prontuario,'identificacion':identificacion,'existe':True},context_instance=RequestContext(request))
+                return render(request,"./nueva_identificacion.html",{'persona':identificacion.persona,'prontuario':prontuario,'identificacion':identificacion,'existe':True})
     return HttpResponseBadRequest()
 
 @login_required
@@ -813,7 +811,7 @@ def identificacion_save(request):
 def verificar(request):
     if request.is_ajax():
         verificar = Verificar.objects.filter(verificado = False)
-        return render_to_response("./verificar.html",{'verificar':verificar},context_instance=RequestContext(request))
+        return render(request,"./verificar.html",{'verificar':verificar})
     return HttpResponseBadRequest()
 
 @login_required
@@ -836,7 +834,7 @@ def datos_verificar(request,id):
             'fotos':fotos,
             'form':ProntuarioForm(),
         }
-        return render_to_response("./detalle_verificar.html",values,context_instance=RequestContext(request))
+        return render(request,"./detalle_verificar.html",values)
     return HttpResponseBadRequest()
 
 @login_required
@@ -870,7 +868,7 @@ def cargar_padres(request,id):
                 form = PadresForm(instance = padres)
             except ObjectDoesNotExist:
                 form = PadresForm()
-            return render_to_response("./padres.html",{'form':form,'id':id},context_instance=RequestContext(request))
+            return render(request,"./padres.html",{'form':form,'id':id})
     return HttpResponseBadRequest()
 
 @login_required
@@ -909,17 +907,16 @@ def cargar_domicilios(request,id):
         domicilios = Domicilios.objects.filter(personas=persona)
         paises = RefPaises.objects.all()
         form = DomicilioProntuarioForm()
-        return render_to_response("./domicilios.html",{'domicilios':domicilios,'form':form,'id':id,'paises':paises},context_instance=RequestContext(request))
+        return render(request,"./domicilios.html",{'domicilios':domicilios,'form':form,'id':id,'paises':paises})
     return HttpResponseBadRequest()
 
 @login_required
 @group_required(["prontuario"])
 def cargar_fotos(request,id):
+    print "VIENE"
     if request.is_ajax():
         persona = Personas.objects.get(id=id)
-
         if request.method=="POST":
-
             form = FotosPersonaForm(request.POST, request.FILES)
             if form.is_valid():
                 foto = FotosPersona()
@@ -932,12 +929,13 @@ def cargar_fotos(request,id):
                         prontuario = Prontuario.objects.get(persona = persona)
                         prontuario.fotos.add(foto)
                     except Exception as e:
-                        pass
+                        print e
                 except Exception as e:
                     return HttpResponseBadRequest()
         fotos = FotosPersona.objects.filter(persona = persona)
+        print fotos
         form = FotosPersonaForm()
-        return render_to_response("./fotos.html",{'fotos':fotos,'form':form,'id':id},context_instance=RequestContext(request))
+        return render(request,"./fotos.html",{'fotos':fotos,'form':form,'id':id})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1004,7 +1002,7 @@ def identificaciones_anteriores(request,id):
         identificaciones = Identificacion.objects.filter(persona=id).order_by("-id")
         if identificaciones.count() > 0:
             data = serializers.serialize("json", identificaciones)
-            return HttpResponse(data, mimetype='application/json')
+            return HttpResponse(data, content_type='application/json')
         return HttpResponseNotFound()
     return HttpResponseBadRequest()
 
@@ -1013,7 +1011,7 @@ def identificaciones_anteriores(request,id):
 def obtener_identificacion(request,id):
     if request.is_ajax():
         identificacion = Identificacion.objects.get(id=id)
-        return render_to_response("./identificacion.html",{'identificacion':identificacion})
+        return render(request,"./identificacion.html",{'identificacion':identificacion})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1021,7 +1019,7 @@ def obtener_identificacion(request,id):
 def obtener_fotos(request,id):
     if request.is_ajax():
         fotos = FotosPersona.objects.filter(persona = id)
-        return render_to_response("./galeria.html",{"fotos":fotos})
+        return render(request,"./galeria.html",{"fotos":fotos})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1030,7 +1028,7 @@ def ver_identificacion(request,id):
     if request.is_ajax:
         identificacion = Identificacion.objects.get(id=id)
         foto = FotosPersona.objects.filter(persona = identificacion.persona,tipo_foto = "1")[0] if FotosPersona.objects.filter(persona = identificacion.persona,tipo_foto = "1").count() > 0 else None
-        return render_to_response("./ver_identificacion.html",{'identificacion':identificacion,'foto':foto})
+        return render(request,"./ver_identificacion.html",{'identificacion':identificacion,'foto':foto})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1038,7 +1036,7 @@ def ver_identificacion(request,id):
 def buscar(request):
     if request.is_ajax:
         form = BuscarForm()
-        return render_to_response("./busqueda.html",{'form':form},context_instance=RequestContext(request))
+        return render(request,"./busqueda.html",{'form':form})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1071,7 +1069,7 @@ def busqueda(request):
                             personas = personas.filter(fecha_nac__year = anio_nacimiento )
                     resultados = Prontuario.objects.filter(persona__in = personas)
                     data = serializers.serialize("json", resultados)
-                    return HttpResponse(data, mimetype='application/json')
+                    return HttpResponse(data, content_type='application/json')
         return HttpResponseBadRequest()
     return HttpResponseRedirect("/")
 
@@ -1084,7 +1082,7 @@ def obtener_miniatura(request,id):
         foto = '/media/'+str(foto[0].foto)
     else:
         foto = '/static/prontuario/images/avatar.png'
-    return render_to_response("./miniatura.html",{'prontuario':prontuario,'foto':foto},context_instance = RequestContext(request))
+    return render(request,"./miniatura.html",{'prontuario':prontuario,'foto':foto})
 
 @login_required
 @group_required(["prontuario"])
@@ -1099,7 +1097,7 @@ def ver_prontuario(request,id):
         if values['padres'].count() > 0:
             values['padres'] = values['prontuario'].persona.padre.all()[0]
         values['preventivos'] = PreventivosPersona.objects.filter(documento = values['prontuario'].persona.nro_doc)
-        return render_to_response("./prontuario.html",values,context_instance = RequestContext(request))
+        return render(request,"./prontuario.html",values)
     return HttpResponseBadRequest()
 
 @login_required
@@ -1108,7 +1106,7 @@ def modificar_persona(request,id):
     if request.is_ajax():
         persona = Personas.objects.get(id=id)
         form    = PersonasForm(instance = persona)
-        return render_to_response("./modificar_persona.html",{'persona':persona,'form':form},context_instance=RequestContext(request))
+        return render(request,"./modificar_persona.html",{'persona':persona,'form':form})
     return HttpResponseBadRequest()
 
 def persona_save(request,id):
@@ -1193,7 +1191,7 @@ def nuevo_elemento(request,tipo):
             if tipo == "ciudad":
                 form = CiudadesForm()
                 print form
-            return render_to_response("./nuevo_elemento.html",{'form':form,'tipo':tipo},context_instance=RequestContext(request))
+            return render(request,"./nuevo_elemento.html",{'form':form,'tipo':tipo})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1230,13 +1228,13 @@ def buscar_procesales(request):
                     resultados = resultados.filter(dni=dni,n_c__icontains=n_c)
                 print resultados.count()
                 if resultados.count() > 0:
-                    return render_to_response("./listado_procesales.html",{'resultado':resultados,'id':0,'cambia':True},context_instance=RequestContext(request))
+                    return render(request,"./listado_procesales.html",{'resultado':resultados,'id':0,'cambia':True})
                 else:
                     return HttpResponseNotFound()
-        return render_to_response("./buscar_procesales.html",{'form':form},context_instance=RequestContext(request))
+        return render(request,"./buscar_procesales.html",{'form':form})
     return HttpResponseBadRequest()
 
 
 def preventivos_persona(request,persona):
     resultados = PreventivosPersona.objects.filter(documento = persona)
-    return render_to_response("./preventivos_persona.html",{'resultados':resultados},context_instance=RequestContext(request))
+    return render(request,"./preventivos_persona.html",{'resultados':resultados})

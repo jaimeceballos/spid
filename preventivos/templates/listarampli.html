@@ -1,3 +1,4 @@
+{% load static %}
 {%if 'no' in total %}
 
   
@@ -22,8 +23,8 @@
                  
                    <td width="5%">
 
-                    <a href='{% url 'reporampli' datos.preventivo_id datos.id  %}' target="_blank">
-                      <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" 
+                    <a href="{% url 'reporampli' datos.preventivo_id datos.id  %}" target="_blank">
+                      <img src="{% static 'imagenes/preventivos/ver.png ' %}" style="border:0" 
                       title="Permite Ver Datos de la Ampliacion"  rel='tooltip'/>
                    </a></td>
 

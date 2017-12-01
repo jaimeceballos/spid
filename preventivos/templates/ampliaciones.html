@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 
- <form id="form" action="." method="post" autocomplete="OFF">{% csrf_token %} 
+ <form id="form" action="." method="post" autocomplete="OFF" novalidate>{% csrf_token %} 
    <h1>Ampliaciones referidas al preventivo {{preventivo.nro}}/{{preventivo.anio}} {{preventivo.dependencia.descripcion}} - {{preventivo.dependencia.unidades_regionales.descripcion}}</h1>
 
    <p><strong style="text-transform:uppercase;font-size:15px">Datos Generales del preventivo:</strong></p>
@@ -48,7 +49,7 @@
    {% endif %}
     {%if not ampliacion.fecha_autorizacion%}
                   
-         {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in user.get_profile.depe.descripcion and id%}
+         {% if depe == user.userprofile.depe  or user.userprofile.depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in user.userprofile.depe.descripcion and id%}
          {% if finaliza and not ampliacion.fecha_autorizacion%}
         <p align="right">
           <a class="btn btn-success"  href="{% url 'finalizar' preventivo.id id %}" >
@@ -102,7 +103,7 @@
                    <td width="10%">{{a.fecha|date:"d/m/y"}}</td>
                    <td width="50%">{{a.titulo}}</td>
                    <td width="25%">{{a.fecha_autorizacion}}</td>
-                  <td width="12%"><center><a href="{% url 'ver_ampliacion' preventivo.id a.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite ver Datos de la Ampliacion" rel="tooltip" /></a></center></td>
+                  <td width="12%"><center><a href="{% url 'ver_ampliacion' preventivo.id a.id %}"><img src="{% static 'imagenes/preventivos/amp_edit.png' %}" style="border:0" title="Permite ver Datos de la Ampliacion" rel="tooltip" /></a></center></td>
                   {%if tienepersonas%}
              
                      
@@ -121,7 +122,7 @@
 
                      </center></td>
                    {%endif%}
-                    {%if depe == user.get_profile.depe and state == "jefes" and a.fin_edicion and not a.fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and a.fin_edicion and not a.fecha_autorizacion or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and a.fin_edicion and  not a.fecha_autorizacion%}
+                    {%if depe == user.userprofile.depe and state == "jefes" and a.fin_edicion and not a.fecha_autorizacion or "RADIO" in user.userprofile.depe.descripcion and a.fin_edicion and not a.fecha_autorizacion or user.userprofile.depe.descripcion == 'INVESTIGACIONES' and a.fin_edicion and  not a.fecha_autorizacion%}
                
                    <td width="12%"><center>
                     <a href="{% url 'enviar' preventivo.id a.id %}"><input type="button" name="enviar" id="enviar"  class="botonenviar"  
@@ -130,11 +131,11 @@
                    {%else%}
                       {%if  a.fecha_autorizacion%}
                    <td width="12%"><center>
-                   <img src="{{STATIC_URL}}imagenes/preventivos/forget.png" style="border:0" title="Ampliacion informada/envida por email" rel="tooltip" />
+                   <img src="{% static 'imagenes/preventivos/forget.png' %}" style="border:0" title="Ampliacion informada/envida por email" rel="tooltip" />
                     </center></td>
                    {%else%}
                          <td width="12%">
-                   <center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" 
+                   <center><a href="#"><img src="{% static 'imagenes/preventivos/validatebox_warning.png' %}" style="border:0" 
                     title="Para informar una ampliacion debe estar autorizada (Fin de Ediccion)" rel='tooltip' /></a></center>
                  </td>
                    {%endif%}

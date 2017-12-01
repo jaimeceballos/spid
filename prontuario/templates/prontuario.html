@@ -1,3 +1,4 @@
+{% load static %}
 <div class="row bg-success">
   <div class="col-md-4 col-md-offset-3">
     <h1>Prontuario N° {{prontuario.nro}} </h1>
@@ -90,7 +91,7 @@
           {% for foto in fotos %}
           {% if forloop.first %}
           <div class="item active">
-            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" style="height:400px; width:auto" /></center>
+            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="/media/{{foto.foto}}" style="height:400px; width:auto" /></center>
             <div class="carousel-caption">
               <h4>
 
@@ -100,7 +101,7 @@
           </div>
           {% else %}
           <div class="item">
-            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{MEDIA_URL}}{{foto.foto}}" style="height:400px; width:auto" /></center>
+            <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="/media/{{foto.foto}}" style="height:400px; width:auto" /></center>
             <div class="carousel-caption">
               <h4>
 
@@ -116,7 +117,7 @@
       </div>
       {% else %}
         <center><h3 class="text-muted">Sin Fotos</h3></center>
-        <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{{STATIC_URL}}prontuario/images/avatar.png" style="height:400px; width:auto" /></center>
+        <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="{% static 'prontuario/images/avatar.png' %}" style="height:400px; width:auto" /></center>
       {% endif %}
     </div>
   </div>

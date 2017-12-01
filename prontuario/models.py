@@ -78,8 +78,8 @@ class Identificacion(models.Model):
 class Prontuario(models.Model):
     nro                 = models.CharField(max_length=7,unique=True)
     persona             = models.OneToOneField(Personas)
-    identificaciones    = models.ManyToManyField(Identificacion,null=True)
-    fotos               = models.ManyToManyField('FotosPersona',related_name='fotos',blank=True,null=True)
+    identificaciones    = models.ManyToManyField(Identificacion)
+    fotos               = models.ManyToManyField('FotosPersona',related_name='fotos',blank=True)
     observaciones       = models.CharField(max_length=100,null=True,blank=True)
 
     class Meta:
@@ -131,7 +131,7 @@ class RecordIdentifications(models.Model):
     profession = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     civil_status = models.ForeignKey(CivilStatuses)
-    instructed = models.BooleanField()
+    instructed = models.BooleanField(default=None)
     e_mail = models.CharField(max_length=60, blank=True)
     telephone_number = models.CharField(max_length=20, blank=True)
     alias = models.CharField(max_length=20, blank=True)

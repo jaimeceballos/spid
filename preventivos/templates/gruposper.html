@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 
 <form id="form" action="" method="POST">{% csrf_token %} 
@@ -34,7 +35,7 @@
   </p>
 
   <p>
-      <div id="informacion"><blockquote style="font-size:10px;font-family: Georgia, "DroidSansMono", serif;"><h3><legend>   <img id="alert" src="{{STATIC_URL}}imagenes/preventivos/alert.png" style="border:0px solid #C0C0C0;"/>
+      <div id="informacion"><blockquote style="font-size:10px;font-family: Georgia, "DroidSansMono", serif;"><h3><legend>   <img id="alert" src="{% static 'imagenes/preventivos/alert.png' %}" style="border:0px solid #C0C0C0;"/>
         <p>Especifique los permisos para el grupo de usuario seleccionado.</p></legend></h3><br><br>
         <dd><p>Para Asignar y/o reasignar uno o mas, realize la busqueda y seleccione haciendo click sobre el permiso en el cuadro izquierdo</p></dd>
         <dd><p>Para revocar o remover permisos, hacer doble click sobre el permiso en el cuadro derecho anteriormente asignado.-</p></dd></strong></p>

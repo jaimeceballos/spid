@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 
  <form id="form" action="." method="post">{% csrf_token %} 
@@ -61,7 +62,7 @@
       readonly="readonly" autocomplete="off"/>&nbsp;&nbsp;
       <strong for="apeynombres" >Apellido y Nombres :
       <input type="text" name="apeynombres" id="apeynombres" size="30" value="{{apeynom}}"
-      readonly="readonly" autocomplete="off"/>&nbsp;&nbsp; <a href="/preventivos/actuantes/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar seleccion"></a><a onclick="" href="/preventivos/persona/"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/addpersonas.png" title="Agregar Personas"></a>
+      readonly="readonly" autocomplete="off"/>&nbsp;&nbsp; <a href="/preventivos/actuantes/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar seleccion"></a><a onclick="" href="/preventivos/persona/"><img id="imagen" src="{% static 'imagenes/preventivos/addpersonas.png' %}" title="Agregar Personas"></a>
       </strong>
       </p>
       <p>

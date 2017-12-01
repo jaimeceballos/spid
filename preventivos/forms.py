@@ -38,7 +38,7 @@ class UserCreateForm(forms.Form):
 	fecha_nacimiento		= forms.DateField(required=True,widget=forms.DateInput(attrs=dict({'class':'form-control','placeholder':'dd/mm/aaaa'})),label="Fecha Nacimiento")
 	ciudad_nacimiento		= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Nombre de la ciudad'})))
 	ciudad_nacimiento_id    = forms.CharField(required=True,widget=forms.HiddenInput())
-	estados_civiles			= forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}),choices=RefEstadosciv.objects.all().values_list('id','descripcion'))
+	estados_civiles			= forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}))#,queryset=RefEstadosciv.objects.all().values_list('id','descripcion'))
 	ciudad_residencia		= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Nombre de la ciudad'})))
 	ciudad_residencia_id    = forms.CharField(required=True,widget=forms.HiddenInput())
 	jerarquia				= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Jerarquía'})))
@@ -46,8 +46,8 @@ class UserCreateForm(forms.Form):
 	lugar_trabajo			= forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Dependencia'})))
 	lugar_trabajo_id		= forms.CharField(required=True,widget=forms.HiddenInput())
 	email					= forms.EmailField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'mail@example.com'})))
-	sexo 					= forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}),choices=RefSexo.objects.all().values_list('id','descripcion'))
-	grupos 					= forms.MultipleChoiceField(widget = forms.SelectMultiple(attrs={'class':'form-control'}), choices= Group.objects.all().values_list('id','name'))
+	sexo 					= forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}))#,choices=RefSexo.objects.all().values_list('id','descripcion'))
+	grupos 					= forms.MultipleChoiceField(widget = forms.SelectMultiple(attrs={'class':'form-control'}))#, choices= Group.objects.all().values_list('id','name'))
 	activo 					= forms.BooleanField()
 	funcion					= forms.CharField(required=False,widget = forms.RadioSelect(choices = fcio_opciones))
 
@@ -55,7 +55,7 @@ class GroupForm(forms.ModelForm):
 	#name = forms.CharField(required=True)
 	class Meta:
 		model = Group
-		exclude=('name')
+		exclude=['name',]
 
 		groups = forms.ModelChoiceField(
 		Group.objects.all(),
@@ -76,8 +76,8 @@ class UserForm(forms.ModelForm):
 	groups 	= forms.ModelMultipleChoiceField(widget = forms.SelectMultiple(),queryset = Group.objects.all())
 	class Meta:
 		model = User
-		exclude = ('password','last_login','is_superuser','date_joined')
-		fields = ('groups','user_permissions','username','first_name','last_name','last_login','email','is_active','is_staff')
+		exclude = ['password','last_login','is_superuser','date_joined',]
+		fields = ['groups','user_permissions','username','first_name','last_name','last_login','email','is_active','is_staff',]
 
 	def __init__(self, *args, **kwargs):
 		super(UserForm,self).__init__(*args,**kwargs)
@@ -110,108 +110,142 @@ class CiudadesForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefCiudades
+		exclude = []
 
 class DepartamentosForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefDepartamentos
+		exclude = []
 
 class ProvinciasForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 
 	class Meta:
 		model = RefProvincia
-
+		exclude = []
 
 class PaisesForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefPaises
+		exclude = []
 
 class LugaresForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefLugares
+		exclude = []
 
 class HogaresForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefHogares
+		exclude = []
 
 class CondclimasForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefCondclimas
+		exclude = []
 
 class UnidadesForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
-	ciudad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
+
+
+	def __init__(self, *args, **kwargs):
+		super(UnidadesForm,self).__init__(*args,**kwargs)
+		self.fields["ciudad"].widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'})
+		self.fields["ciudad"].queryset = RefCiudades.objects.filter(provincia__descripcion__contains = 'CHUBUT')
+
 	class Meta:
 		model = UnidadesRegionales
+		exclude = []
 
 class DependenciasForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
-	ciudad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
-	unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.all())
 
+	def __init__(self, *args, **kwargs):
+		super(DependenciasForm,self).__init__(*args,**kwargs)
+		self.fields["ciudad"].widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'})
+		self.fields["ciudad"].queryset = RefCiudades.objects.filter(provincia__descripcion__icontains = 'CHUBUT')
+		self.fields["unidades_regionales"].widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'})
+		self.fields["unidades_regionales"].queryset= UnidadesRegionales.objects.all()
 
 	class Meta:
 		model = Dependencias
+		exclude = []
 
 class PeopleForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefPeople
+		exclude = []
 
 class TipoDelitosForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefTipoDelitos
+		exclude = []
 
 class DelitoForm(forms.ModelForm):
 	descripcion = forms.CharField(required = True)
 	tipo_delito = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefTipoDelitos.objects.all())
 	class Meta:
 		model = RefDelito
+		exclude = []
 
 class JobsForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefOcupacion
+		exclude = []
 
 class TrademarkForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefTrademark
+		exclude = []
 
 class TiposarmasForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefTiposarmas
+		exclude = []
 
 class SubtiposaForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefSubtiposa
+		exclude = []
 
 class SistemadisForm(forms.ModelForm):
 	#descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefSistemadis
+		exclude = []
 
 class ItemForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefItems
+		exclude = []
 
 class CategoryForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
 	class Meta:
 		model = RefCategory
+		exclude = []
 
 class BarriadasForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
-	ciudad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
+
+	def __init__(self, *args, **kwargs):
+		super(BarriadasForm,self).__init__(*args,**kwargs)
+		self.fields["ciudad"].widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'})
+		self.fields["ciudad"].queryset = RefCiudades.objects.filter(provincia__descripcion__contains = 'CHUBUT').values('id')
+
+
 
 	class Meta:
 	  model = RefBarrios
@@ -219,10 +253,16 @@ class BarriadasForm(forms.ModelForm):
 
 class AddressForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
-	ciudad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
+
+	def __init__(self, *args, **kwargs):
+		super(AddressForm,self).__init__(*args,**kwargs)
+		self.fields["ciudad"].widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'})
+		self.fields["ciudad"].queryset = RefCiudades.objects.filter(provincia__descripcion__contains = 'CHUBUT')
+
 
 	class Meta:
 	  model = RefCalles
+	  exclude = []
 
 class AuthoritiesForm(forms.ModelForm):
 	descripcion = forms.CharField(required=True)
@@ -236,25 +276,28 @@ class AuthoritiesForm(forms.ModelForm):
 		super(AuthoritiesForm,self).__init__(*args,**kwargs)
 
 		self.fields["ciudades"].widget = CheckboxSelectMultiple()
-		self.fields["ciudades"].queryset = RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))
+		self.fields["ciudades"].queryset = RefCiudades.objects.filter(provincia__descripcion__contains = 'CHUBUT')
 
 class TipoJerarquiaForm(forms.ModelForm):
 	descripcion = forms.CharField(required = True)
 
 	class Meta:
 		model = RefTipoJerarquia
+		exclude = []
 
 class DivisionJerarquiaForm(forms.ModelForm):
 	descripcion = forms.CharField(required = True)
 
 	class Meta:
 		model = RefDivisionJerarquia
+		exclude = []
 
 class JerarquiasForm(forms.ModelForm):
 	descripcion = forms.CharField(required = True)
 
 	class Meta:
 		model = RefJerarquias
+		exclude = []
 
 class SexoForm(forms.ModelForm):
 	Sexo_opciones=(
@@ -265,6 +308,7 @@ class SexoForm(forms.ModelForm):
 
 	class Meta:
 		model = RefSexo
+		exclude = []
 
 class TipodocForm(forms.ModelForm):
 	Doc_opciones=(
@@ -278,6 +322,7 @@ class TipodocForm(forms.ModelForm):
 
 	class Meta:
 		model = RefTipoDocumento
+		exclude = []
 
 class ActuantesForm(forms.ModelForm):
 	fcio_opciones=(('1','ACTUANTE'),('2','PREVENTOR'),('3','ACT / PREV'))
@@ -285,15 +330,7 @@ class ActuantesForm(forms.ModelForm):
 
 	class Meta:
 		model = Actuantes
-
-
-class HorizRadioRenderer(forms.RadioSelect.renderer):
-	""" this overrides widget method to put radio buttons horizontally
-		instead of vertically.
-	"""
-	def render(self):
-			"""Outputs radios"""
-			return mark_safe(u'%s' % u'\n'.join([u'%s'  % force_unicode(w) for w in self]))
+		exclude = []
 
 
 laburo_opciones=(('1','ESTABLE'),('2','NO ESTABLE'))
@@ -317,13 +354,14 @@ class PersonasForm(forms.ModelForm):
 	class Meta:
 		model = Personas
 		#fields = ('estado_civil','nro_doc','ciudad_res','ocupacion')
-
+		exclude = []
 
 
 class PersonalForm(forms.ModelForm):
 
 	class Meta:
 		model = Personal
+		exclude = []
 
 class ComunidadesForm(forms.ModelForm):
 	Zonas_opciones=(
@@ -335,6 +373,7 @@ class ComunidadesForm(forms.ModelForm):
 
 	class Meta:
 		model = RefComunidades
+		exclude = []
 
 class PrimerForm(forms.ModelForm):
 	unidad = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= UnidadesRegionales.objects.all(), required=False)
@@ -517,11 +556,13 @@ class SearchPreveForm(forms.Form):
 	anio=forms.IntegerField(required=False)
 	fecha_carga=forms.DateTimeField(required=False)
 	caratula=forms.CharField(required=False)
-	unidades_regionales=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.exclude(descripcion__icontains='INVESTIGACION') &  UnidadesRegionales.objects.exclude(descripcion__icontains='AREA'))
-	#unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.filter(Q(descripcion__startswith="OPERA") | Q(descripcion__startswith="UNIDAD")))
+	unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.all())
 	dependencias = forms.Select()
 
-
+	def __init__(self, *args, **kwargs):
+		super(SearchPreveForm,self).__init__(*args,**kwargs)
+		#self.fields["unidades_regionales"].widget = forms.Select(attrs={'size':'13', })
+		#self.fields["unidades_regionales"].queryset= UnidadesRegionales.objects.exclude(descripcion__icontains='INVESTIGACION') &  UnidadesRegionales.objects.exclude(descripcion__icontains='AREA')
 
 	"""
 	class Meta:
@@ -573,14 +614,22 @@ class HechosDelitoForm(forms.ModelForm):
 
 	class Meta:
 		model = HechosDelito
+		exclude = []
 
 nuevo=(('si','SI'),('no','NO'),)
 class PersInvolucradasForm(forms.ModelForm):
 	roles=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), queryset= RefPeople.objects.all(),initial=5)
 	detenido=forms.ChoiceField(widget=forms.Select(attrs={'size':'13'}), required=False,choices=nuevo,initial='si',)
 	#juridica=forms.ChoiceField(widget=forms.Select(attrs={'size':'13'}), required=False,choices=nuevo,initial='si',)
-	cuit=forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13'}), required=False, queryset= RefTipoDocumento.objects.filter(descripcion__contains='CUI'),initial=8)
 	nrocuit = forms.CharField(required= False)
+
+	def __init__(self, *args, **kwargs):
+		super(PersInvolucradasForm,self).__init__(*args,**kwargs)
+		self.fields["cuit"].widget = forms.Select(attrs={'size':'13'})
+		self.fields["cuit"].queryset= RefTipoDocumento.objects.filter(descripcion__contains='CUI')
+		self.fields["cuit"].initial = 8
+
+
 	class Meta:
 		model = PersInvolucradas
 		exclude = ('persona','hechos')
@@ -599,7 +648,7 @@ class DomicilioProntuarioForm(forms.ModelForm):
 
 	class Meta:
 		model = Domicilios
-		exclude = 'personas'
+		exclude = ['personas',]
 
 
 class DetenidosForm(forms.ModelForm):
@@ -666,6 +715,7 @@ class UnidadMedidasForm(forms.ModelForm):
 
 	class Meta:
 		model = RefUnidadmedidas
+		exclude = []
 
 class ArmasForm(forms.ModelForm):
 	nueva_marca = forms.CharField(required=False)
@@ -679,6 +729,7 @@ class ArmasForm(forms.ModelForm):
 		return nueva_marca
 	class Meta:
 		model = Armas
+		exclude = []
 
 class VehiculosForm(forms.ModelForm):
 
@@ -694,20 +745,27 @@ class VehiculosForm(forms.ModelForm):
 
 	class Meta:
 		model = Vehiculos
+		exclude = []
 
 class MapaForm(forms.Form):
-	ciudades = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13',}), required=False, queryset= RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))  )
-	ureg= forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.exclude(descripcion__icontains='INVESTIGACION') &  UnidadesRegionales.objects.exclude(descripcion__icontains='AREA'))
+
+	ciudades = forms.ModelChoiceField(widget=forms.Select(attrs={'size':'13',}), required=False, queryset= RefCiudades.objects.all())
+	ureg= forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', }), required=False, queryset= UnidadesRegionales.objects.all())
 	depe = forms.Select()
 	ciu = forms.BooleanField(required=False,initial=False)
 	depes=forms.BooleanField(required=False,initial=False)
-	delito=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13',}),queryset = RefDelito.objects.all(), initial=RefDelito.objects.get(id=1),required=False)
+	delito=forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13',}),queryset = RefDelito.objects.all(),required=False)
 
-	"""def __init__(self, *args, **kwargs):
+
+	def __init__(self, *args, **kwargs):
 		super(MapaForm,self).__init__(*args,**kwargs)
-		self.fields["delito"].widget = CheckboxSelectMultiple()
+		self.fields["ciudades"].widget = forms.Select(attrs={'size':'13'})
+		self.fields["ciudades"].queryset= RefCiudades.objects.filter(provincia__descripcion__icontains = 'CHUBUT')#RefCiudades.objects.filter(provincia__contains = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id'))
+		self.fields["ureg"].widget = forms.Select(attrs={'size':'13', })
+		self.fields["ureg"].queryset= UnidadesRegionales.objects.exclude(descripcion__icontains='INVESTIGACION') &  UnidadesRegionales.objects.exclude(descripcion__icontains='AREA')
+		self.fields["delito"].widget = forms.Select(attrs={'size':'13',})
 		self.fields["delito"].queryset = RefDelito.objects.all()
-		self.fields["delito"].help_text='Seleccione haciendo click sobre cada uno de los Delitos'"""
+		self.fields["delito"].initial=RefDelito.objects.get(id=1)
 
 	def clean(self):
 		cleaned_data = super(MapaForm,self).clean()

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load i18n %}
 
 {% block main %}
@@ -31,9 +32,9 @@
       <span class="add-on">
           <span class="glyphicon glyphicon-calendar"></span> <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
       </span>
-     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+     <script type="text/javascript"  src="{% static 'fechayhora/bootstrap.min.js' %}"> </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.min.js' %}">   </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.pt-BR.js' %}"> </script>
 
 <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'});
 </script></div></p>
@@ -81,12 +82,12 @@
 
       {%if 'policia' in state or 'investigaciones' in state or 'radio' in state or 'jefes' in state%}
 
-       {%if not fecha_autorizacion and depe == user.get_profile.depe  or  not fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or not fecha_autorizacion and 'RADIO' in user.get_profile.depe.descripcion%}
+       {%if not fecha_autorizacion and depe == user.userprofile.depe  or  not fecha_autorizacion and user.userprofile.depe.descripcion == 'INVESTIGACIONES' or not fecha_autorizacion and 'RADIO' in user.userprofile.depe.descripcion%}
          <input  class="new-aqua" type="submit" name = "button" id = "button" value="Modificar"
          title="Permite modificar solamente los datos cabeceras del preventivos" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"/>
        {%endif%}
-       {%if fecha_autorizacion and depe == user.get_profile.depe  or  fecha_autorizacion and user.get_profile.depe.descripcion == 'INVESTIGACIONES' or fecha_autorizacion and 'RADIO' in user.get_profile.depe.descripcion%}
-        <a href="{% url 'ampliacion' idprev %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_editp.png" style="border:0" title="Permite generar radios ampliatorios." /></a>
+       {%if fecha_autorizacion and depe == user.userprofile.depe  or  fecha_autorizacion and user.userprofile.depe.descripcion == 'INVESTIGACIONES' or fecha_autorizacion and 'RADIO' in user.userprofile.depe.descripcion%}
+        <a href="{% url 'ampliacion' idprev %}"><img src="{% static 'imagenes/preventivos/amp_editp.png' %}" style="border:0" title="Permite generar radios ampliatorios." /></a>
        {%endif%}
       {%endif%}
         <a href="{% url 'reportes' idprev %}" target="_blank" style="display:none" id="imprimir"><input type="button" class="botonprint"
@@ -163,7 +164,7 @@
        <a class="btn btn-success"  href="{% url 'persinvoluc' idhec idper%}">
         <label title="Permite Ver mas detalles de las personas involucradas en el Hecho" style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Ver Personas</label></a></p><hr>
   {%else%}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES'  or 'RADIO' in user.get_profile.depe.descripcion%}
+      {% if depe == user.userprofile.depe  or user.userprofile.depe.descripcion == 'INVESTIGACIONES'  or 'RADIO' in user.userprofile.depe.descripcion%}
         <p align="right">
            <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}">
            <label title="Permite Agregar otra Persona Involucrada" style="font-size:11px;text-align:left;">Involucrados</label></a>
@@ -180,7 +181,7 @@
         style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Ver Lugar </label></a></p><hr>
 
    {% else %}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion %}
+      {% if depe == user.userprofile.depe  or user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.userprofile.depe.descripcion %}
         <p align="right">
         <a class="btn btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label  title="Permite Indicar la Ubicación del Hecho y caracteristicas del lugar"
           style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Lugar </label></a></p>
@@ -229,7 +230,7 @@
         <label title="Permite Ver mas detalle de los Elementos pertenecientes al Hecho" style="font-size:10px;text-align:center;"> Ver elementos </label></a></p><hr>
 
     {% else %}
-      {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion%}
+      {% if depe == user.userprofile.depe  or user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.userprofile.depe.descripcion%}
           <p align="right">
         <a class="btn btn-success"  href="{% url 'elementos' idhec %}" ><label  title="Permite Agregar Elementos según sean Denunciados/Utilizados/Secuestrados/Utilizados y Secuestrados en el Hecho"
           style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Elementos </label></a></p>
@@ -241,11 +242,13 @@
   <p align="right">
           <a class="btn btn-success"  href="{% url 'newhecho' idprev %}" ><label  title="Permite Indicar una breve descripcion del Hecho Delictivo sucedido y otras caracteristicas que no fueron detalladas anteriormente"
           style="margin-top:0px;font-size:10px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Descripcion del Hecho</label></a></p>
+    
     {%if tienelugar%}
 
-      {% if depe == user.get_profile.depe   %}
+      {% if depe == user.userprofile.depe   %}
         {% if not fecha_autorizacion  and "jefes" in state %}
-          <!-- or "RADIO" in user.get_profile.depe.descripcion and  not fecha_autorizacion or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and  not fecha_autorizacion -->
+        
+          <!-- or "RADIO" in user.userprofile.depe.descripcion and  not fecha_autorizacion or user.userprofile.depe.descripcion == 'INVESTIGACIONES' and  not fecha_autorizacion -->
            <div align="center">
             <input type="button" class="btn btn-success"  id="autorizar" value="Autorizar" ></input>
             <div class=""  id="loader" style="display:none" >
@@ -278,7 +281,7 @@
           {% endif%}
         {% endif%}
       {%else%}
-        {%if depe == user.get_profile.depe and 'jefes' in state and not preventivo.fecha_cierre or "RADIO" in user.get_profile.depe.descripcion and not preventivo.fecha_cierre%}
+        {%if depe == user.userprofile.depe and 'jefes' in state and not preventivo.fecha_cierre or "RADIO" in user.userprofile.depe.descripcion and not preventivo.fecha_cierre%}
                  <p align="center">
                    <a  type="button" href="{% url 'ampliacion' idprev %}"  class="new-aquas">
                    <label   title="Permite realizar el Cierre del Preventivo mediante una Ampliación"
@@ -291,7 +294,7 @@
      {%endif%}
 
 {% else %}
-    {% if depe == user.get_profile.depe or user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion%}
+    {% if depe == user.userprofile.depe or user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.userprofile.depe.descripcion%}
       <p align="right">
       <a class="btn btn-success"  href="{% url 'newhecho' idprev %}" ><label style="font-size:11px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Hecho</label></a>
       </p>
@@ -314,7 +317,7 @@
 <!--{% else %}
    <input  class="new-aqua" type="submit" name = "button" id = "button" value="Modificar"/>
 
-   {% if user.get_profile.depe == depe %}
+   {% if user.userprofile.depe == depe %}
       <a class="btn btn-success"  href="{% url 'newhecho' idprev %}"><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;">Cargar Hecho</label></a>
    {%endif%}
 

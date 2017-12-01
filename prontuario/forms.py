@@ -29,13 +29,14 @@ class FotosPersonaForm(forms.ModelForm):
     foto      = forms.ImageField()
     class Meta:
         model = FotosPersona
-        exclude = 'persona'
+        exclude = ['persona',]
 
 class RefOcupacionEspecificaForm(forms.ModelForm):
     descripcion = forms.CharField(required=True,widget=forms.TextInput(attrs=dict({'class':'form-control','placeholder':'Descripcion'})))
 
     class Meta:
         model = RefOcupacionEspecifica
+        exclude = []
 
 class ProntuarioForm(forms.ModelForm):
 

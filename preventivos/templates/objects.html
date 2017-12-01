@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 
   {% if errors %}
@@ -27,7 +28,7 @@
   </div>-->
   {% endif %}
   
-  <form id="form" action="." method="post">{% csrf_token %} 
+  <form id="form" action="." method="post" novalidate>{% csrf_token %} 
       <input type="hidden" id="id" name="id" value="{{idhec}}"/>
   
     <input type="hidden" id="idp" name="idp" value="{{idprev}}"/>
@@ -93,7 +94,7 @@
                     <option {{form.rubro}}</option>
                     </option>
                 </select>
-                 <a onclick="" href="." class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" width="18px" title="Agregar Rubros">
+                 <a onclick="" href="." class="basic" name="basic"><img id="imagen" src="{% static 'imagenes/preventivos/agregar.png' %}" width="18px" title="Agregar Rubros">
                  </a></strong>
         </td>
     </tr>
@@ -106,7 +107,7 @@
                     <option  name="categoria" id="categoria" {{form.categoria}} </option>
                     </option>
                 </select> 
-                 <a onclick="" href="." class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" width="18px"
+                 <a onclick="" href="." class="basic" name="basic"><img id="imagen" src="{% static 'imagenes/preventivos/agregar.png' %}" width="18px"
                   title="Agregar categoria">
               </strong>
         </td>
@@ -281,7 +282,7 @@
   <p> 
 
    <div align="right">
-   {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not  fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+   {% if depe == user.userprofile.depe and not fecha_autorizacion or "RADIO" in user.userprofile.depe.descripcion and not  fecha_autorizacion or "INVESTIGACIONES" in user.userprofile.depe.descripcion and not fecha_autorizacion%}
                  <input  class="new-aqua" type="submit" name = "button" id = "button" value="Guardar" /> 
               {%else%}
                 {%if fecha_autorizacion%}
@@ -331,13 +332,13 @@
                     <td width="30%">{{ elemento.rubro }}</td>
                     <td width="30%">{{ elemento.categoria }}</td>
                     <td width="30%">{{ elemento.cantidad }}  {{ elemento.unidadmed }}</td>
-   {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+   {% if depe == user.userprofile.depe and not fecha_autorizacion or "RADIO" in user.userprofile.depe.descripcion and not fecha_autorizacion or "INVESTIGACIONES" in user.userprofile.depe.descripcion and not fecha_autorizacion%}
                              <td  width="2%"> <button type="submit" name="dele" id="dele" class="borrarde"
               value="{{elemento.id}}" onclick=(this.value) title="Permite borrar un elemento"/></button>
       
                       </td>
         {%else%}
-          <td width="12%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="" rel='tooltip' /></a></center></td>      
+          <td width="12%"><center><a href="#"><img src="{% static 'imagenes/preventivos/validatebox_warning.png' %}" style="border:0" title="" rel='tooltip' /></a></center></td>      
            
               {%endif%}
                   </tr>

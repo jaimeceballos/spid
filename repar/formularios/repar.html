@@ -7,7 +7,7 @@
 
 {% block main %}
 
-  <p>Bienvenido {{ user.first_name }}&nbsp;{{ user.last_name }}, tu &uacute;ltimo ingreso fue el {{ user.get_profile.ultimo_ingreso }} </p>
+  <p>Bienvenido {{ user.first_name }}&nbsp;{{ user.last_name }}, tu &uacute;ltimo ingreso fue el {{ user.userprofile.ultimo_ingreso }} </p>
   {% if no_enviados %}
     <!--div style="width:50%;margin-top:15px;margin-bottom:15px;padding:10px;border-radius:5px;background-color:#5EA94C;border:1px solid #e3e3e3;-webkit-box-shadow: 2px 2px 2px 2px #ccc;box-shadow:2px 2px 2px 2px #ccc;">
     <center><p style="font:15px;"><strong>Usted tiene {{ no_enviados }} preventivos pendientes de envio por favor revise el <a href="{% url 'pendientes_envio' %}">listado</a>.</strong></p></center>

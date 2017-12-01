@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block main %}
 <script>
   function abrirModal(){
@@ -69,7 +69,7 @@
   
   {% endif %}
    <p style="text-align:right">
-          <a href="/preventivos/persona/" name="cancelar" style="text-align:right"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" 
+          <a href="/preventivos/persona/" name="cancelar" style="text-align:right"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" 
            title="Limpiar ingreso"></a>
         {% if personas in lista %}
           <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" 
@@ -145,7 +145,7 @@
          <option name="ciudades_r"></option>
        <option {{form.ciudad_res}}</option></select>
         
-         <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+         <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{% static 'imagenes/preventivos/agregar.png' %}"
          width="18px" title="Agregar Ciudad de Residencia"></a>
          
        <!-- <a onclick="." href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
@@ -218,7 +218,7 @@
           
             <option {{dom.barrio_codigo}}</option>
         </select> 
-          <a onclick="abrirModal();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+          <a onclick="abrirModal();" href="#" ><img id="imagen" src="{% static 'imagenes/preventivos/agregar.png' %}"
          width="18px" title="Agregar Barrios"></a>
 
          <strong>Calle:</strong>

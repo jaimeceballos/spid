@@ -178,14 +178,14 @@ p#P a:hover {
        <p> 
            <div id="map" style="margin-left:20%;width:800px;height:450px;border:1px solid black;"></div>
               <div style="margin-left:70%;border:0px solid black;"> 
-                <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/powered-by-google.png" width="60px" height="20"></div>
+                <img id="imagen" src="{% static 'imagenes/preventivos/powered-by-google.png' %}" width="60px" height="20"></div>
          </p>      
  
 
 
 
-<script type='text/javascript' src='{{STATIC_URL}}js/preventivos/jquerym.js'></script>
-    <script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/preventivos/script.js" ></script>
+<script type='text/javascript' src="{% static 'js/preventivos/jquerym.js' %}"></script>
+    <script language="JavaScript" type="text/javascript" src="{% static 'js/preventivos/script.js' %}" ></script>
 
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBuneURtJfQGvMv3cG5TQMomWarGPIQ14c&sensor=true">
     </script>
@@ -195,7 +195,7 @@ p#P a:hover {
     var map;
      $(document).ready(function(){
    
- var image = '{{STATIC_URL}}imagenes/preventivos/powered-by-google.png';
+ var image = "{% static 'imagenes/preventivos/powered-by-google.png' %}";
 
      var latlng = new google.maps.LatLng({{preventivo.ciudad.lat}},{{preventivo.ciudad.longi}});
      var person = {{preven}};

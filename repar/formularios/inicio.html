@@ -1,8 +1,8 @@
   {% block sidebar %}
- <link href="{{STATIC_URL}}css/spid/default.css" rel="stylesheet" type="text/css" />
- <script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/jquery.js"></script>
-<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/spid/jquerym.js"></script>
- <script type="text/javascript" src="{{STATIC_URL}}js/preventivos/pschecker.js"></script>
+ <link href="{% static 'css/spid/default.css' %}" rel="stylesheet" type="text/css" />
+ <script language="JavaScript" type="text/javascript" src="{% static 'js/spid/jquery.js' %}"></script>
+<script language="JavaScript" type="text/javascript" src="{% static 'js/spid/jquerym.js' %}"></script>
+ <script type="text/javascript" src="{% static 'js/preventivos/pschecker.js' %}"></script>
      <script type="text/javascript" charset="utf-8">
      $(document).ready(function() {
    

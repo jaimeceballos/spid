@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 
  <form id="form" action="." method="post">{% csrf_token %} 
@@ -26,7 +27,7 @@
                        <input type="text" id="hechos" name="hechos"  size="40" autocomplete="off" value="{{hechos}}"
                        placeholder="Escriba algun dato que haga referencia a un Hecho" required=''/>
 
-                      <a href="/preventivos/seehechos/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+                      <a href="/preventivos/seehechos/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
                       <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda en Hechos ocurridos"/>
 
                     </div>

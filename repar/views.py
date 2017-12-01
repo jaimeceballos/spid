@@ -1,12 +1,12 @@
-#encoding:utf-8 
+#encoding:utf-8
 from repar.models import *
 from repar.forms import *
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.template import Context, Template, RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, render_to_response,get_object_or_404
 from django.core import serializers
-from django.utils import simplejson
+import json as simplejson
 from django.contrib.auth import authenticate, login
 from decorators.auth import group_required
 from django.core.mail import EmailMultiAlternatives
@@ -27,7 +27,7 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.db.models.signals  import  post_save,post_delete
 from django.http import HttpResponse
 from django.template import Context, loader
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from preventivos.models import *
 from preventivos.forms import *
 from django.db import connections
@@ -67,7 +67,7 @@ def inicial(request):
   ciudades = ""
   state= request.session.get('state')
   destino= request.session.get('destino')
- 
+
   return render(request,'repar.html',{'state':state, 'destino': destino})
 
 #la funcion en donde se guardan los grupos de usuarios que son ingresados en usuarios
@@ -82,30 +82,30 @@ def loguser(request):
     #form = DependenciasForm()
     form=''
     formpass = CambiarPassForm()
-   
+
     if request.POST.get('username')=='':
          formj = ActuantesForm()
          return render(request, 'contactar.html', {'state':state,'formj':formj})
     else:
         if request.POST.get('logonea')=='Conectar':
-         
+
          username = request.POST.get('username')
          password = request.POST.get('password')
-      
+
          ultimo_ingreso = User.objects.get(username = username).last_login
-         profile = User.objects.get(username=username).get_profile()
+         profile = User.objects.get(username=username).userprofile
          profile.ultimo_ingreso = ultimo_ingreso
          profile.save()
          if username.isdigit():
           user = auth.authenticate(username=username, password=password)
           if user is not None:
-       
+
            if Personas.objects.get(nro_doc=username).fecha_nac.day == date.today().day and Personas.objects.get(nro_doc=username).fecha_nac.month == date.today().month:
               birthday = True
-     
-         
 
-       
+
+
+
          user = auth.authenticate(username=username, password=password)
          if user is not None:
             if user.is_active:
@@ -113,22 +113,22 @@ def loguser(request):
                 #fecha_joined=datetime.datetime.strftime(user.date_joined, "%Y-%m-%d %H:%M:%S")
                 #print type(datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")),fecha_login,fecha_joined
                 #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")!=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
-                if user.get_profile().last_login:
+                if user.userprofile.last_login:
                    changePass = 'si'
-              
+
                 auth.login(request, user)
-                userp=user.get_profile()
-                profiles = user.get_profile()
+                userp=user.userprofile
+                profiles = user.userprofile
                 uregs=profiles.ureg
                 depes=profiles.depe
-               
+
 
                 gr=user.groups.values_list('name', flat=True)
-               
+
                 for varios in gr:
                   if 'admi' in varios or 'repar' in varios:
                     state = str(Group.objects.get(name=varios))
-               
+
                 if 'administrador' in state or 'repar' in state:
                     state = str(Group.objects.get(name=varios))
                     request.session['state']=state
@@ -137,12 +137,12 @@ def loguser(request):
                 else:
                    state="Usuario no Autorizado"
                    return render(request, 'login.html', {'state':state,'form':form})
-                        
-            else:    
+
+            else:
               state="Usuario no Autorizado"
               return render(request, 'login.html', {'state':state,'form':form})
          return render(request, './repar.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'birthday':birthday,'ultimo_ingreso':ultimo_ingreso})
-          
+
         else:
             return render(request, 'login.html', {'name':name,'form':form})
 
@@ -155,8 +155,8 @@ def nologin(request):
     except KeyError:
         pass
         state = "SE DESCONECTO DEL SISTEMA"
-   
-    formd = []  
+
+    formd = []
     return render(request, 'login.html', {'formd':formd,'state':state})
 
 def passwordChange(request):
@@ -171,12 +171,12 @@ def passwordChange(request):
   user = User.objects.get(username=request.user)
   #if formpass.is_valid():
   pass1 = request.POST.get('pass1')
- 
+
   if pass1:
      user.date_joined=datetime.datetime.now()
      user.set_password(pass1)
      user.save()
-     profiles = user.get_profile()
+     profiles = user.userprofile
      profiles.last_login=False
      profiles.save()
      changePass = ''
@@ -188,8 +188,8 @@ def passwordChange(request):
   except KeyError:
       pass
       state = "SE DESCONECTO DEL SISTEMA"
-  #form = DependenciasForm()      
-  formd = []  
+  #form = DependenciasForm()
+  formd = []
   #print form,formd
   return render(request, 'login.html', {'formd':formd,'form':form,'state':state,})
   #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})
@@ -208,7 +208,7 @@ def register(request):
     soli=''
     if request.POST.get('envia')=='Enviar':
            jerarca=RefJerarquias.objects.get(id=request.POST.get('jerarca'))
-           
+
            info_enviado= True
            subject, from_email, to = 'Solicitud de Usuario - Repar' ,request.POST.get('mail'), 'fydsoftware@gmail.com'
            text_content = "Solicitud recibida de : %s<br><br>Nro de Dni : %s<br><br>Jerarquia : %s<br><br>Destino actual : %s<br><br> Usuarios <br><br> %s <br><br>" % (request.POST.get('name'),str(request.POST.get('docu')),jerarca,request.POST.get('destino'),request.POST.get('comment'))
@@ -218,8 +218,8 @@ def register(request):
                msg.send(fail_silently=True)
            except IndexError:
                pass
-          
-      
+
+
            cabecera = '<br><br><br>'+'Al Sr/a'+'<br>'+'ADMINISTRADOR SIREGAR'+'<br>'+'Div. Desarrollo Informático'+'<br>'+'S_____________/_______________D'+'<br><br>'
            cuerpos='Por medio de la presente, me dirijo a UD. con el fin de solicitar el ALTA de usuarios al Sistema Registración de Armas'
            usuas='Lista del Personal A/C: '+str(jerarca)+' - '+str(request.POST.get('destino'))+'<br><br>'+str(request.POST.get('comment'))+'<br><br><br><br><br><br>'
@@ -227,7 +227,7 @@ def register(request):
            datos.append(cabecera)
            for i in datos:
              soli=soli+i
-         
+
            return  render(request,'solicitaUser.html',{'name':soli,'today':today,'cuerpos':cuerpos,'usuas':usuas,'saludo':saludo,})
     else:
        formj = ActuantesForm()
@@ -246,9 +246,9 @@ def sugerir(request):
     today = datetime.datetime.now()
     datos=[]
     soli=''
-    
+
     if request.POST.get('envia')=='Enviar':
-          
+
            info_enviado= True
            subject, from_email, to = 'Solicitud de Información' ,request.POST.get('mail'), 'fydsoftware@gmail.com'
            text_content = "Solicitud recibida de : %s<br><br> Comentario : %s <br><br>" % (request.POST.get('name'),request.POST.get('comment'))
@@ -260,10 +260,10 @@ def sugerir(request):
            direcciones=[]
            for dire in dire:
               direcciones.append(dire)
-              #direcciones.append('jaimeceballos82@gmail.com')    
-    
+              #direcciones.append('jaimeceballos82@gmail.com')
+
            for cantdir in direcciones:
-      
+
              try:
                msg = EmailMultiAlternatives(subject,text_content,from_email, [cantdir])
                msg.attach_alternative(text_content,'text/html')
@@ -278,7 +278,7 @@ def sugerir(request):
            datos.append(cabecera)
            for i in datos:
              soli=soli+i
-           
+
            return  render(request,'solicitaUser.html',{'name':soli,'today':today,'cuerpos':cuerpos,'usuas':usuas,'saludo':saludo,})"""
            return render(request,'solicitaUser.html',  {'name':name})
     else:
@@ -301,12 +301,12 @@ def new_reg(request):
   #n_c='ROSAS%'
   #datos=myconsul(n_c)
   #print (datos)
-  if request.POST.get('grabarm')=="Grabar": 
+  if request.POST.get('grabarm')=="Grabar":
         formark=TrademarkForm(request.POST, request.FILES)
         form=RefModArmas()
         descripcion = request.POST.get('descripcionm')
-        trademark=request.POST.get('trademark')   
-      
+        trademark=request.POST.get('trademark')
+
         if descripcion!='' and trademark!='':
             form.descripcion=descripcion
             form.trademark_id=trademark
@@ -314,24 +314,24 @@ def new_reg(request):
               form.save()
             except DatabaseError:
               return HttpResponseRedirect('.')
-            
+
             formrep = RepardataForm(request.POST)
             formrep.fields['modelo'].queryset = RefModArmas.objects.filter(trademark=request.POST.get('marca'))
             form = RefModArmasForm()
             lista = Repardata.objects.all()
             formark = TrademarkForm()
-  
+
             values={'formark':formark,'form':form,'formrep':formrep,'clean':clean,'errors': errors,'lista':lista,'state':state, 'destino': destino,'modelos':modelos}
             return render_to_response('new_reg.html',values,context_instance=RequestContext(request))
   else:
-    if request.POST.get('grabarepar')=="Guardar": 
+    if request.POST.get('grabarepar')=="Guardar":
         formrep=RepardataForm(request.POST, request.FILES)
         rep=Repardata()
-       
+
         if formrep.errors.has_key('__all__'):
            clean=True
         if formrep.is_valid():
-        
+
           rep.tipoar = formrep.cleaned_data['tipoar']
           rep.calibre = formrep.cleaned_data['calibre']
           rep.marca = formrep.cleaned_data['marca']
@@ -358,7 +358,7 @@ def new_reg(request):
            rep.save()
           except KeyError:
            clean=True
-       
+
         errors = formrep.errors
         formrep = RepardataForm()
         form = RefModArmasForm()
@@ -367,7 +367,7 @@ def new_reg(request):
         values={'formark':formark,'form':form,'formrep':formrep,'clean':clean,'errors': errors,'lista':lista,'state':state, 'destino': destino,'modelos':modelos}
         return render_to_response('new_reg.html',values,context_instance=RequestContext(request))
 
-    
+
   return render_to_response('new_reg.html', {'result':result,'formark':formark,'form':form,'formrep':formrep,'clean':clean,'errors': errors,'lista':lista,'state':state, 'destino': destino,'modelos':modelos},context_instance=RequestContext(request))
 
 def myconsul(self):
@@ -385,7 +385,7 @@ def myconsul(self):
     #finally:
     #cursor.close()
     return dicto
-    
+
 @login_required
 @group_required(['repar'])
 def obtener_nroprontuario(request,dnis):
@@ -403,7 +403,7 @@ def obtener_nroprontuario(request,dnis):
     data = serializers.serialize('json', curso)
 
     cursor.close()
-   
+
     return HttpResponse(data, mimetype='application/json')
 
 
@@ -419,14 +419,14 @@ def editarReg(request, id):
   result=''
   historial=''
   if request.method=='POST':
-      result = Repardata.objects.get(id=id)       
+      result = Repardata.objects.get(id=id)
       formrep=RepardataForm(request.POST)
-     
+
       if formrep.errors.has_key('__all__'):
            clean=True
-          
+
       if formrep.is_valid():
-      
+
          result.tipoar = formrep.cleaned_data['tipoar']
          result.calibre = formrep.cleaned_data['calibre']
          result.marca = formrep.cleaned_data['marca']
@@ -450,10 +450,10 @@ def editarReg(request, id):
          result.nro_prontuario = formrep.cleaned_data['nro_prontuario']
          result.seccion = formrep.cleaned_data['seccion']
          result.observaciones = formrep.cleaned_data['observaciones']
-      
+
       result.save()
-         
-        
+
+
       errors = formrep.errors
       formrep = RepardataForm()
       form = RefModArmasForm()
@@ -461,11 +461,11 @@ def editarReg(request, id):
       formark = TrademarkForm()
       values={'historial':historial,'clean':clean,'result':result,'formark':formark,'form':form,'formrep':formrep,'cleana':cleana,'errors': errors,'lista':lista,'state':state, 'destino': destino,'modelos':modelos}
       return render_to_response('new_reg.html',values,context_instance=RequestContext(request))
- 
+
   else:
       result = Repardata.objects.get(id=id)
       formrep = RepardataForm(instance=result)
-    
+
   form = RefModArmasForm()
   formrep.fields['calibre'].queryset=RefCalibres.objects.filter(tipoar=result.tipoar_id)
   formrep.fields['calibre'].initial=result.calibre
@@ -500,15 +500,15 @@ def verdata(request,id):
 
     formrep = RepardataForm(instance=result)
     formt = HistoryreparForm()
-    if request.POST.get('grabart')=="Grabar": 
-       result = Repardata.objects.get(id=id)       
+    if request.POST.get('grabart')=="Grabar":
+       result = Repardata.objects.get(id=id)
        formrep=RepardataForm(request.POST)
        history = Historyrepar()
        formt = HistoryreparForm(request.POST,request.FILES)
-       
-       
+
+
        if formt.is_valid():
-         #genero un registro en historyrepar 
+         #genero un registro en historyrepar
          history.apellidos_pro = result.apellidos_pro.upper()
          history.nombres_pro = result.nombres_pro.upper()
          history.domicilio_pro = result.domicilio_pro.upper()
@@ -528,6 +528,6 @@ def verdata(request,id):
          result.observaciones = formt.cleaned_data['observaciones']
          result.fecha_transf = datetime.datetime.now()
          result.save()
-        
-        
+
+
   return render_to_response('verdatos.html', {'historial':historial,'formt':formt,'result':result,'formark':formark,'form':form,'formrep':formrep,'clean':clean,'errors': errors,'lista':lista,'state':state, 'destino': destino,'modelos':modelos},context_instance=RequestContext(request))

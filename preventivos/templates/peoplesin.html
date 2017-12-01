@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 
 {% block main %}
  
@@ -26,7 +26,7 @@
                 <legend><b> Búsqueda de Personas </b> </legend>
                     <div style="margin-left:16px;">
                       <input type="text" id="texto" name="texto" size="60" value="" style="font-color:black; border: 1px solid black;" placeholder="Nro de Dni | Apellido | Nombres" autocomplete="off">
-                      <a href="/preventivos/peoplein/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+                      <a href="/preventivos/peoplein/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
                       <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de personas involucradas en Hechos"/>
 
                     </div>

@@ -7,28 +7,29 @@ from repar import forms
 from repar.forms import *
 from repar.views import *
 from django.conf import settings
+from django.contrib.auth.views import password_reset_confirm, password_reset_complete
 handler404 = 'repar.views.page_not_found'
 handler500 = 'repar.views.server_error'
 
 
 admin.autodiscover()
 
-urlpatterns = patterns('',url(r'^repar/change/$', 'repar.views.passwordChange', name="changePassR"),
-	(r'^$', 'repar.views.iniciar'),
-    (r'^inicio/$', 'repar.views.inicial'),
-    (r'^login/$', 'repar.views.loguser'),
-    (r'^new/$', 'repar.views.new_reg'),
-    (r'^solicitud/$', 'repar.views.register'),
-    (r'^contacto/$', 'repar.views.sugerir'),
-    (r'^salir/$', 'repar.views.nologin'),
-    (r'^tipoars/(?P<tipoar>[0-9A-Za-z]+)/$', 'repar.views.obtener_calibres'),
-    (r'^marcas/(?P<marca>[0-9A-Za-z]+)/$', 'repar.views.obtener_modelos'),
-    (r'^new/(?P<dnis>[0-9A-Za-z]+)/$', 'repar.views.obtener_nroprontuario'),
-    #(r'^new/search/$', 'repar.views.search'),
-    (r'^regis/(?P<id>[0-9A-Za-z]+)/$', 'repar.views.editarReg'),
-    (r'^seek/(?P<id>[0-9A-Za-z]+)/$', 'repar.views.verdata'),
+urlpatterns = [
+    url(r'^repar/change/$', passwordChange, name="changePassR"),
+	url(r'^$', iniciar),
+    url(r'^inicio/$', inicial),
+    url(r'^login/$', loguser),
+    url(r'^new/$', new_reg),
+    url(r'^solicitud/$', register),
+    url(r'^contacto/$', sugerir),
+    url(r'^salir/$', nologin),
+    url(r'^tipoars/(?P<tipoar>[0-9A-Za-z]+)/$', obtener_calibres),
+    url(r'^marcas/(?P<marca>[0-9A-Za-z]+)/$', obtener_modelos),
+    url(r'^new/(?P<dnis>[0-9A-Za-z]+)/$', obtener_nroprontuario),
+    #url(r'^new/search/$', 'repar.views.search'),
+    url(r'^regis/(?P<id>[0-9A-Za-z]+)/$', editarReg),
+    url(r'^seek/(?P<id>[0-9A-Za-z]+)/$', verdata),
 
-    (r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
-    (r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
-
-)
+    url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', password_reset_confirm),
+    url(r'^reset/done/$', password_reset_complete),
+]

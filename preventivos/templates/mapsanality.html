@@ -1,4 +1,5 @@
 {% extends "mapasver.html" %}
+{% load static %}
 {% block main %}
 
    <form action="." method="post">{% csrf_token %}
@@ -65,9 +66,9 @@
             <p><strong>   PERIODO DE FECHAS: {{hoyes}}  AL  {{ayerfue}}</strong></p>
               <p><strong style="color:red;">
 
-     <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitospropiedad.png" style="background: transparent;"> <strong>ROBO</strong>
-     <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitoscontrapeople.png" style="background: transparent;">  <strong>HOMICIDIOS</strong>
-     <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/delitoscontrahonor.png" style="background: transparent;">  <strong>OTROS DELITOS</strong>
+     <img id="imagen" src="{% static 'imagenes/preventivos/delitospropiedad.png' %}" style="background: transparent;"> <strong>ROBO</strong>
+     <img id="imagen" src="{% static 'imagenes/preventivos/delitoscontrapeople.png' %}" style="background: transparent;">  <strong>HOMICIDIOS</strong>
+     <img id="imagen" src="{% static 'imagenes/preventivos/delitoscontrahonor.png' %}" style="background: transparent;">  <strong>OTROS DELITOS</strong>
     <!-- {% for y in refdelitosdes %}
         <p>
                 {%if 'ROBO' in y%}
@@ -97,12 +98,12 @@
 
 
 
-               <div class="capasmpf"> <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/powered-by-google-on-white.png"></div></div><br><br>
+               <div class="capasmpf"> <img id="imagen" src="{% static 'imagenes/preventivos/powered-by-google-on-white.png' %}"></div></div><br><br>
                 <p>
             <h1>Seleccione los Delitos a consultar</h1>
               <p>
       <div  id="informacion"><div align="center"><blockquote style="font-size:11px;font-family: Georgia, "DroidSansMono", serif;">
-        <img id="alert" src="{{STATIC_URL}}imagenes/preventivos/alert.png" style="border:0px solid #C0C0C0;text-align:justify;"/>&nbsp;&nbsp;<p><u>
+        <img id="alert" src="{% static 'imagenes/preventivos/alert.png" style="border:0px solid #C0C0C0;text-align:justify;"/>&nbsp;&nbsp;<p><u>
         <strong>Especifique los delitos a consultar su incidencia en el mapa</strong></u></p>
         <dd><p>Antes de buscar, cierre los delitos anteriores. [x Delitos].</p></dd>
         <dd><p>Para seleccionar uno o mas, realize la busqueda y seleccione haciendo click sobre el mismo.</p></dd>
@@ -157,8 +158,8 @@
           <input class="new-aqua" type="submit" id="ver" name="ver" value="Visualizar"/></div>
 
       </form>
-      <script src="{{ STATIC_URL }}chosen_v1.3.0/chosen.jquery.js" type="text/javascript"></script>
-  <script src="{{ STATIC_URL }}chosen_v1.3.0/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
+      <script src="{% static 'chosen_v1.3.0/chosen.jquery.js' %}" type="text/javascript"></script>
+  <script src="{% static 'chosen_v1.3.0/docsupport/prism.js' %}" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
     var config = {
       '.chosen-select'           : {},

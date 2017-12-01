@@ -1,3 +1,4 @@
+{% load static %}
 <div class="container well col-md-6" id="busqueda">
   <div class="alert alert-info" role="alert">
     <center><h5> <i class="glyphicon glyphicon-info-sign"></i> Realice una busqueda previa de la persona que va a identificar.</h5></center>
@@ -52,8 +53,8 @@
 
 
 
-<script src="{{STATIC_URL}}/prontuario/js/bootstrap-datepicker.min.js"></script>
-<script src="{{STATIC_URL}}/prontuario/js/bootstrap-datepicker.es.min.js"></script>
+<script src="{% static '/prontuario/js/bootstrap-datepicker.min.js' %}"></script>
+<script src="{% static '/prontuario/js/bootstrap-datepicker.es.min.js' %}"></script>
 
 <script type="text/javascript">
 $("#id_ciudad_nacimiento").autocomplete({

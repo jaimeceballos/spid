@@ -1,4 +1,4 @@
-
+{% load static %}
     <h1>LISTADO GENERAL DE PREVENTIVOS </h1>
     <div> Realice una Búsqueda mas detallada con el resultado que se encontró con la búsqueda anterior</div>
 
@@ -20,7 +20,7 @@
 
                    {% for datos in todos %}
                      <tr  class="gradeC">
-                      {%if datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES'%}
+                      {%if datos.dependencia.ciudad.descripcion == jurisdi or user.userprofile.depe.descripcion == 'INVESTIGACIONES'%}
                       <td width="10%"><a href='{% url 'selectPrev' datos.id %}'>
                       {{ datos.nro }}/{{ datos.anio}}</a></td>
                       {%else%}
@@ -41,15 +41,15 @@
                       </td>
 
 
-                     {%if datos.fecha_autorizacion and datos.dependencia.ciudad.descripcion == jurisdi or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and datos.fecha_autorizacion%}
-                       <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{{STATIC_URL}}imagenes/preventivos/amp_edit.png" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
+                     {%if datos.fecha_autorizacion and datos.dependencia.ciudad.descripcion == jurisdi or user.userprofile.depe.descripcion == 'INVESTIGACIONES' and datos.fecha_autorizacion%}
+                       <td width="12%"><center><a href="{% url 'ampliacion' datos.id %}"><img src="{% static 'imagenes/preventivos/amp_edit.png' %}" style="border:0" title="Permite generar Ampliaciones" rel='tooltip' /></a></center></td>
                      {%else%}
 
-                          <td width="10%"><center><a href="#"><img src="{{STATIC_URL}}imagenes/preventivos/validatebox_warning.png" style="border:0" title="Para generar una Ampliacion debe estar Autorizado/Enviado el Preventivo" rel='tooltip' /></a></center></td>
+                          <td width="10%"><center><a href="#"><img src="{% static 'imagenes/preventivos/validatebox_warning.png' %}" style="border:0" title="Para generar una Ampliacion debe estar Autorizado/Enviado el Preventivo" rel='tooltip' /></a></center></td>
                      {%endif%}
                     <td width="12%">
                      {%if datos.dependencia.ciudad.descripcion != jurisdi%}
-                     <a href="{% url 'reportes' datos.id %}" target="_blank" > <img src="{{STATIC_URL}}imagenes/preventivos/ver.png" style="border:0" title="Solo puede ver el preventivo en modo vista preeliminar" rel='tooltip' /> </a>
+                     <a href="{% url 'reportes' datos.id %}" target="_blank" > <img src="{% static 'imagenes/preventivos/ver.png' %}" style="border:0" title="Solo puede ver el preventivo en modo vista preeliminar" rel='tooltip' /> </a>
                      {%else%}
                        <strong><center>---</center></strong>
                      {%endif%}

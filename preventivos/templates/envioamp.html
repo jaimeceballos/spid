@@ -1,11 +1,11 @@
 {% load static %}
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
-<link href="{{STATIC_URL}}css/preventivos/default.css" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/preventivos/default.css' %}" rel="stylesheet" type="text/css" />
 <title>Informar Ampliaciones</title>	
 {% block error %}
    <div align="center">
-   	  <img onclick="mensajes();" src="{{STATIC_URL}}imagenes/preventivos/policia.png" 
+   	  <img onclick="mensajes();" src="{% static 'imagenes/preventivos/policia.png' %}" 
         style="align:center;border:0px solid #C0C0C0;">
     <h4>RADIO AMPLIATORIO FUE ENVIADO</h4>
     <h4>SATISFACTORIAMENTE A SUS DESTINATARIOS CORRESPONDIENTES.-</h4>

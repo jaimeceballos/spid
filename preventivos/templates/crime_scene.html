@@ -1,4 +1,5 @@
 {% extends "mapas.html" %}
+{% load static %}
 {% block main %}
 
    {% if form.errors or dom.errors %}
@@ -200,7 +201,7 @@
         en el cuadro numero. En caso de haber ocurrido en una interseccion directamente seleccionelo desde el mapa. Si la calle que necesita no esta
         disponible en el listado solamente seleccione desde el mapa la calle e indique la altura en el cuadro numero. </i></strong></p>
        
-        <p><strong><i><img src="{{STATIC_URL}}imagenes/preventivos/streetview.png" style="border:0" title="Arrastre el Icono para obtener una vista callejera real del lugar" rel='tooltip' />Arrastre este icono en el mapa para visualizar imagenes callejeras reales del lugar</i></strong></p>
+        <p><strong><i><img src="{% static 'imagenes/preventivos/streetview.png' %}" style="border:0" title="Arrastre el Icono para obtener una vista callejera real del lugar" rel='tooltip' />Arrastre este icono en el mapa para visualizar imagenes callejeras reales del lugar</i></strong></p>
         <p <p><strong Style="color:red;"><i>PARA LOS HECHOS EN DONDE SE DESCONOCE EL LUGAR, MANTENGA CALLE Y NRO VACIOS, TAMPOCO SELECCIONE UN PUNTO EN EL MAPA.</i><strong></p>
         </blockquote>
 
@@ -228,7 +229,7 @@
         <div id="mapa" name="mapa" class="capasm"> </div>
           
      
-         <div class="capasmp"> <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/powered-by-google-on-white.png"></div>
+         <div class="capasmp"> <img id="imagen" src="{% static 'imagenes/preventivos/powered-by-google-on-white.png' %}"></div>
         </div>
        <br><br><br><p>
         <h6>Datos de las Condiciones Climaticas y del lugar del hecho</h6><hr></p>
@@ -246,7 +247,7 @@
     {% else %}
     <div align="right">
     
-          {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+          {% if depe == user.userprofile.depe and not fecha_autorizacion or "RADIO" in user.userprofile.depe.descripcion and not fecha_autorizacion%}
       <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>{%else%}
                {%if fecha_autorizacion%}
                     <strong style="color:red;">Prev. Autorizado y Enviado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}

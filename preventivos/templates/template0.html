@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load i18n %}
 
 {% block main %}
@@ -23,11 +24,11 @@
                      <div id="light" class="modals" style="display: block;">
                          <div align="right">  <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"> <input class="borrarde"  type="button" value= "" title="Cerrar Ventana" ></a></div>
                   <p style="color: red; font-size:12px;" > Error : {{error}}.- &nbsp;&nbsp;
-                      
+
                        </p>
                        </div>
       {% endfor %}
-  {% endif %}  
+  {% endif %}
  <input id="id_preventivos-current_step" name="preventivos-current_step" value="nro" type="hidden">
 
 <hr>
@@ -35,42 +36,42 @@
      <div id="datetimepicker1" class="input-append date">
           <div style="color:red;">{{wizard.form.fecha_denuncia.errors}}</div>
       <strong ><span style="color:red"> * </span>Fecha / Hora de Denuncia :</strong>
-      <input type="datetime" name="nro-fecha_denuncia" size="9" id="id_nro-fecha_denuncia" placeholder="dd/mm/aaaa h:m:s" 
+      <input type="datetime" name="nro-fecha_denuncia" size="9" id="id_nro-fecha_denuncia" placeholder="dd/mm/aaaa h:m:s"
        style="height:25px;border-radius:5px;"
-      {{wizard.form.fecha_denuncia}} 
+      {{wizard.form.fecha_denuncia}}
       <span class="add-on">
         <span class="glyphicon glyphicon-calendar"></span> <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
       </span>
-     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+     <script type="text/javascript"  src="{% static 'fechayhora/bootstrap.min.js' %}"> </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.min.js' %}">   </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.pt-BR.js' %}"> </script>
 
-<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
+<script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'});
 </script></div></p>
 
- 
+
     <p>
        <div style="color:red;"> {{wizard.form.caratula.errors}}</div>
     <strong> <span style="color:red"> * </span> Caratula Policial :</strong>
       <input type="text" name="nro-caratula" size="50" id="id_nro-caratula" autocomplete="off" style="margin-left:58px"
       placeholder="Ej. Juan Perez s/Denuncia Robo autores desconocidos"
-      {{wizard.form.caratula}} 
-     
+      {{wizard.form.caratula}}
+
     </p>
 
-    {% if user.get_profile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.get_profile.depe.descripcion%}
+    {% if user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in user.userprofile.depe.descripcion%}
      <p>
      <div style="color:red;">{{wizard.form.nro.errors}}</div><div style="color:red;"> {{wizard.form.anio.errors}}
    </div>
       <strong><span style="color:red;"> * </span> Preventivo Nro :</strong>
-      <input type="number" name = "nro-nro" id="nro-nro" 
+      <input type="number" name = "nro-nro" id="nro-nro"
       style="margin-left:28px;width:80px;color:black;height: 22px;margin-top: 5px;" {{wizard.form.nro}}
-      <span >  </span> <strong style="margin-left:10px;">  Año :</strong>  
+      <span >  </span> <strong style="margin-left:10px;">  Año :</strong>
       <input type="number" name = "nro-anio" id="nro-anio" style="width:65px;color:black;height: 22px;margin-top: 5px;"
       {{wizard.form.anio}}
-    
+
     </p>
-     
+
       <p>
      <div style="color:red;">{{wizard.form.unidad.errors}}</div><div style="color:red;"> {{wizard.form.dependencia.errors}}
    </div>
@@ -78,16 +79,16 @@
       <select name = "nro-unidad" id="nro-unidad" style="width:200px;margin-left:24px">
         <option {{wizard.form.unidad}}</option>
       </select></p>
-     
-  
-       
+
+
+
     <strong> <span style="color:red"> * </span> Dependencia : </strong>
       <select name = "nro-dependencia" id="depe" style="width:200px;margin-left:36px">
         <option {{wizard.form.dependencia}}</option>
-      </select> 
- 
+      </select>
 
-  
+
+
    {%endif%}
 {% endif %}
 </table>

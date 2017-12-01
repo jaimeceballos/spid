@@ -1,5 +1,5 @@
   {% extends "base.html" %}
-
+  {% load static %}
 
   {% block main %}
   
@@ -130,7 +130,7 @@
           <p>
             <strong>Búsqueda de Personas<strong>
             <input type="text" id="texto" name="texto" size="30" value="" placeholder="Nro de Dni | Apellido | Nombres" autocomplete="off">
-              <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+              <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
             <input class="botonsearch" type="submit" value="Buscar" id="search" name="search" title="Permite la busqueda de personas"/>
            
                 <a href="{%url 'persinvol' idhec 0 %}" ><input type="submit" class="btn btn-success" id="nuevo" name="nuevo" onclick="return confirm('Esta seguro de querer agregar una nueva persona a la base de datos?');" value="Nuevo"
@@ -226,9 +226,9 @@
         <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
       </span> 
    
-     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+     <script type="text/javascript"  src="{% static 'fechayhora/bootstrap.min.js' %}"> </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.min.js' %}">   </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.pt-BR.js' %}"> </script>
 <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
 </script>
 <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
@@ -317,7 +317,7 @@
           <select name="ciudad_res" id="ciudades_r" style="width: 160px;" tabindex="-1">
            <option name="ciudades_r"></option>
          <option {{formp.ciudad_res}}</option></select>
-              <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+              <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{% static 'imagenes/preventivos/agregar.png' %}"
            width="18px" title="Agregar Ciudad de Residencia"></a>
           <!-- id="basic-modalcr" <a onclick="" href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
            width="18px" title="Agregar Ciudad de Residencia"></a></strong>-->
@@ -530,7 +530,7 @@
           <select name="ciudad_res" id="ciudades_r" style="width: 160px;" tabindex="-1">
            <option name="ciudades_r"></option>
          <option {{formp.ciudad_res}}</option></select>
-          <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+          <a onclick="abrirModalcr();" href="#" ><img id="imagen" src="{% static 'imagenes/preventivos/agregar.png' %}"
            width="18px" title="Agregar Ciudad de Residencia"></a>
          <!-- <a onclick="." href="#" class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
            width="18px" title="Agregar Ciudad de Residencia"></a></strong> id="basic-modalcr"-->&nbsp; </p>
@@ -595,7 +595,7 @@
             
               <option {{dom.barrio_codigo}}</option>
           </select> 
-              <a onclick="abrirModal();" href="#" ><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png"
+              <a onclick="abrirModal();" href="#" ><img id="imagen" src="{% static 'imagenes/preventivos/agregar.png' %}"
            width="18px" title="Agregar Barrios"></a>
         
      
@@ -666,7 +666,7 @@
     {%if "si" in mostrar or "no" in mostrar%}
        <br>
        <div align="right">
-             <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+             <a href="/preventivos/persona/{{idhec}}/0/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
     
           <input class="btn btn-success" type="submit" value="Guardar" id="grabar" name="grabar"
            title="Permite guardar personas involucradas" onclick="documentVerify()" />
@@ -686,7 +686,7 @@
          
           <tr>
              <td>
-               {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+               {% if depe == user.userprofile.depe and not fecha_autorizacion or "RADIO" in user.userprofile.depe.descripcion and not fecha_autorizacion%}
                <button type="submit" name="dele" id="dele" class="borrarde"
                 value="{{involus.id}}" onclick=(this.value) title="Permite borrar un involucrado"/></button>
                 {%endif%}
@@ -714,7 +714,7 @@
       {% if tienelugar %}
         <a class="btn1 btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Ver Lugar </label></a>
      {% else %}
-        {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+        {% if depe == user.userprofile.depe  or user.userprofile.depe.descripcion == 'INVESTIGACIONES' %}
           <a class="btn1 btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Lugar </label></a>
         {% endif %}
       {%endif%}
@@ -729,7 +729,7 @@
    {%endif%}
     <!--
      <div align="right">
-     {% if depe == user.get_profile.depe  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' %}
+     {% if depe == user.userprofile.depe  or user.userprofile.depe.descripcion == 'INVESTIGACIONES' %}
           <a class="btn1 btn-success"  href="{% url 'lugar_hecho' idhec idprev %}" ><label style="font-size:12px;font-family: Georgia, 'Times New Roman', serif;text-align:center;"> Cargar Lugar </label></a>
         {% endif %}
       </div>
@@ -903,7 +903,7 @@
       
        <p><label for="descripcion" name="descripcion">Ciudad Residencia : 
       <input type="text" name="descripcion" id="descripcion" value="{{ciudad.descripcion}}" autocomplete="off"/>
-      <a href="/preventivos/ciudades/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>   
+      <a href="/preventivos/ciudades/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>   
       
        {% if ciudad in lista %}
         <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">

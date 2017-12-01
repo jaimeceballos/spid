@@ -1,11 +1,11 @@
 {% load static %}
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
-<link href="{{STATIC_URL}}css/preventivos/default.css" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/preventivos/default.css' %}" rel="stylesheet" type="text/css" />
 <title>Informar Preventivo</title>	
 {% block error %}
    <div align="center">
-   	  <img onclick="mensajes();" src="{{STATIC_URL}}imagenes/preventivos/policia.png" 
+   	  <img onclick="mensajes();" src="{% static 'imagenes/preventivos/policia.png' %}" 
         style="align:center;border:0px solid #C0C0C0;">
     <h4>EL PREVENTIVO FUE ENVIADO</h4>
     <h4>SATISFACTORIAMENTE AL MINISTERIO PUBLICO FISCAL.-</h4>

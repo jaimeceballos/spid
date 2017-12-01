@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 
 {% block main %}
@@ -89,7 +90,7 @@
       {%if not descripcionhecho %}
          <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Guardar Hecho"/>
       {%else%}
-       {% if depe == user.get_profile.depe and not fecha_autorizacion  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'RADIO' in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+       {% if depe == user.userprofile.depe and not fecha_autorizacion  or user.userprofile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'RADIO' in user.userprofile.depe.descripcion and not fecha_autorizacion%}
           <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"  title="Permite Actualizar datos en Descripcion del Hecho"/>
           {%endif%}
       {%endif%}
@@ -162,9 +163,9 @@
       <span class="add-on">
         <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
       </span>
-     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+     <script type="text/javascript"  src="{% static 'fechayhora/bootstrap.min.js' %}"> </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.min.js' %}">   </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.pt-BR.js' %}"> </script>
 <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
 </script>
 <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
@@ -229,9 +230,9 @@
       <span class="add-on">
         <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
       </span>
-     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+     <script type="text/javascript"  src="{% static 'fechayhora/bootstrap.min.js' %}"> </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.min.js' %}">   </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.pt-BR.js' %}"> </script>
 <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
 </script>
 <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
@@ -314,7 +315,7 @@
       {%endfor%}
 <br>
   <!--
-  {%if 'MUJER' in user.get_profile.depe.descripcion and 'si' in boton %}
+  {%if 'MUJER' in user.userprofile.depe.descripcion and 'si' in boton %}
    <div align="right">
          <a class="btn btn-success"  href="">
            <label title="Permite registrar Hecho de Violencia Familiar" style="font-size:10px;text-align:left;">Formulario VIF</label></a>

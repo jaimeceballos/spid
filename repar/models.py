@@ -30,6 +30,7 @@ class RefTipoDocumento(models.Model):
     class Meta:
         ordering = ['descripcion']
         db_table = 'ref_tipodocumento'
+        app_label = "repar"
 
 
 class RefTiposarmas(models.Model):
@@ -47,6 +48,7 @@ class RefTiposarmas(models.Model):
     class Meta:
         ordering = ['descripcion']
         db_table = 'ref_tiposarmas'
+        app_label = "repar"
 
 class RefTrademark(models.Model):
     id = models.AutoField(primary_key=True)
@@ -64,6 +66,7 @@ class RefTrademark(models.Model):
     class Meta:
         ordering = ['descripcion']
         db_table = 'ref_trademark'
+        app_label = "repar"
 
 
 class RefCalibres(models.Model):
@@ -85,6 +88,7 @@ class RefCalibres(models.Model):
         unique_together=('descripcion','tipoar',)
         db_table = 'ref_calibres'
         ordering = ["descripcion"]
+        app_label = "repar"
 
 class RefModArmas(models.Model):
     id = models.AutoField(primary_key=True)
@@ -105,6 +109,7 @@ class RefModArmas(models.Model):
         unique_together=('descripcion','trademark',)
         db_table = 'ref_modarmas'
         ordering = ["descripcion"]
+        app_label = "repar"
 
 class Repardata(models.Model):
     id = models.AutoField(primary_key=True)
@@ -141,6 +146,7 @@ class Repardata(models.Model):
         unique_together=('nro_arma','tipoar','marca','nrodoc_pro')
         ordering = ['nro','anio']
         db_table = 'repardata'
+        app_label = "repar"
 
 class Historyrepar(models.Model):
     id = models.AutoField(primary_key=True)
@@ -166,6 +172,7 @@ class Historyrepar(models.Model):
     class Meta:
         ordering = ['-fechamov']
         db_table = 'historyrepar'
+        app_label = "repar"
 
 class Indice(models.Model):
     id_documento = models.AutoField(primary_key=True)
@@ -187,3 +194,4 @@ class Indice(models.Model):
     class Meta:
        managed = False
        db_table = 'indice'
+       app_label = "repar"

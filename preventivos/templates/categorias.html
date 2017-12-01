@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 
  <form id="form" action="." method="post">{% csrf_token %} 
@@ -17,7 +18,7 @@
     {% endif %}  
     <p><label for="descripcion" name="descripcion">Categorias : 
     <input type="text" name="descripcion" id="descripcion" value="{{categorias.descripcion}}" autocomplete="off"/>
-    <a href="/preventivos/category/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>   
+    <a href="/preventivos/category/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>   
     
      {% if categorias in lista %}
       <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">
@@ -34,7 +35,7 @@
       <option {{formc.rubro}}</option>
     </select>
      
-    <a onclick="" href="." class="basic" name="basic"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/agregar.png" title="Agregar Rubros">
+    <a onclick="" href="." class="basic" name="basic"><img id="imagen" src="{% static 'imagenes/preventivos/agregar.png' %}" title="Agregar Rubros">
     </a>
     </label>
     </p>  

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block main %}
 
  <form id="form" action="." method="post">{% csrf_token %} 
@@ -20,7 +21,7 @@
     <label>Referencia de Lugar :
      <input type="text" name="descripcion" id="descripcion" size="30" value="{{lugar}}" autocomplete="off"/>
      
-<a href="/preventivos/lugares/" name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+<a href="/preventivos/lugares/" name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
     
     {% if lugar in lista %}
      <input class="btn btn-success" type="submit" value= "Actualizar" name="modifica" title="Actualiza los cambios">

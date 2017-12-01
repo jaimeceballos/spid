@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <link rel="shortcut icon" href="{{STATIC_URL}}imagenes/preventivos/icono.ico" type="image/x-icon"/>
+  <link rel="shortcut icon" href="{% static 'imagenes/preventivos/icono.ico' %}" type="image/x-icon"/>
  
   
  <title>SISTEMA POLICIAL DE REGISTRO DE ARMAS</title> 
@@ -65,7 +65,7 @@
     <div id="header">  
        <div id="header-logo">     
       
-      <div id="logo"><img onclick="mensajes();" src="{{STATIC_URL}}imagenes/preventivos/policia.png"  style="border:0px solid #C0C0C0;"></div>
+      <div id="logo"><img onclick="mensajes();" src="{% static 'imagenes/preventivos/policia.png' %}"  style="border:0px solid #C0C0C0;"></div>
       
      
      
@@ -138,12 +138,12 @@
 
 <!-- jQuery -->
 
-<script>window.jQuery || document.write('<script src="{{STATIC_URL}}plantiweb/js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
+<script>window.jQuery || document.write('<script src="{% static 'plantiweb/js/libs/jquery-1.9.0.min.js' %}">\x3C/script>')</script>
 
-<script defer src="{{STATIC_URL}}plantiweb/js/flexslider/jquery.flexslider-min.js"></script>
+<script defer src="{% static 'plantiweb/js/flexslider/jquery.flexslider-min.js' %}"></script>
 
 <!-- fire ups - read this file!  -->   
-<script src="{{STATIC_URL}}plantiweb/js/main.js"></script>
+<script src="{% static 'plantiweb/js/main.js' %}"></script>
 
 
 <script type="text/javascript">
@@ -168,7 +168,7 @@
 
  <div id="sitio">
     {% block error %}
-         <img onclick="mensajes();" src="{{STATIC_URL}}imagenes/preventivos/policia.png" 
+         <img onclick="mensajes();" src="{% static 'imagenes/preventivos/policia.png' %}" 
         style="align:center;border:0px solid #C0C0C0;">
 
       <h4>Policia de la Provincia de Chubut </h4>

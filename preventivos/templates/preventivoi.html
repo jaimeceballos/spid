@@ -190,7 +190,7 @@ p#P a:hover {
 </head>
 <body >
  <center>
- <a href='javascript:imprimir();' id="boton" title="Imprimir Preventivo Completo con Mapa"><img src="{{STATIC_URL}}imagenes/preventivos/prints.png" width="" height="" alt="" /></a>
+ <a href='javascript:imprimir();' id="boton" title="Imprimir Preventivo Completo con Mapa"><img src="{% static 'imagenes/preventivos/prints.png' %}" width="" height="" alt="" /></a>
 <!--<input type="button" value="Imprimir" style="height:22px;text-transform:uppercase;"  
 onclick="imprSelec('preve')" title="Imprimir Preventivo Completo con Mapa"/> &nbsp;&nbsp;-->
 <input type="button"  id="botons" name="botons" value="Imprimir solo Texto" style="height:22px;text-transform:uppercase;"  title="Imprimir Preventivo Completo solo Texto" 
@@ -284,15 +284,15 @@ onclick="imprSelec('onlytext')"/>
         
            <div id="map" style="margin-left:20%;width:500px;height:450px;border:1px solid black;"></div>
               <div style="margin-left:35%;border:0px solid black;"> 
-                <img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/powered-by-google-on-white.png" width="25" height="16"></div>
+                <img id="imagen" src="{% static 'imagenes/preventivos/powered-by-google-on-white.png' %}" width="25" height="16"></div>
          </p>      
   <p>
 
 <!--
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
 
-<script type='text/javascript' src='{{STATIC_URL}}js/preventivos/jquerym.js'></script>
-    <script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/preventivos/script.js" ></script>
+<script type='text/javascript' src="{% static 'js/preventivos/jquerym.js' %}"></script>
+    <script language="JavaScript" type="text/javascript" src="{% static 'js/preventivos/script.js' %}" ></script>
 
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBuneURtJfQGvMv3cG5TQMomWarGPIQ14c&sensor=true">
     </script>

@@ -6,7 +6,7 @@
             Prontuario N°
           </div>
           <div class="col-md-6">
-            {% if not request.user.get_profile.depe.unidades_regionales.descripcion == "INVESTIGACIONES" %}
+            {% if not request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES" %}
                 {% if identificacion.id %}
                 {{identificacion.prontuario_local}}
                 {% else %}
@@ -77,7 +77,7 @@
         <form id="identificacion-save" action="{% url 'identificacion_save'%}" method="post">{%csrf_token%}
           <input type="hidden" name="prontuario" value="{{prontuario.id}}">
           <input type="hidden" name="persona" value="{{persona.id}}">
-          {% if not request.user.get_profile.depe.unidades_regionales.descripcion == "INVESTIGACIONES" %}
+          {% if not request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES" %}
           <div class="row">
             <div class="col-md-2">
               <label for="">Registro Local</label>

@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,25 +8,24 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/style.css">
-    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/bootstrap-datepicker.min.css">
-
-    <script src="{{STATIC_URL}}prontuario/js/jquery-1.11.3.min.js"></script>
-    <script src="{{STATIC_URL}}prontuario/js/bootstrap.min.js"></script>
-    <script src="{{STATIC_URL}}/prontuario/js/funciones.js"></script>
-    <script src="{{STATIC_URL}}prontuario/js/bootstrap-datepicker.min.js"></script>
-    <script src="{{STATIC_URL}}prontuario/js/bootstrap-datepicker.es.min.js"></script>
+    <link rel="stylesheet" href="{% static 'prontuario/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'prontuario/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'prontuario/css/bootstrap-datepicker.min.css' %}">
+    
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{% static '/prontuario/js/funciones.js' %}"></script>
+    <script src="{% static 'prontuario/js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'prontuario/js/bootstrap-datepicker.es.min.js' %}"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript">
-    </script> <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
-    <script src="{{STATIC_URL}}prontuario/js/jquery.dataTables.min.js"></script>
-    <script src="{{STATIC_URL}}prontuario/js/dataTables.bootstrap.min.js"></script>
-    <script src="{{STATIC_URL}}prontuario/js/dataTables.responsive.min.js"></script>
-    <script src="{{STATIC_URL}}prontuario/js/responsive.bootstrap.min.js"></script>
-    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/dataTables.min.css">
-    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" href="{{STATIC_URL}}prontuario/css/responsive.bootstrap.min.css">
+    
+    <script src="{% static 'prontuario/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'prontuario/js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'prontuario/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'prontuario/js/responsive.bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'prontuario/css/dataTables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'prontuario/css/dataTables.bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'prontuario/css/responsive.bootstrap.min.css' %}">
 
     <style media="screen">
       .contenedor{

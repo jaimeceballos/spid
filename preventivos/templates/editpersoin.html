@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 
 {% block main %}
@@ -114,7 +115,7 @@
             
             <button type="submit" name="ver" id="ver" class="verdata"
               value="{{involus.id}}" onclick=(this.value) title="Permite Ver mas Datos de la Persona Involucrada"/></button>
- {% if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion and not fecha_autorizacion%}
+ {% if depe == user.userprofile.depe and not fecha_autorizacion or "RADIO" in user.userprofile.depe.descripcion and not fecha_autorizacion%}
             <button type="submit" name="dele" id="dele" class="borrarde"
               value="{{involus.id}}" onclick=(this.value) title="Permite borrar un involucrado"/></button>
          {%endif%}
@@ -129,7 +130,7 @@
        
   </table> 
 <div align="right">
-              {%if depe == user.get_profile.depe and not fecha_autorizacion or "RADIO" in user.get_profile.depe.descripcion  and not fecha_autorizacion or "INVESTIGACIONES" in user.get_profile.depe.descripcion and  not fecha_autorizacion%} 
+              {%if depe == user.userprofile.depe and not fecha_autorizacion or "RADIO" in user.userprofile.depe.descripcion  and not fecha_autorizacion or "INVESTIGACIONES" in user.userprofile.depe.descripcion and  not fecha_autorizacion%} 
          
               <a class="btn btn-success"  href="{% url 'persinvol' idhec 0%}" id="involucrados">
                 <label title="Permite Agregar otra Persona Involucrada" >Involucrados</label></a>
@@ -187,9 +188,9 @@
         <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
       </span> 
    
-     <script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap.min.js"> </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.min.js">   </script>
-<script type="text/javascript"  src="{{STATIC_URL}}fechayhora/bootstrap-datetimepicker.pt-BR.js"> </script>
+     <script type="text/javascript"  src="{% static 'fechayhora/bootstrap.min.js' %}"> </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.min.js' %}">   </script>
+<script type="text/javascript"  src="{% static 'fechayhora/bootstrap-datetimepicker.pt-BR.js' %}"> </script>
 <script type="text/javascript"> $('#datetimepicker').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
 </script>
 <script type="text/javascript"> $('#datetimepicker1').datetimepicker({format: 'dd/MM/yyyy hh:mm:ss',language: 'pt-BR'}); 
@@ -382,8 +383,8 @@
      <br>
   <br>
     <div align="right">
-        {% if depe == user.get_profile.depe and not fecha_autorizacion  or user.get_profile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'RADIO' in user.get_profile.depe.descripcion and not fecha_autorizacion%}
-             <a href="." name="cancelar"><img id="imagen" src="{{STATIC_URL}}imagenes/preventivos/reset.png" title="Limpiar ingreso"></a>
+        {% if depe == user.userprofile.depe and not fecha_autorizacion  or user.userprofile.depe.descripcion == 'INVESTIGACIONES' and not fecha_autorizacion or 'RADIO' in user.userprofile.depe.descripcion and not fecha_autorizacion%}
+             <a href="." name="cancelar"><img id="imagen" src="{% static 'imagenes/preventivos/reset.png' %}" title="Limpiar ingreso"></a>
      <input class="new-aqua" type="submit" id="grabar" name="grabar" value="Modificar"/>{%else%}
      {%if fecha_autorizacion%}
            <strong style="color:red;">Fue enviado y Autorizado el : {{fecha_autorizacion|date:"d/m/y"}}</strong>{%endif%}

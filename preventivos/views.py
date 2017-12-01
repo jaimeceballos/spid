@@ -1,13 +1,13 @@
  #!/usr/bin/python
  # -*- coding: iso-8859-15 -*-
-
+from __future__ import unicode_literals
 import re
 from preventivos.models import *
 from preventivos.forms import *
 from django.core import serializers
 from django.contrib.auth.models import Group,Permission,User
 from django.contrib.admin.models import LogEntry
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 import smtplib
 import httplib,urllib,httplib2
 import urllib2
@@ -23,13 +23,14 @@ import base64
 import dict2xml
 import html2text
 from django.http import QueryDict
+from django.core.mail import send_mail
 from email.mime.text import MIMEText
 from django.template import Context, Template, RequestContext
 from django.template.loader import get_template,render_to_string
 from openpyxl import Workbook
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.utils.encoding import smart_str, smart_unicode
-import locale
+import locale 
 locale.setlocale(locale.LC_ALL, ('es_AR', 'utf8'))
 from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response,get_object_or_404
@@ -39,8 +40,8 @@ from datetime import date,timedelta
 import datetime
 from time import strptime
 from decorators.auth import group_required
-from django.core.mail import *
-from django.utils import simplejson,timezone
+import json as simplejson
+from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe,SafeString
 from django.contrib.auth.forms import AuthenticationForm
@@ -48,7 +49,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from django.db import transaction,IntegrityError,connection
 from django.core.urlresolvers import reverse
 # set up the environment using the settings module
-from django.core.management import setup_environ
+#from django.core.management import setup_environ
 from django.conf import settings
 from spid import settings
 import sys,os, re, calendar
@@ -57,18 +58,22 @@ from django.utils.encoding import smart_text
 #imports para la paginacion
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models.signals  import  post_save,post_delete
-from django.contrib.formtools.wizard.views import SessionWizardView
+from formtools.wizard.views import SessionWizardView
 from django.template import Context, loader
 from haystack.query import SearchQuerySet
 from django.db.models import Q
 from django.utils.translation import ugettext
 from wkhtmltopdf.views import PDFResponse, PDFTemplateView, PDFTemplateResponse
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from xml.sax import make_parser, SAXException
 from xml.sax.handler import feature_namespaces
 from django.utils.dateparse import parse_datetime
 import pytz
 from django.db import connections
+from django.core.mail import EmailMultiAlternatives
+
+
+
 
 def normalize_query(query_string,
                                         findterms=re.compile(r'"([^"]+)"|(\S+)').findall,
@@ -107,7 +112,7 @@ def get_query(query_string, search_fields):
 
 def inicio(request):
     user = request.user
-    profile = user.get_profile()
+    profile = user.userprofile
     destino = "%s / %s" % (profile.depe,profile.ureg)
     state = user.groups.values_list('name', flat=True)
     no_enviados = False                                           #inicializa una variable de no enviados
@@ -125,7 +130,7 @@ def inicio(request):
     if radio_user:
         preventivos = ""
         dependencias = ""
-        dependencias = Dependencias.objects.filter(ciudad = user.get_profile().depe.ciudad )
+        dependencias = Dependencias.objects.filter(ciudad = user.userprofile.depe.ciudad )
         preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True)            #para esas dependencias obtiene los preventivos autorizados no enviados
         #si hay preventivos no enviados
         if preventivos.count() > 0:
@@ -143,7 +148,7 @@ def search_caratula(request):
         search_text =''
     #preventivos=Preventivos.objects.filter(caratula__contains=search_text)
     preventivos = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text',''))
-    return render_to_response('search_html',{'preventivos':preventivos})
+    return render(request,'search_html',{'preventivos':preventivos})
 
 def page_not_found(request):
     state= request.session.get('state')
@@ -152,14 +157,6 @@ def page_not_found(request):
 
 def server_error(request):
  return render(request, './500.html')
-
-
-    #return render_to_response('./404.html',locals(),context_instance=RequestContext(request))
-#def grilla_pais(request):
-#    if request.user.is_authenticated() and request.user.has_perm('preventivos.ref_paises') or request.user.has_perm('preventivos.change_ref_paises') or request.user.has_perm('preventivos.delete_ref_paises'):
-#        return render_to_response("./grilla_pais.html", { "user": request.user }, context_instance = RequestContext(request))
-#    else:
-#        return HttpResponseRedirect('.')
 
 
 FORMS = [("nro", PrimerForm),
@@ -186,7 +183,6 @@ class preventivos(SessionWizardView):
 
         def get_context_data(self, form, **kwargs):
             context = super(preventivos, self).get_context_data(form=form, **kwargs)
-
             if self.steps.current:
                 context.update({'state': self.request.session.get('state')})
                 context.update({'destino': self.request.session.get('destino')})
@@ -197,8 +193,8 @@ class preventivos(SessionWizardView):
 
                 form = super(preventivos, self).get_form(step, data, files)
 
-                if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-PM':
-                                depe = self.request.user.get_profile().ureg
+                if self.request.user.userprofile.depe.descripcion == 'RADIO CABECERA-PM':
+                                depe = self.request.user.userprofile.ureg
                                 ureg= UnidadesRegionales.objects.filter(descripcion__contains='MADRYN')
                                 if depe is None:
                                      form.errors['__all__'] = form.error_class(["Regrese a la pantalla anterior e Ingrese todos los Datos Obligatorios"])
@@ -209,8 +205,8 @@ class preventivos(SessionWizardView):
                                 if step=='nro':
                                      form.fields['dependencia'].queryset = depe
 
-                if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-TW':
-                                depe = self.request.user.get_profile().ureg
+                if  self.request.user.userprofile.depe.descripcion == 'RADIO CABECERA-TW':
+                                depe = self.request.user.userprofile.ureg
 
                                 ureg= UnidadesRegionales.objects.filter(descripcion__contains='TRELEW')
                                 if depe is None:
@@ -221,8 +217,8 @@ class preventivos(SessionWizardView):
                                 if step=='nro':
                                      form.fields['dependencia'].queryset = depe
 
-                if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-ESQ':
-                                depe = self.request.user.get_profile().ureg
+                if  self.request.user.userprofile.depe.descripcion == 'RADIO CABECERA-ESQ':
+                                depe = self.request.user.userprofile.ureg
 
                                 ureg= UnidadesRegionales.objects.filter(descripcion__contains='ESQUEL')
                                 if depe is None:
@@ -233,8 +229,8 @@ class preventivos(SessionWizardView):
                                 if step=='nro':
                                      form.fields['dependencia'].queryset = depe
 
-                if  self.request.user.get_profile().depe.descripcion == 'RADIO CABECERA-CR':
-                                depe = self.request.user.get_profile().ureg
+                if  self.request.user.userprofile.depe.descripcion == 'RADIO CABECERA-CR':
+                                depe = self.request.user.userprofile.ureg
 
                                 ureg= UnidadesRegionales.objects.filter(descripcion__contains='COMODORO RIVADAVIA')
                                 if depe is None:
@@ -245,8 +241,8 @@ class preventivos(SessionWizardView):
                                 if step=='nro':
                                      form.fields['dependencia'].queryset = depe
 
-                if  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
-                                depe = self.request.user.get_profile().ureg
+                if  self.request.user.userprofile.depe.descripcion == 'CENTRAL RADIO':
+                                depe = self.request.user.userprofile.ureg
                                 if step is None:
                                      step=self.steps.current
                                 ureg= UnidadesRegionales.objects.exclude(descripcion__icontains='AREA')
@@ -257,10 +253,10 @@ class preventivos(SessionWizardView):
                                 #form.fields['dependencia'].queryset = depes
 
                 ### realizar el paso en caso de que el usuario sea de investigaciones
-                #depe=self.request.user.get_profile().depe
+                #depe=self.request.user.userprofile.depe
                 if step == "actores":
 
-                            if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in self.request.user.get_profile().depe.descripcion:
+                            if self.request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in self.request.user.userprofile.depe.descripcion:
 
                                 depe = self.get_cleaned_data_for_step('nro')['dependencia']
                                 nro = self.get_cleaned_data_for_step('nro')['nro']
@@ -295,13 +291,12 @@ class preventivos(SessionWizardView):
                                     form.fields['preventor'].queryset = preventor
 
 
-                            if self.request.user.get_profile().depe.descripcion!="Jefatura" and self.request.user.get_profile().depe.descripcion != 'INVESTIGACIONES' and  self.request.user.get_profile().depe.descripcion != 'CENTRAL RADIO':
+                            if self.request.user.userprofile.depe.descripcion!="Jefatura" and self.request.user.userprofile.depe.descripcion != 'INVESTIGACIONES' and  self.request.user.userprofile.depe.descripcion != 'CENTRAL RADIO':
 
-                                if 'RADIO CABECERA' in self.request.user.get_profile().depe.descripcion:
+                                if 'RADIO CABECERA' in self.request.user.userprofile.depe.descripcion:
                                      depe=self.get_cleaned_data_for_step('nro')['dependencia']
                                 else:
-                                     depe=self.request.user.get_profile().depe
-
+                                     depe=self.request.user.userprofile.depe
                                 id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
 
                                 actuante=Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=1) | Actuantes.objects.filter(dependencia_id__exact=id_depe,funcion__exact=3)
@@ -322,23 +317,23 @@ class preventivos(SessionWizardView):
 
 
                 if step == 'autoridades':
-                         if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  self.request.user.get_profile().depe.descripcion == 'CENTRAL RADIO':
+                         if self.request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or  self.request.user.userprofile.depe.descripcion == 'CENTRAL RADIO':
                                 id_ciudad = Dependencias.objects.get(id=self.get_cleaned_data_for_step('nro')['dependencia'].id).ciudad_id
                          else:
-                                id_ciudad=self.request.user.get_profile().depe.ciudad.id
-                         #id_ciudad=self.request.user.get_profile().depe.ciudad.id
-                         if self.request.user.get_profile().depe!="Jefatura":
+                                id_ciudad=self.request.user.userprofile.depe.ciudad.id
+                         #id_ciudad=self.request.user.userprofile.depe.ciudad.id
+                         if self.request.user.userprofile.depe!="Jefatura":
                                 form.fields['autoridades'].queryset=RefCiudades.objects.get(id=id_ciudad).ciu_autori.all()
 
 
                 if step=='confirmation':
-                     if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES'  or  'RADIO' in self.request.user.get_profile().depe.descripcion:
+                     if self.request.user.userprofile.depe.descripcion == 'INVESTIGACIONES'  or  'RADIO' in self.request.user.userprofile.depe.descripcion:
                                 depe = self.get_cleaned_data_for_step('nro')['dependencia']
                                 #id_ciudad = Dependencias.objects.get(id=self.get_cleaned_data_for_step('nro')['dependencia'].id).ciudad_id
 
                      else:
-                             depe=self.request.user.get_profile().depe
-                             #id_ciudad=self.request.user.get_profile().depe.ciudad.id
+                             depe=self.request.user.userprofile.depe
+                             #id_ciudad=self.request.user.userprofile.depe.ciudad.id
 
                      id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
 
@@ -371,7 +366,7 @@ class preventivos(SessionWizardView):
                 actuante= form.cleaned_data['actuante']
                 preventor=  form.cleaned_data['preventor']
                 autoridades=form.cleaned_data['autoridades']
-                if self.request.user.get_profile().depe.descripcion == 'INVESTIGACIONES'  or  'RADIO' in self.request.user.get_profile().depe.descripcion:
+                if self.request.user.userprofile.depe.descripcion == 'INVESTIGACIONES'  or  'RADIO' in self.request.user.userprofile.depe.descripcion:
                     dependencia = self.get_cleaned_data_for_step('nro')['dependencia']
                     nro = self.get_cleaned_data_for_step('nro')['nro']
                     anio= self.get_cleaned_data_for_step('nro')['anio']
@@ -385,7 +380,7 @@ class preventivos(SessionWizardView):
 
 
                 else:
-                    depe=self.request.user.get_profile().depe
+                    depe=self.request.user.userprofile.depe
 
                     dependencia=Dependencias.objects.get(id__exact=depe.id)
 
@@ -480,7 +475,7 @@ def obtener_datosfirst(request,idprev):
 
                      if request.POST.get('modos'):
                         hechoDelito.refmodoshecho = RefModosHecho.objects.get(id = request.POST.get('modos'))
-                     if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                     if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
 
                          try:
                              idhec=hecho.id
@@ -506,7 +501,7 @@ def obtener_datosfirst(request,idprev):
 
 
 
-                 if 'MUJER' in request.user.get_profile().depe.descripcion and request.user.get_profile().depe==depe:
+                 if 'MUJER' in request.user.userprofile.depe.descripcion and request.user.userprofile.depe==depe:
                     tipodelito=RefDelito.objects.get(id = request.POST.get('delito'))
 
                     for delis in listadelitos:
@@ -536,7 +531,7 @@ def obtener_datosfirst(request,idprev):
                     hec.descripcion=''
                     hec.preventivo_id=idprev
 
-                    if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in  request.user.get_profile().depe.descripcion:
+                    if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in  request.user.userprofile.depe.descripcion:
                         try:
                             hec.save()
                         except IntegrityError:
@@ -564,7 +559,7 @@ def obtener_datosfirst(request,idprev):
                     if request.POST.get('modos'):
                      hechoDelito.refmodoshecho = RefModosHecho.objects.get(id = request.POST.get('modos'))
 
-                    if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                    if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
                         try:
 
                             hechoDelito.save()
@@ -586,7 +581,7 @@ def obtener_datosfirst(request,idprev):
                 else:
                     continua="no"
 
-                if 'MUJER' in request.user.get_profile().depe.descripcion and request.user.get_profile().depe==depe:
+                if 'MUJER' in request.user.userprofile.depe.descripcion and request.user.userprofile.depe==depe:
                     tipodelito=RefDelito.objects.get(id = request.POST.get('delito'))
 
                     if 'VIOLENCIA FAMILIAR' in tipodelito.descripcion or 'Violencia Familiar' in tipodelito.descripcion:
@@ -642,7 +637,7 @@ def obtener_datosfirst(request,idprev):
                  hecho.descripcion=hecho.descripcion.replace('&nbsp','')
                  hecho.descripcion=hecho.descripcion.strip()
                  hecho.descripcion=request.POST.get('descrihecho').strip()
-                 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                 if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
 
                             hecho.save()
                             idhec=hecho.id
@@ -680,18 +675,23 @@ def obtener_datosfirst(request,idprev):
                  motivo=request.POST.get('motivo')
                  fecha_desde=request.POST.get('fecha_desde')
                  fecha_hasta=request.POST.get('fecha_hasta')
-                 if 'MUJER' in request.user.get_profile().depe.descripcion and request.user.get_profile().depe==depe:
+                 if 'MUJER' in request.user.userprofile.depe.descripcion and request.user.userprofile.depe==depe:
                     for delis in delitos:
                        delitus=str(delis)
                        if 'VIOLENCIA FAMILIAR' in delitus or 'Violencia Familiar' in delitus:
 
                           boton='si'
                 else:
-                    data=Preventivos.objects.get(id=idprev).hecho.values('id')
-                    if len(data)>0:
+                    data = 0L
+                    try:
+                        data=Preventivos.objects.get(id=idprev).hecho.id
+                    except:
+                        print 'no tiene hecho'
+
+                    if data>0:
                      if  Hechos.objects.get(id=data).involu.all():
 
-                            datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all()
+                            datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.id).involu.all()
                             notienePer= True
                      if not notienePer:
                          state= request.session.get('state')
@@ -741,7 +741,7 @@ def obtener_datosfirst(request,idprev):
     'errors': errors, 'grabo':grabo,'dependencia':dependencia,'unidadreg':unidadreg,
     'state':state, 'continua':continua,'delitos':delitos,'motivo':motivo,'depe':depe,
     'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'modos':modos,'idhec':idhec}
-    return render_to_response('./templateidp.html',info,context_instance=RequestContext(request))
+    return render(request,'./templateidp.html',info)
 
 
 
@@ -749,7 +749,6 @@ def obtener_datosfirst(request,idprev):
 
 def nologin(request):
         logout(request)
-        print 'logout preventivo'
         try:
                 del request.session['state']
                 del request.session['destino']
@@ -789,7 +788,7 @@ def reporactivity(request, user):
                     usuarios = User.objects.get(username=user)
 
                     usua = User.objects.filter(username=user).values()
-                    idem = usuarios.get_profile()
+                    idem = usuarios.userprofile
                     dnis = usuarios.username
                     apellidos=usuarios.last_name
                     nombres=usuarios.first_name
@@ -808,7 +807,7 @@ def reporactivity(request, user):
                     control=True
                     ure=datos.ureg
                     #lista = User.objects.all()
-                    return render_to_response('./controluser.html', {'control':control,'listacontrol':listacontrol,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
+                    return render(request,'./controluser.html', {'control':control,'listacontrol':listacontrol,'lista':lista,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino})
     else:
         lista = UserProfile.objects.all()
         user_groups = Group.objects.all()
@@ -820,7 +819,7 @@ def reporactivity(request, user):
 @login_required
 def inicial(request):
     ciudades = ""
-    destino = "%s / %s" % (request.user.get_profile().depe,request.user.get_profile().ureg)
+    destino = "%s / %s" % (request.user.userprofile.depe,request.user.userprofile.ureg)
     state = request.user.groups.values_list('name', flat=True)
 
     no_enviados = False
@@ -834,7 +833,7 @@ def inicial(request):
         radio_user = True
     if radio_user:
 
-        dependencias = Dependencias.objects.filter(ciudad = usuario.get_profile().depe.ciudad )
+        dependencias = Dependencias.objects.filter(ciudad = usuario.userprofile.depe.ciudad )
         preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True).order_by('-id')
         if preventivos.count() > 0:
             autorizados = preventivos.count()
@@ -874,7 +873,7 @@ def ngrupos(request):
          form  = GroupForm()
          lista = UserProfile.objects.all()
          user_groups = Group.objects.all()
-         return render_to_response('./newuser.html',{'form':form,'formp':formp,'user_groups':user_groups,'grupos':grupos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./newuser.html',{'form':form,'formp':formp,'user_groups':user_groups,'grupos':grupos,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 
 @login_required
@@ -883,7 +882,7 @@ def user_create(request):
     state= request.session.get('state')
     destino= request.session.get('destino')
     form = UserCreateForm()
-    return render_to_response("./user_create.html",{'form':form},context_instance=RequestContext(request))
+    return render(request,"./user_create.html",{'form':form})
 
 @login_required
 @permission_required('user.is_staff','administrador')
@@ -891,7 +890,7 @@ def user_edit(request):
     state   = request.session.get('state')
     destino = request.session.get('destino')
     form    = UserCreateForm()
-    return render_to_response("./user_edit.html",{'form':form},context_instance=RequestContext(request))
+    return render(request,"./user_edit.html",{'form':form})
 
 @login_required
 def user_edit_destino(request,usuario):
@@ -904,11 +903,11 @@ def user_edit_destino(request,usuario):
             form        = ActuantesForm(instance=actuantes)
 
         except:
-            profile = User.objects.get(username=usuario).get_profile()
+            profile = User.objects.get(username=usuario).userprofile
             form    = UserProfileForm(instance=profile)
             actuante = False
         finally:
-            return render_to_response("./user_edit-destino.html",{'form':form,'actuante':actuante,'usuario':usuario},context_instance=RequestContext(request))
+            return render(request,"./user_edit-destino.html",{'form':form,'actuante':actuante,'usuario':usuario})
     return HttpResponseBadRequest()
 
 def user_edit_save_destino(request,usuario):
@@ -940,7 +939,7 @@ def user_edit_save_destino(request,usuario):
             else:
                 unidad = request.POST['ureg']
                 dependencia = request.POST['depe']
-            profile = User.objects.get(username = usuario).get_profile()
+            profile = User.objects.get(username = usuario).userprofile
             profile.depe = Dependencias.objects.get(id=dependencia)
             profile.ureg = UnidadesRegionales.objects.get(id=unidad)
             try:
@@ -966,11 +965,10 @@ def user_edit_actuante(request,usuario):
                 data['documento']       = usuario
                 data['apeynombres']     = "%s, %s" % (User.objects.get(username=usuario).last_name,User.objects.get(username=usuario).first_name)
                 data['persona_id']      = Personas.objects.get(nro_doc=usuario)
-                data['unidadreg_id']    = User.objects.get(username=usuario).get_profile().ureg
-                data['dependencia_id']  = User.objects.get(username=usuario).get_profile().depe
+                data['unidadreg_id']    = User.objects.get(username=usuario).userprofile.ureg
+                data['dependencia_id']  = User.objects.get(username=usuario).userprofile.depe
                 form = ActuantesForm(initial=data)
-                print form
-                return render_to_response("./user_edit-destino.html",{'form':form,'actuante':True,'usuario':usuario},context_instance=RequestContext(request))
+                return render(request,"./user_edit-destino.html",{'form':form,'actuante':True,'usuario':usuario})
         else:
             msg = "<h4> Verifique los roles asignados al usuario.</h4>"
     return HttpResponseBadRequest(msg)
@@ -978,7 +976,7 @@ def user_edit_actuante(request,usuario):
 
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @permission_required('user.is_staff','administrador')
 def user_create_save(request):
     if request.is_ajax:
@@ -1030,7 +1028,7 @@ def user_create_save(request):
                         usuario.save()
                         for rol in form.cleaned_data['grupos']:
                             usuario.groups.add(Group.objects.get(id=rol))
-                        profile         = usuario.get_profile()
+                        profile         = usuario.userprofile
                         profile.depe    = dependencia
                         profile.ureg    = dependencia.unidades_regionales
                         profile.save()
@@ -1052,7 +1050,7 @@ def user_create_save(request):
                     msg = "El Email ingresado ya esta siendo utilizado. Por favor indique otro."
                     return HttpResponseBadRequest(msg)
             else:
-                return render_to_response("./user_create.html",{'form':form},context_instance=RequestContext(request))
+                return render(request,"./user_create.html",{'form':form})
 
 
 
@@ -1103,7 +1101,7 @@ def user_roles(request,usuario):
     if request.is_ajax():
         usuario = User.objects.get(id = usuario)
         form = UserGroupsForm(instance = usuario)
-        return render_to_response('./user_edit-roles.html',{'form':form,'usuario':usuario},context_instance=RequestContext(request))
+        return render(request,'./user_edit-roles.html',{'form':form,'usuario':usuario})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1132,7 +1130,7 @@ def enviar_correo_usuario(usuario,password):
     roles = []
     for rol in usuario.groups.all():
         roles.append(rol.name)
-    profile = usuario.get_profile()
+    profile = usuario.userprofile
     subject, from_email, to = 'Asunto : Usuario y Password - SPID' ,'divsistemasjp@policia.chubut.gov.ar',usuario.email
     text_content = ("Este email es creado por Div. Sistemas Informaticos Rw."\
     "<br>Ureg. : %s <br> Dependencia : %s <br> Usuario: %s <br> Password: %s <br><strong> Grupo Usuarios : %s </strong>"\
@@ -1150,7 +1148,7 @@ def enviar_correo_usuario(usuario,password):
         return False
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @permission_required('user.is_staff','administrador')
 def new_user(request):
         state= request.session.get('state')
@@ -1164,10 +1162,10 @@ def new_user(request):
         visitaes=False
         dni=request.POST.get('username')
         create_user =True
-        return render_to_response('./newuser.html', {'state':state, 'destino': destino,'create_user':create_user},context_instance=RequestContext(request))
+        return render(request,'./newuser.html', {'state':state, 'destino': destino,'create_user':create_user})
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @permission_required('user.is_staff')
 def gruposperm(request):
         state= request.session.get('state')
@@ -1245,8 +1243,7 @@ def gruposperm(request):
 
 
 
-        print form
-        return render_to_response('./gruposper.html', {'grupos':grupos,'listapg':listapg,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render(request,'./gruposper.html', {'grupos':grupos,'listapg':listapg,'usuarios':usuarios,'form':form,'formnew':formnew,'errors': errors,'state':state, 'destino': destino})
 
 """
 grupo de funciones que
@@ -1285,13 +1282,13 @@ def grupos(request):
 
             form = GroupForm()
             lista = Group.objects.all()
-            return render_to_response('./grupusers.html',{'form':form,'grupos':grupos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+            return render(request,'./grupusers.html',{'form':form,'grupos':grupos,'errors': errors,'lista':lista,'state':state, 'destino': destino})
     else:
 
          form = GroupForm()
          lista = Group.objects.all()
 
-         return render_to_response('./grupusers.html',{'form':form,'grupos':grupos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./grupusers.html',{'form':form,'grupos':grupos,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se actualiza y/o elimina los paises
 @login_required
@@ -1304,7 +1301,7 @@ def grupusers(request, idgr):
     if request.POST.get('cancelar')=="Cancelar":
          form = GroupForm(request.POST)
          lista = Group.objects.all()
-         return render_to_response('./grupusers.html',{'form':form,'grupos':grupos,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./grupusers.html',{'form':form,'grupos':grupos,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
              try:
@@ -1334,7 +1331,7 @@ def grupusers(request, idgr):
     grupos= Group.objects.get(id=idgr)
 
 
-    return render_to_response('./grupusers.html',{'form':form,'grupos':grupos,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./grupusers.html',{'form':form,'grupos':grupos,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 
 #la funcion en donde se guardan los paises que son ingresados en provincia
@@ -1371,7 +1368,7 @@ def npais(request):
          form  = PaisesForm()
          lista = RefProvincia.objects.all()
          combo = RefPaises.objects.all()
-         return render_to_response('./provincias.html',{'form':form,'formp':formp,'combo':combo,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./provincias.html',{'form':form,'formp':formp,'combo':combo,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 
 @login_required
@@ -1379,21 +1376,21 @@ def obtener_barrios(request,idcit):
                 data = request.POST
                 barrios = RefBarrios.objects.filter(ciudad = idcit)
                 data = serializers.serialize("json", barrios)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 def obtener_calle(request,idcit):
                 data = request.POST
                 calles = RefCalles.objects.filter(ciudad = idcit)
                 data = serializers.serialize("json", calles)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 def obtener_ciudades(request,pais):
                 data = request.POST
                 ciudades = RefCiudades.objects.filter(pais= pais)
                 data = serializers.serialize("json", ciudades)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 def obtener_modos(request,idd):
@@ -1401,21 +1398,21 @@ def obtener_modos(request,idd):
                 modos = RefModosHecho.objects.filter(delito = idd)
                 data = serializers.serialize("json", modos)
 
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 def obtener_subtiposa(request,uso):
                 data = request.POST
                 subtiposa = RefSubtiposa.objects.filter(tipo = uso)
                 data = serializers.serialize("json", subtiposa)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 def obtener_delitos(request,idtd):
                 data = request.POST
                 delitos = RefDelito.objects.filter(tipo_delito = idtd)
                 data = serializers.serialize("json", delitos)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 
 @login_required
@@ -1423,21 +1420,21 @@ def obtener_dependencias(request,ure):
                 data = request.POST
                 dependencias = Dependencias.objects.filter(unidades_regionales_id = ure)
                 data = serializers.serialize("json", dependencias)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 def obtener_provincia(request,pais):
                 data = request.POST
                 provincias = RefProvincia.objects.filter(pais = pais)
                 data = serializers.serialize("json", provincias)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 def obtener_departa(request,prvi):
                 data = request.POST
                 depa = RefDepartamentos.objects.filter(provincia = prvi)
                 data = serializers.serialize("json", depa)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 @group_required(["policia","investigaciones","visita","radio"])
@@ -1474,14 +1471,14 @@ def ciudadesadd(request):
          formd = DepartamentosForm()
          formp = ProvinciasForm()
          lista = RefCiudades.objects.all()
-         return render_to_response('./ciudadadd.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./ciudadadd.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
     else:
          formc = []
          formd = []
          formp = ProvinciasForm()
          lista = RefCiudades.objects.all()
 
-    return render_to_response('./ciudadadd.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./ciudadadd.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 
 @login_required
@@ -1516,14 +1513,14 @@ def ciudades(request):
          formd = DepartamentosForm()
          formp = ProvinciasForm()
          lista = RefCiudades.objects.all()
-         return render_to_response('./cities.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./cities.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
     else:
          formc = []
          formd = []
          formp = ProvinciasForm()
          lista = RefCiudades.objects.all()
 
-    return render_to_response('./cities.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./cities.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 @login_required
 @permission_required('user.is_staff')
 def ciudad(request, idciu):
@@ -1536,7 +1533,7 @@ def ciudad(request, idciu):
          formd = DepartamentosForm()
          formp = ProvinciasForm()
          lista = RefCiudades.objects.all()
-         return render_to_response('./cities.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./cities.html', {'formd':formd,'formp':formp,'formc:':formc,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
             try:
@@ -1585,7 +1582,7 @@ def ciudad(request, idciu):
                      formc=[]
                 formp = ProvinciasForm(instance=ciudad)
                 lista = RefCiudades.objects.all()
-                return render_to_response('./cities.html', {'formd':formd,'formp':formp,'ciudad':ciudad,'formc':formc,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+                return render(request,'./cities.html', {'formd':formd,'formp':formp,'ciudad':ciudad,'formc':formc,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -1615,7 +1612,7 @@ def departamentos(request):
          formd = DepartamentosForm()
          lista = RefDepartamentos.objects.all()
          combo = RefPaises.objects.all()
-         return render_to_response('./departamentos.html',{'formd':formd,'provincia':provincia,'combo':combo,'departa':departa,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./departamentos.html',{'formd':formd,'provincia':provincia,'combo':combo,'departa':departa,'errors': errors,'lista':lista,'state':state, 'destino': destino})
     else:
          dpto = RefProvincia.objects.filter(descripcion__contains='CHUBUT').values('id')
          if not dpto:
@@ -1627,7 +1624,7 @@ def departamentos(request):
          formd = DepartamentosForm()
          lista = RefDepartamentos.objects.all()
          combo = RefProvincia.objects.all()
-         return render_to_response('./departamentos.html',{'formd':formd,'provincia':provincia,'combo':combo,'departa':departa,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./departamentos.html',{'formd':formd,'provincia':provincia,'combo':combo,'departa':departa,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -1642,7 +1639,7 @@ def depto(request, iddepto):
          formd = DepartamentosForm()
          lista = RefDepartamentos.objects.all()
          combo = RefProvincia.objects.all()
-         return render_to_response('./departamentos.html',{'formd':formd,'provincia':provincia,'combo':combo,'departa':departa,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./departamentos.html',{'formd':formd,'provincia':provincia,'combo':combo,'departa':departa,'errors': errors,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
             try:
@@ -1683,7 +1680,7 @@ def depto(request, iddepto):
                 formd = DepartamentosForm()
                 lista = RefDepartamentos.objects.all()
                 combo = RefProvincia.objects.all()
-                return render_to_response('./departamentos.html',{'formd':formd,'provincia':provincia,'combo':combo,'departa':departa,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+                return render(request,'./departamentos.html',{'formd':formd,'provincia':provincia,'combo':combo,'departa':departa,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -1718,7 +1715,7 @@ def provincias(request):
          form  = PaisesForm()
          lista = RefProvincia.objects.all()
          combo = RefPaises.objects.all()
-         return render_to_response('./provincias.html',{'form':form,'formp':formp,'combo':combo,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./provincias.html',{'form':form,'formp':formp,'combo':combo,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -1732,7 +1729,7 @@ def provi(request, idpcia):
          form  = PaisesForm()
          lista = RefProvincia.objects.all()
          combo = RefPaises.objects.all()
-         return render_to_response('./provincias.html',{'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./provincias.html',{'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
             try:
@@ -1770,7 +1767,7 @@ def provi(request, idpcia):
                 form  = PaisesForm()
                 lista = RefProvincia.objects.all()
 
-                return render_to_response('./provincias.html',{'form':form,'formp':formp,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+                return render(request,'./provincias.html',{'form':form,'formp':formp,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se guardan los paises que son ingresados en provincia
 @login_required
@@ -1806,7 +1803,7 @@ def npais(request):
          form  = PaisesForm()
          lista = RefProvincia.objects.all()
          combo = RefPaises.objects.all()
-         return render_to_response('./provincias.html',{'form':form,'formp':formp,'combo':combo,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./provincias.html',{'form':form,'formp':formp,'combo':combo,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 
 
@@ -1836,12 +1833,12 @@ def pais(request):
 
             form = PaisesForm()
             lista = RefPaises.objects.all()
-            return render_to_response('./paises.html',{'form':form,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+            return render(request,'./paises.html',{'form':form,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
     else:
 
          form = PaisesForm()
          lista = RefPaises.objects.all()
-         return render_to_response('./paises.html',{'form':form,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./paises.html',{'form':form,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se actualiza y/o elimina los paises
 @login_required
@@ -1854,7 +1851,7 @@ def paise(request, idlista):
     if request.POST.get('cancelar')=="Cancelar":
          form = PaisesForm(request.POST)
          lista = RefPaises.objects.all()
-         return render_to_response('./paises.html',{'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./paises.html',{'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
 
@@ -1866,7 +1863,7 @@ def paise(request, idlista):
 
             form = PaisesForm(request.POST)
             lista = RefPaises.objects.all()
-            return render_to_response('./paises.html',{'errors':errors,'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+            return render(request,'./paises.html',{'errors':errors,'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino})
 
         else:
             if request.POST.get('modifica')=='Actualizar':
@@ -1884,7 +1881,7 @@ def paise(request, idlista):
                 lista = RefPaises.objects.all()
                 ciudades= RefPaises.objects.get(id=idlista)
     #.values_list('descripcion', flat=False).distinct()
-    return render_to_response('./paises.html',{'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./paises.html',{'form':form,'ciudades':ciudades,'lista':lista,'state':state, 'destino': destino})
 
 
 #la funcion en donde se cargan los tipos de lugares
@@ -1913,11 +1910,11 @@ def lugares(request):
 
             form = LugaresForm()
             lista = RefLugares.objects.all()
-            return render_to_response('./lugares.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'lugar':lugar},context_instance=RequestContext(request))
+            return render(request,'./lugares.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'lugar':lugar})
         else:
          form = LugaresForm()
          lista = RefLugares.objects.all()
-         return render_to_response('./lugares.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'lugar':lugar},context_instance=RequestContext(request))
+         return render(request,'./lugares.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'lugar':lugar})
 
 #la funcion en donde se actualiza y/o elimina los tipos de lugares en donde ocurrio los hechos
 @login_required
@@ -1929,7 +1926,7 @@ def nlugares(request, idlugar):
     if request.POST.get('cancelar')=="Cancelar":
          form = LugaresForm(request.POST)
          lista = RefLugares.objects.all()
-         return render_to_response('./lugares.html',{'form':form,'lugar':lugar,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./lugares.html',{'form':form,'lugar':lugar,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
              try:
@@ -1962,7 +1959,7 @@ def nlugares(request, idlugar):
                 lista = RefLugares.objects.all()
                 lugar= RefLugares.objects.get(id=idlugar)
 
-    return render_to_response('./lugares.html',{'form':form,'lugar':lugar,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./lugares.html',{'form':form,'lugar':lugar,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se carga el template y se guarda los tipos de viviendas
 @login_required
@@ -1993,11 +1990,11 @@ def hogares(request):
 
             form = HogaresForm()
             lista = RefHogares.objects.all()
-            return render_to_response('./hogares.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'hogar':hogar},context_instance=RequestContext(request))
+            return render(request,'./hogares.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'hogar':hogar})
         else:
          form = HogaresForm()
          lista = RefHogares.objects.all()
-         return render_to_response('./hogares.html',{'form':form,'lista':lista,'hogar':hogar, 'state':state,'errors': errors,'destino': destino,'hogar':hogar},context_instance=RequestContext(request))
+         return render(request,'./hogares.html',{'form':form,'lista':lista,'hogar':hogar, 'state':state,'errors': errors,'destino': destino,'hogar':hogar})
 
 #la funcion en donde se actualiza y/o elimina un tipos de viviendas
 @login_required
@@ -2010,7 +2007,7 @@ def nhogares(request, idipv):
     if request.POST.get('cancelar')=="Cancelar":
          form = HogaresForm(request.POST)
          lista = RefHogares.objects.all()
-         return render_to_response('./hogares.html',{'form':form,'hogar':hogar,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./hogares.html',{'form':form,'hogar':hogar,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
             try:
@@ -2044,7 +2041,7 @@ def nhogares(request, idipv):
                 hogar= RefHogares.objects.get(id=idipv)
 
 
-    return render_to_response('./hogares.html',{'form':form,'hogar':hogar,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./hogares.html',{'form':form,'hogar':hogar,'lista':lista,'state':state, 'destino': destino})
 
 #condiciones climaticas
 @login_required
@@ -2072,11 +2069,11 @@ def climas(request):
 
             form = CondclimasForm()
             lista = RefCondclimas.objects.all()
-            return render_to_response('./climas.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'climas':climas},context_instance=RequestContext(request))
+            return render(request,'./climas.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'climas':climas})
         else:
          form = CondclimasForm()
          lista = RefCondclimas.objects.all()
-         return render_to_response('./climas.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'climas':climas},context_instance=RequestContext(request))
+         return render(request,'./climas.html',{'form':form,'lista':lista,'state':state,'errors': errors,'destino': destino,'climas':climas})
 
 #la funcion en donde se actualiza y/o elimina los tipos de climas referente a un hecho delictivo
 @login_required
@@ -2088,7 +2085,7 @@ def nclimas(request, idcli):
     if request.POST.get('cancelar')=="Cancelar":
          form = CondclimasForm(request.POST)
          lista = RefCondclimas.objects.all()
-         return render_to_response('./climas.html',{'form':form,'climas':climas,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./climas.html',{'form':form,'climas':climas,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
             try:
@@ -2118,7 +2115,7 @@ def nclimas(request, idcli):
                 lista = RefCondclimas.objects.all()
                 climas= RefCondclimas.objects.get(id=idcli)
 
-    return render_to_response('./climas.html',{'form':form,'climas':climas,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./climas.html',{'form':form,'climas':climas,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se carga el template de unidades regionales y se graba
 @login_required
@@ -2150,9 +2147,8 @@ def unidades(request):
                             errors.append('La Unidad que intenta grabar ya existe')
     form = UnidadesForm()
     lista = UnidadesRegionales.objects.all()
-    prov = RefProvincia.objects.filter(descripcion__contains = 'CHUBUT').values('id')
-    ciudades = RefCiudades.objects.filter(provincia__contains = prov).values('id','descripcion')
-    return render_to_response('./unidades.html',{'ciudades':ciudades,'unidades':unidades,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    ciudades = RefCiudades.objects.filter(provincia__descripcion__contains = 'CHUBUT').values('id','descripcion')
+    return render(request,'./unidades.html',{'ciudades':ciudades,'unidades':unidades,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se actualiza y/o elimina una Unidad Regional
 @login_required
@@ -2165,7 +2161,7 @@ def unidad(request, idUnidad):
     if request.POST.get('cancelar')=='Cancelar':
         form = UnidadesForm(instance = unidades)
         lista = UnidadesRegionales.objects.all()
-        return render_to_response('./unidades.html',{'unidades':unidades,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render(request,'./unidades.html',{'unidades':unidades,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('modifica')=='Actualizar':
             unidad = UnidadesRegionales.objects.get(id = idUnidad)
@@ -2195,7 +2191,7 @@ def unidad(request, idUnidad):
     unidades = UnidadesRegionales.objects.get(id = idUnidad)
     form = UnidadesForm(instance = unidades)
     lista = UnidadesRegionales.objects.all()
-    return render_to_response('./unidades.html',{'unidades':unidades,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./unidades.html',{'unidades':unidades,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se carga el template de ingreso de dependencias
 @login_required
@@ -2230,7 +2226,7 @@ def dependencias(request):
                                 errors.append('La Dependencias que intenta grabar ya existe')
     form = DependenciasForm()
     lista = Dependencias.objects.all()
-    return render_to_response('./depe.html',{'depes':depes,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./depe.html',{'depes':depes,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se actualiza y/o elimina las dependencias segun unidad regional
 @login_required
@@ -2243,7 +2239,7 @@ def dependencia(request, idDepe):
     if request.POST.get('cancelar')=='Cancelar':
         form = DependenciasForm(instance = depes)
         lista = Dependencias.objects.all()
-        return render_to_response('./unidades.html',{'depes':depes,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render(request,'./unidades.html',{'depes':depes,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('modifica')=='Actualizar':
             depe = Dependencias.objects.get(id = idDepe)
@@ -2275,7 +2271,7 @@ def dependencia(request, idDepe):
     depes = Dependencias.objects.get(id = idDepe)
     form = DependenciasForm(instance = depes)
     lista = Dependencias.objects.all()
-    return render_to_response('./depe.html',{'depes':depes,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./depe.html',{'depes':depes,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se carga el template para el ingreso de tipos de personas involucradas
 @login_required
@@ -2303,12 +2299,12 @@ def personasi(request):
 
             form = PeopleForm()
             lista = RefPeople.objects.all()
-            return render_to_response('./peopleenv.html',{'form':form,'invo':invo,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+            return render(request,'./peopleenv.html',{'form':form,'invo':invo,'errors': errors,'lista':lista,'state':state, 'destino': destino})
     else:
 
          form = PeopleForm()
          lista = RefPeople.objects.all()
-         return render_to_response('./peopleenv.html',{'form':form,'invo':invo,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./peopleenv.html',{'form':form,'invo':invo,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se actualiza y/o elimina un tipo de persona involucrada
 @login_required
@@ -2320,7 +2316,7 @@ def npersonasi(request, idple):
     if request.POST.get('cancelar')=="Cancelar":
          form = PeopleForm(request.POST)
          lista = RefPeople.objects.all()
-         return render_to_response('./peopleenv.html',{'form':form,'invo':invo,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./peopleenv.html',{'form':form,'invo':invo,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
              try:
@@ -2350,7 +2346,7 @@ def npersonasi(request, idple):
                 form = PeopleForm(request.POST)
                 lista = RefPeople.objects.all()
                 invo= RefPeople.objects.get(id=idple)
-    return render_to_response('./peopleenv.html',{'form':form,'invo':invo,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./peopleenv.html',{'form':form,'invo':invo,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se guardan los paises que son ingresados en provincia
 @login_required
@@ -2386,7 +2382,7 @@ def ntipodelito(request):
          form  = TipoDelitosForm()
          lista = RefDelito.objects.all()
          combo = RefTipoDelitos.objects.all()
-         return render_to_response('./delito.html',{'form':form,'formp':formp,'combo':combo,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./delito.html',{'form':form,'formp':formp,'combo':combo,'ciudades':ciudades,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 
 @login_required
@@ -2414,7 +2410,7 @@ def tipodelitos(request):
                     errors.append('Verifique la informacion a cargar y vuelva a intentar')
     form = TipoDelitosForm()
     lista = RefTipoDelitos.objects.all()
-    return render_to_response('./tipodel.html',{'errors':errors,'tdel':tdel,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./tipodel.html',{'errors':errors,'tdel':tdel,'lista':lista,'state':state,'destino':destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2426,7 +2422,7 @@ def tipodelito(request,idtipo):
     if request.POST.get('cancelar')=='Cancelar':
         form = TipoDelitosForm(instance = tdel)
         lista = RefTipoDelitos.objects.all()
-        return render_to_response('./tipodel.html',{'tdel':tdel,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render(request,'./tipodel.html',{'tdel':tdel,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('modifica')=='Actualizar':
             tipodel = RefTipoDelitos.objects.get(id = idtipo)
@@ -2455,7 +2451,7 @@ def tipodelito(request,idtipo):
     tdel = RefTipoDelitos.objects.get(id = idtipo)
     form = TipoDelitosForm(instance = tdel)
     lista = RefTipoDelitos.objects.all()
-    return render_to_response('./tipodel.html',{'tdel':tdel,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./tipodel.html',{'tdel':tdel,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2482,7 +2478,7 @@ def delitos(request):
     form = DelitoForm()
 
     lista = RefDelito.objects.all()
-    return render_to_response('./delito.html',{'form':form,'errors':errors,'delito':delito,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./delito.html',{'form':form,'errors':errors,'delito':delito,'lista':lista,'state':state,'destino':destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2494,7 +2490,7 @@ def delito(request,idelito):
     if request.POST.get('cancelar')=='Cancelar':
         form = DelitoForm(instance = delito)
         lista = RefDelito.objects.all()
-        return render_to_response('./delito.html',{'delito':delito,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render(request,'./delito.html',{'delito':delito,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('modifica')=='Actualizar':
             deli = RefDelito.objects.get(id = idelito)
@@ -2523,7 +2519,7 @@ def delito(request,idelito):
     delito = RefDelito.objects.get(id = idelito)
     form = DelitoForm(instance = delito)
     lista = RefDelito.objects.all()
-    return render_to_response('./delito.html',{'delito':delito,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./delito.html',{'delito':delito,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 
 @login_required
@@ -2550,7 +2546,7 @@ def jobs(request):
                     errors.append('Verifique la informacion a cargar y vuelva a intentar')
     form = JobsForm
     lista = RefOcupacion.objects.all()
-    return render_to_response('./jobs.html',{'form':form,'errors':errors,'job':job,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./jobs.html',{'form':form,'errors':errors,'job':job,'lista':lista,'state':state,'destino':destino})
 
 
 
@@ -2565,7 +2561,7 @@ def jobselected(request,idjob):
         if request.POST.get('cancelar') == 'Cancelar':
             form = JobsForm(instance = job)
             lista = RefOcupacion.objects.all()
-            return render_to_response('./jobs.html',{'form':form,'job':job,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+            return render(request,'./jobs.html',{'form':form,'job':job,'errors':errors,'lista':lista,'state':state,'destino':destino})
         else:
             if request.POST.get('modifica')  == 'Actualizar':
                 jobs = RefOcupacion.objects.get(id = idjob)
@@ -2593,7 +2589,7 @@ def jobselected(request,idjob):
         job = RefOcupacion.objects.get(id = idjob)
         form = JobsForm(instance = job)
         lista = RefOcupacion.objects.all()
-        return render_to_response('./jobs.html',{'form':form,'job':job,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+        return render(request,'./jobs.html',{'form':form,'job':job,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 #funcion que llama al template de marcas
 @login_required
@@ -2620,7 +2616,7 @@ def marcas(request):
                     errors.append('Verifique la informacion a cargar y vuelva a intentar')
     form = TrademarkForm()
     lista = RefTrademark.objects.all()
-    return render_to_response('./marcas.html',{'form':form,'marcas':marcas,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+    return render(request,'./marcas.html',{'form':form,'marcas':marcas,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2632,7 +2628,7 @@ def tradeselec(request,idmars):
         if request.POST.get('cancelar') == 'Cancelar':
             form =TrademarkForm()
             lista = RefTrademark.objects.all()
-            return render_to_response('./marcas.html',{'form':form,'marcas':marcas,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+            return render(request,'./marcas.html',{'form':form,'marcas':marcas,'errors':errors,'lista':lista,'state':state,'destino':destino})
         else:
             if request.POST.get('modifica')  == 'Actualizar':
                 marcas = RefTrademark.objects.get(id = idmars)
@@ -2659,7 +2655,7 @@ def tradeselec(request,idmars):
         marcas = RefTrademark.objects.get(id = idmars)
         form = TrademarkForm(instance = marcas)
         lista = RefTrademark.objects.all()
-        return render_to_response('./marcas.html',{'form':form,'marcas':marcas,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+        return render(request,'./marcas.html',{'form':form,'marcas':marcas,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 #funcion que llama al template de tipos de armas
 @login_required
@@ -2686,7 +2682,7 @@ def tiposarmas(request):
                     errors.append('Verifique la informacion a cargar y vuelva a intentar')
     form = TiposarmasForm()
     lista = RefTiposarmas.objects.all()
-    return render_to_response('./tiposarms.html',{'form':form,'tiposa':tiposa,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+    return render(request,'./tiposarms.html',{'form':form,'tiposa':tiposa,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2698,7 +2694,7 @@ def tiposaselec(request,idta):
         if request.POST.get('cancelar') == 'Cancelar':
             form = TiposarmasForm()
             lista = RefTiposarmas.objects.all()
-            return render_to_response('./tiposarms.html',{'form':form,'tiposa':tiposa,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+            return render(request,'./tiposarms.html',{'form':form,'tiposa':tiposa,'errors':errors,'lista':lista,'state':state,'destino':destino})
         else:
             if request.POST.get('modifica')  == 'Actualizar':
                 tiposa = RefTiposarmas.objects.get(id = idta)
@@ -2725,7 +2721,7 @@ def tiposaselec(request,idta):
         tiposa = RefTiposarmas.objects.get(id = idta)
         form = TiposarmasForm(instance = tiposa)
         lista = RefTiposarmas.objects.all()
-        return render_to_response('./tiposarms.html',{'form':form,'tiposa':tiposa,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+        return render(request,'./tiposarms.html',{'form':form,'tiposa':tiposa,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 #subtipos de armas
 @login_required
@@ -2761,7 +2757,7 @@ def subtiposarms(request):
          form  = TiposarmasForm()
          lista = RefSubtiposa.objects.all()
          combo = RefTiposarmas.objects.all()
-         return render_to_response('./subtiposarms.html',{'form':form,'forms':forms,'combo':combo,'subtiposa':subtiposa,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./subtiposarms.html',{'form':form,'forms':forms,'combo':combo,'subtiposa':subtiposa,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2775,7 +2771,7 @@ def subaselect(request, idsta):
         form = TiposarmasForm()
         lista = RefSubtiposa.objects.all()
         combo = RefTiposarmas.objects.all()
-        return render_to_response('./subtiposarms.html',{'form':form,'subtiposa':subtiposa,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render(request,'./subtiposarms.html',{'form':form,'subtiposa':subtiposa,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
             try:
@@ -2812,7 +2808,7 @@ def subaselect(request, idsta):
                 form  = TiposarmasForm()
                 lista = RefSubtiposa.objects.all()
             #.values_list('descripcion', flat=False).distinct()
-                return render_to_response('./subtiposarms.html',{'form':form,'forms':forms,'subtiposa':subtiposa,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+                return render(request,'./subtiposarms.html',{'form':form,'forms':forms,'subtiposa':subtiposa,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se guardan los nuevos tipos de armas ingresados en subtipos
 @login_required
@@ -2848,7 +2844,7 @@ def ntypesa(request):
          form  = TiposarmasForm()
          lista = RefSubtiposa.objects.all()
          combo = RefTiposarmas.objects.all()
-         return render_to_response('./subtiposarms.html',{'form':form,'forms':forms,'combo':combo,'subtiposa':subtiposa,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./subtiposarms.html',{'form':form,'forms':forms,'combo':combo,'subtiposa':subtiposa,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 #funcion que llama al template de rubros
 @login_required
@@ -2875,7 +2871,7 @@ def rubros(request):
                     errors.append('Verifique la informacion a cargar y vuelva a intentar')
     form = ItemForm()
     lista = RefItems.objects.all()
-    return render_to_response('./rubros.html',{'form':form,'rubros':rubros,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+    return render(request,'./rubros.html',{'form':form,'rubros':rubros,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2887,7 +2883,7 @@ def itemselec(request,idrub):
         if request.POST.get('cancelar') == 'Cancelar':
             form = ItemForm()
             lista = RefItems.objects.all()
-            return render_to_response('./rubros.html',{'form':form,'rubros':rubros,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+            return render(request,'./rubros.html',{'form':form,'rubros':rubros,'errors':errors,'lista':lista,'state':state,'destino':destino})
         else:
             if request.POST.get('modifica')  == 'Actualizar':
                 rubros = RefItems.objects.get(id = idrub)
@@ -2914,7 +2910,7 @@ def itemselec(request,idrub):
         rubros = RefItems.objects.get(id = idrub)
         form = ItemForm(instance = rubros)
         lista = RefItems.objects.all()
-        return render_to_response('./rubros.html',{'form':form,'rubros':rubros,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance= RequestContext(request))
+        return render(request,'./rubros.html',{'form':form,'rubros':rubros,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2949,7 +2945,7 @@ def categorias(request):
          form  = ItemForm()
          lista = RefCategory.objects.all()
          combo = RefItems.objects.all()
-         return render_to_response('./categorias.html',{'form':form,'formc':formc,'combo':combo,'categorias':categorias,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./categorias.html',{'form':form,'formc':formc,'combo':combo,'categorias':categorias,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -2963,7 +2959,7 @@ def catselect(request, idcat):
          form  = ItemForm()
          lista = RefCategory.objects.all()
          combo = RefItems.objects.all()
-         return render_to_response('./categorias.html',{'form':form,'categorias':categorias,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./categorias.html',{'form':form,'categorias':categorias,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
              try:
@@ -3000,7 +2996,7 @@ def catselect(request, idcat):
                 form  = ItemForm()
                 lista = RefCategory.objects.all()
             #.values_list('descripcion', flat=False).distinct()
-                return render_to_response('./categorias.html',{'form':form,'formc':formc,'categorias':categorias,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+                return render(request,'./categorias.html',{'form':form,'formc':formc,'categorias':categorias,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se guardan los rubros que son ingresados en categorias
 @login_required
@@ -3036,7 +3032,7 @@ def nrubros(request):
          form  = ItemForm()
          lista = RefCategory.objects.all()
          combo = RefItems.objects.all()
-         return render_to_response('./categorias.html',{'form':form,'formc':formc,'combo':combo,'categorias':categorias,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./categorias.html',{'form':form,'formc':formc,'combo':combo,'categorias':categorias,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se carga el template de barrios y se graba
 @login_required
@@ -3074,7 +3070,7 @@ def barrios(request):
     form = BarriadasForm()
     lista = RefBarrios.objects.all()
     formc = ''
-    return render_to_response('./barrios.html',{'formc':formc,'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./barrios.html',{'formc':formc,'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se carga el template de barrios y se graba
 @login_required
@@ -3113,7 +3109,7 @@ def addbarrios(request):
     form = BarriadasForm()
     lista = RefBarrios.objects.all()
     formc = ''
-    return render_to_response('./barriosadd.html',{'formc':formc,'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./barriosadd.html',{'formc':formc,'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se carga el template de ingreso de dependencias
 @login_required
@@ -3147,7 +3143,7 @@ def addcalles(request):
                                 errors.append('Datos Existentes. Verifique los mismos')
     form = AddressForm()
     lista = RefCalles.objects.all()
-    return render_to_response('./callesadd.html',{'calles':calles,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./callesadd.html',{'calles':calles,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 
 @login_required
@@ -3156,7 +3152,7 @@ def obtener_calles(request,idci):
                 calles = RefCalles.objects.filter(ciudad = idci)
                 data = serializers.serialize("json", calles)
 
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 
 #la funcion en donde se actualiza y/o elimina un Barrio segun la ciudad
@@ -3171,7 +3167,7 @@ def nbarrios(request, idbar):
     if request.POST.get('cancelar')=='Cancelar':
         form = BarriadasForm()
         lista = RefBarrios.objects.all()
-        return render_to_response('./barrios.html',{'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render(request,'./barrios.html',{'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=='Borrar':
             try:
@@ -3207,7 +3203,7 @@ def nbarrios(request, idbar):
                  formc=BarriadasForm(instance=barrios)
                  calles = RefCalles.objects.filter(ciudad =barrios).values('descripcion')
                  lista = RefBarrios.objects.all()
-                 return render_to_response('./barrios.html',{'calles':calles,'formc':formc,'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+                 return render(request,'./barrios.html',{'calles':calles,'formc':formc,'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 
     barrios = RefBarrios.objects.get(id=idbar)
@@ -3215,7 +3211,7 @@ def nbarrios(request, idbar):
     formc=BarriadasForm(instance=barrios)
     calles = RefCalles.objects.filter(ciudad =barrios).values('descripcion')
     lista = RefBarrios.objects.all()
-    return render_to_response('./barrios.html',{'calles':calles,'formc':formc,'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./barrios.html',{'calles':calles,'formc':formc,'barrios':barrios,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se carga el template de ingreso de dependencias
 @login_required
@@ -3247,7 +3243,7 @@ def calles(request):
                                 errors.append('Datos Existentes. Verifique los mismos')
     form = AddressForm()
     lista = RefCalles.objects.all()
-    return render_to_response('./calles.html',{'calles':calles,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./calles.html',{'calles':calles,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 #la funcion en donde se actualiza y/o elimina las dependencias segun unidad regional
 @login_required
@@ -3261,7 +3257,7 @@ def ncalles(request, idadrs):
     if request.POST.get('cancelar')=='Cancelar':
         form = AddressForm(instance = calles)
         lista = RefCalles.objects.all()
-        return render_to_response('./calles.html',{'calles':calles,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+        return render(request,'./calles.html',{'calles':calles,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('modifica')=='Actualizar':
             calles = RefCalles.objects.get(id = idadrs)
@@ -3291,7 +3287,7 @@ def ncalles(request, idadrs):
     calles = RefCalles.objects.get(id = idadrs)
     form = AddressForm(instance = calles)
     lista = RefCalles.objects.all()
-    return render_to_response('./calles.html',{'calles':calles,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+    return render(request,'./calles.html',{'calles':calles,'form':form,'errors':errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -3326,7 +3322,7 @@ def autoridades(request):
     form = AuthoritiesForm()
     formciud = CiudadesForm()
     lista = RefAutoridad.objects.all()
-    return render_to_response('./authorities.html',{'formciud':formciud,'form':form,'errors':errors,'autoridades':autoridades,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./authorities.html',{'formciud':formciud,'form':form,'errors':errors,'autoridades':autoridades,'lista':lista,'state':state,'destino':destino})
 
 
 @login_required
@@ -3340,7 +3336,7 @@ def autoridad(request,idaut):
     if request.POST.get('cancelar') == 'Cancelar':
         form = AuthoritiesForm()
         lista = RefAutoridad.objects.all()
-        return render_to_response('./authorities.html',{'form':form,'autoridades':autoridades,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+        return render(request,'./authorities.html',{'form':form,'autoridades':autoridades,'errors':errors,'lista':lista,'state':state,'destino':destino})
     else:
 
         if request.POST.get('modifica') == 'Actualizar':
@@ -3374,7 +3370,7 @@ def autoridad(request,idaut):
     autoridades = RefAutoridad.objects.get(id = idaut)
     form = AuthoritiesForm(instance = autoridades)
     lista = RefAutoridad.objects.all()
-    return render_to_response('./authorities.html',{'form':form,'autoridades':autoridades,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./authorities.html',{'form':form,'autoridades':autoridades,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 def validateEmail(email):
         if len(email) > 6:
@@ -3399,7 +3395,7 @@ def actuantes(request):
     ciudad = ""
     personas = ""
     errors=''
-    return render_to_response('./actuantes.html',{'formp':formp,'ciudad':ciudad,'personas':personas,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./actuantes.html',{'formp':formp,'ciudad':ciudad,'personas':personas,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -3447,19 +3443,19 @@ def oficiales(request,idact):
                     pers = Personas.objects.all()
                     lista = Actuantes.objects.all()
                     dnis=''
-                    return render_to_response('./actuantes.html',{'botonsi':botonsi,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+                    return render(request,'./actuantes.html',{'botonsi':botonsi,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino})
                 else:
                     errors.append('Datos Existentes. Verifique los mismos')
                     form = ActuantesForm()
                     formj = JerarquiasForm()
                     pers = Personas.objects.all()
                     lista = Actuantes.objects.all()
-                    return render_to_response('./actuantes.html',{'botonsi':botonsi,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+                    return render(request,'./actuantes.html',{'botonsi':botonsi,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino})
         form = ActuantesForm()
         formj = JerarquiasForm()
         pers = Personas.objects.all()
         lista = Actuantes.objects.all()
-        return render_to_response('./actuantes.html',{'botonsi':botonsi,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+        return render(request,'./actuantes.html',{'botonsi':botonsi,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
     else:
         if request.POST.get('modifica') == 'Actualizar':
@@ -3496,7 +3492,7 @@ def oficiales(request,idact):
                 pers = Personas.objects.all()
                 lista = Actuantes.objects.all()
                 dnis='si'
-                return render_to_response('./actuantes.html',{'formd':formd,'botonsi':botonsi,'dnis':dnis,'datos':datos,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+                return render(request,'./actuantes.html',{'formd':formd,'botonsi':botonsi,'dnis':dnis,'datos':datos,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino})
              else:
                 perso=Personal.objects.get(persona_id=idact)
                 per=perso.persona_id
@@ -3510,18 +3506,18 @@ def oficiales(request,idact):
                 lista = Actuantes.objects.all()
                 dnis='si'
                 botonsi='si'
-                return render_to_response('./actuantes.html',{'botonsi':botonsi,'dnis':dnis,'datos':datos,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+                return render(request,'./actuantes.html',{'botonsi':botonsi,'dnis':dnis,'datos':datos,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino})
             else:
              errors.append('La persona seleccionada no es Empleado Policial')
              form = ActuantesForm()
              formj = JerarquiasForm()
              pers = Personas.objects.all()
              lista = Actuantes.objects.all()
-             return render_to_response('./actuantes.html',{'botonsi':botonsi,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+             return render(request,'./actuantes.html',{'botonsi':botonsi,'idact':idact,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 #abm de personas
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["administrador","policia","investigaciones","radio"])
 def personas(request):
     state  = request.session.get('state')
@@ -3556,7 +3552,7 @@ def personas(request):
 
                                                  if formc.is_valid():
                                                          formc.save()
-                                                         return render_to_response('./persona.html',{'domicilios':domicilios,'dom':dom,'ciudad':ciudad,'form':form,'personas':persona,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+                                                         return render(request,'./persona.html',{'domicilios':domicilios,'dom':dom,'ciudad':ciudad,'form':form,'personas':persona,'lista':lista,'state':state,'destino':destino})
 
                                                  else:
                                                             errors.append('La ciudad que UD. desea Guardar ya Existe. Verifique')
@@ -3581,16 +3577,7 @@ def personas(request):
                 persona.celular   = form.cleaned_data['celular']
                 persona.alias      = form.cleaned_data['alias']
                 persona.estado_civil = form.cleaned_data['estado_civil']
-                """
-                persona.estudios = form.cleaned_data['estudios']
-                persona.condicionlaboral = form.cleaned_data['condicionlaboral']
-                persona.emails = form.cleaned_data['emails']
-                persona.redsociales = form.cleaned_data['redsociales']
-                persona.domiciliolab = form.cleaned_data['domiciliolab']
-                persona.horariolab = form.cleaned_data['horariolab']
-                persona.otrasactividades = form.cleaned_data['otrasactividades']
-                persona.horalugaractivi = form.cleaned_data['horalugaractivi']
-                """
+                
                 try:
                     idpoli=persona.ocupacion
                     refpoli=RefOcupacion.objects.get(descripcion=idpoli)
@@ -3628,6 +3615,7 @@ def personas(request):
                     domicilios.personas             = persona
                     domicilios.ref_ciudades         = form.cleaned_data['ciudad_res']
                     domicilios.save()
+
                     if formpa.is_valid():
                         papis=Padres()
                         papis.padre_apellidos = formpa.cleaned_data['padre_apellidos']
@@ -3639,11 +3627,11 @@ def personas(request):
                 else:
                     ciudad = ""
                     lista = Personas.objects.all()
-                    return render_to_response('./persona.html',{'domicilios':domicilios,'dom':dom,'ciudad':ciudad,'form':form,'personas':persona,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+                    return render(request,'./persona.html',{'domicilios':domicilios,'dom':dom,'ciudad':ciudad,'form':form,'personas':persona,'lista':lista,'state':state,'destino':destino})
             else:
                 ciudad = ""
                 lista = Personas.objects.all()
-                return render_to_response('./persona.html',{'domicilios':domicilios,'dom':dom,'ciudad':ciudad,'form':form,'personas':persona,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+                return render(request,'./persona.html',{'domicilios':domicilios,'dom':dom,'ciudad':ciudad,'form':form,'personas':persona,'lista':lista,'state':state,'destino':destino})
 
     lista = Personas.objects.all()
     form = PersonasForm()
@@ -3654,7 +3642,7 @@ def personas(request):
     formcalles= AddressForm()
     formbarrios = BarriadasForm()
     formciu=RefCiudades.objects.all()
-    return render_to_response('./persona.html',{'formcalles':formcalles,'formbarrios':formbarrios,'formciu':formciu,'formpr':formpr,'errors':errors,'dom':dom,'ciudad':ciudad,'formpa':formpa,'form':form,'personas':personas,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./persona.html',{'formcalles':formcalles,'formbarrios':formbarrios,'formciu':formciu,'formpr':formpr,'errors':errors,'dom':dom,'ciudad':ciudad,'formpa':formpa,'form':form,'personas':personas,'lista':lista,'state':state,'destino':destino})
 
 #abm de personas
 @login_required
@@ -3705,10 +3693,10 @@ def newperso(request):
     ciudad = ""
     personas = ""
     errors=''
-    return render_to_response('./actuantes.html',{'formpr':formpr,'formp':formp,'ciudad':ciudad,'personas':personas,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./actuantes.html',{'formpr':formpr,'formp':formp,'ciudad':ciudad,'personas':personas,'filtro':filtro,'pers':pers,'formj':formj,'apeynom':apeynom,'dni':dni,'form':form,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["administrador","policia","investigaciones","radio"])
 #@permission_required('user.is_staff')
 def persona(request, idper):
@@ -3742,7 +3730,7 @@ def persona(request, idper):
         form = PersonasForm()
         form.fields['tipo_doc'].queryset = RefTipoDocumento.objects.exclude(descripcion__icontains='NO POSEE')
         lista = Personas.objects.all()
-        return render_to_response('./persona.html',{'form':form, 'personas':personas,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+        return render(request,'./persona.html',{'form':form, 'personas':personas,'errors':errors,'lista':lista,'state':state,'destino':destino})
     else:
         if request.POST.get('modifica') == 'Actualizar':
             persona = Personas.objects.get(id=idper)
@@ -3885,7 +3873,7 @@ def persona(request, idper):
 
     ciudad = personas.ciudad_nac
     lista = Personas.objects.all()
-    return render_to_response('./persona.html',{'formpr':formpr,'dom':dom,'domicilios':domicilios,'ciudad':ciudad,'formpa':formpa,'form':form,'personas':personas,'errors':errors,'lista':lista,'state':state,'destino':destino},context_instance=RequestContext(request))
+    return render(request,'./persona.html',{'formpr':formpr,'dom':dom,'domicilios':domicilios,'ciudad':ciudad,'formpa':formpa,'form':form,'personas':personas,'errors':errors,'lista':lista,'state':state,'destino':destino})
 
 
 @login_required
@@ -3923,14 +3911,14 @@ def modus(request):
 
          combo = RefDelito.objects.all()
          form  = DelitoForm(request.POST)
-         return render_to_response('./modusop.html',{'formp':formp,'combo':combo,'modos':modos,'lista':lista,'state':state, 'errors':errors,'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./modusop.html',{'formp':formp,'combo':combo,'modos':modos,'lista':lista,'state':state, 'errors':errors,'destino': destino})
     else:
          formp = RefModosHechoForm()
          form  = DelitoForm()
          lista = RefModosHecho.objects.all()
          combo = RefDelito.objects.all()
 
-         return render_to_response('./modusop.html',{'form':form,'formp':formp,'combo':combo,'modos':modos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./modusop.html',{'form':form,'formp':formp,'combo':combo,'modos':modos,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @permission_required('user.is_staff')
@@ -3944,7 +3932,7 @@ def modos(request, idmod):
          form  = DelitoForm()
          lista = RefModosHecho.objects.all()
          combo = RefDelito.objects.all()
-         return render_to_response('./modusop.html',{'form':form,'modos':modos,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+         return render(request,'./modusop.html',{'form':form,'modos':modos,'lista':lista,'state':state, 'destino': destino})
     else:
         if request.POST.get('borrar')=="Borrar":
              try:
@@ -3981,7 +3969,7 @@ def modos(request, idmod):
                 form  = DelitoForm()
                 lista = RefModosHecho.objects.all()
             #.values_list('descripcion', flat=False).distinct()
-                return render_to_response('./modusop.html',{'form':form,'formp':formp,'modos':modos,'errors': errors,'lista':lista,'state':state, 'destino': destino},context_instance=RequestContext(request))
+                return render(request,'./modusop.html',{'form':form,'formp':formp,'modos':modos,'errors': errors,'lista':lista,'state':state, 'destino': destino})
 
 @login_required
 @group_required(["policia","investigaciones","visita","radio","judiciales"])
@@ -4009,7 +3997,7 @@ def verprev(request):
         ureg            = request.GET.get('ureg')
         depe            = request.GET.get('depe')
 
-        unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+        unidadregi=Dependencias.objects.get(descripcion__contains=request.user.userprofile.depe.descripcion)
         jurisdi=unidadregi.ciudad.descripcion
         todos = Preventivos.objects.all()
         if depe != "" and depe != None:
@@ -4031,7 +4019,7 @@ def verprev(request):
             fecha_carga = datetime.datetime.strptime(fecha_carga+' 00:00:00',"%d/%m/%Y %H:%M:%S")
             todos = todos.filter(fecha_carga__range = [fecha_carga,fecha_cargah])
         if peticion == 'buscar':
-            return render_to_response("./listarprev.html",{'todos':todos,'jurisdi':jurisdi},context_instance=RequestContext(request))
+            return render(request,"./listarprev.html",{'todos':todos,'jurisdi':jurisdi})
         else:
             return exportar_listado(request,todos)
 
@@ -4040,7 +4028,7 @@ def verprev(request):
     info={'nro':nro,'anio':anio,'fecha_carga':fecha_carga,'fecha_cargah':fecha_cargah,
     'caratula':caratula,'todos':todos,'total':total,'errors':errors,'unidadregi':unidadregi,'jurisdi':jurisdi,
     'state':state,'destino': destino,'form':form}
-    return render_to_response('./seeprev.html',info,context_instance=RequestContext(request))
+    return render(request,'./seeprev.html',info)
 
 
 
@@ -4070,59 +4058,46 @@ def exportar_listado(request,todos):
                 'Unidad Regional':str(datas.dependencia.unidades_regionales),
                 'Dependencia':str(datas.dependencia),
                 'Localidad':str(ciudad),
-                'Caratula':str(datas.caratula.encode("utf8")),
+                'Caratula':str(datas.caratula.encode("utf-8")),
                 'Fecha Denuncia':str(timezone.localtime(datas.fecha_denuncia).strftime("%d/%m/%Y %H:%M:%S"))}
          filagral=filadata                                                      #asigna la fila creada a fila gral
-         datahechos=Preventivos.objects.get(id=datas.id).hecho.all()            #obtiene los hechos relacionados al preventivo
-         if datahechos:                                                         #si hay hechos relacionados
-          for dhecho in datahechos:                                             #para cada hecho
+         dhecho=Preventivos.objects.get(id=datas.id).hecho                  #obtiene los hechos relacionados al preventivo
+         if dhecho:
+          if dhecho.motivo.descripcion==None or dhecho.motivo.descripcion=='': #si no tiene cargado el motivo de denuncia
+            motivo='SIN MOTIVO'                                             #le asigna un sin motivo
+          else:                                                              # si lo tiene cargado
+            motivo=str(dhecho.motivo.descripcion)                           # lo asigna en motivo
+          filahecho={                                                        #prepara los datos de la fila hecho
+            'Motivo Preventivo':motivo,
+            #'Denuncia':denuncia,
+            "Dia Hecho":str(timezone.localtime(dhecho.fecha_desde).strftime("%A")),
+            "Fecha Desde":str(timezone.localtime(dhecho.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")),
+            'Fecha Hasta':str(timezone.localtime(dhecho.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S"))
+            }
+          filagral.update(filahecho)                                         #actualiza fila gral con fila hecho
+          idhec=dhecho.id                                                    #obtiene el id del hecho
+          delito =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True) #obtiene los delitos del hecho
+          cometidos=[]                                                       #crea un arreglo de cometidos
+          hechodeli=""                                                       #crea una variable hechodeli
+          for d in delito:                                                   #por cada delito
+            cometidos.append(d)                                            # lo agrega a cometidos
 
-             if dhecho.descripcion==None or dhecho.descripcion=='':             #si no esta cargada la descripcion
-                 denuncia="SIN DESCRIPCION"                                     #asigna sin descripcion a denuncia
-             else:                                                              #si tiene cargada la descripcion
-                 denuncia=html2text.html2text(dhecho.descripcion,True)          #convierete el texto html en texto simple
-                 denuncia=denuncia.encode('utf-8', 'xmlcharrefreplace')         #codifica el texto en utf-8
-                 denuncia=strip_tags(denuncia)                                  #quita todos los tags html
-                 #.replace('&nbsp;','')
-                 denuncia=denuncia.replace('&nbsp;','')
-                 denuncia=denuncia.replace('"','')
-                 denuncia=denuncia[:200]+'...'
+          hechodeli=''                                                       #limpia hecho deli
+          modus=' SIN MODALIDAD  '                                           #asigna sin modalidad al modus
+          for i in cometidos:                                                #para cada delito
+            if hechodeli != '':                                            #si hecho deli no esta vacio
+                hechodeli=hechodeli+'-'+unicode(str(i).strip(),'UTF-8')    # le agrega el delito separado por guion
+            else:                                                          #si esta vacio
+                hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')        #agrega el delito
 
-             if dhecho.motivo.descripcion==None or dhecho.motivo.descripcion=='': #si no tiene cargado el motivo de denuncia
-                motivo='SIN MOTIVO'                                             #le asigna un sin motivo
-             else:                                                              # si lo tiene cargado
-                motivo=str(dhecho.motivo.descripcion)                           # lo asigna en motivo
-             filahecho={                                                        #prepara los datos de la fila hecho
-                    'Motivo Preventivo':motivo,
-                    'Denuncia':denuncia,
-                    "Dia Hecho":str(timezone.localtime(dhecho.fecha_desde).strftime("%A")),
-                    "Fecha Desde":str(timezone.localtime(dhecho.fecha_desde).strftime("%d/%m/%Y %H:%M:%S")),
-                    'Fecha Hasta':str(timezone.localtime(dhecho.fecha_hasta).strftime("%d/%m/%Y %H:%M:%S"))
-                }
-             filagral.update(filahecho)                                         #actualiza fila gral con fila hecho
-             idhec=dhecho.id                                                    #obtiene el id del hecho
-             delito =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True) #obtiene los delitos del hecho
-             cometidos=[]                                                       #crea un arreglo de cometidos
-             hechodeli=""                                                       #crea una variable hechodeli
-             for d in delito:                                                   #por cada delito
-                 cometidos.append(d)                                            # lo agrega a cometidos
+            if i.refmodoshecho!=None:                                      #si el delito tiene modo
+                modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+' - '    # se lo agrega
 
-             hechodeli=''                                                       #limpia hecho deli
-             modus=' SIN MODALIDAD  '                                           #asigna sin modalidad al modus
-             for i in cometidos:                                                #para cada delito
-                 if hechodeli != '':                                            #si hecho deli no esta vacio
-                     hechodeli=hechodeli+'-'+unicode(str(i).strip(),'UTF-8')    # le agrega el delito separado por guion
-                 else:                                                          #si esta vacio
-                     hechodeli=hechodeli+unicode(str(i).strip(),'UTF-8')        #agrega el delito
+            filadelitos={                                                  #prepara la filadelitos
+                    'Delitos':hechodeli.strip()+modus
+                    }
 
-                 if i.refmodoshecho!=None:                                      #si el delito tiene modo
-                     modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+' - '    # se lo agrega
-
-                 filadelitos={                                                  #prepara la filadelitos
-                        'Delitos':hechodeli.strip()+modus
-                        }
-
-             filagral.update(filadelitos)                                       #a la fila gral le agrega filadelitos
+          filagral.update(filadelitos)                                       #a la fila gral le agrega filadelitos
 
           involuscra=[]                                                         #crea un arreglo de involurados
           eleminvo=[]                                                           #crea un arreglo de elementos
@@ -4163,15 +4138,15 @@ def exportar_listado(request,todos):
          involucrados=0                                                         #involucrados 0
          if len(Lugar.objects.filter(hecho=idhec))>0:                           #si el hecho tiene lugar
              tienelugar=True                                                    #levanta la bandera tiene lugar
-             idlugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]        #obtiene el id del lugar
-             lugar=Hechos.objects.get(id=idhec).lugar_hecho.all()[0]            #obtiene el lugar
+             idlugar = Hechos.objects.get(id=idhec).lugar_hecho        #obtiene el id del lugar
+             lugar=Hechos.objects.get(id=idhec).lugar_hecho            #obtiene el lugar
              if idlugar.altura==None:                                           #si no tiene altura el lugar
                 idlugar.altura=0                                                #lo pone en 0
 
              lugarhecho={                                                       #prepara el lugar
                     'Lugar':str(idlugar.tipo_lugar),
                     "Zona":str(idlugar.zona),
-                    'LugarHecho':str(idlugar.calle)+' Nro.: '+str(idlugar.altura)
+                    'LugarHecho':idlugar.calle.descripcion+' Nro.: '+str(idlugar.altura)
                     }
              if idlugar.barrio==None:                                           #si no tiene barrio
                 lugarbarrio='SIN DESCRIPCION'                                   #le pone sin descripcion
@@ -4328,23 +4303,23 @@ def exportar_listado(request,todos):
     celda.value=" Elementos recopilados desde la Base de Datos para Estadísticas "
     celda = hoja.cell("B3")
     celda.value=" Tabla con datos obtenidos de Preventivos Enviados e Informados"
-    rango_celdas = hoja.range("B4:W4")
+    rango_celdas = hoja.range("B4:V4")
     # se crea una tupla con los nombres de los campos
-    nombre_campos = "BARRIOHECHO","CARATULA","DELITOS","DENUNCIA","DEPENDENCIA","DIA DEL HECHO","ELEMENTOS","FECHA DENUNCIA","FECHA DESDE","FECHA HASTA","FRAGANTI","INVOLUCRADOS","LATITUD","LOCALIDAD","LONGITUD","LUGAR","LUGARHECHO","MOTIVO","PREVENTIVO NRO","TENTATIVA","UNIDAD REGIONAL","ZONA"
+    nombre_campos = "BARRIOHECHO","CARATULA","DELITOS","DEPENDENCIA","DIA DEL HECHO","ELEMENTOS","FECHA DENUNCIA","FECHA DESDE","FECHA HASTA","FRAGANTI","INVOLUCRADOS","LATITUD","LOCALIDAD","LONGITUD","LUGAR","LUGARHECHO","MOTIVO","PREVENTIVO NRO","TENTATIVA","UNIDAD REGIONAL","ZONA"
     # ahora, se asigna cada nombre de campo a cada celda
-
     for campo in rango_celdas:
          indice = 0  # se crea un contador para acceder a la tupla
          for celda in campo:
                  celda.value = nombre_campos[indice]
                  indice += 1
     longitud=ii
-    celdas_datos = hoja.range("B5:W{0}".format(longitud))
+    celdas_datos = hoja.range("B5:V{0}".format(longitud))
 
     # ahora vamos a dar los valores a las celdas con los datos
 
     fila=0
     for valuex in fila3:
+         
          indice1=0
          for celda in celdas_datos[fila]:
              celda.value = valuex[indice1]
@@ -4353,7 +4328,7 @@ def exportar_listado(request,todos):
 
 
 
-    response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+    response = HttpResponse(content_type="application/ms-excel")  # HttpResponse viene del modulo django.http
     nombre_archivo = "informe.xlsx"
     contenido = "attachment; filename={0}".format(nombre_archivo)
     response["Content-Disposition"] = contenido
@@ -4381,7 +4356,7 @@ def verhechos(request):
     autora=[]
     tipodelito=''
     delito=''
-    unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+    unidadregi=Dependencias.objects.get(descripcion__contains=request.user.userprofile.depe.descripcion)
     jurisdi=unidadregi.ciudad.descripcion
     if request.POST.get('ver')=='1':
          sonauti=request.POST.get('sonauti')
@@ -4471,7 +4446,7 @@ def verhechos(request):
     info={'hechos':hechos,'total':total,'errors':errors,'sonauti':sonauti,'nosonauti':nosonauti,'auti':auti,'autora':autora,
     'state':state,'destino': destino,'form':form,'todos':todos,'tipodelito':tipodelito,'delito':delito,'jurisdi':jurisdi}
 
-    return render_to_response('./seehec.html',info,context_instance=RequestContext(request))
+    return render(request,'./seehec.html',info)
 
 
 @login_required
@@ -4494,7 +4469,7 @@ def verdelitos(request):
     autora=[]
     tipodelito=''
     delito=''
-    unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+    unidadregi=Dependencias.objects.get(descripcion__contains=request.user.userprofile.depe.descripcion)
     jurisdi=unidadregi.ciudad.descripcion
     if request.POST.get('ver')=='1':
          auti='si'
@@ -4565,7 +4540,7 @@ def verdelitos(request):
     info={'hechos':hechos,'total':total,'errors':errors,'sonauti':sonauti,'nosonauti':nosonauti,'auti':auti,'autora':autora,'jurisdi':jurisdi,
     'state':state,'destino': destino,'form':form,'todos':todos,'ftiposdelitos':ftiposdelitos,'tipodelito':tipodelito,'delito':delito,}
 
-    return render_to_response('./seedelitos.html',info,context_instance=RequestContext(request))
+    return render(request,'./seedelitos.html',info)
 
 @login_required
 @group_required(["policia","investigaciones","radio"])
@@ -4605,7 +4580,8 @@ def pdfs(request,idprev):
                     cometidos.append(d)
 
             for i in cometidos:
-                     hechodeli=hechodeli+'-'+str(i)
+
+                     hechodeli=hechodeli+'-'+i.refdelito.descripcion
             #Datos de las Personas involucradas en el hecho
             involuscra=[]
             eleminvo=[]
@@ -4623,7 +4599,7 @@ def pdfs(request,idprev):
             perjuridica=''
             if len(Lugar.objects.filter(hecho=idhec))>0:
                 tienelugar=True
-                lugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]
+                lugar = Hechos.objects.get(id=idhec).lugar_hecho
                 condiciones= lugar.cond_climaticas.values_list('descripcion',flat=True)
                 laticiudad = RefCiudades.objects.get(id=preventivo.dependencia.ciudad_id)
                 lati=laticiudad.lat
@@ -4670,7 +4646,7 @@ def pdfs(request,idprev):
                                         else:
                                             persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
 
-                                    domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
+                                    domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+l.calle.descripcion+'  Nro.: '+str(l.altura)+'</dd>'
                                     if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
                                          padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+' y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
                                     else:
@@ -4815,7 +4791,7 @@ def pdfs(request,idprev):
                      'destino': destino,'form1':form1,'ftiposdelitos':ftiposdelitos,'tamaño':5,}
 
 
-            return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
+            return render(request,'./preventivoi.html', info)
 
 
 
@@ -4846,9 +4822,9 @@ def pdfs(request,idprev):
                 'errors': errors,'unidadreg':unidadreg,'dependencia':dependencia,
                 'state':state,
                 'destino': destino,}
-    #return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
+    #return render(request,'./preventivoi.html', info, context_instance=RequestContext(request))
 
-    return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
+    return render(request,'./preventivoi.html', info)
 
 def generar_pdf(html):
         # Función para generar el archivo PDF y devolverlo mediante HttpResponse
@@ -4857,7 +4833,7 @@ def generar_pdf(html):
                                                                                         link_callback=fetch_resources)
 
         if not pdf.err:
-                                converted_pdf= HttpResponse(result.getvalue(), mimetype='application/pdf')
+                                converted_pdf= HttpResponse(result.getvalue(), content_type='application/pdf')
                                 pdf = result.getvalue()
                                 return converted_pdf
 
@@ -4921,13 +4897,13 @@ def updatehechos(request,idprev):
                     hechoDelito.refdelito = RefDelito.objects.get(id = request.POST.get('delito'))
                     if request.POST.get('modos'):
                      hechoDelito.refmodoshecho = RefModosHecho.objects.get(id = request.POST.get('modos'))
-                    if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                    if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
                          try:
                             hechoDelito.save()
                             descripcion=request.POST.get('descripcion')
                             continua='no'
                             grabo='si'
-                            if request.user.get_profile().depe==depe or 'MUJER' in request.user.get_profile().depe.descripcion:
+                            if request.user.userprofile.depe==depe or 'MUJER' in request.user.userprofile.depe.descripcion:
                                tipodelito=RefDelito.objects.get(id = request.POST.get('delito'))
                                if 'VIOLENCIA FAMILIAR' in tipodelito.descripcion or 'Violencia Familiar' in tipodelito.descripcion:
                                    boton='si'
@@ -4962,7 +4938,7 @@ def updatehechos(request,idprev):
                      hecho.fecha_desde=form.cleaned_data['fecha_desde']
                      hecho.fecha_hasta=form.cleaned_data['fecha_hasta']
 
-                     if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                     if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
                             if hecho.fecha_desde > ids.fecha_denuncia or hecho.fecha_hasta > ids.fecha_denuncia:
                                 errors.append('La Fecha de Denuncia nunca puede ser menor a la Fecha y Hora del Hecho sucedido')
                             else:
@@ -4982,7 +4958,7 @@ def updatehechos(request,idprev):
                         'errors':errors,'grabo':grabo,'fecha_autorizacion':fecha_autorizacion,
                         'state':state, 'continua':continua,'delito':delito,'descripcion':descripcion,
                         'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,}
-                         return render_to_response('./updatehechos.html',info,context_instance=RequestContext(request))
+                         return render(request,'./updatehechos.html',info)
 
              else:
 
@@ -5006,7 +4982,7 @@ def updatehechos(request,idprev):
     'state':state, 'continua':continua,'delito':delito,'descripcion':descripcion,
     'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,}
 
-    return render_to_response('./updatehechos.html',info,context_instance=RequestContext(request))
+    return render(request,'./updatehechos.html',info)
 
 
 @login_required
@@ -5038,7 +5014,7 @@ def selectPrev(request,prev):
      modosref=''
      delito=''
      boton='no'
-     if Preventivos.objects.get(id=prev).hecho.all():
+     if Preventivos.objects.get(id=prev).has_hecho():
         tieneHecho = True
         if len(Elementos.objects.filter(hechos = Hechos.objects.get(preventivo = prev).id)) > 0:
             hecho=Hechos.objects.get(preventivo=prev)
@@ -5073,14 +5049,14 @@ def selectPrev(request,prev):
         ######### MODIFICACION ##########
         if len(Lugar.objects.filter(hecho = Hechos.objects.get(preventivo = prev).id)) > 0:
             hecho=Hechos.objects.get(preventivo=idprev)
-            idlugar = Hechos.objects.get(id=hecho.id).lugar_hecho.all()[0]
-            lugar=Hechos.objects.get(id=hecho.id).lugar_hecho.all()[0]
-            lugarhecho='LUGAR : '+str(idlugar.tipo_lugar)+' --- '+'  ZONA :'+str(idlugar.zona)+' ---  '+'  UBICACION : '+str(idlugar.calle)+' NRO.: '+str(idlugar.altura)
+            idlugar = Hechos.objects.get(id=hecho.id).lugar_hecho
+            lugar=Hechos.objects.get(id=hecho.id).lugar_hecho
+            lugarhecho='LUGAR : '+idlugar.tipo_lugar.descripcion+' --- '+'  ZONA :'+str(idlugar.zona)+' ---  '+'  UBICACION : '+idlugar.calle.descripcion+' NRO.: '+str(idlugar.altura)
             tienelugar = True
 
-        if  Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.values('id')).involu.all():
+        if  Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.id).involu.all():
 
-                datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.values('id')).involu.all()
+                datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=prev).hecho.id).involu.all()
 
                 tienePersonas= True
 
@@ -5092,10 +5068,10 @@ def selectPrev(request,prev):
             preventivo.caratula = form.cleaned_data['caratula']
             preventivo.actuante = form.cleaned_data['actuante']
             preventivo.preventor = form.cleaned_data['preventor']
-            ureg=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+            ureg=Dependencias.objects.get(descripcion__contains=request.user.userprofile.depe.descripcion)
 
 
-            if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in request.user.get_profile().depe.descripcion and depe.ciudad_id==ureg.ciudad_id:
+            if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or  'RADIO' in request.user.userprofile.depe.descripcion and depe.ciudad_id==ureg.ciudad_id:
                  preventivo.save()
                  preventivo.autoridades.clear()
                  for grabauto in form.cleaned_data['autoridades']:
@@ -5120,7 +5096,7 @@ def selectPrev(request,prev):
                     autoridad.append(ids)
             form.fields['autoridades'].initial=autoridad
             form.fields['autoridades'].widget.attrs["onclick"] = False
-            return render_to_response('./updateprev.html',{'boton':boton,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'fecha_autorizacion':fecha_autorizacion,'unireg':unireg,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,},context_instance=RequestContext(request))
+            return render(request,'./updateprev.html',{'boton':boton,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'fecha_autorizacion':fecha_autorizacion,'unireg':unireg,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,})
 
      form = PreventivosForm(instance = preventivo)
      id_depe=Dependencias.objects.filter(descripcion__exact=depe).values('id')
@@ -5138,10 +5114,10 @@ def selectPrev(request,prev):
      form.fields['autoridades'].initial=autoridad
      form.fields['autoridades'].widget.attrs["onclick"] = False
 
-     return render_to_response('./updateprev.html',{'boton':boton,'errors':errors,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'unireg':unireg,'fecha_autorizacion':fecha_autorizacion,'lista':lista,'lugarhecho':lugarhecho,'datosinvo':datosinvo,'descripcion':descri,'hechodeli':hechodeli,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,'tieneelemento':tieneelemento,},context_instance=RequestContext(request))
+     return render(request,'./updateprev.html',{'boton':boton,'errors':errors,'fecha_desde':fecha_desde,'fecha_hasta':fecha_hasta,'idmodo':modosref,'delito':delito,'preventivo':preventivo,'unireg':unireg,'fecha_autorizacion':fecha_autorizacion,'lista':lista,'lugarhecho':lugarhecho,'datosinvo':datosinvo,'descripcion':descri,'hechodeli':hechodeli,'idprev':idprev,'form':form,'state':state, 'destino': destino,'depe':depe,'tieneHecho':tieneHecho,'tienelugar':tienelugar,'tienePersonas':tienePersonas,'idhec':idhec,'idper':idper,'tieneelemento':tieneelemento,})
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["administrador","policia","investigaciones","radio"])
 def persinvo(request,idhec,idper):
 
@@ -5363,7 +5339,7 @@ def persinvo(request,idhec,idper):
             if persoinvoluc:
                 persoinvolu=PersInvolucradas.objects.get(id=request.POST.get('dele'))
                 if 'si' in persoinvolu.detenido:
-                    if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                    if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
                         Detenidos.objects.filter(persona_id = persoinvolu.persona_id).update(borrado='S',observaciones=request.user.username)
                         PersInvolucradas.objects.get(id=request.POST.get('dele')).delete()
                     else:
@@ -5664,10 +5640,10 @@ def persinvo(request,idhec,idper):
     'tienePersonas':tienePersonas,'tienelugar':tienelugar,'formd':formd,'formpr':formpr,'formc':formc,
     'state':state,'delito':delito,'descripcion':descripcion,'formpa':formpa,'depe':depe,'unidadreg':unidadreg,'dependencia':dependencia,
     'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,'preventivo':datos,'noposee':noposee,}
-    return render_to_response('./personasin.html',info,context_instance=RequestContext(request))
+    return render(request,'./personasin.html',info)
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["administrador","policia","investigaciones","radio"])
 def persinvom(request,idhec,idper):
     state= request.session.get('state')
@@ -5812,7 +5788,7 @@ def persinvom(request,idhec,idper):
                                             persoin.fechahoradetencion = formr.cleaned_data['fechahoradetencion']
 
                                             try:
-                                             if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                                             if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
                                                  if fde>=fd:
                                                         detenidos.save()
                                              else:
@@ -5870,7 +5846,7 @@ def persinvom(request,idhec,idper):
          if persoinvoluc:
              persoinvolu=PersInvolucradas.objects.get(id=request.POST.get('dele'))
              if 'si' in persoinvolu.detenido:
-                 if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                 if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
                      Detenidos.objects.filter(persona_id = persoinvolu.persona_id).update(borrado='S',observaciones=request.user.username)
                      PersInvolucradas.objects.get(id=request.POST.get('dele')).delete()
                  else:
@@ -5924,10 +5900,10 @@ def persinvom(request,idhec,idper):
     'errors': errors,'motivo':motivo,'todos':todos,'comb':comb,'idciu':idciu,'formpa':formpa,'unidadreg':unidadreg,'dependencia':dependencia,
     'state':state,'delito':delito,'descripcion':descripcion,'idper':idper,'detenido':detenido,'depe':depe,'personas':personas,
     'destino': destino,'form':form,'ftiposdelitos':ftiposdelitos,'idprev':idprev,'razon':razon,}
-    return render_to_response('./editpersoin.html',info,context_instance=RequestContext(request))
+    return render(request,'./editpersoin.html',info)
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["policia","investigaciones","radio"])
 def lugar_hecho(request,idhecho,idprev):
     state= request.session.get('state')
@@ -5940,9 +5916,9 @@ def lugar_hecho(request,idhecho,idprev):
     numero=''
     notienePer=False
     errors=[]
-    if  Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all():
+    if  Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.id).involu.all():
 
-                datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.values('id')).involu.all()
+                datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=idprev).hecho.id).involu.all()
 
                 notienePer= True
     if not notienePer:
@@ -5950,7 +5926,7 @@ def lugar_hecho(request,idhecho,idprev):
             destino= request.session.get('destino')
             return render(request,'./errorsinper.html',{'state':state, 'destino': destino})
 
-    if len(Hechos.objects.get(id=idhecho).lugar_hecho.all()) == 0 :
+    if not Hechos.objects.get(id=idhecho).has_lugar():
 
         form = LugarForm()
         lugar = Lugar()
@@ -5959,8 +5935,8 @@ def lugar_hecho(request,idhecho,idprev):
         form.fields['dependencia'].queryset = Dependencias.objects.filter(unidades_regionales = preventivo.dependencia.unidades_regionales_id)
 
     else:
-        idlugar = Hechos.objects.get(id=idhecho).lugar_hecho.all()[0]
-        lugar=Hechos.objects.get(id=idhecho).lugar_hecho.all()[0]
+        idlugar = Hechos.objects.get(id=idhecho).lugar_hecho
+        lugar=Hechos.objects.get(id=idhecho).lugar_hecho
 
 
 
@@ -6035,7 +6011,7 @@ def lugar_hecho(request,idhecho,idprev):
                     barrio.descripcion = nbarrio
                     barrio.save()
                     lugar.barrio = barrio
-                if request.user.get_profile().depe_id==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                if request.user.userprofile.depe_id==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
 
                      lugar.save()
                      if request.POST.get('grabar') == 'Modificar':
@@ -6096,7 +6072,7 @@ def lugar_hecho(request,idhecho,idprev):
 
 
     }
-    return render_to_response('./crime_scene.html',values,context_instance=RequestContext(request))
+    return render(request,'./crime_scene.html',values)
 
 def street_name(string):
 
@@ -6135,7 +6111,7 @@ def autorizar(request,idprev):
 
 #informar a autoridades por email
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["policia","investigaciones","radio"])
 def informe(request,idhec,idprev,aforo):
         info_enviado = False
@@ -6167,7 +6143,7 @@ def informe(request,idhec,idprev,aforo):
         ftiposdelitos=DelitoForm()
         motivo=request.POST.get('motivo')
         modos=RefModosHechoForm(instance=hecho)
-        descripcion=hecho.descripcion.encode('utf8')
+        descripcion=hecho.descripcion
         idhec=hecho.id
         delito =HechosDelito.objects.filter(hechos = idhec,borrado__isnull=True)
         modalidad=''
@@ -6193,7 +6169,7 @@ def informe(request,idhec,idprev,aforo):
         datosgral=""
         eleminvo=[]
         #Datos del lugar del hecho
-        lugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]
+        lugar = Hechos.objects.get(id=idhec).lugar_hecho
         condiciones= lugar.cond_climaticas.values_list('descripcion',flat=True)
         for tiempo in condiciones:
              titempo=titempo+' * '+str(tiempo)+'<br>'
@@ -6222,28 +6198,27 @@ def informe(request,idhec,idprev,aforo):
                      if dad:
 
                             for la in Personas.objects.get(id=p.persona.id).padre.all():
-
-                                    roles='<u>'+str(p.roles)+'</u><br><br>'
+                                    roles='<u>'+p.roles.descripcion+'</u><br><br>'
                                     if bandera:
                                         if p.juridica=='si':
-                                            persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
+                                            persona='<dd>'+p.persona.tipo_doc+': '+p.persona.nro_doc+personai+'</dd><dd>Personeria Juridica :'+perjuridica+'</dd>'
                                         else:
-                                            persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')
+                                            persona='<dd>'+p.persona.tipo_doc+': '+p.persona.nro_doc+personai+'</dd>'
                                     else:
                                         if p.juridica=='si':
-                                            persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')+'<dd>Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))
+                                            persona='<dd>'+p.persona.tipo_doc+': '+p.persona.nro_doc+'</dd><dd>Personeria Juridica :'+perjuridica+'</dd><dd>Ocupacion :'+p.persona.ocupacion+', Estado Civil :'+' '+p.persona.estado_civil+', Menor de Edad : '+p.menor.upper()+'<dd>Nacido en: '+p.persona.pais_nac+', '+p.persona.ciudad_nac+', Fecha Nac: '+p.persona.fecha_nac.strftime("%d/%m/%Y")
                                         else:
-                                            persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+', Ocupacion :'+str(p.persona.ocupacion)+', Estado Civil :'+' '+str(p.persona.estado_civil)+', Menor de Edad : '+str(p.menor.upper())+'<dd>Nacido en: '+str(p.persona.pais_nac)+', '+str(p.persona.ciudad_nac)+', Fecha Nac: '+str(p.persona.fecha_nac.strftime("%d/%m/%Y"))+'</dd>')
-
-                                    domi='<dd>Reside en : '+str(p.persona.ciudad_res)+',  Domicilio : '+str(l.calle)+'  Nro.: '+str(l.altura)+'</dd>'
+                                            persona='<dd>'+p.persona.tipo_doc.descripcion+': '+p.persona.nro_doc+', Ocupacion :'+p.persona.ocupacion.descripcion+', Estado Civil :'+' '+p.persona.estado_civil.descripcion+', Menor de Edad : '+p.menor.upper()+'<dd>Nacido en: '+p.persona.pais_nac.descripcion+', '+p.persona.ciudad_nac.descripcion+', Fecha Nac: '+p.persona.fecha_nac.strftime("%d/%m/%Y")+'</dd>'
+                                    domi='<dd>Reside en : '+p.persona.ciudad_res.descripcion +',  Domicilio : '+ l.calle.descripcion if l.calle else ' ' +'  Nro.: '+l.altura if l.altura else ' '  +'</dd>'
                                     if la.padre_apellidos or la.padre_nombres or la.madre_apellidos or la.madre_nombres:
-                                            padys='<dd>Hijo de : '+str(la.padre_apellidos.encode("utf8"))+', '+str(la.padre_nombres.encode("utf8"))+'  y de : '+str(la.madre_apellidos.encode("utf8"))+', '+str(la.madre_nombres.encode("utf8"))+'<br><br></dd>'
+                                            padys='<dd>Hijo de : '+la.padre_apellidos+', '+la.padre_nombres+'  y de : '+la.madre_apellidos+', '+la.madre_nombres+'<br><br></dd>'
                                     else:
                                             padys='<dd>no registra datos de los padres'+'<br><br></dd>'
+                                    
                                     datosgral=roles+persona+domi+padys
                      else:
 
-                         roles='<u>'+str(p.roles)+'</u><br><br>'
+                         roles='<u>'+p.roles+'</u><br><br>'
                          if bandera:
                             if p.juridica=='si':
                                 persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('<dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
@@ -6260,7 +6235,7 @@ def informe(request,idhec,idprev,aforo):
                          datosgral=roles+persona+domi+padys
                 involuscra.append(datosgral)
             else:
-                roles='<u>'+str(p.roles)+'</u><br><br>'
+                roles='<u>'+p.roles+'</u><br><br>'
                 if bandera:
                     if p.juridica=='si':
                         persona=str(p)+str('<dd>'+str(p.persona.tipo_doc)+': '+str(p.persona.nro_doc)+str(personai)+'</dd>')+str('</dd>'+'Personeria Juridica :'+str(perjuridica)+'</dd>')
@@ -6379,18 +6354,18 @@ def informe(request,idhec,idprev,aforo):
 
         titulo =str('<u>'+'Preventivo Nro : '+str(nro)+'/'+str(anio)+'</u>')
         tresto='--Dependencia : '+str(depe)+' Ciudad de : '+str(ciudad)+'</u><br>'
-        titulo1=str('Fecha de Denuncia : '+fecha_denuncia+'<br>'+'Fecha de Carga: '+fecha_carga+'<br>'+'Caratula :'+str(caratula.encode("utf8"))+'<br>'+'Actuante : '+str(jerarqui_a)+' '+str(actuante)+' --- '+' Preventor :'+str(jerarqui_p)+' '+str(preventor)+'<br>'+'Autoridades a informar :'+'<br><dd>'+str(autoridad)+'<br><dd><hr>')
-        titulo2=str(hechodelitos)+'<hr>'+'Personas Involucradas'+'<hr>'+str(datosper)+'<hr>'
+        titulo1='Fecha de Denuncia : '+fecha_denuncia+'<br>'+'Fecha de Carga: '+fecha_carga+'<br>'+'Caratula :'+caratula+'<br>'+'Actuante : '+jerarqui_a.descripcion+' '+actuante.apeynombres+' --- '+' Preventor :'+jerarqui_p.descripcion+' '+preventor.apeynombres+'<br>'+'Autoridades a informar :'+'<br><dd>'+autoridad+'<br><dd><hr>'
+        titulo2=hechodelitos+'<hr>'+'Personas Involucradas'+'<hr>'+datosper+'<hr>'
 
         #ubicacion
-        titulo3='Ubicacion Geografica y caracteristicas del Lugar del Hecho <br><hr>'+'Ciudad :'+str(ciudad)+' --- Ubicacion : '+str(lugar.calle)+' --- Nro :'+str(lugar.altura)+'<br>Tipo de Lugar : '+str(lugar.tipo_lugar)+' --  Zona: '+str(lugar.zona)+'<br>'
-        titulo4='Barrio : '+str(lugar.barrio)+' ---  Nro casa: '+str(lugar.nro_casa)+'<br>'+'Lote : '+str(lugar.lote)+' --- Manzana: '+str(lugar.manzana)+' --- Sector: '+str(lugar.sector)+'<br>'
+        titulo3='Ubicacion Geografica y caracteristicas del Lugar del Hecho <br><hr>'+'Ciudad :'+str(ciudad)+' --- Ubicacion : '+lugar.calle.descripcion+' --- Nro :'+str(lugar.altura)+'<br>Tipo de Lugar : '+str(lugar.tipo_lugar)+' --  Zona: '+str(lugar.zona)+'<br>'
+        titulo4='Barrio : '+lugar.barrio.descripcion if lugar.barrio else '' +' ---  Nro casa: '+str(lugar.nro_casa)+'<br>'+'Lote : '+lugar.lote+' --- Manzana: '+lugar.manzana+' --- Sector: '+lugar.sector+'<br>'
         titulo5='Edificio : '+str(lugar.edificio)+' --- Escalera: '+str(lugar.escalera)+' --- Departamento: '+str(lugar.departamento)+' ---  Piso: '+str(lugar.piso)+'<br><hr>'
         titulo6='Condiciones Climaticas del lugar <br><hr>'+'<dd>'+str(titempo)+'</dd><br><hr>'
         titulo7='Elementos del Hecho <br><hr>'+str(elementos)+'</dd><br><hr>'
         text_content=titulo+tresto+titulo1+titulo2+titulo3+titulo4+titulo5+titulo6+titulo7
 
-        if request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
+        if request.user.userprofile.depe.descripcion != 'INVESTIGACIONES':
 
             informa=datos.autoridades.values_list('email',flat=True)
             #agregar email 2jefeacei para que reciba los preventivos
@@ -6436,14 +6411,14 @@ def informe(request,idhec,idprev,aforo):
                 preventivo.reenviado = True
                 preventivo.save()
                 return HttpResponseRedirect(reverse('reenvio'))
-        except KeyError:
-            pass
+        except Exception as e:
+            print e
 
-        return render_to_response('./informado.html', info, context_instance=RequestContext(request))
+        return render(request,'./informado.html', info)
 
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["policia","investigaciones","radio"])
 def elementos(request,idhecho):
     state= request.session.get('state')
@@ -6456,9 +6431,9 @@ def elementos(request,idhecho):
     errors = []
     notienePer=False
 
-    if  Hechos.objects.get(id=Preventivos.objects.get(id=hecho.preventivo_id).hecho.values('id')).involu.all():
+    if  Hechos.objects.get(id=Preventivos.objects.get(id=hecho.preventivo_id).hecho.id).involu.all():
 
-                datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=hecho.preventivo_id).hecho.values('id')).involu.all()
+                datosinvo=Hechos.objects.get(id=Preventivos.objects.get(id=hecho.preventivo_id).hecho.id).involu.all()
 
                 notienePer= True
     if not notienePer:
@@ -6470,7 +6445,7 @@ def elementos(request,idhecho):
             elementosin=Elementos.objects.filter(id=request.POST.get('dele'))
 
             if elementosin:
-                if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0 or request.user.get_profile().depe.descripcion.find('RADIO')>=0:
+                if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion.find('INVESTIGACIONES')>=0 or request.user.userprofile.depe.descripcion.find('RADIO')>=0:
                         obs="elemento borrado por usuario : "+request.user.username
 
                         Elementos.objects.filter(id = request.POST.get('dele')).update(borrado='S',observaciones=obs)
@@ -6645,11 +6620,11 @@ def elementos(request,idhecho):
             'formcat':formcat,
             'formumed':formumed,
     }
-    return render_to_response('./objects.html',values,context_instance=RequestContext(request))
+    return render(request,'./objects.html',values)
 
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["policia","investigaciones","radio"])
 def elemento(request,idhecho,elemento):
     state= request.session.get('state')
@@ -6712,7 +6687,7 @@ def elemento(request,idhecho,elemento):
             'lista':lista,
             'elemento':elementox,
     }
-    return render_to_response('./objects.html',values,context_instance=RequestContext(request))
+    return render(request,'./objects.html',values)
 
 @login_required
 def get_categories(request,rubro):
@@ -6720,7 +6695,7 @@ def get_categories(request,rubro):
                 categorias = RefCategory.objects.filter(rubro= rubro)
                 data = serializers.serialize("json", categorias)
 
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
 
 @login_required
 @group_required(["policia","investigaciones","radio","visita","judiciales"])
@@ -6734,8 +6709,8 @@ def seemaps(request):
     injusticia=''
     haydatos=False
     refdelitosdes=[]
-    depe=request.user.get_profile().depe_id
-    ureg=request.user.get_profile().ureg_id
+    depe=request.user.userprofile.depe_id
+    ureg=request.user.userprofile.ureg_id
     preventivo=Dependencias.objects.get(id=depe)
     depes=depe
     ureg=ureg
@@ -6954,7 +6929,7 @@ def seemaps(request):
 
 
     values={'buscar':buscar,'buscarciu':buscarciu,'ayerfue':ayerfue,'hoyes':hoyes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,'depes':depes,'ureg':ureg,'refdelitosdes':refdelitosdes,}
-    return render_to_response('./mapsanality.html',values,context_instance=RequestContext(request))
+    return render(request,'./mapsanality.html',values)
 
 #definicion para ver personas involuvradas en hechos
 @login_required
@@ -6991,7 +6966,7 @@ def verperin(request):
 
 
     info={'errors': errors,'state':state,'destino': destino,'mostrar':mostrar,'filtro':filtro,'todos':todos,'idhecho':idhecho,}
-    return render_to_response('./peoplesin.html',info,context_instance=RequestContext(request))
+    return render(request,'./peoplesin.html',info)
 
 @login_required
 @group_required(["policia","investigaciones","radio"])
@@ -7082,7 +7057,7 @@ def verpersin(request,idper):
     else:
          errors.append("La persona seleccionada no registra datos que los involucre en algun Hecho")
          info={'errors': errors,'state':state,'destino': destino,'mostrar':mostrar,'filtro':filtro,'todos':todos,}
-    return render_to_response('./peoplesin.html',info,context_instance=RequestContext(request))
+    return render(request,'./peoplesin.html',info)
 
 #definicion para ver elementos involuvrados en hechos
 @login_required
@@ -7158,7 +7133,7 @@ def verobjin(request):
          autoridades= datos.autoridades.values_list('descripcion',flat=True)
 
     info={'idprev':idprev,'todosa':todosa,'mostrarsi':mostrarsi,'texto':texto,'filtro':filtro,'alldata':alldata,'errors': errors,'state':state,'destino': destino,'mostrar':mostrar,'filtro':filtro,'todos':todos,'idhecho':idhecho,'form':form,}
-    return render_to_response('./objectsin.html',info,context_instance=RequestContext(request))
+    return render(request,'./objectsin.html',info)
 
 #definicion de los reposrtes estadisticos
 @login_required
@@ -7173,8 +7148,8 @@ def repestadis(request):
     injusticia=''
     haydatos=False
     refdelitosdes=[]
-    depe=request.user.get_profile().depe_id
-    ureg=request.user.get_profile().ureg_id
+    depe=request.user.userprofile.depe_id
+    ureg=request.user.userprofile.ureg_id
     preventivo=Dependencias.objects.get(id=depe)
     depes=depe
     ureg=ureg
@@ -7225,7 +7200,7 @@ def repestadis(request):
 
 
     values={'tiposdelitos':tiposdelitos,'anios':anios,'month_choices':months_choices,'ayerfue':ayerfue,'hoyes':hoyes,'destino': destino,'state':state,'form':form,'preventivo':preventivo,'haydatos':haydatos,'preven':preven,'depes':depes,'ureg':ureg,'refdelitosdes':refdelitosdes,}
-    return render_to_response('./reportes.html',values,context_instance=RequestContext(request))
+    return render(request,'./reportes.html',values)
 
 #definicion de los reposrtes estadisticos
 @login_required
@@ -8330,9 +8305,9 @@ def repforages(request):
                  indice+=1
          fila += 1
 
-         # se crea un objeto httpresponse y se pasa como parámetro el mimetype
+         # se crea un objeto httpresponse y se pasa como parámetro el content_type
          # diciendo que es excel
-        response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+        response = HttpResponse(content_type="application/ms-excel")  # HttpResponse viene del modulo django.http
         nombre_archivo = "persoinvo.xlsx"
         contenido = "attachment; filename={0}".format(nombre_archivo)
         response["Content-Disposition"] = contenido
@@ -8396,9 +8371,9 @@ def repforages(request):
          fila1 += 1
 
 
-         # se crea un objeto httpresponse y se pasa como parámetro el mimetype
+         # se crea un objeto httpresponse y se pasa como parámetro el content_type
          # diciendo que es excel
-        response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+        response = HttpResponse(content_type="application/ms-excel")  # HttpResponse viene del modulo django.http
         nombre_archivo = "persinvhom.xlsx"
         contenido = "attachment; filename={0}".format(nombre_archivo)
         response["Content-Disposition"] = contenido
@@ -8462,9 +8437,9 @@ def repforages(request):
          fila1 += 1
 
 
-         # se crea un objeto httpresponse y se pasa como parámetro el mimetype
+         # se crea un objeto httpresponse y se pasa como parámetro el content_type
          # diciendo que es excel
-        response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+        response = HttpResponse(content_type="application/ms-excel")  # HttpResponse viene del modulo django.http
         nombre_archivo = "persinvrobos.xlsx"
         contenido = "attachment; filename={0}".format(nombre_archivo)
         response["Content-Disposition"] = contenido
@@ -8493,7 +8468,7 @@ def repforages(request):
         meses[i]=calendar.month_name[i]
 
     values={'reprobosexo':reprobosexo,'rob':rob,'dada':dada,'rephomisexo':rephomisexo,'anios':anios,'meses':meses,'fechadesde':fechadesde,'fechahasta':fechahasta,'dato':dato,'ciudad':ciudad,'depes':depes,'ureg':ureg,'destino': destino,'state':state,'form':form,'reporte':reporte,'dictms':dictms,'matriz':matriz,'matrix':matrix,'lugar':lugar,'valores':valores,'arreglo':arreglo,}
-    return render_to_response('./repoestadis.html',values,context_instance=RequestContext(request))
+    return render(request,'./repoestadis.html',values)
 
 #definicion de los reposrtes estadisticos
 @login_required
@@ -8905,9 +8880,9 @@ def rephechos(request):
 
 
 
-         # se crea un objeto httpresponse y se pasa como parámetro el mimetype
+         # se crea un objeto httpresponse y se pasa como parámetro el content_type
          # diciendo que es excel
-        response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+        response = HttpResponse(content_type="application/ms-excel")  # HttpResponse viene del modulo django.http
         nombre_archivo = "canthechos.xlsx"
         contenido = "attachment; filename={0}".format(nombre_archivo)
         response["Content-Disposition"] = contenido
@@ -8936,7 +8911,7 @@ def rephechos(request):
         meses[i]=calendar.month_name[i]
 
     values={'fechadesde':fechadesde,'fechahasta':fechahasta,'anios':anios,'meses':meses,'delitos':delitos,'dictdp':dictdp,'dictip':dictip,'dictoj':dictoj,'dictot':dictot,'ciudad':ciudad,'ureg':ureg,'depes':depes,'destino': destino,'state':state,'form':form,'matriz':tothechos,'rephec':rephec,'lugar':lugar,'rangot':rangot,}
-    return render_to_response('./rephechos.html',values,context_instance=RequestContext(request))
+    return render(request,'./rephechos.html',values)
 
 #homicidios segun tipo de lugar
 #definicion de los reposrtes estadisticos
@@ -9424,9 +9399,9 @@ def killings(request):
                  celda.value = value
             filaa1+=1
 
-         # se crea un objeto httpresponse y se pasa como parámetro el mimetype
+         # se crea un objeto httpresponse y se pasa como parámetro el content_type
          # diciendo que es excel
-        response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+        response = HttpResponse(content_type="application/ms-excel")  # HttpResponse viene del modulo django.http
         nombre_archivo = "tothechos.xlsx"
         contenido = "attachment; filename={0}".format(nombre_archivo)
         response["Content-Disposition"] = contenido
@@ -9458,7 +9433,7 @@ def killings(request):
     'delitos':delitos,'dictch':dictch,'dictvic':dictvic,'dictimp':dictimp,'dictot':dictot,'dictar':dictar,
     'ciudad':ciudad,'ureg':ureg,'depes':depes,'destino': destino,'state':state,'dictlt':dictlt,
     'form':form,'matriz':tothechos,'canhec':canhec,'lugar':lugar,'rangot':rangot,}
-    return render_to_response('./homicidios.html',values,context_instance=RequestContext(request))
+    return render(request,'./homicidios.html',values)
 
 #cantidad de automotores segun delitos
 @login_required
@@ -10142,9 +10117,9 @@ def repautos(request):
 
 
 
-         # se crea un objeto httpresponse y se pasa como parámetro el mimetype
+         # se crea un objeto httpresponse y se pasa como parámetro el content_type
          # diciendo que es excel
-        response = HttpResponse(mimetype="application/ms-excel")  # HttpResponse viene del modulo django.http
+        response = HttpResponse(content_type="application/ms-excel")  # HttpResponse viene del modulo django.http
         nombre_archivo = "cantcars.xlsx"
         contenido = "attachment; filename={0}".format(nombre_archivo)
         response["Content-Disposition"] = contenido
@@ -10173,7 +10148,7 @@ def repautos(request):
         meses[i]=calendar.month_name[i]
 
     values={'rangose':rangose,'rangod':rangod,'rangou':rangou,'rangoot':rangoot,'fechadesde':fechadesde,'fechahasta':fechahasta,'anios':anios,'meses':meses,'delitos':delitos,'dictse':dictse,'dictde':dictde,'dictut':dictut,'dictot':dictot,'ciudad':ciudad,'ureg':ureg,'depes':depes,'destino': destino,'state':state,'form':form,'matriz':tothechos,'rephec':rephec,'lugar':lugar,}
-    return render_to_response('./repautos.html',values,context_instance=RequestContext(request))
+    return render(request,'./repautos.html',values)
 
 
 def repetidos(rango):
@@ -10267,7 +10242,7 @@ def ampliacion(request,idprev):
 
     values={'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion,'depe':depe,}
 
-    return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))
+    return render(request,'./ampliaciones.html',values)
 
 @login_required
 @group_required(["policia","investigaciones","radio"])
@@ -10322,7 +10297,7 @@ def ver_ampliacion(request,idprev,idamp):
     ampliacion.fields['autoridades'].widget.attrs["onclick"] = False
     values={'depe':depe,'tienep':tienep,'personas':personas,'verpers':verpers,'finaliza':finaliza,'tiene':tiene,'veriele':veriele,'verelemento':verelemento,'tieneelemento':tieneelemento,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion,'tienepersonas':tienepersonas,}
 
-    return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))
+    return render(request,'./ampliaciones.html',values)
 
 @login_required
 @group_required(["policia","investigaciones","radio"])
@@ -10360,7 +10335,7 @@ def amplia_ele(request,idprev,idamp):
             elementosin=Elementos.objects.filter(id=request.POST.get('dele'))
 
             if elementosin:
-                if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0 or request.user.get_profile().depe.descripcion.find('RADIO')>=0:
+                if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion.find('INVESTIGACIONES')>=0 or request.user.userprofile.depe.descripcion.find('RADIO')>=0:
                         obs="elemento borrado por usuario : "+request.user.username
 
                         Elementos.objects.filter(id = request.POST.get('dele')).update(borrado='S',observaciones=obs)
@@ -10506,7 +10481,7 @@ def amplia_ele(request,idprev,idamp):
             'formcat':formcat,
             'formumed':formumed,}
 
-    return render_to_response('./objampli.html',values,context_instance=RequestContext(request))
+    return render(request,'./objampli.html',values)
 
 
 @group_required(["policia","investigaciones","radio"])
@@ -10713,10 +10688,10 @@ def reporampli(request,idprev,idamp):
                      'unidadreg':unidadreg,'dependencia':dependencia,'unireg':unireg,'amplia':amplia,
                      'destino': destino,'form1':form1,'tamaño':5,}
 
-            #return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
+            #return render(request,'./preventivoi.html', info, context_instance=RequestContext(request))
 
 
-            return render_to_response('./ampliacioni.html', info, context_instance=RequestContext(request))
+            return render(request,'./ampliacioni.html', info)
 
 
 
@@ -10748,9 +10723,9 @@ def reporampli(request,idprev,idamp):
                 'errors': errors,'unidadreg':unidadreg,'dependencia':dependencia,'tienepersonas':tienepersonas,
                 'state':state,
                 'destino': destino,}
-    #return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
+    #return render(request,'./preventivoi.html', info, context_instance=RequestContext(request))
 
-    return render_to_response('./preventivoi.html', info, context_instance=RequestContext(request))
+    return render(request,'./preventivoi.html', info)
 
 
 @login_required
@@ -10775,7 +10750,7 @@ def verampli(request):
          fecha_cargah=request.POST.get('fecha_cargah')
          ureg=request.POST.get('ureg')
          depe=request.POST.get('depe')
-         unidadregi=Dependencias.objects.get(descripcion__contains=request.user.get_profile().depe.descripcion)
+         unidadregi=Dependencias.objects.get(descripcion__contains=request.user.userprofile.depe.descripcion)
          jurisdi=unidadregi.ciudad.descripcion
 
          if titulo and not ureg and not depe:
@@ -10973,11 +10948,11 @@ def verampli(request):
     'titulo':titulo,'todos':todos,'total':total,'errors':errors,
     'state':state,'destino': destino,'form':form}
 
-    return render_to_response('./seeampli.html',info,context_instance=RequestContext(request))
+    return render(request,'./seeampli.html',info)
 
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["policia","investigaciones","radio"])
 def eleampli(request,idhecho,elemento,idamp):
     state= request.session.get('state')
@@ -11004,7 +10979,7 @@ def eleampli(request,idhecho,elemento,idamp):
             elementosin=Elementos.objects.filter(id=request.POST.get('dele'))
 
             if elementosin:
-                if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion.find('INVESTIGACIONES')>=0  or request.user.get_profile().depe.descripcion.find('RADIO')>=0:
+                if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion.find('INVESTIGACIONES')>=0  or request.user.userprofile.depe.descripcion.find('RADIO')>=0:
                         obs="elemento borrado por usuario : "+request.user.username
 
                         Elementos.objects.filter(id = request.POST.get('dele')).update(borrado='S',observaciones=obs)
@@ -11188,7 +11163,7 @@ def eleampli(request,idhecho,elemento,idamp):
             'lista':lista,
             'elemento':elementox,
     }
-    return render_to_response('./objampli.html',values,context_instance=RequestContext(request))
+    return render(request,'./objampli.html',values)
 
 
 @login_required
@@ -11198,7 +11173,7 @@ def helpassword(request):
 
     values={'destino': destino,'state':state,}
 
-    return render_to_response('./helpassw.html',values,context_instance=RequestContext(request))
+    return render(request,'./helpassw.html',values)
 
 
 @login_required
@@ -11208,7 +11183,7 @@ def amplia_pers(request,idprev,idamp):
     state= request.session.get('state')
     destino= request.session.get('destino')
     preventivo = Preventivos.objects.get(id=idprev)
-    involucrados = preventivo.hecho.all()[0].involu.all().order_by('roles')
+    involucrados = preventivo.hecho.involu.all().order_by('roles')
     enprev = involucrados.filter(cargado_prev=True,ampliacion__isnull=True)
     modif_amp = involucrados.filter(cargado_prev=True,ampliacion__isnull=False)
     enamp = involucrados.filter(cargado_prev=False)
@@ -11316,7 +11291,7 @@ def amplia_pers(request,idprev,idamp):
                     'filtro'        :      filtro
                     }
 
-    return render_to_response('./amplipers.html',values,context_instance=RequestContext(request))
+    return render(request,'./amplipers.html',values)
 
 @login_required
 @group_required(["policia","investigaciones","radio"])
@@ -11325,7 +11300,7 @@ def amplia_per(request,idprev,idamp,idper):
     state= request.session.get('state')
     destino= request.session.get('destino')
     preventivo = Preventivos.objects.get(id=idprev)
-    involucrados = preventivo.hecho.all()[0].involu.all().order_by('roles')
+    involucrados = preventivo.hecho.involu.all().order_by('roles')
     enprev = involucrados.filter(cargado_prev=True,ampliacion__isnull=True)
     modif_amp = involucrados.filter(cargado_prev=True,ampliacion__isnull=False)
     enamp = involucrados.filter(cargado_prev=False)
@@ -11333,7 +11308,7 @@ def amplia_per(request,idprev,idamp,idper):
     dom = DomiciliosForm()
     formr = PersInvolucradasForm()
     formpa=PadresForm()
-    hechos = preventivo.hecho.all()[0]
+    hechos = preventivo.hecho
     errors=[]
     siexistepoli=""
     estadetes=True
@@ -11385,7 +11360,7 @@ def amplia_per(request,idprev,idamp,idper):
                     'errors'        : errors,
                     'idper'         : idper
                     }
-                    return render_to_response('./amplipers.html',valuesi,context_instance=RequestContext(request))
+                    return render(request,'./amplipers.html',valuesi)
 
       if idper!='0':
          perso=Personas.objects.get(id=idper)
@@ -11648,7 +11623,7 @@ def amplia_per(request,idprev,idamp,idper):
                     }
 
 
-    return render_to_response('./amplipers.html',values,context_instance=RequestContext(request))
+    return render(request,'./amplipers.html',values)
 
 @login_required
 @group_required(["policia","investigaciones","radio"])
@@ -11676,7 +11651,7 @@ def finalizar(request,idprev,idamp):
 
     values={'finaliza':finaliza,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion}
 
-    return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))
+    return render(request,'./ampliaciones.html',values)
 
 @login_required
 @group_required(["policia","investigaciones","radio"])
@@ -11738,7 +11713,7 @@ def enviar(request,idprev,idamp):
                          if dad:
 
                                 for la in Personas.objects.get(id=p.persona.id).padre.all():
-                                    #print p.roles,p,p.persona.nro_doc,l.calle,l.altura,la.padre_apellidos,la.padre_nombres
+                                    
 
 
                                     roles='<u>'+str(p.roles)+'</u>'+' : '
@@ -11914,10 +11889,10 @@ def enviar(request,idprev,idamp):
                  titulo4="Sin Elementos"+'<br><br><hr>'
             text_content=titulo2+titulo3+titulo4+titulo+tresto+titulo1
 
-            if request.user.get_profile().depe.descripcion != 'INVESTIGACIONES':
+            if request.user.userprofile.depe.descripcion != 'INVESTIGACIONES':
                 informa=amplia.autoridades.values_list('email',flat=True)
                 #agregar email 2jefeacei para que reciba los preventivos
-                #print informa,autoridad
+                
                 direcciones=[]
                 indice=0
                 nstring=''
@@ -11964,7 +11939,7 @@ def enviar(request,idprev,idamp):
 
     ampliacion.fields['autoridades'].initial=autoridad
     values={'finaliza':finaliza,'id':idamp,'destino': destino,'state':state,'preventivo':preventivo,'ampliaciones':ampliaciones,'ampliacion':ampliacion}
-    return render_to_response('./ampliaciones.html',values,context_instance=RequestContext(request))
+    return render(request,'./ampliaciones.html',values)
 
 
 
@@ -11972,7 +11947,7 @@ def verificardni(request,tdni,dni):
     data = request.POST
     persona = Personas.objects.filter(nro_doc = dni,tipo_doc=tdni)
     data = serializers.serialize("json", persona)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 def envioemail(envio,nstring,subject,text_content,from_email,request):
     msg = EmailMultiAlternatives(subject,text_content,from_email, nstring)
@@ -12056,7 +12031,7 @@ def enviadop(request):
                        modus=modus+unicode(str(i.refmodoshecho),'UTF-8')+'|'
 
 
-                #print hechodeli
+                
                 #Datos de las Personas involucradas en el hecho
                 involuscra=[]
                 datosper=""
@@ -12065,7 +12040,7 @@ def enviadop(request):
                 datosgral=""
                 eleminvo=[]
                 #Datos del lugar del hecho
-                lugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]
+                lugar = Hechos.objects.get(id=idhec).lugar_hecho
                 laticiudad = RefCiudades.objects.get(id=preventivo.dependencia.ciudad_id)
                 localidad=laticiudad.descripcion
                 lati=laticiudad.lat
@@ -12119,7 +12094,7 @@ def enviadop(request):
 
                     if criasdepe in depen:
                         idComisaria=crias.idorganismo
-                #print callelugar,barriolugar,idComisaria,idBarrioHecho,idCalleHecho
+                
                 cantper=0
                 cantpersonas=''
                 detenidos=0
@@ -12297,7 +12272,7 @@ def enviadop(request):
                         dictpersona.update(domi)
                         dictpersona.update(padys)
                     cantper=cantper+1
-                    #print dictpersona
+                    
                     personasxml=dicttoxml(dictpersona,attr_type=False,root='Personas')
                     xmlsper='<Persona>'+personasxml+'</Persona>'
                     cantpersonas=cantpersonas+xmlsper
@@ -12511,7 +12486,7 @@ def enviadop(request):
                 request.session['reason'] = refer
                 if ref.status==200:
                    data = ref.read()
-                   print data,ref.status
+                   
                    #aqui actualizar el campo sendwebservice en preventivo a 1
                    user = User.objects.get(username='23140893')
                    prev = Preventivos.objects.get(id=hay.id)
@@ -12548,7 +12523,7 @@ def enviadop(request):
     lista= Preventivos.objects.filter(sendwebservice=0) #EnvioPreJudicial.objects.all()
     fecha_carga=datetime.datetime.now()
     values={'errors':errors,'destino': destino,'state':state,'fecha_carga':fecha_carga,'lista':lista,'totenviados':totenviados,'reason':reason}
-    return render_to_response('./enviowebservice.html',values,context_instance=RequestContext(request))
+    return render(request,'./enviowebservice.html',values)
 
 
 @login_required
@@ -12562,7 +12537,7 @@ def enviarp(request,idprev):
     if enviado and len(sin_enviar) >= 1:
         marcar_enviados(sin_enviar)
         return HttpResponseRedirect('/spid/inicio/')
-    print 'entro a enviarp'
+    
     #Datos del Hecho delicitivo atraves del nro de preventivo
     if Hechos.objects.filter(preventivo=preventivo.id):                         # si el preventivo tiene un hecho cargado
         hecho = Hechos.objects.get(preventivo=preventivo.id)                    # obtengo el hecho
@@ -12603,7 +12578,7 @@ def enviarp(request,idprev):
         datosgral=""                                                            # creo una cadena datosgral
         eleminvo=[]                                                             # creo un arreglo eleminvo
         #Datos del lugar del hecho
-        lugar = Hechos.objects.get(id=idhec).lugar_hecho.all()[0]               # obtengo el lugar del hecho
+        lugar = Hechos.objects.get(id=idhec).lugar_hecho                           # obtengo el lugar del hecho
         laticiudad = RefCiudades.objects.get(id=preventivo.dependencia.ciudad_id) # obtengo la ciudad de la dependencia donde se genero el preventivo
         localidad=laticiudad.descripcion                                        # Obtengo el nombre de la ciudad
         lati=laticiudad.lat                                                     # obtengo la latitud de la ciudad
@@ -12655,7 +12630,7 @@ def enviarp(request,idprev):
 
             if criasdepe in depen:                                              # si la comisaria y la dependencia son iguales
                 idComisaria=crias.idorganismo                                   # obtengo el numero de organismo asignado por el poder judicial
-        #print callelugar,barriolugar,idComisaria,idBarrioHecho,idCalleHecho
+        
         cantper=0                                                               # cantidad de personas a cero
         cantpersonas=''                                                         # cantidad de personas vacio
         detenidos=0                                                             # detenidos a cero
@@ -12697,7 +12672,7 @@ def enviarp(request,idprev):
                pf=0                                                             # sino la dejo en cero
                if p.razon_social!=None:                                         # y si la razon social tiene dato
                   perjuridica=str(p.razon_social)                               # obtengo el nombre de la persona juridica
-               print p.cuit_id
+               
                if RefTipoDocumento.objects.get(id=p.cuit_id)!='Null':           # si tiene cargado el cuit
                   perjuridica=perjuridica+'-'+str(RefTipoDocumento.objects.get(id=p.cuit_id))   # al nombre de la persona juridica le agrego su cuit
                if p.nrocuit!=0:                                                 # si el numero de cuit esta cargado
@@ -13043,8 +13018,9 @@ def enviarp(request,idprev):
 
 
             denuncia=html2text.html2text(descripcion,True)                  # obtengo la descripcion del hecho transformada en texto plano
-            denuncia=denuncia.encode('utf-8', 'xmlcharrefreplace')          # lo codifico en utf-8
-            denuncia=strip_tags(denuncia)                                   # le quito los tags html
+            denuncia=denuncia.encode('utf8', 'xmlcharrefreplace')          # lo codifico en utf-8
+            
+            #denuncia=strip_tags(denuncia)                                   # le quito los tags html
             denuncia=denuncia.replace('&nbsp;','')                          # quito los espacios
             denuncia=denuncia.replace('"','')                               # reemplazo las comillas dobles por vacio
             motivo=str(value.motivo)                                        # obtengo el motivo de la denuncia
@@ -13201,7 +13177,7 @@ def enviarp(request,idprev):
         ref=webservice.getresponse()
         refer=str(ref.status)+'-'+str(ref.reason)
         valorweb=0
-        print xmls
+        
         if ref.status==200:
            data = ref.read()
            #aqui actualizar el campo sendwebservice en preventivo a 1
@@ -13691,7 +13667,7 @@ def enviadoa(request):
     lista=EnvioAmpJudicial.objects.all()
     fecha_carga=datetime.datetime.now()
     values={'errors':errors,'destino': destino,'state':state,'fecha_carga':fecha_carga,'lista':lista,'totenviados':totenviados,}
-    return render_to_response('./enviowebamp.html',values,context_instance=RequestContext(request))
+    return render(request,'./enviowebamp.html',values)
 
 @login_required
 @permission_required('user.is_staff')
@@ -13766,10 +13742,10 @@ def violencia(request,idhec):
     'preventor':preventor,'idprev':idprev,'delito':delito,'formvif':formvif,
     'autoridades':autoridades,'errors': errors, 'dependencia':dependencia,'unidadreg':unidadreg,
     'state':state,'delitos':delitos,'destino': destino,'idhec':idhec}
-    return render_to_response('./formvif.html',info,context_instance=RequestContext(request))
+    return render(request,'./formvif.html',info)
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 @group_required(["administrador","policia","investigaciones","radio"])
 def persinvovif(request,idhec,idper):
     state= request.session.get('state')
@@ -14016,7 +13992,7 @@ def persinvovif(request,idhec,idper):
             if persoinvoluc:
                 persoinvolu=PersInvolucradas.objects.get(id=request.POST.get('dele'))
                 if 'si' in persoinvolu.detenido:
-                    if request.user.get_profile().depe==depe or request.user.get_profile().depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.get_profile().depe.descripcion:
+                    if request.user.userprofile.depe==depe or request.user.userprofile.depe.descripcion == 'INVESTIGACIONES' or 'RADIO' in request.user.userprofile.depe.descripcion:
                         Detenidos.objects.filter(persona_id = persoinvolu.persona_id).update(borrado='S',observaciones=request.user.username)
                         PersInvolucradas.objects.get(id=request.POST.get('dele')).delete()
                     else:
@@ -14268,19 +14244,19 @@ def persinvovif(request,idhec,idper):
     'preventor':preventor,'idprev':idprev,'delito':delito,'formvif':formvif,'formr':formr,'formcalles':formcalles,'formbarrios':formbarrios,
     'autoridades':autoridades,'errors': errors, 'dependencia':dependencia,'unidadreg':unidadreg,'listap':listap,'todos':todos,'datosinvo':datosinvo,
     'state':state,'delitos':delitos,'destino': destino,'idhec':idhec}
-    return render_to_response('./formpersovif.html',info,context_instance=RequestContext(request))
+    return render(request,'./formpersovif.html',info)
 
 @login_required
 def obtener_no_enviados(request):
-    depe = request.user.get_profile().depe
+    depe = request.user.userprofile.depe
     no_enviados = EnvioPreJudicial.objects.filter(enviado = 0,dependencia=depe)
     data = serializers.serialize("json",no_enviados)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 
 @login_required
 def obtener_cantidad_no_enviados(request):
-    depe = request.user.get_profile().depe
+    depe = request.user.userprofile.depe
     return  Preventivos.objects.filter(fecha_autorizacion__isnull=False, fecha_envio__isnull=True).count()
 
 @login_required
@@ -14296,14 +14272,14 @@ def pendientes_envio(request):
     state= request.session.get('state')
     destino= request.session.get('destino')
     user = request.user
-    depe = user.get_profile().depe
+    depe = user.userprofile.depe
     pendientes = Preventivos.objects.filter(fecha_autorizacion__isnull=False, fecha_envio__isnull=True)
     info = {
         'state'         : state,
         'destino'       : destino,
         'pendientes'    : pendientes,
     }
-    return render_to_response('./pendientes_envio.html',info,context_instance=RequestContext(request))
+    return render(request,'./pendientes_envio.html',info)
 
 def verificar_enviado(prev):
     sin_enviar = []
@@ -14346,14 +14322,14 @@ def pendientes_autorizacion(request):
         'destino'       : destino,
         'pendientes'    :pendientes,
     }
-    return render_to_response('./pendientes_autorizacion.html',info,context_instance=RequestContext(request))
+    return render(request,'./pendientes_autorizacion.html',info)
 
 def enviarp2(idprev):
     preventivo      = Preventivos.objects.get(id=idprev)
     hecho           = preventivo.hechos.all()[0]
     delitos         = hechos.hechos.all()
     personas        = hecho.involu.all()
-    lugar           = hecho.lugar_hecho.all()[0]
+    lugar           = hecho.lugar_hecho 
     elementos       = hecho.eleinvolu.all()
 
     pass
@@ -14388,7 +14364,7 @@ def buscar_tipos_doc(tipo_doc):
 def actualizar_ultimo_ingreso():
     usuarios = User.objects.all()
     for user in usuarios:
-        profile = user.get_profile()
+        profile = user.userprofile
         profile.ultimo_ingreso = user.last_login
         profile.save()
 
@@ -14421,7 +14397,7 @@ def cambiar_password(request):
                 cambio.usuario_que_cambia           = user.username
                 cambio.usuario                      = usuario.username
                 cambio.fecha_cambio                 = datetime.datetime.now()
-                profile_usuario                     = usuario.get_profile()
+                profile_usuario                     = usuario.userprofile
                 profile_usuario.last_login          = True
                 profile_usuario.solicitud_cambio    = True
                 profile_usuario.fecha_solicitud     = datetime.datetime.now()
@@ -14438,7 +14414,7 @@ def cambiar_password(request):
                 info['error'] = 'Por favor revise haber ingresado todos los datos del formulario muchas gracias.'
         else:
             info['error'] = 'Por favor revise haber ingresado todos los datos del formulario muchas gracias.'
-    return render_to_response('./cambiar_password.html',info,context_instance = RequestContext(request))
+    return render(request,'./cambiar_password.html',info)
 
 
 @login_required
@@ -14448,7 +14424,7 @@ def preventivos_autorizados_n_dias(request,dependencia):
     initial_date = actual_date - timedelta(days=15)
     preventivos = Preventivos.objects.filter(fecha_autorizacion__range = (initial_date,actual_date),dependencia = dependencia,reenviado=False)
     data = serializers.serialize("json", preventivos)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 @login_required
 def reenvio(request):
@@ -14460,8 +14436,8 @@ def reenvio(request):
     }
     usuario = request.user
     unidades=False
-    if '-' in usuario.get_profile().depe.descripcion:
-        ur = usuario.get_profile().depe.descripcion.split('RADIO CABECERA-')[1]
+    if '-' in usuario.userprofile.depe.descripcion:
+        ur = usuario.userprofile.depe.descripcion.split('RADIO CABECERA-')[1]
         if ur == 'ESQ':
             ur = UnidadesRegionales.objects.get(descripcion__startswith = 'ESQ')
         elif ur == 'PM':
@@ -14494,17 +14470,17 @@ def reenvio(request):
     except KeyError as e:
         print e
 
-    return render_to_response('./reenvio.html',info,context_instance=RequestContext(request))
+    return render(request,'./reenvio.html',info)
 
 @login_required
 def reenviar(request,idprev):
-    hecho = Preventivos.objects.get(id=idprev).hecho.all()[0].id
+    hecho = Preventivos.objects.get(id=idprev).hecho.id
     return HttpResponseRedirect(reverse('informa',args=[hecho,idprev,0]))
 
 def obtener_preventivo(request,depe,numero,anio):
     preventivo = Preventivos.objects.get(dependencia=depe,nro=numero,anio=anio)
     data = serializers.serialize("json",[preventivo,])
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 @login_required
 def autorizados_envio(request):
@@ -14515,13 +14491,13 @@ def autorizados_envio(request):
         'destino':destino,
     }
     usuario = request.user
-    dependencias = Dependencias.objects.filter(ciudad = usuario.get_profile().depe.ciudad )
+    dependencias = Dependencias.objects.filter(ciudad = usuario.userprofile.depe.ciudad )
     preventivos = Preventivos.objects.filter(dependencia__in=dependencias,fecha_autorizacion__isnull=False,fecha_envio__isnull = True).order_by('-id')           #para esas dependencias obtiene los preven
     depes = preventivos.values('dependencia').distinct()
     dependencias = dependencias.filter(id__in=depes)
     info['preventivos'] = preventivos
     info['dependencias'] = dependencias
-    return render_to_response('./enviar.html',info,context_instance = RequestContext(request))
+    return render(request,'./enviar.html',info)
 
 @login_required
 def envio(request,idprev):
@@ -14533,10 +14509,10 @@ def envio(request,idprev):
     }
     usuario = request.user
     info['preventivo'] = Preventivos.objects.get(id = idprev)
-    info['hecho'] = info['preventivo'].hecho.all()[0]
+    info['hecho'] = info['preventivo'].hecho
     info['autoridades'] = info['preventivo'].autoridades.all()
 
-    return render_to_response('./verificar_envio.html',info,context_instance=RequestContext(request))
+    return render(request,'./verificar_envio.html',info)
 
 def eliminarduplicados(arreglo):
     resultado = []
@@ -14599,8 +14575,8 @@ def verificar_persona(request,dni):
                     raise Exception('sin datos')
             obtenerReferencias(personas)
             data = json.dumps(personas, default=date_handler)
-            mimetype = 'application/json'
-            return HttpResponse(data,mimetype)
+            content_type = 'application/json'
+            return HttpResponse(data,content_type)
         except:
             try:
                 cursorRh = connections['rrhh'].cursor()
@@ -14639,8 +14615,8 @@ def verificar_persona(request,dni):
 
                 obtenerReferencias(personas)
                 data = json.dumps(personas, default=date_handler)
-                mimetype = 'application/json'
-                return HttpResponse(data,mimetype)
+                content_type = 'application/json'
+                return HttpResponse(data,content_type)
 
             except Exception as e:
                 msg = 'La busqueda no arrojó ninugn resultado, deberá cargar los datos manualmente'
@@ -14667,15 +14643,15 @@ def ciudades_ajax(request):
         data = json.dumps(results)
     else:
         data = 'fail'
-    mimetype = 'application/json'
-    return HttpResponse(data,mimetype)
+    content_type = 'application/json'
+    return HttpResponse(data,content_type)
 
 @login_required
 def ciudades_ajax_provincia(request,id):
     if request.is_ajax():
         ciudades = RefCiudades.objects.filter(provincia = id)
         data = serializers.serialize("json",ciudades)
-        return HttpResponse(data,mimetype='application/json')
+        return HttpResponse(data,content_type='application/json')
     return HttpResponseBadRequest()
 
 
@@ -14695,8 +14671,8 @@ def paises_ajax(request):
         data = json.dumps(results)
     else:
         data = 'fail'
-    mimetype = 'application/json'
-    return HttpResponse(data,mimetype)
+    content_type = 'application/json'
+    return HttpResponse(data,content_type)
 
 
 @login_required
@@ -14714,8 +14690,8 @@ def dependencias_ajax(request):
         data = json.dumps(results)
     else:
         data = 'error'
-    mimetype = 'application/json'
-    return HttpResponse(data,mimetype)
+    content_type = 'application/json'
+    return HttpResponse(data,content_type)
 
 @login_required
 def estados_civiles(request):
@@ -14723,7 +14699,7 @@ def estados_civiles(request):
         data = request.POST
         estados = RefEstadosciv.objects.all()
         data = serializers.serialize("json", estados)
-        return HttpResponse(data, mimetype='application/json')
+        return HttpResponse(data, content_type='application/json')
     else:
         return HttpResponseBadRequest()
 
@@ -14742,8 +14718,8 @@ def jerarquias_ajax(request):
         data = json.dumps(results)
     else:
         data = 'error'
-    mimetype = 'application/json'
-    return HttpResponse(data,mimetype)
+    content_type = 'application/json'
+    return HttpResponse(data,content_type)
 
 
 @login_required
@@ -14761,8 +14737,8 @@ def usuarios_ajax(request):
         data = json.dumps(results)
     else:
         data = 'error'
-    mimetype = 'application/json'
-    return HttpResponse(data,mimetype)
+    content_type = 'application/json'
+    return HttpResponse(data,content_type)
 
 def date_handler(obj):
     """
@@ -14789,6 +14765,6 @@ def buscar_usuario(request,id):
     if request.is_ajax():
         usuario = User.objects.get(id=id)
         data = serializers.serialize("json", [usuario,])
-        return HttpResponse(data, mimetype='application/json')
+        return HttpResponse(data, content_type='application/json')
     else:
         return HttpResponseBadRequest("El usuario no existe.")
