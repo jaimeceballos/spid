@@ -1,7 +1,8 @@
 #encoding:utf-8
 from repar.models import *
 from repar.forms import *
-from django.template.context_processors import csrf
+from spid.forms import LoginForm
+from django.core.context_processors import csrf
 from django.template import Context, Template, RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, render_to_response,get_object_or_404
@@ -60,7 +61,7 @@ def iniciar(request):
     name=''
     username = password = ''
     formd = []
-    return render(request, 'login.html', {'formd':formd,'state':state})
+    return render(request, './loginRepar.html', {'formd':formd,'state':state})
 
 @login_required
 def inicial(request):
@@ -146,6 +147,8 @@ def loguser(request):
         else:
             return render(request, 'login.html', {'name':name,'form':form})
 
+
+
 def nologin(request):
     logout(request)
     try:
@@ -155,9 +158,15 @@ def nologin(request):
     except KeyError:
         pass
         state = "SE DESCONECTO DEL SISTEMA"
+<<<<<<< HEAD
 
     formd = []
     return render(request, 'login.html', {'formd':formd,'state':state})
+=======
+   
+    formd = []  
+    return render(request, 'loginRepar.html', {'formd':formd,'state':state})
+>>>>>>> 960a7a61ad8a60e8ac7dffcd5b1157bd15236bbb
 
 def passwordChange(request):
   formpass = CambiarPassForm(request.POST)
@@ -191,7 +200,7 @@ def passwordChange(request):
   #form = DependenciasForm()
   formd = []
   #print form,formd
-  return render(request, 'login.html', {'formd':formd,'form':form,'state':state,})
+  return render(request, 'loginRepar.html', {'formd':formd,'form':form,'state':state,})
   #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})
 
 def register(request):
