@@ -9,15 +9,15 @@ from django.contrib.auth.models import Group,Permission,User
 from django.contrib.admin.models import LogEntry
 from django.template.context_processors import csrf
 import smtplib
-import httplib,urllib,httplib2
-import urllib2
-import xmlrpclib
+import http.client,httplib2
+import urllib.request
+from xmlrpc import client
 from xml.dom.minidom import parseString
 import xml
 import json
 from dicttoxml import dicttoxml
 from httplib2 import Http
-from urllib import urlencode
+from urllib.parse import urlencode
 from base64 import b64encode
 import base64
 import dict2xml
@@ -29,7 +29,7 @@ from django.template import Context, Template, RequestContext
 from django.template.loader import get_template,render_to_string
 from openpyxl import Workbook
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
-from django.utils.encoding import smart_str, smart_unicode
+from django.utils.encoding import smart_bytes, smart_text
 import locale 
 locale.setlocale(locale.LC_ALL, ('es_AR', 'utf8'))
 from django.http import HttpResponse,HttpResponseRedirect, HttpResponse,Http404, HttpResponseBadRequest
@@ -47,7 +47,7 @@ from django.utils.safestring import mark_safe,SafeString
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required,permission_required
 from django.db import transaction,IntegrityError,connection
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 # set up the environment using the settings module
 #from django.core.management import setup_environ
 from django.conf import settings
@@ -63,7 +63,7 @@ from django.template import Context, loader
 from haystack.query import SearchQuerySet
 from django.db.models import Q
 from django.utils.translation import ugettext
-from wkhtmltopdf.views import PDFResponse, PDFTemplateView, PDFTemplateResponse
+#from wkhtmltopdf.views import PDFResponse, PDFTemplateView, PDFTemplateResponse
 from django.forms.utils import ErrorList
 from xml.sax import make_parser, SAXException
 from xml.sax.handler import feature_namespaces
@@ -156,7 +156,7 @@ def page_not_found(request):
     return render(request,'./error404.html',{'state':state, 'destino': destino})
 
 def server_error(request):
- return render(request, './500.html')
+ return render(request, '500.html')
 
 
 FORMS = [("nro", PrimerForm),
@@ -682,12 +682,12 @@ def obtener_datosfirst(request,idprev):
 
                           boton='si'
                 else:
-                    data = 0L
+                    data = 0
                     try:
                         data=Preventivos.objects.get(id=idprev).hecho.id
                     except:
-                        print 'no tiene hecho'
-
+                        print('no tiene hecho')
+        
                     if data>0:
                      if  Hechos.objects.get(id=data).involu.all():
 
@@ -1044,7 +1044,7 @@ def user_create_save(request):
                             actuante.save()
                         enviar_correo_usuario(usuario,password)
                     except Exception as e:
-                        print e
+                        print(e)
                         return HttpResponseBadRequest("No se pudo realizar la operacion solicitada.")
                 else:
                     msg = "El Email ingresado ya esta siendo utilizado. Por favor indique otro."
@@ -3582,7 +3582,7 @@ def personas(request):
                     idpoli=persona.ocupacion
                     refpoli=RefOcupacion.objects.get(descripcion=idpoli)
                     texto=refpoli.descripcion
-                except Exception, e:
+                except Exception as e:
                     refpoli = RefOcupacion.objects.get(descripcion='SIN DESCRIPCION')
 
 
@@ -3778,7 +3778,7 @@ def persona(request, idper):
                      idpoli=form.cleaned_data['ocupacion']
                      refpoli=RefOcupacion.objects.get(descripcion=idpoli)
                      texto=refpoli.descripcion
-                    except Exception, e:
+                    except Exception as e:
                      refpoli = RefOcupacion.objects.get(descripcion='SIN DESCRIPCION')
 
                     try:
@@ -5597,7 +5597,7 @@ def persinvo(request,idhec,idper):
 
     try:
         noposee = Personas.objects.get(id=idper).tipo_doc.descripcion
-    except Exception, e:
+    except Exception as e:
         noposee=""
 
     datosinvo=hechos.involu.all()
@@ -5971,7 +5971,7 @@ def lugar_hecho(request,idhecho,idprev):
                 ncalle,numero = street_name(form.cleaned_data['callen'])
                 try:
                     calle = RefCalles.objects.get(descripcion=ncalle.upper(),ciudad=preventivo.dependencia.ciudad.id)
-                except Exception, e:
+                except Exception as e:
                     calle=RefCalles()
                     calle.ciudad = RefCiudades.objects.get(id=preventivo.dependencia.ciudad_id)
                     calle.descripcion = ncalle
@@ -6412,7 +6412,7 @@ def informe(request,idhec,idprev,aforo):
                 preventivo.save()
                 return HttpResponseRedirect(reverse('reenvio'))
         except Exception as e:
-            print e
+            print( e)
 
         return render(request,'./informado.html', info)
 
@@ -14227,7 +14227,7 @@ def persinvovif(request,idhec,idper):
 
     try:
         noposee = Personas.objects.get(id=idper).tipo_doc.descripcion
-    except Exception, e:
+    except Exception as e:
         noposee=""
 
 
@@ -14468,7 +14468,7 @@ def reenvio(request):
             info['msg'] = request.session['msg']
             del request.session['msg']
     except KeyError as e:
-        print e
+        print( e)
 
     return render(request,'./reenvio.html',info)
 

@@ -2,7 +2,7 @@
 from repar.models import *
 from repar.forms import *
 from spid.forms import LoginForm
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.template import Context, Template, RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, render_to_response,get_object_or_404
@@ -23,7 +23,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.encoding import smart_text
 from django.contrib.auth import logout
 from io import BytesIO
-from django.utils.encoding import smart_str, smart_unicode
+from django.utils.encoding import smart_bytes, smart_text
 #from reportlab.pdfgen import canvas
 from django.db.models.signals  import  post_save,post_delete
 from django.http import HttpResponse
@@ -158,15 +158,9 @@ def nologin(request):
     except KeyError:
         pass
         state = "SE DESCONECTO DEL SISTEMA"
-<<<<<<< HEAD
 
     formd = []
     return render(request, 'login.html', {'formd':formd,'state':state})
-=======
-   
-    formd = []  
-    return render(request, 'loginRepar.html', {'formd':formd,'state':state})
->>>>>>> 960a7a61ad8a60e8ac7dffcd5b1157bd15236bbb
 
 def passwordChange(request):
   formpass = CambiarPassForm(request.POST)

@@ -6,7 +6,10 @@
     </small></h4>
     <div class="row">
       <div class="col-md-12">
-        <a href="javascript:nuevo();" class="btn btn-xs btn-block btn-primary">La persona que busco no esta en el listado, Cargar nuevo.</a>
+        <a href="javascript:nuevo();" class="btn btn-xs btn-primary">La persona que busco no esta en el listado, Cargar nuevo.</a>
+        {% if ver_procesales > 0 %}
+        <a href="" class="btn btn-xs btn-info">Hay <span class="badge">{{ver_procesales}}</span> resultados posibles en el sisitema de Comunicaciones Procesales.</a>
+        {% endif %}
       </div>
     </div><hr>
     <div class="row">

@@ -71,7 +71,7 @@ class RefTrademark(models.Model):
 
 class RefCalibres(models.Model):
     id = models.AutoField(primary_key=True)
-    descripcion = models.CharField(max_length=15L)
+    descripcion = models.CharField(max_length=15)
     tipoar = models.ForeignKey('RefTiposarmas',on_delete=models.PROTECT)
 
 
@@ -92,7 +92,7 @@ class RefCalibres(models.Model):
 
 class RefModArmas(models.Model):
     id = models.AutoField(primary_key=True)
-    descripcion = models.CharField("Modelo :", max_length=15L)
+    descripcion = models.CharField("Modelo :", max_length=15)
     trademark = models.ForeignKey('RefTrademark',on_delete=models.PROTECT)
 
 

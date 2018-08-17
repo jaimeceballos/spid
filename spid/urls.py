@@ -4,7 +4,7 @@ from spid.views import registro
 from django.contrib.auth.decorators import login_required
 from spid.views import *
 from preventivos.views import inicial
-from repar import views
+#from repar import views
 from repar.forms import *
 from preventivos.forms import *
 from django.contrib.auth.views import password_reset, password_reset_complete, password_reset_confirm
@@ -32,9 +32,9 @@ urlpatterns = [
     url(r'^spid/help/$', help_view),
     url(r'^spid/ayudaonline/$', help_view),
     url(r'^spid/salir/$', nologin),
-    url(r'^admin/config/', include(admin.site.urls)),
+    #url(r'^admin/config/', include(admin.site.urls)),
     url(r'^preventivos/', include('preventivos.urls')),
-    url(r'^NIF/',include('NIF.urls')),
+    #url(r'^NIF/',include('NIF.urls')),
     url(r'^prontuario/',include('prontuario.urls')),
     url(r'^spid/dependencias_ajax/',dependencias_ajax,name='dependencias_ajax'),
     url(r'^spid/primer_ingreso/(?P<id>[0-9A-Za-z]+)/$',primer_ingreso,name='primer_ingreso'),

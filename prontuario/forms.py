@@ -12,7 +12,7 @@ from django.forms.widgets import CheckboxSelectMultiple,RadioSelect
 from prontuario.models import *
 from preventivos.models import *
 from django.core.exceptions import ValidationError
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.db.models import Q
 

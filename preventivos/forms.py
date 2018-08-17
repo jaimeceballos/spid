@@ -11,7 +11,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms.widgets import CheckboxSelectMultiple,RadioSelect
 from preventivos.models import *
 from django.core.exceptions import ValidationError
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.db.models import Q
 
@@ -402,7 +402,7 @@ class PrimerForm(forms.ModelForm):
 		if self.cleaned_data.get('unidad') is not None:
 		   filtro=Dependencias.objects.filter(unidades_regionales_id__exact=self.cleaned_data.get('unidad'))
 		   if self.cleaned_data.get('dependencia') not in filtro:
-			  raise forms.ValidationError('La dependencia elegida no pertenece a la U.R.E seleccionada')
+			   raise forms.ValidationError('La dependencia elegida no pertenece a la U.R.E seleccionada')
 
 		return self.cleaned_data
 	class Meta:

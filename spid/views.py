@@ -20,7 +20,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.encoding import smart_text
 from django.contrib.auth import logout
 from io import BytesIO
-from django.utils.encoding import smart_str, smart_unicode
+from django.utils.encoding import smart_bytes, smart_text
 #from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from django.template import Context, loader
@@ -70,8 +70,12 @@ def iniciar(request):
     formd = []                      #arreglo formd
     #renderiza la pagina de inicio con las variables de inicializacion del entorno
     return render(request, 'index.html', {'formd':formd,'state':state,'destino':destino,'form':form})"""
-    form = LoginForm()
-    return render(request,'./login.html',{'form':form})
+    try:
+        form = LoginForm()
+        return render(request,'login.html',{'form':form})
+    except Exception as e:
+        print(e)
+    
 
 #definicion para loguear un usuario
 def login_user(request):
@@ -97,6 +101,7 @@ def login_user(request):
                         changePass = 'si'                                            #si esta levantada prepara una bandera que indica que debe cambiar la contraseña
                     grupos = user.groups.values_list('name',flat=True) 
                     radio_user = True if 'Radio' in grupos else False
+                    
                     if len(grupos) == 1 or (len(grupos) == 2 and "administrador" in grupos) :
                         if "prontuario" in grupos:
                             ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
@@ -104,12 +109,16 @@ def login_user(request):
                             profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
                             profile.save()                                                         #guarda el valor
                             user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
-                            auth.login(request, user)                                       #realiza el login del usuario
                             destino = "%s / %s" % (profile.depe,profile.ureg)
                             state = user.groups.values_list('name', flat=True)
                             request.session['state']=state                                #si es correcto carga en la sesion la variable estado
                             request.session['destino']=destino                            #carga en la sesion la variable destino
-                            return HttpResponseRedirect("/prontuario/")
+                            
+                            if user:
+                                auth.login(request, user)                                       #realiza el login del usuario
+                                return HttpResponseRedirect("/prontuario/")
+                            return HttpResponseRedirect("/spid/")
+                                
                         else:
                             destino = "%s / %s" % (user.userprofile.depe,user.userprofile.ureg)
                             state = user.groups.values_list('name', flat=True)
@@ -140,11 +149,12 @@ def login_user(request):
                             profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
                             profile.save()                                                         #guarda el valor
                             user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
-                            auth.login(request, user)
-                            
                             request.session['state']=state                                #si es correcto carga en la sesion la variable estado
                             request.session['destino']=destino                            #carga en la sesion la variable destino
-                            return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
+                            if user:
+                                auth.login(request, user)
+                                return render(request, './index1.html', {'form':form,'state':state, 'destino': destino,'changePass':changePass,'formpass':formpass,'no_enviados':no_enviados,'no_autorizados':no_autorizados,'ultimo_ingreso':ultimo_ingreso,'radio_user':radio_user,'autorizados':autorizados})
+                            return HttpResponseRedirect("/spid/")
                     elif len(grupos) > 1 and ('prontuario' in grupos):
                         request.session['cambia_sistema'] = 'radio' in grupos or 'policia' in grupos or 'investigaciones' in grupos or 'jefes' in grupos
                         ultimo_ingreso = User.objects.get(username = usuario).last_login      #obtiene la fecha de ultimo ingreso
@@ -152,8 +162,10 @@ def login_user(request):
                         profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
                         profile.save()                                                         #guarda el valor
                         user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
-                        auth.login(request, user)                                       #realiza el login del usuario
-                        return render(request,"./seleccionar_sistema.html",{'usuario':usuario})
+                        if user:
+                            auth.login(request, user)                                       #realiza el login del usuario
+                            return render(request,"./seleccionar_sistema.html",{'usuario':usuario})
+                        return HttpResponseRedirect('/spid/')
                     else:
                         destino = "%s / %s" % (user.userprofile.depe,user.userprofile.ureg)
                         state = grupos
@@ -170,7 +182,6 @@ def login_user(request):
                         no_enviados = False                                           #inicializa una variable de no enviados
                         #verifica si el usuario es preventor
                         if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
-                            print 'viene aca'
                             no_enviados = obtener_cantidad_no_enviados(request)         #obtiene la cantidad de preventivos no enviados
                             no_autorizados = obtener_cantidad_no_autorizados(request)     #obtiene la cantidad de preventivos no autorizados
                             radio_user = False                                            #crea una variable radio user para identificar si el usuario pertenece a una radiocabecera
@@ -191,7 +202,6 @@ def login_user(request):
                                 autorizados = preventivos.count()                     #obtiene la cantidad de preventivos autorizados para enviar
                         request.session['state'] = serializers.serialize('json',user.groups.all(),fields=("name"))                                #si es correcto carga en la sesion la variable estado
                         request.session['destino'] = destino                            #carga en la sesion la variable destino
-                        print no_autorizados
                         values = {
                         'form':form,
                         'state':state, 

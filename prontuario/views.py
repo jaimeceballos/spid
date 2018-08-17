@@ -20,7 +20,7 @@ from time import strptime
 from decorators.auth import group_required
 from django.contrib.auth.decorators import login_required,permission_required
 from django.db import transaction,IntegrityError,connection,connections
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from prontuario.models import *
 from prontuario.forms import *
 import json
@@ -57,7 +57,7 @@ def nuevo(request):
     Definicion que devuelve el formulario de carga de un nuevo prontuario
     """
     if request.is_ajax():
-        print 'llega'
+        print ('llega')
         values = {}
         form            = PersonasForm()
         prontuarioForm  = ProntuarioForm()
@@ -114,8 +114,8 @@ def search_persona(request):
             parametros['alias']             = form.cleaned_data['alias']
             strParametros = str(parametros)
             try:
-                resultados = SearchResults.objects.filter(id_busqueda=SearchHistory.objects.get(busqueda = strParametros).id)
-            except ObjectDoesNotExist:
+                resultados = SearchResults.objects.filter(id_busqueda=SearchHistory.objects.get(busqueda = strParametros))
+            except SearchHistory.DoesNotExist:
                 persona_spid = buscar_persona_spid(parametros)
                 persona_rrhh = buscar_persona_rrhh(parametros)
                 persona_acei = buscar_persona_acei(parametros)
@@ -139,7 +139,8 @@ def search_persona(request):
         ciudades_residencia = resultados.values('ciudad_residencia').distinct()
         paises_nacimiento = resultados.values('pais_nacimiento').distinct()
         if resultados.count() > 0:
-            return render(request,"./resultados_busqueda.html",{'resultados':resultados})
+            persona_indice = persona_indice.exclude(dni__exact='',n_c__exact='').values_list('dni','n_c','n_p').distinct()
+            return render(request,"./resultados_busqueda.html",{'resultados':resultados,'ver_procesales':persona_indice.count(),'procesales_result':persona_indice})
         else:
             return HttpResponseNotFound("No hay Resultados para su busqueda.")
     else:
@@ -195,7 +196,7 @@ def buscar_persona_acei(parametros):
 def buscar_persona_indice(parametros,persona_spid = None, persona_acei = None, persona_rrhh = None):
     """ Esta definicion realiza la busqueda de la persona segun los parametros ingresados
     en la base de datos chubut del sistema Comunicaciones Procesales"""
-    persona_indice = Indice.objects.using('prontuario').all()
+    persona_indice = Indice.objects.using('prontuario').all().exclude(dni__exact='',n_c__exact='')
     n_c = ""
     if not parametros['nombre'] == "":
         n_c = n_c +parametros['nombre']
@@ -206,20 +207,22 @@ def buscar_persona_indice(parametros,persona_spid = None, persona_acei = None, p
     if not parametros['documento'] == "":
         persona_indice = persona_indice.filter(dni = parametros['documento'])
     documento = []
-    if persona_spid > 0:
+    if persona_spid and len(persona_spid) > 0:
         for registro in persona_spid.values('nro_doc').distinct():
             documento.append(registro['nro_doc'])
-    if persona_rrhh > 0:
+    if persona_rrhh and len(persona_rrhh) > 0:
         for registro in persona_rrhh:
             if registro['documento'] not in documento:
                 documento.append(registro['documento'])
-    if persona_acei > 0:
+    if persona_acei and len(persona_acei) > 0:
         for registro in persona_acei.values('dni').distinct():
             if registro['dni'] not in documento:
                 documento.append(registro['dni'])
-    persona_indice = persona_indice.filter(dni__in=documento)
-
+    persona_indice = persona_indice.exclude(dni__in=documento)
+    
     return persona_indice
+
+
 
 def buscar_persona_rrhh(parametros):
     """ Esta definicion realiza la busqueda de la persona segun los parametros ingresados
@@ -913,7 +916,7 @@ def cargar_domicilios(request,id):
 @login_required
 @group_required(["prontuario"])
 def cargar_fotos(request,id):
-    print "VIENE"
+    print ("VIENE")
     if request.is_ajax():
         persona = Personas.objects.get(id=id)
         if request.method=="POST":
@@ -929,11 +932,11 @@ def cargar_fotos(request,id):
                         prontuario = Prontuario.objects.get(persona = persona)
                         prontuario.fotos.add(foto)
                     except Exception as e:
-                        print e
+                        print (e)
                 except Exception as e:
                     return HttpResponseBadRequest()
         fotos = FotosPersona.objects.filter(persona = persona)
-        print fotos
+        print (fotos)
         form = FotosPersonaForm()
         return render(request,"./fotos.html",{'fotos':fotos,'form':form,'id':id})
     return HttpResponseBadRequest()
@@ -983,7 +986,7 @@ def vincular(request,id):
                         try:
                             prontuario.fotos.add(foto)                                    # las agrego al prontuario
                         except Exception as e:
-                            print e
+                            print (e)
 
                 verificar = Verificar.objects.get(identificacion = identificacion)
                 verificar.verificado = True                                           # marco la identificacion como verificada
@@ -992,7 +995,7 @@ def vincular(request,id):
                 verificar.save()
                 return HttpResponse("ok")                                             # devuelvo "ok" para notificar que la operacion termino correctamente
             except Exception as e:
-                print e
+                print (e)
     return HttpResponseBadRequest()
 
 @login_required
@@ -1190,7 +1193,7 @@ def nuevo_elemento(request,tipo):
                 form = PaisesForm()
             if tipo == "ciudad":
                 form = CiudadesForm()
-                print form
+                print (form)
             return render(request,"./nuevo_elemento.html",{'form':form,'tipo':tipo})
     return HttpResponseBadRequest()
 
@@ -1226,12 +1229,12 @@ def buscar_procesales(request):
                     resultados = resultados.filter(dni=dni)
                 if not dni == "" and not n_c == "" :
                     resultados = resultados.filter(dni=dni,n_c__icontains=n_c)
-                print resultados.count()
+                print (resultados.count())
                 if resultados.count() > 0:
                     return render(request,"./listado_procesales.html",{'resultado':resultados,'id':0,'cambia':True})
                 else:
                     return HttpResponseNotFound()
-        return render(request,"./buscar_procesales.html",{'form':form})
+        return render(request,"buscar_procesales.html",{'form':form})
     return HttpResponseBadRequest()
 
 

@@ -9,7 +9,7 @@ import random,datetime,time
 from django.core.validators import MinValueValidator,MaxValueValidator
 
 class Registrouser(models.Model):
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 	action=models.CharField(max_length=50)
 	tablas = models.CharField(max_length=50)
 	link = models.CharField(max_length=50)
@@ -23,9 +23,9 @@ class Registrouser(models.Model):
 		app_label = 'preventivos'
 
 class UserProfile(models.Model):
-	user = models.OneToOneField(User)
-	ureg = models.ForeignKey('UnidadesRegionales',blank=True, null=True,)
-	depe = models.ForeignKey('Dependencias',blank=True, null=True,)
+	user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+	ureg = models.ForeignKey('UnidadesRegionales',blank=True, null=True, on_delete=models.DO_NOTHING)
+	depe = models.ForeignKey('Dependencias',blank=True, null=True, on_delete=models.DO_NOTHING)
 	last_login = models.BooleanField(default=True)
 	ultimo_ingreso = models.DateTimeField(blank=True,null=True)
 	solicitud_cambio = models.BooleanField(default=False)
@@ -50,10 +50,10 @@ class UserProfile(models.Model):
 
 class RefPaises(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField("Seleccione Pais :", unique=True, max_length=45L )
+	descripcion = models.CharField("Seleccione Pais :", unique=True, max_length=45 )
 
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -69,11 +69,11 @@ class RefPaises(models.Model):
 
 class RefProvincia(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField("Ingrese Provincia :", max_length=45L)
+	descripcion = models.CharField("Ingrese Provincia :", max_length=45)
 	pais = models.ForeignKey(RefPaises,on_delete=models.PROTECT)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return  u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -90,10 +90,10 @@ class RefProvincia(models.Model):
 
 class RefDepartamentos(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField("Ingrese Departamento :", unique=True, max_length=45L)
+	descripcion = models.CharField("Ingrese Departamento :", unique=True, max_length=45)
 	provincia = models.ForeignKey(RefProvincia, on_delete=models.PROTECT)
 
-	def __unicode__(self):
+	def __str__(self):
 		return  u'%s' %  (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -110,14 +110,14 @@ class RefDepartamentos(models.Model):
 
 class RefCiudades(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField(max_length=80L)
+	descripcion = models.CharField(max_length=80)
 	departamento = models.ForeignKey('RefDepartamentos',blank=True, null=True, on_delete=models.PROTECT)
 	provincia = models.ForeignKey('RefProvincia', blank=True,  null=True, on_delete=models.PROTECT)
 	pais = models.ForeignKey('RefPaises', on_delete=models.PROTECT)
 	lat= models.CharField(max_length=50,blank=True,null=True)
 	longi= models.CharField(max_length=50,blank=True,null=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return  u'%s' %  (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -134,9 +134,9 @@ class RefCiudades(models.Model):
 #modelo de datos de referencias de tipos de lugares en donde se cometio el hecho
 class RefLugares(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField(max_length=100L, blank=True, unique=True)
+	descripcion = models.CharField(max_length=100, blank=True, unique=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -151,9 +151,9 @@ class RefLugares(models.Model):
 
 class RefHogares(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField(max_length=100L,blank=True, unique=True)
+	descripcion = models.CharField(max_length=100,blank=True, unique=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -168,9 +168,9 @@ class RefHogares(models.Model):
 
 class RefCondclimas(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField(max_length=150L,blank=True, unique=True)
+	descripcion = models.CharField(max_length=150,blank=True, unique=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -185,11 +185,11 @@ class RefCondclimas(models.Model):
 
 class UnidadesRegionales(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField(max_length=80L)
+	descripcion = models.CharField(max_length=80)
 	ciudad = models.ForeignKey('RefCiudades',on_delete=models.PROTECT)
 	cabecera_envio = models.ForeignKey('Dependencias',on_delete = models.PROTECT,blank=True,null=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' %  (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -211,7 +211,7 @@ class Dependencias(models.Model):
 	ciudad = models.ForeignKey('RefCiudades',on_delete=models.PROTECT)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -228,10 +228,10 @@ class Dependencias(models.Model):
 
 class RefPeople(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField("Involucrados - Tipos :", null=False, unique=True, max_length=150L )
+	descripcion = models.CharField("Involucrados - Tipos :", null=False, unique=True, max_length=150 )
 
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -249,7 +249,7 @@ class RefTipoDelitos(models.Model):
 	id = models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length = 50)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -267,7 +267,7 @@ class RefDelito(models.Model):
 	descripcion = models.CharField(max_length=50)
 	tipo_delito = models.ForeignKey('RefTipoDelitos', on_delete=models.PROTECT)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -285,7 +285,7 @@ class RefOcupacion(models.Model):
 	id = models.AutoField(primary_key= True)
 	descripcion = models.CharField(max_length=80,unique = True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -303,7 +303,7 @@ class RefTrademark(models.Model):
 	id = models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length=100,unique = True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -320,7 +320,7 @@ class RefTiposarmas(models.Model):
 	id = models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length=100,unique = True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -335,11 +335,11 @@ class RefTiposarmas(models.Model):
 
 class RefSubtiposa(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField("Ingrese Sub-Tipo :", max_length=100L)
+	descripcion = models.CharField("Ingrese Sub-Tipo :", max_length=100)
 	tipo = models.ForeignKey(RefTiposarmas,related_name='tiposub',on_delete=models.PROTECT)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return  u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -359,7 +359,7 @@ class RefSistemadis(models.Model):
 	descripcion = models.CharField(max_length=100,unique=True)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return  u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -378,9 +378,9 @@ class RefSistemadis(models.Model):
 
 class RefItems(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField(max_length=100L,unique = True)
+	descripcion = models.CharField(max_length=100,unique = True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -395,11 +395,11 @@ class RefItems(models.Model):
 
 class RefCategory(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField("Ingrese Categoria :", max_length=100L)
+	descripcion = models.CharField("Ingrese Categoria :", max_length=100)
 	rubro = models.ForeignKey(RefItems,related_name='rubcategory',on_delete=models.PROTECT)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return  u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -416,10 +416,10 @@ class RefCategory(models.Model):
 
 class RefBarrios(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField(max_length=100L)
+	descripcion = models.CharField(max_length=100)
 	ciudad = models.ForeignKey('RefCiudades',on_delete=models.PROTECT)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' %  (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -437,11 +437,11 @@ class RefBarrios(models.Model):
 
 class RefCalles(models.Model):
 	id = models.AutoField(primary_key=True)
-	descripcion = models.CharField(max_length=150L)
+	descripcion = models.CharField(max_length=150)
 	ciudad = models.ForeignKey('RefCiudades', related_name="ciucalle", on_delete=models.PROTECT)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return  u'%s' %  (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -450,7 +450,7 @@ class RefCalles(models.Model):
 		super(RefCalles, self).save(force_insert, force_update)
 
 	class Meta:
-  		app_label = 'preventivos'
+		app_label = 'preventivos'
 		unique_together = ('descripcion','ciudad',)
 		ordering = ["descripcion"]
 		db_table = 'ref_calles'
@@ -461,7 +461,7 @@ class RefAutoridad(models.Model):
 	ciudades = models.ManyToManyField('RefCiudades', related_name="ciu_autori", blank = True)
 	email = models.EmailField("e mail",max_length = 300)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.descripcion
 		self.descripcion = self.descripcion.upper()
 
@@ -478,7 +478,7 @@ class RefTipoJerarquia(models.Model):
 	id = models.AutoField(primary_key = True)
 	descripcion = models.CharField(max_length = 45)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -491,7 +491,7 @@ class RefDivisionJerarquia(models.Model):
 	id = models.AutoField(primary_key = True)
 	descripcion = models.CharField(max_length = 45)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -506,7 +506,7 @@ class RefJerarquias(models.Model):
 	ref_tipo_jerarquia = models.ForeignKey('RefTipoJerarquia',on_delete = models.PROTECT)
 	ref_division_jerarquia = models.ForeignKey('RefDivisionJerarquia', on_delete = models.PROTECT)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -523,7 +523,7 @@ class RefSexo(models.Model):
 	)
 	descripcion = models.CharField(max_length = 10, choices=Sexo_opciones)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	class Meta:
@@ -537,7 +537,7 @@ class RefEstadosciv(models.Model):
 	('0','NO REGISTRA'),('1','SOLTERO'),('2','CONCUBINO'),('3','CASAD0'),('4','DIVORCIADO'),('5','VIUDO'),('6','SEPARADO'),)
 	descripcion = models.CharField(max_length = 10, choices=civil_opciones)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	class Meta:
@@ -557,8 +557,8 @@ class RefTipoDocumento(models.Model):
 	)
 	descripcion = models.CharField(max_length = 8, choices= Doc_opciones)
 
-	def __unicode__(self):
-		return u'%s' % (self.descripcion)
+	def __str__(self):
+		return '%s' % (self.descripcion)
 
 	class Meta:
 		ordering = ['descripcion']
@@ -571,7 +571,7 @@ class RefEstudios(models.Model):
 	descripcion = models.CharField(max_length = 13, choices= Estudios_opt)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' %  (self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
@@ -612,7 +612,7 @@ class Personas(models.Model):
 	horalugaractivi=models.CharField(max_length=100,blank = True, null = True)
 	"""
 
-	def __unicode__(self):
+	def __str__(self):
 		return  u'%s %s' % (self.apellidos, self.nombres)
 
 	def save(self, force_insert = False, force_update = False):
@@ -636,7 +636,7 @@ class Actuantes(models.Model):
 	unidadreg_id = models.ForeignKey('UnidadesRegionales', on_delete=models.PROTECT)
 	dependencia_id = models.ForeignKey('Dependencias', on_delete=models.PROTECT)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s ' % (self.apeynombres)
 
 	def save(self, force_insert = False, force_update = False):
@@ -657,7 +657,7 @@ class Personal(models.Model):
 	nro_cuenta_bco = models.CharField(max_length=20)
 	nro_seros = models.CharField(max_length=15)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.id)
 
 	class Meta:
@@ -676,7 +676,7 @@ class RefComunidades(models.Model):
 	)
 	descripcion = models.CharField(max_length = 10, choices= Zonas_opciones)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	class Meta:
@@ -695,7 +695,7 @@ class Preventivos(models.Model):
 	fecha_cierre = models.DateTimeField(null=True)
 	actuante = models.ForeignKey('Actuantes', verbose_name='Actuante', related_name='Actuante', on_delete=models.PROTECT)
 	preventor = models.ForeignKey('Actuantes', verbose_name='Preventor', related_name='Preventor', on_delete=models.PROTECT)
-	dependencia = models.ForeignKey('Dependencias',blank=True,null=True)
+	dependencia = models.ForeignKey('Dependencias',blank=True,null=True, on_delete=models.DO_NOTHING)
 	autoridades = models.ManyToManyField('RefAutoridad',blank=True)
 	sendwebservice = models.IntegerField(default=0)
 	reenviado = models.BooleanField(default=False)
@@ -704,7 +704,7 @@ class Preventivos(models.Model):
 	aforo = models.IntegerField(null=True)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s %s %s %s' % (self.id,self.caratula,self.actuante,self.preventor)
 
 	def save(self, force_insert = False, force_update = False):
@@ -727,7 +727,7 @@ class RefModosHecho(models.Model):
 	id = models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length=80)
 	delito = models.ForeignKey(RefDelito,on_delete=models.PROTECT)
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 			 # %s  ,self.delito)
 
@@ -744,7 +744,7 @@ class RefModosHecho(models.Model):
 class RefMotivosHecho(models.Model):
 	id = models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length=80, unique=True)
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % unicode(self.descripcion)
 	class Meta:
 		ordering = ['id']
@@ -762,7 +762,7 @@ class Hechos(models.Model):
 	fecha_hasta=models.DateTimeField()
 	fecha_esclarecido=models.DateTimeField(null=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s %s' % (self.preventivo,self.descripcion)
 
 	def save(self, force_insert = False, force_update = False):
@@ -783,12 +783,12 @@ class Hechos(models.Model):
 
 class HechosDelito(models.Model):
 	id = models.AutoField(primary_key=True)
-	hechos = models.ForeignKey('Hechos',related_name='hechos',)
-	refdelito = models.ForeignKey('RefDelito',related_name='delis',)
-	refmodoshecho = models.ForeignKey('RefModosHecho', related_name='modus', null=True, blank=True)
+	hechos = models.ForeignKey('Hechos',related_name='hechos', on_delete=models.DO_NOTHING)
+	refdelito = models.ForeignKey('RefDelito',related_name='delis', on_delete=models.DO_NOTHING)
+	refmodoshecho = models.ForeignKey('RefModosHecho', related_name='modus', null=True, blank=True, on_delete=models.DO_NOTHING)
 	borrado = models.CharField(max_length=1,null=True, blank=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.refdelito.descripcion)
 
 	def save(self, force_insert = False, force_update = False):
@@ -804,9 +804,9 @@ class HechosDelito(models.Model):
 class PersInvolucradas(models.Model):
 	fcio_opciones=(('si','SI'),('no','NO'),)
 	id = models.AutoField(primary_key=True)
-	hechos = models.ForeignKey('Hechos',related_name='involu')
-	roles = models.ForeignKey('RefPeople',related_name='rol',default=0)
-	persona = models.ForeignKey('Personas',related_name='perso')
+	hechos = models.ForeignKey('Hechos',related_name='involu', on_delete=models.DO_NOTHING)
+	roles = models.ForeignKey('RefPeople',related_name='rol',default=0, on_delete=models.DO_NOTHING)
+	persona = models.ForeignKey('Personas',related_name='perso', on_delete=models.DO_NOTHING)
 	juridica =models.CharField(max_length=2,choices=fcio_opciones,blank=True,default="no")
 	razon_social = models.CharField(max_length=150,null=True,blank=True)
 	menor =  models.CharField(max_length=2,choices=fcio_opciones,blank=True,default="no")
@@ -816,11 +816,11 @@ class PersInvolucradas(models.Model):
 	fechahoradetencion=models.DateTimeField(null=True,blank=True)
 	fechahoralibertad=models.DateTimeField(null=True,blank=True)
 	cargado_prev=models.BooleanField(default=False)
-	ampliacion=models.ForeignKey('Ampliacion',blank=True,null=True)
-	cuit=models.ForeignKey('RefTipoDocumento', verbose_name='cuit',null=True,blank=True)
+	ampliacion=models.ForeignKey('Ampliacion',blank=True,null=True, on_delete=models.DO_NOTHING)
+	cuit=models.ForeignKey('RefTipoDocumento', verbose_name='cuit',null=True,blank=True, on_delete=models.DO_NOTHING)
 	nrocuit=models.CharField(max_length=11,default=0,unique=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.persona)
 
 	def save(self, force_insert = False, force_update = False):
@@ -835,7 +835,7 @@ class PersInvolucradas(models.Model):
 
 class Padres(models.Model):
 	id=models.AutoField(primary_key=True)
-	persona = models.ForeignKey('Personas',related_name='padre')
+	persona = models.ForeignKey('Personas',related_name='padre',on_delete=models.DO_NOTHING)
 	padre_nombres=models.CharField(max_length=150,null=True,blank=True,default="")
 	padre_apellidos=models.CharField(max_length=100,null=True,blank=True,default="")
 	padre_vive = models.BooleanField(default=True)
@@ -844,7 +844,7 @@ class Padres(models.Model):
 	madre_vive=models.BooleanField(default=True)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s %s %s %s %s' % (self.padre_nombres,self.padre_apellidos,self.madre_nombres,self.madre_apellidos,self.persona)
 
 	def save(self, force_insert = False, force_update = False):
@@ -862,16 +862,16 @@ class Padres(models.Model):
 
 class Detenidos(models.Model):
 	id=models.AutoField(primary_key=True)
-	persona = models.ForeignKey(Personas)
+	persona = models.ForeignKey(Personas,on_delete=models.DO_NOTHING )
 	fechahoradetencion=models.DateTimeField(null=True,blank=True)
 	fechahoralibertad=models.DateTimeField(null=True,blank=True)
 	libertad=models.CharField(max_length=1,null=True, blank=True)
-	hechos = models.ForeignKey(Hechos)
+	hechos = models.ForeignKey(Hechos,on_delete=models.DO_NOTHING)
 	observaciones= models.CharField(max_length=800,null=True,blank=True)
 	borrado = models.CharField(max_length=1,null=True, blank=True)
 
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.persona)
 
 	def save(self, force_insert = False, force_update = False):
@@ -884,24 +884,24 @@ class Detenidos(models.Model):
 		app_label = 'preventivos'
 
 class Domicilios(models.Model):
-	personas = models.ForeignKey('Personas',related_name='persodom')
-	ref_ciudades = models.ForeignKey(RefCiudades,blank = True, null = True)
-	barrio_codigo = models.ForeignKey(RefBarrios,blank = True, null = True)
-	calle = models.ForeignKey(RefCalles,related_name = 'domicilio',blank = True, null = True)
+	personas = models.ForeignKey('Personas',related_name='persodom',on_delete=models.DO_NOTHING)
+	ref_ciudades = models.ForeignKey(RefCiudades,blank = True, null = True,on_delete=models.DO_NOTHING)
+	barrio_codigo = models.ForeignKey(RefBarrios,blank = True, null = True,on_delete=models.DO_NOTHING)
+	calle = models.ForeignKey(RefCalles,related_name = 'domicilio',blank = True, null = True,on_delete=models.DO_NOTHING)
 	altura = models.CharField(max_length=4,default="0",blank = True)
-	entre = models.ForeignKey(RefCalles,related_name = 'interseccion', blank = True, null = True)
+	entre = models.ForeignKey(RefCalles,related_name = 'interseccion', blank = True, null = True,on_delete=models.DO_NOTHING)
 	fecha_desde = models.DateField(blank = True, null = True)
 	fecha_hasta = models.DateField(blank = True, null = True)
 	fecha_actualizacion = models.DateField(blank = True, null = True)
-	tipos_domicilio = models.ForeignKey(RefHogares,blank = True, null = True)
-	ref_zona = models.ForeignKey(RefComunidades,blank = True, null = True)
+	tipos_domicilio = models.ForeignKey(RefHogares,blank = True, null = True,on_delete=models.DO_NOTHING)
+	ref_zona = models.ForeignKey(RefComunidades,blank = True, null = True,on_delete=models.DO_NOTHING)
 	departamento = models.CharField(max_length = 10,blank = True, null = True,default="")
 	piso = models.CharField(max_length=4,default="0",blank = True)
 	lote =models.CharField(max_length=4,default="0",blank = True)
 	sector = models.CharField(max_length = 10,blank = True, null = True,default="")
 	manzana = models.CharField(max_length=4,default="0",blank = True)
 	calle2 = models.CharField(max_length=80,blank= True, null=True)
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s %s %s %s %s' % (self.personas,self.barrio_codigo,self.calle,self.altura,self.calle)
 
 	class Meta:
@@ -931,7 +931,7 @@ class Lugar(models.Model):
 	escalera = models.CharField(default='',max_length = 45,blank=True,null = True)
 	dependencia = models.ForeignKey('Dependencias',null=True,blank=True,on_delete = models.PROTECT)
 
-	"""def __unicode__(self):
+	"""def __str__(self):
 		return u'%s %s %s %s' % (self.calle,self.barrio,self.tipo_lugar,self.cond_climaticas)"""
 	def save(self, force_insert = False, force_update = False):
 		super(Lugar, self).save(force_insert,force_update)
@@ -951,7 +951,7 @@ class RefTipoelementos(models.Model):
 	)
 	descripcion = models.CharField(max_length = 50,choices= elementos)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	class Meta:
@@ -963,7 +963,7 @@ class RefUnidadmedidas(models.Model):
 	id=models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length =30)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	def save(self, force_insert = False, force_update = False):
@@ -980,7 +980,7 @@ class RefCategorias(models.Model):
 	id=models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length =100)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	class Meta:
@@ -1000,9 +1000,9 @@ class Elementos(models.Model):
 	borrado = models.CharField(max_length=1,null=True, blank=True)
 	observaciones= models.CharField(max_length=800,null=True,blank=True)
 	cargado_prev=models.BooleanField(default=False)
-	ampliacion=models.ForeignKey('Ampliacion',blank=True,null=True)
+	ampliacion=models.ForeignKey('Ampliacion',blank=True,null=True,on_delete=models.DO_NOTHING)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s %s %s %s %s %s' % (self.id,self.categoria,self.rubro,self.descripcion, self.hechos, self.observaciones)
 		self.descripcion = self.descripcion.upper()
 
@@ -1031,7 +1031,7 @@ class Armas(models.Model):
 	propietario=models.CharField(max_length=100,blank=True,null=True)
 	fecha_carga=models.DateTimeField(auto_now=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.tipos)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1046,10 +1046,10 @@ class Armas(models.Model):
 
 class Elementosarmas(models.Model):
 	id=models.AutoField(primary_key=True)
-	idelemento=models.ForeignKey('Elementos',related_name='relelem')
-	idarma=models.ForeignKey('Armas')
+	idelemento=models.ForeignKey('Elementos',related_name='relelem',on_delete=models.DO_NOTHING)
+	idarma=models.ForeignKey('Armas',on_delete=models.DO_NOTHING)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.idelemento)
 	def save(self, force_insert = False, force_update = False):
 
@@ -1067,7 +1067,7 @@ class RefMarcascars(models.Model):
 	id = models.AutoField(primary_key = True)
 	descripcion = models.CharField(max_length = 50)
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -1089,7 +1089,7 @@ class Vehiculos(models.Model):
 	fecha_carga=models.DateTimeField(auto_now=True)
 	nro_doc = models.IntegerField(null=True,blank=True)
 	propietario = models.CharField(max_length=100,null=True,blank=True)
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.dominio)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1110,8 +1110,8 @@ class Vehiculos(models.Model):
 
 class Elementoscars(models.Model):
 	id=models.AutoField(primary_key=True)
-	idelemento=models.ForeignKey('Elementos')
-	idvehiculo=models.ForeignKey('Vehiculos')
+	idelemento=models.ForeignKey('Elementos',on_delete=models.DO_NOTHING)
+	idvehiculo=models.ForeignKey('Vehiculos',on_delete=models.DO_NOTHING)
 
 	def save(self, force_insert = False, force_update = False):
 		super(Elementoscars, self).save(force_insert, force_update)
@@ -1133,7 +1133,7 @@ class RefTipodrogas(models.Model):
 	)
 	descripcion = models.CharField(max_length = 50, choices= typedrogas)
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -1148,9 +1148,9 @@ class RefTipodrogas(models.Model):
 class Drogas(models.Model):
 	id = models.AutoField(primary_key = True)
 	descripcion=models.CharField(max_length=100)
-	idtipo=models.ForeignKey('reftipodrogas')
+	idtipo=models.ForeignKey('reftipodrogas',on_delete=models.DO_NOTHING)
 	fecha_carga=models.DateTimeField(auto_now=True)
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1164,8 +1164,8 @@ class Drogas(models.Model):
 
 class Elementosdrogas(models.Model):
 	id=models.AutoField(primary_key=True)
-	idelemento=models.ForeignKey('Elementos')
-	droga=models.ForeignKey('Drogas')
+	idelemento=models.ForeignKey('Elementos',on_delete=models.DO_NOTHING)
+	droga=models.ForeignKey('Drogas',on_delete=models.DO_NOTHING)
 
 	class Meta:
 		app_label = 'preventivos'
@@ -1176,14 +1176,14 @@ class Ampliacion(models.Model):
 	titulo              = models.CharField(max_length=100)
 	autoridades         = models.ManyToManyField('RefAutoridad',blank=True)
 	descripcion         = models.CharField(max_length=2000)
-	preventivo          = models.ForeignKey('Preventivos',related_name='ampli')
+	preventivo          = models.ForeignKey('Preventivos',related_name='ampli',on_delete=models.DO_NOTHING)
 	fecha_autorizacion  = models.DateTimeField(null=True,blank=True)
 	cierre_causa        = models.BooleanField(default=False)
 	fecha_cierre        = models.DateTimeField(blank=True,null=True)
 	fin_edicion         = models.BooleanField(default=False)
 	sendwebservice      = models.IntegerField(default=0)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1206,7 +1206,7 @@ class ViolenciaFliar(models.Model):
 	otrosdatosinteres=models.CharField(max_length=2000,blank=True,null=True)
 	hechos = models.ForeignKey('Hechos',related_name='hechovif',blank=True,null=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.hechos)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1237,7 +1237,7 @@ class PerInvolViolenfliar(models.Model):
 	cargado_viol=models.IntegerField(default=0)
 	ampliacion=models.ForeignKey('Ampliacion',blank=True,null=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.persona)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1289,7 +1289,7 @@ class HechoViolencia(models.Model):
 	diadenunciado=models.CharField(max_length=500,null=True,blank=True)
 	violencia = models.ForeignKey('ViolenciaFliar',related_name='hechovif')
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.violencia)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1310,7 +1310,7 @@ class HechosTestigos(models.Model):
 	telefonos = models.CharField(max_length=200,null=True,blank=True)
 	borrado = models.CharField(max_length=1,null=True, blank=True)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.nombreape)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1332,7 +1332,7 @@ class HistoryDenuncias(models.Model):
 	resultado=models.CharField(max_length=500,null=True,blank=True)
 	persona = models.ForeignKey('Personas',related_name='denunvif')
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.dependencia)
 
 	def save(self, force_insert = False, force_update = False):
@@ -1347,7 +1347,7 @@ class Nacionalidad(models.Model):
 	idNacionalidad=models.AutoField(primary_key=True)
 	descripcion=models.CharField(max_length=100)
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -1365,7 +1365,7 @@ class Provincia(models.Model):
 	idProvincia=models.AutoField(primary_key=True)
 	descripcion=models.CharField(max_length=100)
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -1384,7 +1384,7 @@ class Localidad(models.Model):
 	idProvincia=models.IntegerField()
 	descripcion=models.CharField(max_length=100)
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -1403,7 +1403,7 @@ class Calles(models.Model):
 	idLocalidad=models.IntegerField()
 	descripcion=models.CharField(max_length=100)
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -1422,7 +1422,7 @@ class Comisarias(models.Model):
 	idLocalidad=models.IntegerField()
 	descripcion=models.CharField(max_length=100)
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s' % (self.idorganismo)
 	  self.descripcion = self.descripcion.upper()
 
@@ -1441,7 +1441,7 @@ class Barrio(models.Model):
 	idLocalidad=models.IntegerField()
 	descripcion=models.CharField(max_length=100)
 
-	def __unicode__(self):
+	def __str__(self):
 	  return  u'%s %s' % (self.idBarrio,self.descripcion)
 	  self.descripcion = self.descripcion.upper()
 
@@ -1459,7 +1459,7 @@ class Estadocivil(models.Model):
 	idEstadoCivil = models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length = 15)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.descripcion)
 
 	class Meta:
@@ -1471,7 +1471,7 @@ class Tipodocumentos(models.Model):
 	idtipodocumento=models.CharField(primary_key=True,max_length=5)
 	descripcion = models.CharField(max_length = 11)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.iddoc)
 
 	class Meta:
@@ -1483,7 +1483,7 @@ class RolPersonas(models.Model):
 	idRolPersonas=models.CharField(primary_key=True,max_length=5)
 	descripcion = models.CharField(max_length = 45)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.idRolPersonas)
 
 	class Meta:
@@ -1495,7 +1495,7 @@ class TipoOcupacion(models.Model):
 	idtipoocupacion=models.AutoField(primary_key=True)
 	descripcion = models.CharField(max_length = 45)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.idtipoocupacion)
 
 	class Meta:
@@ -1507,12 +1507,12 @@ class EnvioPreJudicial(models.Model):
 	id = models.AutoField(primary_key=True)
 	fecha_autorizacion = models.DateTimeField(null=True)
 	fecha_envio=models.DateTimeField(auto_now=True)
-	preventivo = models.ForeignKey('Preventivos')
-	user = models.ForeignKey(User)
+	preventivo = models.ForeignKey('Preventivos',on_delete=models.DO_NOTHING)
+	user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
 	enviado=models.IntegerField(default=0)
-	dependencia = models.ForeignKey('Dependencias',null=True,blank=True)
+	dependencia = models.ForeignKey('Dependencias',null=True,blank=True,on_delete=models.DO_NOTHING)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.fecha_envio)
 
 	class Meta:
@@ -1524,11 +1524,11 @@ class EnvioAmpJudicial(models.Model):
 	id = models.AutoField(primary_key=True)
 	fecha_envio=models.DateTimeField(auto_now=True)
 	fecha_autorizacion  = models.DateTimeField(null=True,blank=True)
-	ampliacion=models.ForeignKey('Ampliacion',blank=True,null=True)
-	user = models.ForeignKey(User)
+	ampliacion=models.ForeignKey('Ampliacion',blank=True,null=True,on_delete=models.DO_NOTHING)
+	user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
 	enviado=models.IntegerField(default=0)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.fecha)
 
 	class Meta:
@@ -1548,7 +1548,7 @@ class CambiarContrasenia(models.Model):
 		app_label = 'preventivos'
 
 class Errores(models.Model):
-	usuario 			= models.ForeignKey(User)
+	usuario 			= models.ForeignKey(User,on_delete=models.DO_NOTHING)
 	descripcion 		= models.CharField(max_length=150)
 	fecha 				= models.DateTimeField(auto_now=True)
 

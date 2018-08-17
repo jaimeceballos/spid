@@ -6,12 +6,13 @@ from django.dispatch import Signal
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import post_save,post_delete
-from django.middleware import threadlocals
+#from django.middleware import threadlocals
 from repar.models import *
 from django.utils.dates import MONTHS
 from django.utils import timezone 
-from django.utils.encoding import smart_str, smart_unicode
+from django.utils.encoding import smart_bytes, smart_text
 #import datetime
+from preventivos.models import *
 from datetime import datetime, date
 import csv
 from django.http import *
@@ -27,15 +28,15 @@ from datetime import *
 from django import forms as forms
 from django.forms import ModelForm
 from django.forms.models import *
-from django.forms.extras import *
+#from django.forms.extras import *
 from django.forms.widgets import *
 from django.contrib.auth.decorators import *
 #Reportes
-from cStringIO import StringIO
+#from cStringIO import StringIO
 
 #Propios del Modelo
 from repar.models import *
-from repar.views import *
+#from repar.views import *
 from repar.forms import *
 
 #Render msg

@@ -11,7 +11,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms.widgets import CheckboxSelectMultiple,RadioSelect
 from repar.models import *
 from django.core.exceptions import ValidationError
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.forms.widgets import TextInput
 from django.db.models import Q

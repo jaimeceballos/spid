@@ -45,7 +45,7 @@ def completar(numero):
 
 def crear_barcode(numero):
 	filename = os.path.join('/tmp','NIF','generated','temp',str(numero))
-	print filename
+	print(filename)
 	writer = barcode.writer.ImageWriter()
 	code = barcode.Code39(numero,writer = writer,add_checksum = False)
 	archivo = code.save(filename)
@@ -121,4 +121,4 @@ def descargar_codigos(request):
 	return render_to_response('descargar.html',{},context_instance= RequestContext(request))
 
 def ver():
-	print ruta
+	print (ruta)
