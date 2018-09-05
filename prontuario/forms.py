@@ -45,7 +45,7 @@ class ProntuarioForm(forms.ModelForm):
         exclude = ['persona','identificaciones']
 
 class SearchForm(forms.Form):
-    apellido                = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Apellido','style':'text-align: center;'})))
+    apellido                = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','autocomplete':'off','placeholder':'Apellido','style':'text-align: center;'})))
     nombre                  = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'nombre','style':'text-align: center;'})))
     documento               = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Numero Documento','style':'text-align: center;'})))
     fecha_nacimiento        = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Fecha de nacimiento','style':'text-align: center;','title':'Solo se puede Realizar busqueda de personas mayores de 18 años.'})))

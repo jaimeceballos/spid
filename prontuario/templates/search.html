@@ -3,7 +3,7 @@
   <div class="alert alert-info" role="alert">
     <center><h5> <i class="glyphicon glyphicon-info-sign"></i> Realice una busqueda previa de la persona que va a identificar.</h5></center>
   </div>
-  <form id="search" action="{% url 'search_persona' %}" method="post">{% csrf_token %}
+  <form id="search" action="{% url 'search_persona' %}" autocomplete="off" method="post">{% csrf_token %}
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
         {{form.apellido}}

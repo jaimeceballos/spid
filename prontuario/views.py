@@ -102,6 +102,8 @@ def search_persona(request):
     if request.is_ajax():
         form = SearchForm(request.POST)
         parametros = {}
+        print("VALID")
+        print(form.is_valid())
         if form.is_valid():
             parametros['apellido']          = form.cleaned_data['apellido']
             parametros['nombre']            = form.cleaned_data['nombre']
@@ -114,8 +116,8 @@ def search_persona(request):
             parametros['alias']             = form.cleaned_data['alias']
             strParametros = str(parametros)
             try:
-                resultados = SearchResults.objects.filter(id_busqueda=SearchHistory.objects.get(busqueda = strParametros))
-            except SearchHistory.DoesNotExist:
+                resultados = SearchResults.objects.filter(id_busqueda=SearchHistory.objects.get(busqueda = strParametros).id)
+            except Exception as e:
                 persona_spid = buscar_persona_spid(parametros)
                 persona_rrhh = buscar_persona_rrhh(parametros)
                 persona_acei = buscar_persona_acei(parametros)
@@ -135,16 +137,36 @@ def search_persona(request):
                                              prontuario = persona_indice
                                              )
                                         )
+            
         ciudades_nacimiento = resultados.values('ciudad_nacimiento').distinct()
         ciudades_residencia = resultados.values('ciudad_residencia').distinct()
         paises_nacimiento = resultados.values('pais_nacimiento').distinct()
-        if resultados.count() > 0:
-            persona_indice = persona_indice.exclude(dni__exact='',n_c__exact='').values_list('dni','n_c','n_p').distinct()
-            return render(request,"./resultados_busqueda.html",{'resultados':resultados,'ver_procesales':persona_indice.count(),'procesales_result':persona_indice})
+        if resultados.count():
+            procesales_result = None
+            if persona_indice and persona_indice.count() > 0:
+                persona_indice = persona_indice.exclude(dni__exact='').exclude(n_c__exact='').exclude(n_p__exact='').exclude(n_p__exact='0').values_list('dni','n_c','n_p','id').distinct()
+                procesales_result = to_html(persona_indice)
+
+        elif persona_indice and persona_indice.count() > 0:
+            procesales_result = None
+            if persona_indice and persona_indice.count() > 0:
+                persona_indice = persona_indice.exclude(dni__exact='').exclude(n_c__exact='').exclude(n_p__exact='').exclude(n_p__exact='0').values_list('dni','n_c','n_p','id').distinct()
+                procesales_result = to_html(persona_indice)
+            
         else:
             return HttpResponseNotFound("No hay Resultados para su busqueda.")
+        
+        return render(request,"./resultados_busqueda.html",{'resultados':resultados,'ver_procesales':persona_indice.count(),'procesales_result':procesales_result})
     else:
         return HttpResponseNotFound()
+
+def to_html(query):
+    html = '<table class="table"><thead><tr><th>DNI</th><th>Nombre</th><th>Prontuario</th></tr></thead><tbody>'
+    for row in query:
+        fila = '<tr><td>'+row[0]+'</td><td>'+row[1]+'</td><td>'+row[2]+'</td></tr>'
+        html = html+fila
+    html = html+'</tbody></table>'
+    return html
 
 
 def buscar_persona_spid(parametros):
@@ -196,7 +218,7 @@ def buscar_persona_acei(parametros):
 def buscar_persona_indice(parametros,persona_spid = None, persona_acei = None, persona_rrhh = None):
     """ Esta definicion realiza la busqueda de la persona segun los parametros ingresados
     en la base de datos chubut del sistema Comunicaciones Procesales"""
-    persona_indice = Indice.objects.using('prontuario').all().exclude(dni__exact='',n_c__exact='')
+    persona_indice = Indice.objects.using('prontuario').all().exclude(dni__exact='',n_c__exact='').exclude(dni__exact='0',n_p__exact='').exclude(n_p__exact='0')
     n_c = ""
     if not parametros['nombre'] == "":
         n_c = n_c +parametros['nombre']
@@ -294,38 +316,68 @@ def preparar_resultados(usuario,strParametros,spid = None,acei = None,rrhh = Non
     de datos para ser insertados en la tabla de resultados_busqueda, una tabla intermedia
     donde se almacenan temporalmente los resultados de busquedas hechas por el usuario."""
 
+    # obtengo el id de la busqueda realizada
     id_busqueda = obtener_id_busqueda(strParametros,usuario)
 
+    # si se obtuvieron resultados en la base de datos SPID 
     if spid:
+        # booleano que indica si la persona buscada es policia 
         es_policia = False
+
+        # comienzo a procesar la informacion dentro de los resultados de la base de datos SPID
         for registro in spid:
+            # obtengo el numero de documento desde los datos almacenados en la base de datos
             documento = registro.nro_doc
+            # preparo tres registros temporales uno para cada uno de las bases de datos restantes
             registro_rrhh = None
             registro_acei = None
             registro_prontuario = None
+            # detecto si la persona figura como empleado policial en la base de datos SPID
             try:
                 es_policia = True if registro.personal else False
             except Exception as e:
                 es_policia = False
+
+            # Realizo una busqueda de la persona actual dentro de cada una de las bases de datos restantes
+            # si tengo resultados desde la base de datos de RRHH
             if rrhh:
+                # genero un indice que va a apuntar a un elemento de la base de datos de RRHH
                 index = None
+                # Obtengo cada elemento y su indice del conjunto de resultados de RRHH
                 for idx, elemento in enumerate(rrhh):
+                    # si alguno de los resultados obtenidos coincide con el nro de documento de la persona que estoy procesando
                     if elemento['documento'] == str(documento):
+                        # lo almaceno en el registro temporal
                         registro_rrhh = elemento
+                        # guardo su indice dentro del conjunto de resultados
                         index = idx
+                        # finalizo la busqueda
                         break
+                # si hay un indice guardado
                 if index:
+                    # quito el registro apuntado del conjunto de resultados de RRHH
                     rrhh.pop(index)
+            # si hay resultados desde la base de datos de ACEI
             if acei:
                 try:
+                    # busco en el conjunto de resultados de ACEI una persona que coincida con la actual
                     registro_acei = acei.get(dni=documento)
+                    # si obtuve una persona la quito del conjunto de resultados
                     acei = acei.exclude(id = registro_acei.id)
                 except ObjectDoesNotExist:
                     pass
+            if prontuario:
+                for registro in prontuario:
+                    print("dni %s n_c %s n_p %s " % (registro.dni, registro.n_c, registro.n_p)) 
+            # creo un nuevo registro de resultado de busqueda
             nuevo = SearchResults()
+            # completo cada dato del registro con los obtenidos anteriormente
             nuevo.id_busqueda           = id_busqueda
-            nuevo.id_spid               = registro.id
+            # id del registro de la persona en la base de datos SPID
+            nuevo.id_spid               = registro.id 
+            # id del registro de la persona en la base de datos RRHH si no se encontro queda nulo
             nuevo.id_rrhh               = registro_rrhh['id'] if registro_rrhh else None
+            # id del registro de la persona en la base de datos ACEI si no se encontro queda nulo
             nuevo.id_acei               = registro_acei.id if registro_acei else None
             nuevo.id_prontuario         = registro_prontuario.id if registro_prontuario else None
             nuevo.es_policia            = es_policia
@@ -725,7 +777,7 @@ def nuevo_existe(request,id_detalle):
                                         persona = persona
                                     )
                 form = IdentificacionForm()
-                return render("./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':True})
+                return render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':True})
             form = PersonasForm(
                                 initial={
                                     'nombres':persona.nombres,
@@ -1094,7 +1146,10 @@ def ver_prontuario(request,id):
         values = {}
         values['prontuario'] = Prontuario.objects.get(id=id)
         values['fotos'] = values['prontuario'].fotos.all()
-        values['identificacion'] = values['prontuario'].identificaciones.latest(field_name = 'id')
+        try:
+            values['identificacion'] = values['prontuario'].identificaciones.latest(field_name = 'id')
+        except Exception as e:
+            values['identificacion'] = None
         values['domicilios'] = values['prontuario'].persona.persodom.all()
         values['padres'] = values['prontuario'].persona.padre.all()
         if values['padres'].count() > 0:
