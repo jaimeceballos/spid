@@ -901,8 +901,31 @@ class Domicilios(models.Model):
 	sector = models.CharField(max_length = 10,blank = True, null = True,default="")
 	manzana = models.CharField(max_length=4,default="0",blank = True)
 	calle2 = models.CharField(max_length=80,blank= True, null=True)
+	
 	def __str__(self):
-		return u'%s %s %s %s %s' % (self.personas,self.barrio_codigo,self.calle,self.altura,self.calle)
+		
+		str_domicilio = "" 
+		if self.barrio_codigo:
+			str_domicilio = str_domicilio + self.barrio_codigo.descripcion
+		if self.calle and self.entre and self.altura:
+			str_domicilio = str_domicilio +  "%s %s y %s " % (self.calle,self.altura,self.entre)
+		elif self.calle and self.entre and not self.altura:
+			str_domicilio = str_domicilio +  "%s y %s " % (self.calle,self.entre)
+		elif self.calle and self.altura and not self.entre:
+			str_domicilio = str_domicilio +  "%s %s " % (self.calle,self.altura)
+		elif self.calle2:
+			str_domicilio = str_domicilio +  "%s " % (self.calle2.upper())
+		else: 
+			str_domicilio = "Sin datos especificos."
+		if self.manzana and not self.manzana == '0':
+			str_domicilio = str_domicilio + "Mza. %s " % self.manzana
+		if self.lote and not self.lote == '0':
+			str_domicilio = str_domicilio + "Lte. %s " % self.lote
+
+
+		return str_domicilio
+		
+		
 
 	class Meta:
 		unique_together=('personas','ref_ciudades','barrio_codigo','fecha_desde','calle','altura')

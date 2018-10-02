@@ -1,0 +1,6 @@
+<br>
+{% if domicilios.count > 0 %}
+    <p>&Uacute;ltimo domicilio registrado: {{domicilios.reverse.0}} </p>
+{% else %}
+    <p>No hay domicilios registrados. <a href="javascript:cargar_domicilios({{persona.id}})" class="btn btn-xs btn-success"> <i class="glyphicon glyphicon-map-marker"></i> Cargar domicilio </a></p>
+{% endif %}

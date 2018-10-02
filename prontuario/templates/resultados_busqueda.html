@@ -107,17 +107,18 @@
 
   function ver_procesales(){
     
-    $("#dialog").html('{{procesales_result | safe}}');
-    $("#dialog").dialog(
-    {
-      width: 'auto',
-      height: 400,
-      modal:true,
-      open: function(event, ui)
-      {
-
-      }
-    });
+    var url = "/prontuario/buscar_procesales/";
+              $.get(url,function(data){
+                var apellido  = $("#id_apellido").val();
+                var nombre    = $("#id_nombre").val();
+                var documento = $("#id_documento").val();
+                $("#contenido").hide().empty().append(data);
+                $("#id_apellido").val(apellido);
+                $("#id_nombre").val(nombre);
+                $("#documento").val(documento);
+                $("#contenido").show()
+                $("#buscarForm :submit").trigger("click");
+              });
   }
 
   //});

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+</head>
+<body>
+    {% with identificacion=prontuario.identificaciones.all.reverse.0 persona=prontuario.identificaciones.all.reverse.0.persona domicilio=prontuario.identificaciones.all.reverse.0.persona.persodom.all.reverse.0   %}
+    <center><h1>Prontuario Nro. {{prontuario.nro}}</h1></center>
+    <center><h3><b><i>{{persona.apellidos}}, {{persona.nombres}}</i></b></h3></center>
+    <hr>
+    {% if prontuario.fotos.all.count > 0 %}
+    <center>{% for foto in prontuario.fotos.all %}
+        <img src="/media/{{foto.foto}}" height="100">
+    {% endfor %}</center>
+    {% else %}
+        <center>
+            <img src="/static/prontuario/images/avatar.png" height="100">
+        </center>
+    {% endif %}
+    <hr>
+    <center>
+       <table>
+           <tr>
+               <td style="background-color:rgba(214, 214, 214, 0.856); border-bottom:1pt solid black;" colspan="4" align="center"><i> DATOS PERSONALES </i></td>
+           </tr>
+           <tr>
+              <td align="right"><b><i>Nro. Documento:</i></b></td> 
+              <td>{{persona.nro_doc}}</td>
+              <td align="right"><b><i>Alias:</i></b></td>
+              <td>{% if persona.alias  %} {{persona.alias}} {% else %} No especificado {% endif %} </td>
+           </tr>
+           <tr>
+               <td align="right"><b><i>Fecha Nacimiento:</i></b></td>
+               <td>{{persona.fecha_nac|date:"d/m/Y"}}</td>
+               <td align="right"><b><i>Nacionalidad:</i></b></td>
+               <td>{{persona.ciudad_nac.pais}}</td>
+           </tr>
+           <tr>
+                <td align="right"><b><i>Ocupaci&oacute;n:</i></b></td>
+                <td>{{persona.ocupacion}}</td>
+                <td align="right"><b><i>Estado Civil:</i></b></td>
+                <td>{{persona.estado_civil}}</td>
+            </tr>
+            <tr>
+                <td align="right"><b><i>Contextura:</i></b></td>
+                <td>{{identificacion.contextura}}</td>
+                <td align="right"><b><i>Altura:</i></b></td>
+                <td>{{identificacion.altura_metros}},{{identificacion.altura_centimetros}} mts.</td>
+            </tr>
+            <tr>
+                <td align="right"><b><i>Cabello:</i></b></td>
+                <td>{{identificacion.cabello_tipo}}, {{identificacion.cabello_color}} {% if identificacion.es_tenido %} te&ntild;ido {% endif %}</td>
+                <td align="right"><b><i>Cutis:</i></b></td>
+                <td>{{identificacion.cutis}}</td>
+            </tr>
+            <tr>
+                <td style="border-bottom:1pt solid black;" align="right"><b><i>Tatuajes visibles:</i></b></td>
+                <td style="border-bottom:1pt solid black;">{% if identificacion.posee_tatuajes %} Si {% else %} No {% endif %}</td>
+                <td style="border-bottom:1pt solid black;" align="right"><b><i>Cicatrices visibles:</i></b></td>
+                <td style="border-bottom:1pt solid black;">{% if identificacion.posee_cicatrices %} Si {% else %} No {% endif %}</td>
+            </tr>
+            <tr>
+                <td style="background-color:rgba(214, 214, 214, 0.856);border-bottom:1pt solid black;" colspan="4"><i>Domicilio <small><b>(actualizado el {{domicilio.fecha_actualizacion}})</b></small></i> </td>
+            </tr>
+            <tr>
+                <td align="right"><b><i>Ciudad de residencia:</i></b></td>
+                <td>{{domicilio.ref_ciudades}}</td>
+                <td align="right"><b><i>Provincia:</i></b></td>
+                <td>{{domicilio.ref_ciudades.provincia}}</td>
+            </tr>
+            <tr>
+                <td  style="border-bottom:1pt solid black;" colspan="4">{{domicilio}}</td>
+            </tr>
+            <tr>
+                <td  style="background-color:rgba(214, 214, 214, 0.856);border-bottom:1pt solid black;" colspan="4">
+                    <i>Datos de los Padres</i>
+                </td>
+            </tr>
+            <tr>
+                {% if persona.padre.all %}
+                    {% with padres=persona.padre.all.0 %}
+                        <td align="right"><b><i>Padre:</i></b></td>
+                        <td >{% if padres.padre_nombre %} {{padres.padre_nombre}} {% else %} No registrado {% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom:1pt solid black;" align="right"><b><i>Madre:</i></b></td>
+                        <td style="border-bottom:1pt solid black;">{% if padres.madre_nombre %} {{padres.madre_nombre}} {{padres.madre_apellido }} {% else %} No registrado {% endif %}</td>
+                        <td colspan="2" style="border-bottom:1pt solid black;"></td>
+                    {% endwith %}
+                {% else %}
+                <td colspan="4" align="left">
+                    SIN DATOS DE LOS PADRES
+                </td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>
+                    {{identificacion.observaciones}}
+                </td>
+            </tr>
+       </table>
+    </center>
+    {% endwith %}
+
+
+    <script>
+        window.addEventListener('load', window.print(), false )
+
+    </script>
+</body>
+</html>

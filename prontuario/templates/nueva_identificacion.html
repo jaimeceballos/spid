@@ -20,7 +20,7 @@
         <div class="row bg-success">
           <div class="col-md-12">
             <h3 id="lblNombre">{{persona.apellidos}}, {{persona.nombres}}</h3>
-
+            
           </div>
         </div>
         <div class="row bg-success">
@@ -55,11 +55,14 @@
           <div class="col-md-3">
             <center><a href="javascript:cargar_padres({{persona.id}})" class="btn btn-xs btn-success"> {% if existe %} Ver Padres {% else %} Cargar Padres {% endif %} </a></center>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <center><a href="javascript:cargar_domicilios({{persona.id}})" class="btn btn-xs btn-success"> <i class="glyphicon glyphicon-map-marker"></i> {% if existe %} Ver Domicilios {% else %} Cargar domicilio {% endif %} </a></center>
           </div>
           <div class="col-md-3">
             <center><a href="javascript:cargar_fotos({{persona.id}})" class="btn btn-xs btn-success"> <i class="glyphicon glyphicon-camera"></i> {% if existe %} Ver Fotos {% else %} Cargar Fotos {% endif %} </a></center>
+          </div>
+          <div class="col-md-2">
+            <center><a href="{% url 'imprimir_prontuario' prontuario.id %}" target="_blank" class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-print"></i> Imprimir</a></center>
           </div>
         </div>
         <div class="row">
@@ -176,7 +179,14 @@
       <div id="fotos" style="display:none;">
 
       </div>
-
+      <div id="domicilios" style="display:none">
+        <br>
+        {% if persona.persodom.all %}
+        <p>&Uacute;ltimo domicilio registrado: {{persona.persodom.all.reverse.0}} </p>
+        {% else %}
+        <p>No hay domicilios registrados. <a href="javascript:cargar_domicilios({{persona.id}})" class="btn btn-xs btn-success"> <i class="glyphicon glyphicon-map-marker"></i> Cargar domicilio </a></p>
+        {% endif %}
+      </div>
     </div>
 
   </div>

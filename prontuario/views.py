@@ -57,7 +57,6 @@ def nuevo(request):
     Definicion que devuelve el formulario de carga de un nuevo prontuario
     """
     if request.is_ajax():
-        print ('llega')
         values = {}
         form            = PersonasForm()
         prontuarioForm  = ProntuarioForm()
@@ -102,8 +101,6 @@ def search_persona(request):
     if request.is_ajax():
         form = SearchForm(request.POST)
         parametros = {}
-        print("VALID")
-        print(form.is_valid())
         if form.is_valid():
             parametros['apellido']          = form.cleaned_data['apellido']
             parametros['nombre']            = form.cleaned_data['nombre']
@@ -132,8 +129,8 @@ def search_persona(request):
                                              request.user,
                                              strParametros,
                                              spid = persona_spid,
-                                             rrhh = persona_rrhh,
                                              acei = persona_acei,
+                                             rrhh = persona_rrhh,
                                              prontuario = persona_indice
                                              )
                                         )
@@ -143,20 +140,21 @@ def search_persona(request):
         paises_nacimiento = resultados.values('pais_nacimiento').distinct()
         if resultados.count():
             procesales_result = None
+            persona_indice = buscar_persona_indice(parametros)
             if persona_indice and persona_indice.count() > 0:
                 persona_indice = persona_indice.exclude(dni__exact='').exclude(n_c__exact='').exclude(n_p__exact='').exclude(n_p__exact='0').values_list('dni','n_c','n_p','id').distinct()
-                procesales_result = to_html(persona_indice)
+                
 
         elif persona_indice and persona_indice.count() > 0:
             procesales_result = None
             if persona_indice and persona_indice.count() > 0:
                 persona_indice = persona_indice.exclude(dni__exact='').exclude(n_c__exact='').exclude(n_p__exact='').exclude(n_p__exact='0').values_list('dni','n_c','n_p','id').distinct()
-                procesales_result = to_html(persona_indice)
+                
             
         else:
             return HttpResponseNotFound("No hay Resultados para su busqueda.")
         
-        return render(request,"./resultados_busqueda.html",{'resultados':resultados,'ver_procesales':persona_indice.count(),'procesales_result':procesales_result})
+        return render(request,"./resultados_busqueda.html",{'resultados':resultados,'ver_procesales':persona_indice.count(),'procesales_result':persona_indice})
     else:
         return HttpResponseNotFound()
 
@@ -321,6 +319,7 @@ def preparar_resultados(usuario,strParametros,spid = None,acei = None,rrhh = Non
 
     # si se obtuvieron resultados en la base de datos SPID 
     if spid:
+        
         # booleano que indica si la persona buscada es policia 
         es_policia = False
 
@@ -367,8 +366,8 @@ def preparar_resultados(usuario,strParametros,spid = None,acei = None,rrhh = Non
                 except ObjectDoesNotExist:
                     pass
             if prontuario:
-                for registro in prontuario:
-                    print("dni %s n_c %s n_p %s " % (registro.dni, registro.n_c, registro.n_p)) 
+                for reg in prontuario:
+                    print("dni %s n_c %s n_p %s " % (reg.dni, reg.n_c, reg.n_p)) 
             # creo un nuevo registro de resultado de busqueda
             nuevo = SearchResults()
             # completo cada dato del registro con los obtenidos anteriormente
@@ -653,7 +652,7 @@ def nuevo_pais(request,tipo):
                     return HttpResponseBadRequest()
                 paises = RefPaises.objects.all()
                 data = serializers.serialize("json", paises)
-                return HttpResponse(data, mimetype='application/json')
+                return HttpResponse(data, content_type='application/json')
         else:
             form = PaisesForm()
             return render(request,"./nuevo_pais.html",{'form':form,'tipo':tipo})
@@ -675,10 +674,10 @@ def nueva_ciudad(request,tipo,pais):
                 try:
                     ciudad.save()
                 except Exception as e:
-                    return HttpResponseBadRequest
+                    return HttpResponseBadRequest()
                 ciudades = RefCiudades.objects.filter(pais=pais)
                 data = serializers.serialize("json",ciudades)
-                return HttpResponse(data,mimetype="application/json")
+                return HttpResponse(data,content_type="application/json")
         else:
             form = CiudadesForm(initial={'pais':pais})
             return render(request,"./nuevo_ciudad.html",{'form':form,'tipo':tipo,'pais':pais})
@@ -738,12 +737,19 @@ def nuevo_save(request):
                     if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES":
                         prontuario.nro = prontuarioForm.cleaned_data['nro']
                         prontuario.persona = persona
-                        prontuario.observaciones = prontuarioForm.cleaned_data['observaciones'].upper()
-                        prontuario.save()
+                        prontuario.observaciones = prontuarioForm.cleaned_data['observaciones']
+                        if not prontuario.observaciones =='':
+                            prontuario.observaciones = prontuario.observaciones.upper()
+                        try:
+                            print("------ SAVE DE PRONTUARIO ------")
+                            prontuario.save()
+                        except Exception as e:
+                            print(e)
                     form = IdentificacionForm()
                     existe = False
-                    return render("./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
+                    return render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
                 except Exception as e:
+                    print(e)
                     return HttpResponseBadRequest()
 
     return HttpResponseBadRequest()
@@ -1296,3 +1302,9 @@ def buscar_procesales(request):
 def preventivos_persona(request,persona):
     resultados = PreventivosPersona.objects.filter(documento = persona)
     return render(request,"./preventivos_persona.html",{'resultados':resultados})
+
+
+def imprimir_prontuario(request,prontuario):
+    prontuario = get_object_or_404(Prontuario,id=prontuario)
+
+    return render(request,"impresion.html",{'prontuario':prontuario})

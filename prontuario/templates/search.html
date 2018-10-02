@@ -120,7 +120,15 @@ $("#btnSearch").click(function(event){
               $( this ).dialog( "close" );
               var url = "/prontuario/buscar_procesales/";
               $.get(url,function(data){
-                $("#contenido").hide().empty().append(data).show();
+                var apellido  = $("#id_apellido").val();
+                var nombre    = $("#id_nombre").val();
+                var documento = $("#id_documento").val();
+                $("#contenido").hide().empty().append(data);
+                $("#id_apellido").val(apellido);
+                $("#id_nombre").val(nombre);
+                $("#documento").val(documento);
+                $("#contenido").show()
+                $("#buscarForm :submit").trigger("click");
               });
 
             }

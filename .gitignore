@@ -3,4 +3,5 @@ __pycache__/
 *.py[cod]
 spid/settings.py
 spid/wsgi.py
-
+fotos/*
+.vscode/*

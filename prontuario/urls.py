@@ -48,4 +48,5 @@ urlpatterns = [
     url(r'^eliminar_historial/$',eliminar_historial,name='eliminar_historial'),
     url(r'^buscar_procesales/$',buscar_procesales,name='buscar_procesales'),
     url(r'^preventivos_persona/(?P<persona>[0-9]+)/$',preventivos_persona,name='preventivos_persona'),
+    url(r'^imprimir_prontuario/(?P<prontuario>[0-9]+)/$',imprimir_prontuario,name='imprimir_prontuario'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
