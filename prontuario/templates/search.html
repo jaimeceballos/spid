@@ -228,7 +228,7 @@ function utilizarProntuario(id,prontuario){
   })
 }
 function identificacion(id){
-  var url = "/prontuario/identificacion/"+id+"/";
+  var url = "/prontuario/resumen_persona/"+id+"/";
   $.get(url,function(data){
     $("#contenido").empty().append(data);
     $("#carga").show();

@@ -33,6 +33,7 @@ def home(request):
     user = request.user
     values['destino'] = "%s / %s" % (user.userprofile.depe,user.userprofile.ureg)
     values['state'] = user.groups.values_list('name', flat=True)
+    values['form'] = SearchForm()
     if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES":
         verificar = Verificar.objects.filter(verificado = False)
         values['verificar'] = verificar
@@ -706,6 +707,7 @@ def nuevo_save(request):
 
     if request.is_ajax():
         if request.method == 'POST':
+            print("ingresa")
             validacion = False
             id = request.POST['persona_id']
             if id == "":
@@ -719,6 +721,7 @@ def nuevo_save(request):
                 validacion = form.is_valid() and prontuarioForm.is_valid()
             else:
                 validacion = form.is_valid()
+                
             if validacion:
                 prontuario = Prontuario()
                 persona.apellidos       = form.cleaned_data['apellidos']
@@ -744,11 +747,13 @@ def nuevo_save(request):
                             print("------ SAVE DE PRONTUARIO ------")
                             prontuario.save()
                         except Exception as e:
+                            print("excepcion save prontuario")
                             print(e)
                     form = IdentificacionForm()
                     existe = False
-                    return render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
+                    return HttpResponseRedirect('/prontuario/ver_prontuario/%s/' % persona.id) #render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
                 except Exception as e:
+                    print("excepcion save")
                     print(e)
                     return HttpResponseBadRequest()
 
@@ -759,10 +764,19 @@ def nuevo_save(request):
 def identificacion(request,id):
     if request.is_ajax:
         persona = Personas.objects.get(id=id)
-        prontuario = Prontuario.objects.get(persona=persona)
+        #prontuario = Prontuario.objects.get(persona=persona)
         form = IdentificacionForm()
         existe = True
-        return render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
+        return render(request,"./nueva_identificacion.html",{'persona':persona,'form':form,'existe':existe})
+    return HttpResponseBadRequest()
+
+@login_required
+@group_required(["prontuario"])
+def resumen_persona(request,id):
+    if request.is_ajax:
+        persona = Personas.objects.get(id=id)
+        #prontuario = Prontuario.objects.get(persona=persona)
+        return HttpResponseRedirect('/prontuario/ver_prontuario/%s/' % persona.id)
     return HttpResponseBadRequest()
 
 @login_required
@@ -864,7 +878,7 @@ def identificacion_save(request):
                         prontuario = Prontuario()
                 except Exception as e:
                     return HttpResponseBadRequest()
-                return render(request,"./nueva_identificacion.html",{'persona':identificacion.persona,'prontuario':prontuario,'identificacion':identificacion,'existe':True})
+                return HttpResponseRedirect("/prontuario/resumen_persona/%s/" % identificacion.persona.id) #render(request,"./nueva_identificacion.html",{'persona':identificacion.persona,'prontuario':prontuario,'identificacion':identificacion,'existe':True})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1039,7 +1053,7 @@ def vincular(request,id):
                     prontuario.save()                                                 # guardo la nueva instancia en la BD
                 prontuario.identificaciones.add(identificacion)                       # asigno la identificacion al prontuario
                 fotos = FotosPersona.objects.filter(persona = identificacion.persona) # busco si existen fotos asociadas a la persona
-                if fotos.count > 0:                                                   # en el caso que existan
+                if fotos.count() > 0:                                                   # en el caso que existan
                     for foto in fotos:
                         try:
                             prontuario.fotos.add(foto)                                    # las agrego al prontuario
@@ -1053,7 +1067,7 @@ def vincular(request,id):
                 verificar.save()
                 return HttpResponse("ok")                                             # devuelvo "ok" para notificar que la operacion termino correctamente
             except Exception as e:
-                print (e)
+                print ("Excepcion en vincular %s" % e)
     return HttpResponseBadRequest()
 
 @login_required
@@ -1148,21 +1162,29 @@ def obtener_miniatura(request,id):
 @login_required
 @group_required(["prontuario"])
 def ver_prontuario(request,id):
-    if request.is_ajax():
+    #if request.is_ajax():
         values = {}
-        values['prontuario'] = Prontuario.objects.get(id=id)
-        values['fotos'] = values['prontuario'].fotos.all()
+        persona = Personas.objects.get(id=id)
         try:
-            values['identificacion'] = values['prontuario'].identificaciones.latest(field_name = 'id')
+            values['prontuario'] = persona.prontuario
+        except Exception as e:
+            values['prontuario'] = None
+        try:
+            values['fotos'] = values['prontuario'].fotos.all()
+        except Exception as e:
+            values['fotos'] = None
+        try:
+            values['identificacion'] = persona.identificacion_set.latest(field_name = 'id')
         except Exception as e:
             values['identificacion'] = None
-        values['domicilios'] = values['prontuario'].persona.persodom.all()
-        values['padres'] = values['prontuario'].persona.padre.all()
+        values['domicilios'] = persona.persodom.all()
+        values['padres'] = persona.padre.all()
         if values['padres'].count() > 0:
-            values['padres'] = values['prontuario'].persona.padre.all()[0]
-        values['preventivos'] = PreventivosPersona.objects.filter(documento = values['prontuario'].persona.nro_doc)
+            values['padres'] = persona.padre.all()[0]
+        values['preventivos'] = PreventivosPersona.objects.filter(documento = persona.nro_doc)
+        values['persona'] = persona
         return render(request,"./prontuario.html",values)
-    return HttpResponseBadRequest()
+    #return HttpResponseBadRequest()
 
 @login_required
 @group_required(["prontuario"])

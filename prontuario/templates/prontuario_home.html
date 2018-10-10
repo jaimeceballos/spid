@@ -76,16 +76,17 @@
         </div>
         <div class="row">
           <div class="col-md-2 main">
-                {% include './main_body.html' %}
-          </div>
-          <div class="col-md-10 " id="contenido" style="height:100%;overflow-y:auto;overflow-x:hidden">
-              {% if verificar %}
+              
                 <div class="alert alert-info" role="alert">
                     <p>
                       Hay <span class="badge">{{verificar.count}}</span> nueva{% if verificar.count > 1 %}s{% endif %} identificacion{% if verificar.count > 1 %}es{% endif %} cargada{% if verificar.count > 1 %}s{% endif %} para verificar. Click <a href="{% url 'verificar' %}" id="verificar">aqui</a>.
                     </p>
                 </div>
-              {% endif %}
+              
+            
+          </div>
+          <div class="col-md-10 " id="contenido" style="height:100%;overflow-y:auto;overflow-x:hidden;align-content: center">
+              {% include './search.html' %}  
           </div>
         </div>
         <div class="row">

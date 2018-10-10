@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-12">
-      <form id="save-form" action="{% url 'cargar_padres' id %}" method="post">{% csrf_token %}
+      <form id="save-form" action="{% url 'cargar_padres' persona.id %}" method="post">{% csrf_token %}
         <fieldset>
           <legend>Padre</legend>
           <div class="row">

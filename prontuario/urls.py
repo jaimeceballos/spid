@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^obtener_identificacion/(?P<id>[0-9A-Za-z]+)/$',obtener_identificacion,name='obtener_identificacion'),
     url(r'^obtener_fotos/(?P<id>[0-9A-Za-z]+)/$',obtener_fotos,name='obtener_fotos'),
     url(r'^identificacion/(?P<id>[0-9A-Za-z]+)/$',identificacion,name='identificacion'),
+    url(r'^resumen_persona/(?P<id>[0-9A-Za-z]+)/$',resumen_persona,name='resumen_persona'),
     url(r'^ver_identificacion/(?P<id>[0-9A-Za-z]+)/$',ver_identificacion,name='ver_identificacion'),
     url(r'^buscar/$',buscar,name='buscar'),
     url(r'^busqueda/$',busqueda,name='busqueda'),
