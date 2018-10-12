@@ -943,7 +943,7 @@ def cargar_padres(request,id):
                 form = PadresForm(instance = padres)
             except ObjectDoesNotExist:
                 form = PadresForm()
-            return render(request,"./padres.html",{'form':form,'id':id})
+            return render(request,"./padres.html",{'form':form,'id':id,'persona':persona})
     return HttpResponseBadRequest()
 
 @login_required
@@ -977,6 +977,7 @@ def cargar_domicilios(request,id):
                 domicilio.personas                                      = persona
                 try:
                     domicilio.save()
+                    return HttpResponseRedirect("/prontuario/resumen_persona/%s/" % persona.id)
                 except Exception as e:
                     return HttpResponseBadRequest()
         domicilios = Domicilios.objects.filter(personas=persona)
@@ -1177,7 +1178,7 @@ def ver_prontuario(request,id):
             values['identificacion'] = persona.identificacion_set.latest(field_name = 'id')
         except Exception as e:
             values['identificacion'] = None
-        values['domicilios'] = persona.persodom.all()
+        values['domicilios'] = persona.persodom.all()[:2]
         values['padres'] = persona.padre.all()
         if values['padres'].count() > 0:
             values['padres'] = persona.padre.all()[0]

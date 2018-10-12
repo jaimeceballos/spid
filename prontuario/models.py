@@ -73,6 +73,7 @@ class Identificacion(models.Model):
 
     class Meta:
         db_table = 'identificacion'
+        get_latest_by = 'id'
 
 
 class Prontuario(models.Model):

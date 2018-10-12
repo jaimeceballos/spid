@@ -72,6 +72,10 @@
       success: function(data){
         $("#save").prop('disabled', false);
         $("#loading").hide();
+        var padre = $("#id_padre_apellidos ").val()+", "+$("#id_padre_nombres").val();
+        var madre = $("#id_madre_apellidos ").val()+", "+$("#id_madre_nombres").val();
+        $("#dd-padre").empty().append(padre);
+        $("#dd-madre").empty().append(madre);
         $("#dialog").empty().dialog("close");
         $( "#dialog-confirm" ).dialog({
           closeOnEscape: false,

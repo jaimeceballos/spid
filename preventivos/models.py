@@ -859,6 +859,7 @@ class Padres(models.Model):
 		ordering = ['id']
 		db_table = 'padres'
 		app_label = 'preventivos'
+		get_latest_by = 'id'
 
 class Detenidos(models.Model):
 	id=models.AutoField(primary_key=True)
@@ -932,6 +933,7 @@ class Domicilios(models.Model):
 		ordering = ['-fecha_desde']
 		db_table = 'domicilios'
 		app_label = 'preventivos'
+		get_latest_by = 'id'
 
 class Lugar(models.Model):
 	calle = models.ForeignKey(RefCalles,related_name='calle_hecho',on_delete=models.PROTECT,blank=True,null = True)

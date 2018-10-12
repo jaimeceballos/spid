@@ -207,7 +207,7 @@ $("#save-form").submit(function(event){
     success: function(data){
       $("#save").prop('disabled', false);
       $("#loading").hide();
-      $("#dialog").empty().html(data);
+      $("#contenido").empty().append(data);
     },
     error: function(jqXHR, textStatus,msg){
       $("#btnSearch").prop('disabled', false);

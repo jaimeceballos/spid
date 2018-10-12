@@ -9,7 +9,7 @@
     <script src="main.js"></script>
 </head>
 <body>
-    {% with identificacion=prontuario.identificaciones.all.reverse.0 persona=prontuario.identificaciones.all.reverse.0.persona domicilio=prontuario.identificaciones.all.reverse.0.persona.persodom.all.reverse.0   %}
+    {% with identificacion=prontuario.identificaciones.latest persona=prontuario.persona domicilio=prontuario.persona.persodom.latest   %}
     <center><h1>Prontuario Nro. {{prontuario.nro}}</h1></center>
     <center><h3><b><i>{{persona.apellidos}}, {{persona.nombres}}</i></b></h3></center>
     <hr>
@@ -83,7 +83,7 @@
             </tr>
             <tr>
                 {% if persona.padre.all %}
-                    {% with padres=persona.padre.all.0 %}
+                    {% with padres=persona.padre.latest %}
                         <td align="right"><b><i>Padre:</i></b></td>
                         <td >{% if padres.padre_nombre %} {{padres.padre_nombre}} {% else %} No registrado {% endif %}</td>
                     </tr>

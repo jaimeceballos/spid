@@ -1,3 +1,6 @@
+<div>
+  <a href="javascript:volver()"><i class="glyphicon glyphicon-arrow-left"></i> Volver </a>
+</div>
 <h1>Cargar identificaci&oacute;n</h1>
 <h3>{{persona.apellidos}}, {{persona.nombres}}</h3>
 <hr>
@@ -141,22 +144,7 @@
         }
       });
     });
-    function cargar_padres(id){
-      var url = "/prontuario/cargar_padres/"+id+"/";
-      $.get(url,function(data){
-        $("#dialog").html(data);
-        $("#dialog").dialog(
-        {
-          width: 'auto',
-          height: 'auto',
-          modal:true,
-          open: function(event, ui)
-          {
-  
-          }
-        });
-      });
-    }
+    
     function cargar_domicilios(id){
       var url = "/prontuario/cargar_domicilios/"+id+"/";
       $.get(url,function(data){
@@ -179,28 +167,7 @@
         });
       })
     }
-    function cargar_fotos(id){
-      var url = "/prontuario/cargar_fotos/"+id+"/";
-      $.get(url,function(data){
-        $("#dialog").html(data);
-        $("#dialog").dialog(
-        {
-          width: 'auto',
-          height: 'auto',
-          modal:true,
-          open: function(event, ui)
-          {
-  
-          },
-          buttons: {
-            Cerrar: function() {
-              $( this ).dialog( "close" );
-  
-            }
-          }
-        });
-      });
-    }
+    
     $("#identificaciones-anteriores").ready(function(){
       var persona = "{{persona.id}}";
       var url = "/prontuario/identificaciones_anteriores/"+persona+"/";
@@ -248,30 +215,7 @@
         alert("Hubo un error en la solicitud. Por favor vuelva a intentarlo.")
       })
     }
-    function modificar_persona(url){
-      $.get(url,function(data){
-        $("#dialog").html(data);
-        $("#dialog").dialog(
-        {
-          width: 'auto',
-          height: 'auto',
-          modal:true,
-          open: function(event, ui)
-          {
-  
-          },
-          buttons: {
-            Cerrar: function() {
-              $( this ).dialog( "close" );
-  
-            }
-          }
-        });
-      })
-      .fail(function(){
-        alert("Hubo un error en la solicitud. Por favor vuelva a intentarlo.")
-      })
-    }
+    
     function nuevo(tipo){
       var url = "/prontuario/nuevo_elemento/"+tipo+"/";
       $.get(url,function(data){
@@ -295,6 +239,11 @@
       });
   
     }
-  
+    function volver(){
+      var url = "{% url 'resumen_persona' persona.id %}"
+      $.get(url, function(data){
+        $("#contenido").empty().append(data);
+      });
+    }
   </script>
   

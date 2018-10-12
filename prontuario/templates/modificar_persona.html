@@ -78,8 +78,9 @@
       data: form.serialize(),
       success: function(data){
         $("#alerta").removeAttr("class").addClass("alert alert-success").empty().append("<h4><small>"+data+"</small></h4>").show();
-        $("#lblNombre").text($("#id_apellidos").val().toUpperCase()+", "+$("#id_nombres").val().toUpperCase());
-        $("#lblDocumento").text("Documento "+$("#id_nro_doc").val());
+        $("#dd-nombre").empty().append($("#id_nombres").val().toUpperCase());
+        $("#dd-apellido").empty.append($("#id_apellidos").val().toUpperCase());
+        $("#dd-documento").empty().append("Documento "+$("#id_nro_doc").val());
       },
       error: function(jqXHR, textStatus,msg){
         $("#btnSearch").prop('disabled', false);
