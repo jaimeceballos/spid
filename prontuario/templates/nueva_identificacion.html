@@ -1,10 +1,10 @@
 <div>
-  <a href="javascript:volver()"><i class="glyphicon glyphicon-arrow-left"></i> Volver </a>
+  <a href="javascript:volver()" class="btn btn-xs btn-success"><i class="glyphicon glyphicon-arrow-left"></i> Volver </a>
 </div>
 <h1>Cargar identificaci&oacute;n</h1>
 <h3>{{persona.apellidos}}, {{persona.nombres}}</h3>
 <hr>
-<div id="carga" >
+<div id="carga" class="well" >
     <form id="identificacion-save" action="{% url 'identificacion_save'%}" method="post">{%csrf_token%}
       <input type="hidden" name="prontuario" value="{{prontuario.id}}">
       <input type="hidden" name="persona" value="{{persona.id}}">

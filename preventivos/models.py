@@ -909,19 +909,19 @@ class Domicilios(models.Model):
 		if self.barrio_codigo:
 			str_domicilio = str_domicilio + self.barrio_codigo.descripcion
 		if self.calle and self.entre and self.altura:
-			str_domicilio = str_domicilio +  "%s %s y %s " % (self.calle,self.altura,self.entre)
+			str_domicilio = str_domicilio +  " %s %s y %s " % (self.calle,self.altura,self.entre)
 		elif self.calle and self.entre and not self.altura:
-			str_domicilio = str_domicilio +  "%s y %s " % (self.calle,self.entre)
+			str_domicilio = str_domicilio +  " %s y %s " % (self.calle,self.entre)
 		elif self.calle and self.altura and not self.entre:
-			str_domicilio = str_domicilio +  "%s %s " % (self.calle,self.altura)
+			str_domicilio = str_domicilio +  " %s %s " % (self.calle,self.altura)
 		elif self.calle2:
-			str_domicilio = str_domicilio +  "%s " % (self.calle2.upper())
+			str_domicilio = str_domicilio +  " %s " % (self.calle2.upper())
 		else: 
 			str_domicilio = "Sin datos especificos."
 		if self.manzana and not self.manzana == '0':
-			str_domicilio = str_domicilio + "Mza. %s " % self.manzana
+			str_domicilio = str_domicilio + " Mza. %s " % self.manzana
 		if self.lote and not self.lote == '0':
-			str_domicilio = str_domicilio + "Lte. %s " % self.lote
+			str_domicilio = str_domicilio + " Lte. %s " % self.lote
 
 
 		return str_domicilio

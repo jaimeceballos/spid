@@ -1,165 +1,169 @@
-<fieldset>
-  <legend>Nuevo domicilio</legend>
-  <div class="row well">
-    <form id="save-form" action="{% url 'cargar_domicilios' id %}" method="post">{% csrf_token %}
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="checkbox">
-
-            <label>
-              <input type="checkbox" id="chkNoProvincia" />Domicilio fuera de la provincia
-            </label>
-
+<div>
+  <a href="javascript:volver()" class="btn btn-xs btn-success"><i class="glyphicon glyphicon-arrow-left"></i> Volver </a>
+</div>
+<div class="row">
+  <div class="col-md-5 col-md-offset-1">
+      <fieldset>
+          <legend>Nuevo domicilio</legend>
+          <div class="row well">
+            <form id="save-form" action="{% url 'cargar_domicilios' id %}" method="post">{% csrf_token %}
+        
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="checkbox">
+        
+                    <label>
+                      <input type="checkbox" id="chkNoProvincia" />Domicilio fuera de la provincia
+                    </label>
+        
+                  </div>
+                </div>
+              </div>
+              <div class="row no_provincia" id="noProvincia">
+                <div class="col-md-8">
+                  <label for="">Pais</label>
+                  <select class="" id="id_pais">
+                    <option value=""></option>
+                    {% for pais in paises %}
+                    <option value="{{pais.id}}">{{pais.descripcion}}</option>
+                    {% endfor%}
+                  </select>
+                  <a href="javascript:nuevo('pais')"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="form-group">
+                    <label for="">Ciudad</label>
+                      {{form.ref_ciudades}}
+                      <script type="text/javascript">
+                        var url = '/preventivos/ciudades_ajax_provincia/1/';
+                        $.get(url,function(data){
+                          var select = $("#id_ref_ciudades");
+                          var options = '<option value="">Seleccione ciudad</option>';
+                          for (var i = 0; i < data.length; i++) {
+                            options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
+                          }
+                          select.html(options);
+                          select.removeAttr('disabled');
+                        }, "json");
+                      </script>
+                      <a href="javascript:nuevo('ciudad')"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div id="enProvincia">
+                <div class="row" id="siCalle">
+                  <div class="col-md-6">
+                    <label for="">Calle</label>
+                    {{form.calle}}
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" id="chkInterseccion"/>Interseccion
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <label for="">N°</label>
+                    {{form.altura}}
+                  </div>
+                  <div class="col-md-4 interseccion" id="interseccion">
+                    <label for="">Intersecci&oacute;n</label>
+                    {{form.entre}}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="checkbox">
+                      <label for=""> </label>
+                      <label>
+                        <input type="checkbox" id="chkCalle" />La calle no figura
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row  no_calle" id="noCalle">
+                  <div class="col-md-12" >
+                    <label for="">Calle</label>
+                    {{form.calle2}}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="">Barrio</label>
+                    {{form.barrio_codigo}}
+                  </div>
+                  <div class="col-md-2">
+                    <label for="">Sector</label>
+                    {{form.sector}}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">
+                    <label for="">Manzana</label>
+                    {{form.manzana}}
+                  </div>
+                  <div class="col-md-2">
+                    <label for="">lote</label>
+                    {{form.lote}}
+                  </div>
+                  <div class="col-md-2">
+                    <label for="">Piso</label>
+                    {{form.piso}}
+                  </div>
+                  <div class="col-md-2">
+                    <label for="">Departamento</label>
+                    {{form.departamento}}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-8">
+                  <button type="submit" class="btn btn-large btn-success  pull-right" id="save"> <i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
+                </div>
+              </div>
+            </form>
+        
+        
           </div>
-        </div>
-      </div>
-      <div class="row no_provincia" id="noProvincia">
-        <div class="col-md-12">
-          <label for="">Pais</label>
-          <select class="" id="id_pais">
-            <option value=""></option>
-            {% for pais in paises %}
-            <option value="{{pais.id}}">{{pais.descripcion}}</option>
-            {% endfor%}
-          </select>
-          <a href="javascript:nuevo('pais')"><i class="glyphicon glyphicon-plus-sign"></i></a>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">Ciudad</label>
-              {{form.ref_ciudades}}
-              <script type="text/javascript">
-                var url = '/preventivos/ciudades_ajax_provincia/1/';
-                $.get(url,function(data){
-                  var select = $("#id_ref_ciudades");
-                  var options = '<option value="">Seleccione ciudad</option>';
-                  for (var i = 0; i < data.length; i++) {
-                    options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-                  }
-                  select.html(options);
-                  select.removeAttr('disabled');
-                }, "json");
-              </script>
-              <a href="javascript:nuevo('ciudad')"><i class="glyphicon glyphicon-plus-sign"></i></a>
-          </div>
-        </div>
-      </div>
-      <div id="enProvincia">
-        <div class="row" id="siCalle">
-          <div class="col-md-4">
-            <label for="">Calle</label>
-            {{form.calle}}
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" id="chkInterseccion"/>Interseccion
-              </label>
-            </div>
-          </div>
-          <div class="col-md-1">
-            <label for="">N°</label>
-            {{form.altura}}
-          </div>
-          <div class="col-md-4 interseccion" id="interseccion">
-            <label for="">Intersecci&oacute;n</label>
-            {{form.entre}}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3">
-            <div class="checkbox">
-              <label for=""> </label>
-              <label>
-                <input type="checkbox" id="chkCalle" />La calle no figura
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="row  no_calle" id="noCalle">
-          <div class="col-md-12" >
-            <label for="">Calle</label>
-            {{form.calle2}}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3">
-            <label for="">Barrio</label>
-            {{form.barrio_codigo}}
-          </div>
-          <div class="col-md-2">
-            <label for="">Sector</label>
-            {{form.sector}}
-          </div>
-          <div class="col-md-2">
-            <label for="">Manzana</label>
-            {{form.manzana}}
-          </div>
-          <div class="col-md-2">
-            <label for="">lote</label>
-            {{form.lote}}
-          </div>
-          <div class="col-md-2">
-            <label for="">Piso</label>
-            {{form.piso}}
-          </div>
-          <div class="col-md-1">
-            <label for="">Departamento</label>
-            {{form.departamento}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <button type="submit" class="btn btn-large btn-success  pull-right" id="save"> <i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
-        </div>
-      </div>
-    </form>
-
-
+        </fieldset>
   </div>
-</fieldset>
-<hr>
-<h3>Domicilios registrados</h3>
-  <div class="row well">
-    <div class="col-md-12">
-      <table class="table table-hover table-condensed table-bordered">
-        <tbody>
-          {%for domicilio in domicilios %}
-          <tr>
-            <td>
-              {{domicilio.ref_ciudades.descripcion}}
-            </td>
-            <td>
-              {% if domicilio.barrio_codigo%}
-                {{domicilio.barrio_codigo.descripcion}}
-              {% endif %}
-            </td>
-            <td>
-              {% if domicilio.calle and domicilio.entre and domicilio.altura %}
-                {{domicilio.calle}} {{domicilio.altura}} y {{domicilio.entre}}
-              {% elif domicilio.calle and domicilio.entre and not domicilio.altura %}
-                {{domicilio.calle}} y {{domicilio.entre}}
-              {% elif domicilio.calle and domicilio.altura and not domicilio.entre%}
-                {{domicilio.calle}} {{domicilio.altura}}
-              {% elif domicilio.calle2 %}
-                {{domicilio.calle2}}
-              {% endif %}
-            </td>
-            <td>
-              {% if not domicilio.fecha_hasta %}
-                Actual
-              {% else %}
-                {{domicilio.fecha_hasta}}
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+  <div class="col-md-4 col-md-offset-1">
+      <fieldset>
+          <legend>Domicilios registrados</legend>
+          <div class="row well">
+              <div class="col-md-12">
+                <table class="table table-hover table-condensed table-bordered">
+                  <tbody>
+                    {%for domicilio in domicilios %}
+                    <tr>
+                      <td>
+                        {{domicilio.ref_ciudades.descripcion}}
+                      </td>
+                      
+                      <td>
+                        {{domicilio}}
+                      </td>
+                      <td>
+                        {% if not domicilio.fecha_hasta %}
+                          Actual
+                        {% else %}
+                          {{domicilio.fecha_hasta}}
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+      </fieldset>
+      
   </div>
+</div>
+
+
+
 
 <style media="screen">
   .no_calle,.no_provincia,.interseccion{
@@ -168,6 +172,14 @@
 </style>
 
 <script type="text/javascript">
+
+  function volver(){
+      var url = "{% url 'resumen_persona' persona.id %}"
+      $.get(url, function(data){
+        $("#contenido").empty().append(data);
+      });
+    }
+
 $('input[type=text]').addClass('form-control');
 $('select').addClass('form-control');
 $("#chkNoProvincia").change(function(event){

@@ -707,7 +707,6 @@ def nuevo_save(request):
 
     if request.is_ajax():
         if request.method == 'POST':
-            print("ingresa")
             validacion = False
             id = request.POST['persona_id']
             if id == "":
@@ -735,19 +734,16 @@ def nuevo_save(request):
                 persona.sexo_id         = form.cleaned_data['sexo_id']
                 persona.ocupacion       = form.cleaned_data['ocupacion']
                 persona.estado_civil    = form.cleaned_data['estado_civil']
+                persona.alias           = form.cleaned_data['alias']
                 try:
                     persona.save()
                     if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES":
                         prontuario.nro = prontuarioForm.cleaned_data['nro']
                         prontuario.persona = persona
                         prontuario.observaciones = prontuarioForm.cleaned_data['observaciones']
-                        if not prontuario.observaciones =='':
-                            prontuario.observaciones = prontuario.observaciones.upper()
                         try:
-                            print("------ SAVE DE PRONTUARIO ------")
                             prontuario.save()
                         except Exception as e:
-                            print("excepcion save prontuario")
                             print(e)
                     form = IdentificacionForm()
                     existe = False
@@ -983,7 +979,7 @@ def cargar_domicilios(request,id):
         domicilios = Domicilios.objects.filter(personas=persona)
         paises = RefPaises.objects.all()
         form = DomicilioProntuarioForm()
-        return render(request,"./domicilios.html",{'domicilios':domicilios,'form':form,'id':id,'paises':paises})
+        return render(request,"./domicilios.html",{'domicilios':domicilios,'form':form,'id':id,'paises':paises,'persona':persona})
     return HttpResponseBadRequest()
 
 @login_required
