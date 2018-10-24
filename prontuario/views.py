@@ -985,7 +985,6 @@ def cargar_domicilios(request,id):
 @login_required
 @group_required(["prontuario"])
 def cargar_fotos(request,id):
-    print ("VIENE")
     if request.is_ajax():
         persona = Personas.objects.get(id=id)
         if request.method=="POST":
@@ -1205,8 +1204,9 @@ def persona_save(request,id):
                 persona.sexo_id     = form.cleaned_data['sexo_id']
                 persona.fecha_nac   = form.cleaned_data['fecha_nac']
                 persona.ocupacion   = form.cleaned_data['ocupacion']
+                persona.alias       = form.cleaned_data['alias']
                 persona.save()
-                return HttpResponse("La persona se modifico correctamente.")
+                return render(request,"datos_personales.html",{'persona':persona})
     return HttpResponseBadRequest()
 
 @login_required
@@ -1315,6 +1315,18 @@ def buscar_procesales(request):
                 else:
                     return HttpResponseNotFound()
         return render(request,"buscar_procesales.html",{'form':form})
+    return HttpResponseBadRequest()
+
+@login_required
+@group_required(["prontuario"])
+def eliminar_domicilio(request,id):
+    if request.is_ajax():
+        domicilio = Domicilios.objects.get(id=id)
+        try:
+            domicilio.delete()
+            return HttpResponse("Accion realizada con exito.")
+        except Exception as e:
+            print(e)
     return HttpResponseBadRequest()
 
 

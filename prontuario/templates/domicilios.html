@@ -20,7 +20,7 @@
                 </div>
               </div>
               <div class="row no_provincia" id="noProvincia">
-                <div class="col-md-8">
+                <div class="col-md-12">
                   <label for="">Pais</label>
                   <select class="" id="id_pais">
                     <option value=""></option>
@@ -32,7 +32,7 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12">
                   <div class="form-group">
                     <label for="">Ciudad</label>
                       {{form.ref_ciudades}}
@@ -54,7 +54,7 @@
               </div>
               <div id="enProvincia">
                 <div class="row" id="siCalle">
-                  <div class="col-md-6">
+                  <div class="col-md-10">
                     <label for="">Calle</label>
                     {{form.calle}}
                     <div class="checkbox">
@@ -67,7 +67,7 @@
                     <label for="">N°</label>
                     {{form.altura}}
                   </div>
-                  <div class="col-md-4 interseccion" id="interseccion">
+                  <div class="col-md-12 interseccion" id="interseccion">
                     <label for="">Intersecci&oacute;n</label>
                     {{form.entre}}
                   </div>
@@ -89,7 +89,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-md-6">
+                  <div class="col-md-10">
                     <label for="">Barrio</label>
                     {{form.barrio_codigo}}
                   </div>
@@ -99,26 +99,27 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <label for="">Manzana</label>
                     {{form.manzana}}
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <label for="">lote</label>
                     {{form.lote}}
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <label for="">Piso</label>
                     {{form.piso}}
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <label for="">Departamento</label>
                     {{form.departamento}}
                   </div>
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12">
+                  <br>
                   <button type="submit" class="btn btn-large btn-success  pull-right" id="save"> <i class="glyphicon glyphicon-save"></i> Guardar <img src="/static/imagenes/preventivos/loading.gif" style="display:none" id="loading" /></button>
                 </div>
               </div>
@@ -129,35 +130,7 @@
         </fieldset>
   </div>
   <div class="col-md-4 col-md-offset-1">
-      <fieldset>
-          <legend>Domicilios registrados</legend>
-          <div class="row well">
-              <div class="col-md-12">
-                <table class="table table-hover table-condensed table-bordered">
-                  <tbody>
-                    {%for domicilio in domicilios %}
-                    <tr>
-                      <td>
-                        {{domicilio.ref_ciudades.descripcion}}
-                      </td>
-                      
-                      <td>
-                        {{domicilio}}
-                      </td>
-                      <td>
-                        {% if not domicilio.fecha_hasta %}
-                          Actual
-                        {% else %}
-                          {{domicilio.fecha_hasta}}
-                        {% endif %}
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-      </fieldset>
+      {% include 'domicilios_registrados.html' with domicilios=domicilios%}
       
   </div>
 </div>
@@ -179,6 +152,16 @@
         $("#contenido").empty().append(data);
       });
     }
+
+  function eliminar(id){
+    var url ="/prontuario/eliminar_domicilio/"+id+"/";
+    $.get(url,function(data){
+      $("#"+id).remove();
+    })
+    .fail(function(){
+      alert("No se pudo eliminar el registro.")
+    })
+  }
 
 $('input[type=text]').addClass('form-control');
 $('select').addClass('form-control');

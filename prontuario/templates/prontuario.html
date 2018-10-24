@@ -24,24 +24,8 @@
 </div>
 <div class="row">
   <div class="col-md-4">
-    <div class="row">
-      <div class="col-md-12 bg-danger">
-        <h3 class='text-default'>Datos Personales <small> <a href="javascript:modificar_persona('{% url 'modificar_persona' persona.id %}');" class="btn btn-xs btn-success"><i class="glyphicon glyphicon-edit"></i> modificar </a></small></h3>
-      </div>
-      <dl class="dl-horizontal">
-        <dt>Nombre</dt>
-        <dd id="dd-nombre">{{persona.nombres}}</dd>
-        <dt>Apellido</dt>
-        <dd id="dd-apellido">{{persona.apellidos}}</dd>
-        <dt>Nro. Documento</dt>
-        <dd id="dd-documento">{{persona.nro_doc}}</dd>
-        <dt>Fecha Nacimiento</dt>
-        <dd>{{persona.fecha_nac|date:"d/m/Y"}}</dd>
-        <dt>Ocupaci&oacute;n</dt>
-        <dd>{{persona.ocupacion}}</dd>
-        <dt>Alias</dt>
-        <dd>{{persona.alias}}</dd>
-      </dl>
+    <div class="row" id="datos_personales">
+      {% include 'datos_personales.html' with persona=persona %}
     </div>
     <div class="row">
       <div class="col-md-12 bg-danger">
@@ -106,7 +90,7 @@
             <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="/media/{{foto.foto}}" style="height:400px; width:auto" /></center>
             <div class="carousel-caption">
               <h4>
-
+                  {% if foto.tipo_foto == '1' %} FRENTE {% elif foto.tipo_foto == '2' %} PERFIL DERECHO {% elif foto.tipo_foto == '3' %} PERFIL IZQUIERDO {% elif foto.tipo_foto == '4' %} CUERPO COMPLETO {% else %} OTRO {% endif %}
               </h4>
 
             </div>
@@ -116,7 +100,7 @@
             <center><img alt="{{foto.persona.nombres}} {{foto.persona.apellidos}} - {{foto.tipo_foto}}" src="/media/{{foto.foto}}" style="height:400px; width:auto" /></center>
             <div class="carousel-caption">
               <h4>
-
+                  {% if foto.tipo_foto == '1' %} FRENTE {% elif foto.tipo_foto == '2' %} PERFIL DERECHO {% elif foto.tipo_foto == '3' %} PERFIL IZQUIERDO {% elif foto.tipo_foto == '4' %} CUERPO COMPLETO {% else %} OTRO {% endif %}
               </h4>
               <p>
 

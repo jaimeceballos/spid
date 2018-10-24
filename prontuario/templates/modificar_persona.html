@@ -85,10 +85,8 @@
       url: form.attr('action'),
       data: form.serialize(),
       success: function(data){
-        $("#alerta").removeAttr("class").addClass("alert alert-success").empty().append("<h4><small>"+data+"</small></h4>").show();
-        $("#dd-nombre").empty().append($("#id_nombres").val().toUpperCase());
-        $("#dd-apellido").empty.append($("#id_apellidos").val().toUpperCase());
-        $("#dd-documento").empty().append("Documento "+$("#id_nro_doc").val());
+        $("#alerta").removeAttr("class").addClass("alert alert-success").empty().append("<h4><small> Los datos de la persona se modificaron correctamente </small></h4>").show();
+        $("#datos_personales").empty().append(data);
       },
       error: function(jqXHR, textStatus,msg){
         $("#btnSearch").prop('disabled', false);

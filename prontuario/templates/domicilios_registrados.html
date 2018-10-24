@@ -1,0 +1,32 @@
+<fieldset>
+<legend>Domicilios registrados</legend>
+    <div class="row well">
+        <div class="col-md-12">
+            <table class="table table-hover table-condensed table-bordered">
+                <tbody>
+                    {%for domicilio in domicilios %}
+                    <tr id="{{domicilio.id}}">
+                        <td>
+                            {{domicilio.ref_ciudades.descripcion}}
+                        </td>
+                        
+                        <td>
+                            {{domicilio}}
+                        </td>
+                        <td>
+                            {% if not domicilio.fecha_hasta %}
+                            Actual
+                            {% else %}
+                            {{domicilio.fecha_hasta}}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="javascript:eliminar({{domicilio.id}})"><i class="glyphicon glyphicon-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</fieldset>
