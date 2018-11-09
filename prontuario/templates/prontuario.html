@@ -1,13 +1,4 @@
 {% load static %}
-<a href="javascript:recargar()">recargar</a>
-<script>
-  function recargar(){
-    var url = "{% url 'resumen_persona' persona.id %}";
-    $.get(url,function(data){
-      $("#contenido").empty().append(data);
-    })
-  }
-</script>
 <div class="row bg-primary">
   <div class="col-md-4 col-md-offset-4">
     <center>
@@ -162,6 +153,30 @@
       $("#contenido").hide().empty().append(data).show();
     })
   }
+
+  function nuevo_elemento(tipo){
+      var url = "/prontuario/nuevo_elemento/"+tipo+"/";
+      $.get(url,function(data){
+        $("#dialog-nuevo").html(data);
+        $("#dialog-nuevo").dialog(
+        {
+          width: 'auto',
+          height: 'auto',
+          modal:true,
+          open: function(event, ui)
+          {
+  
+          },
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+  
+            }
+          }
+        });
+      });
+  
+    }
 
   function modificar_persona(url){
       $.get(url,function(data){

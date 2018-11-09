@@ -95,6 +95,7 @@ def login_user(request):
                     return HttpResponseRedirect('/spid/primer_ingreso/%d/' % user.id)
             except Exception as e:
                 error = "El usuario no existe."
+            print(user)
             if user.is_active:
                 if str(user.userprofile.depe.id) == dependencia:
                     if user.userprofile.last_login:

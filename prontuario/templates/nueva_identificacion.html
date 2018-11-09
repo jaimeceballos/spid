@@ -217,29 +217,7 @@
       })
     }
     
-    function nuevo(tipo){
-      var url = "/prontuario/nuevo_elemento/"+tipo+"/";
-      $.get(url,function(data){
-        $("#dialog-nuevo").html(data);
-        $("#dialog-nuevo").dialog(
-        {
-          width: 'auto',
-          height: 'auto',
-          modal:true,
-          open: function(event, ui)
-          {
-  
-          },
-          buttons: {
-            Cerrar: function() {
-              $( this ).dialog( "close" );
-  
-            }
-          }
-        });
-      });
-  
-    }
+    
     function volver(){
       var url = "{% url 'resumen_persona' persona.id %}"
       $.get(url, function(data){

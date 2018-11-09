@@ -1,5 +1,5 @@
 {% load static %}
-<div class="container well col-md-6">
+<div class="container well col-md-6 col-md-offset-3">
   <div class="alert alert-info" role="alert">
     <center><h5> <i class="glyphicon glyphicon-info-sign"></i> Realice esta busqueda si considera que la persona puede haber estado registrada en el sistema de Comunicaciones Procesales.</h5></center>
     <form class="" id="buscarForm" action="{% url 'buscar_procesales' %}" method="post" >{% csrf_token %}
@@ -73,9 +73,10 @@
             modal: true,
             buttons: {
               Cerrar: function() {
-                $( this ).dialog( "close" );
+                
                 $("#btnSearch").prop('disabled', false);
                 $("#loading").hide();
+                $( this ).dialog( "close" );
               }
             }
           }).empty().append("<center><p>No se puede realizar la busqueda solicitada.</p></center>");

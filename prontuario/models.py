@@ -292,3 +292,11 @@ class PreventivosPersona(models.Model):
     class Meta:
         managed = False
         db_table = 'preventivos_persona'
+
+class ProntuarioLog(models.Model):
+    usuario = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    fecha = models.DateTimeField(auto_now_add=True)
+    accion = models.CharField(max_length=300)
+
+    class Meta:
+        db_table = 'prontuario_log'

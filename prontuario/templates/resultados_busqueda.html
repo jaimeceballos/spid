@@ -115,7 +115,7 @@
                 $("#contenido").hide().empty().append(data);
                 $("#id_apellido").val(apellido);
                 $("#id_nombre").val(nombre);
-                $("#documento").val(documento);
+                $("#id_documento").val(documento);
                 $("#contenido").show()
                 $("#buscarForm :submit").trigger("click");
               });
@@ -140,19 +140,22 @@
   });
   $("#ocultar").click(function(event){
     event.preventDefault();
-    $("#busqueda").toggle("slide");
+    $("#busqueda").toggle("slide",function(){
+      $("#busqueda").addClass("col-md-offset-3");
+      $("#resultados").removeClass("col-md-6").addClass("col-md-12");
+    });
     $(this).toggle();
     $("#mostrar").toggle();
-    $("#resultados").removeClass("col-md-6").addClass("col-md-12");
-
+    
   });
+
   $("#mostrar").click(function(event){
     event.preventDefault();
+    $("#busqueda").removeClass("col-md-offset-3")
+    $("#resultados").removeClass("col-md-12").addClass("col-md-6");
     $("#busqueda").toggle("slide");
     $(this).toggle();
     $("#ocultar").toggle();
-    $("#resultados").removeClass("col-md-12").addClass("col-md-6");
-
   });
   $("#ocultar").trigger("click");
 

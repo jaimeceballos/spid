@@ -27,9 +27,12 @@
     <script type="text/javascript">
     var idleTime = 0;//variable de control de minutos para el logout automatico
     $(document).ready(function () {
+        /* funcion que previene la recarga del sitio con presionar f5*/
+        function disableF5(e) { if ((e.which || e.keyCode) == 116) e.preventDefault(); };
+        $(document).on("keydown", disableF5);
 
-        var idleInterval = setInterval(timerIncrement, 60000); // 1 minut
-
+        /*deteccion del tiempo de inactividad*/
+        var idleInterval = setInterval(timerIncrement, 60000); // 1 minuto
         //Zero the idle timer on mouse movement.
         $(this).mouseup(function (e) {
             idleTime = 0;

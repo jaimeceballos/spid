@@ -28,7 +28,7 @@
                     <option value="{{pais.id}}">{{pais.descripcion}}</option>
                     {% endfor%}
                   </select>
-                  <a href="javascript:nuevo('pais')"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                  <a href="javascript:nuevo_elemento('pais')"><i class="glyphicon glyphicon-plus-sign"></i></a>
                 </div>
               </div>
               <div class="row">
@@ -48,7 +48,7 @@
                           select.removeAttr('disabled');
                         }, "json");
                       </script>
-                      <a href="javascript:nuevo('ciudad')"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                      <a href="javascript:nuevo_elemento('ciudad')"><i class="glyphicon glyphicon-plus-sign"></i></a>
                   </div>
                 </div>
               </div>
@@ -185,6 +185,7 @@ $("#chkCalle").change(function(event){
   if($("#chkCalle:checked").val()=="on"){
     $("#noCalle").show();
     $("#siCalle").hide();
+    $("#id_calle option[value='']").attr('selected', true);
   }else{
     $("#noCalle").hide();
     $("#siCalle").show();

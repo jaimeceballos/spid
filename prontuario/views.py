@@ -113,6 +113,10 @@ def search_persona(request):
             parametros['documento']         = form.cleaned_data['documento']
             parametros['alias']             = form.cleaned_data['alias']
             strParametros = str(parametros)
+            log = ProntuarioLog()
+            log.usuario = request.user
+            log.accion = "Realiza busqueda: %s" % (parametros)
+            log.save()
             try:
                 resultados = SearchResults.objects.filter(id_busqueda=SearchHistory.objects.get(busqueda = strParametros).id)
             except Exception as e:
@@ -784,6 +788,10 @@ def nuevo_existe(request,id_detalle):
 
     if request.is_ajax:
         detalle = SearchResults.objects.get(id = id_detalle)
+        log = ProntuarioLog()
+        log.usuario = request.user
+        log.accion = "Selecciona %s  DNI: %s" % (detalle.apellido_nombre, detalle.documento)
+        log.save()
         prontuario_nro = detalle.prontuario_acei if detalle.prontuario_acei else detalle.prontuario_spid if detalle.prontuario_spid else ""
         if detalle.id_spid:
             persona = Personas.objects.get(id = detalle.id_spid)
@@ -1161,6 +1169,10 @@ def ver_prontuario(request,id):
     #if request.is_ajax():
         values = {}
         persona = Personas.objects.get(id=id)
+        log = ProntuarioLog()
+        log.usuario= request.user
+        log.accion = "Visualiza prontuario %s" % (persona.prontuario.nro)
+        log.save()
         try:
             values['prontuario'] = persona.prontuario
         except Exception as e:
@@ -1193,6 +1205,7 @@ def modificar_persona(request,id):
 
 def persona_save(request,id):
     if request.is_ajax():
+        print("ingresa ")
         if request.method == "POST":
             persona = Personas.objects.get(id=id)
             form = PersonasForm(request.POST,instance=persona)
@@ -1205,6 +1218,7 @@ def persona_save(request,id):
                 persona.fecha_nac   = form.cleaned_data['fecha_nac']
                 persona.ocupacion   = form.cleaned_data['ocupacion']
                 persona.alias       = form.cleaned_data['alias']
+                persona.pais_nac    = form.cleaned_data['pais_nac']
                 persona.save()
                 return render(request,"datos_personales.html",{'persona':persona})
     return HttpResponseBadRequest()
@@ -1334,8 +1348,11 @@ def preventivos_persona(request,persona):
     resultados = PreventivosPersona.objects.filter(documento = persona)
     return render(request,"./preventivos_persona.html",{'resultados':resultados})
 
-
+@login_required
 def imprimir_prontuario(request,prontuario):
     prontuario = get_object_or_404(Prontuario,id=prontuario)
-
+    log = ProntuarioLog()
+    log.usuario = request.user
+    log.accion = "Impresion de prontuario nro %s" % (prontuario.nro)
+    log.save()
     return render(request,"impresion.html",{'prontuario':prontuario})
