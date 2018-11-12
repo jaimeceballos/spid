@@ -1114,7 +1114,7 @@ def user_roles_save(request):
                 usuario = User.objects.get(id=request.POST['usuario'])
                 usuario.is_staff = form.cleaned_data['is_staff']
                 usuario.save()
-                usuario.groups = form.cleaned_data['groups']
+                usuario.groups.set(form.cleaned_data['groups'])
                 return HttpResponse('<h4>La operacion se realizo con exito.</h4>')
     return HttpResponseBadRequest("<h4>No se puede realizar la operacion. Vuelva a intentarlo mas tarde</h4>")
 
