@@ -22,21 +22,21 @@
                     if (pstr.length < settings.maxlength)
                         meter.removeClass('strong').removeClass('medium').removeClass('week');
                     if (pstr.length > 0) {
-                        var rx = new RegExp(/^(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{7,30}$/);
+                        var rx = new RegExp(/^(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?!.*\s).{6,12}$/);
                         if (rx.test(pstr)) {
                             meter.addClass('strong');
-                            meter.html("Contraseña Fuerte");
+                            meter.html("Aceptable");
                         }
                         else {
                             var alpha = containsAlpha(pstr);
                             var number = containsNumeric(pstr);
                             var upper = containsUpperCase(pstr);
                             var special = containsSpecialCharacter(pstr);
-                            var result = alpha + number + upper + special;
+                            var result = alpha + number; ///+ upper + special;
 
                             if (result > 2) {
                                 meter.addClass('medium');
-                                meter.html("Contraseña Mediocre");
+                                //meter.html("Contraseña Intermedia");
                             }
                             else {
                                 meter.addClass('week');

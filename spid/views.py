@@ -111,8 +111,8 @@ def login_user(request):
                             profile.save()                                                         #guarda el valor
                             user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
                             destino = "%s / %s" % (profile.depe,profile.ureg)
-                            state = user.groups.values_list('name', flat=True)
-                            request.session['state']=state                                #si es correcto carga en la sesion la variable estado
+                            state = serializers.serialize('json',user.groups.all(),fields=("name"))  
+                            request.session['state']= state                                #si es correcto carga en la sesion la variable estado
                             request.session['destino']=destino                            #carga en la sesion la variable destino
                             
                             if user:
@@ -122,7 +122,7 @@ def login_user(request):
                                 
                         else:
                             destino = "%s / %s" % (user.userprofile.depe,user.userprofile.ureg)
-                            state = user.groups.values_list('name', flat=True)
+                            state = serializers.serialize('json',user.groups.all(),fields=("name"))  
                             no_enviados = False                                           #inicializa una variable de no enviados
                             #verifica si el usuario es preventor
                             if Actuantes.objects.filter(funcion__gt=1,documento=user.username):
@@ -150,7 +150,7 @@ def login_user(request):
                             profile.ultimo_ingreso = ultimo_ingreso                                #asigna el ultimo ingreso al perfil del usuario
                             profile.save()                                                         #guarda el valor
                             user = auth.authenticate(username=usuario, password=password)      #autentica al usuario
-                            request.session['state']=state                                #si es correcto carga en la sesion la variable estado
+                            request.session['state']= state                                #si es correcto carga en la sesion la variable estado
                             request.session['destino']=destino                            #carga en la sesion la variable destino
                             if user:
                                 auth.login(request, user)
