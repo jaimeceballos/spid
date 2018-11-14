@@ -10,7 +10,7 @@
   <form class="" action="{% url 'user_create_save'%}" method="post" id="user_create">{%csrf_token%}
 
     <div class="row-fluid">
-      <div class="col-md-4 form-group ">
+      <div class="col-md-6 col-sm-12 form-group ">
             <label class="sr-only" for="documento">DNI</label>
             <div class="input-group">
               <span class="input-group-addon">DNI</span>
@@ -257,7 +257,7 @@
     minLength: 2,
     select:function (event,ui) {
       $("#id_lugar_trabajo_id").val(ui.item.id);
-
+      alert($("(#id_lugar_id").val());
     }
   });
   $("#id_jerarquia").autocomplete({
