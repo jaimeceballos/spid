@@ -35,7 +35,7 @@
 </head>
 <body>
     <div id="background">
-        <p class="bg-text"><small><b>{{request.user.last_name}}</small></p>
+        <!--p class="bg-text"><small><b>{{request.user.last_name}}</small></p-->
     </div>
     {% with identificacion=prontuario.persona.identificacion_set.latest persona=prontuario.persona domicilio=prontuario.persona.persodom.latest   %}
     <div class="content">
