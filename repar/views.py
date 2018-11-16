@@ -112,7 +112,7 @@ def loguser(request):
             if user.is_active:
                 #fecha_login=datetime.datetime.strftime(user.last_login, "%Y-%m-%d %H:%M:%S")
                 #fecha_joined=datetime.datetime.strftime(user.date_joined, "%Y-%m-%d %H:%M:%S")
-                #print type(datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")),fecha_login,fecha_joined
+                
                 #if datetime.datetime.strptime(fecha_login, "%Y-%m-%d %H:%M:%S")!=datetime.datetime.strptime(fecha_joined, "%Y-%m-%d %H:%M:%S"):
                 if user.userprofile.last_login:
                    changePass = 'si'
@@ -193,7 +193,7 @@ def passwordChange(request):
       state = "SE DESCONECTO DEL SISTEMA"
   #form = DependenciasForm()
   formd = []
-  #print form,formd
+  
   return render(request, 'loginRepar.html', {'formd':formd,'form':form,'state':state,})
   #return render(request, './index.html', {'formd':formd,'form':form,'state':state, 'destino': destino, 'changePass':changePass,'formpass':formpass})
 
@@ -303,7 +303,7 @@ def new_reg(request):
   formark = TrademarkForm()
   #n_c='ROSAS%'
   #datos=myconsul(n_c)
-  #print (datos)
+  
   if request.POST.get('grabarm')=="Grabar":
         formark=TrademarkForm(request.POST, request.FILES)
         form=RefModArmas()
@@ -375,13 +375,13 @@ def new_reg(request):
 
 def myconsul(self):
     cursor = connections['prontuario'].cursor()
-    #print("select n_c,dni,n_p from indice.indice where n_c like %s",[self])
+    
     dicto={}
     elementos=[]
     #try:
     #cursor.execute("select n_c,dni,tipo_p,n_p from indice.indice where n_c like %s",[self] )
     curso = Indice.objects.using('prontuario').get(dni='14282289')
-    #print (curso.n_c)
+    
     #for row in cursor:
     dicto={'Apellidos y Nombres :':curso.n_c,'Nro Documento :':curso.dni,'Seccion :':curso.tipo_p,'Nro Prontuario :':curso.n_p}
     #elementos.append(dicto)

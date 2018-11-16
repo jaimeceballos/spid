@@ -370,9 +370,7 @@ def preparar_resultados(usuario,strParametros,spid = None,acei = None,rrhh = Non
                     acei = acei.exclude(id = registro_acei.id)
                 except ObjectDoesNotExist:
                     pass
-            if prontuario:
-                for reg in prontuario:
-                    print("dni %s n_c %s n_p %s " % (reg.dni, reg.n_c, reg.n_p)) 
+            
             # creo un nuevo registro de resultado de busqueda
             nuevo = SearchResults()
             # completo cada dato del registro con los obtenidos anteriormente
@@ -753,8 +751,7 @@ def nuevo_save(request):
                     existe = False
                     return HttpResponseRedirect('/prontuario/ver_prontuario/%s/' % persona.id) #render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
                 except Exception as e:
-                    print("excepcion save")
-                    print(e)
+                    
                     return HttpResponseBadRequest()
 
     return HttpResponseBadRequest()
@@ -1012,7 +1009,7 @@ def cargar_fotos(request,id):
                 except Exception as e:
                     return HttpResponseBadRequest()
         fotos = FotosPersona.objects.filter(persona = persona)
-        print (fotos)
+        
         form = FotosPersonaForm()
         return render(request,"./fotos.html",{'fotos':fotos,'form':form,'id':id})
     return HttpResponseBadRequest()
@@ -1205,7 +1202,7 @@ def modificar_persona(request,id):
 
 def persona_save(request,id):
     if request.is_ajax():
-        print("ingresa ")
+        
         if request.method == "POST":
             persona = Personas.objects.get(id=id)
             form = PersonasForm(request.POST,instance=persona)
@@ -1287,7 +1284,6 @@ def nuevo_elemento(request,tipo):
                 form = PaisesForm()
             if tipo == "ciudad":
                 form = CiudadesForm()
-                print (form)
             return render(request,"./nuevo_elemento.html",{'form':form,'tipo':tipo})
     return HttpResponseBadRequest()
 
@@ -1323,7 +1319,7 @@ def buscar_procesales(request):
                     resultados = resultados.filter(dni=dni)
                 if not dni == "" and not n_c == "" :
                     resultados = resultados.filter(dni=dni,n_c__icontains=n_c)
-                print (resultados.count())
+                
                 if resultados.count() > 0:
                     return render(request,"./listado_procesales.html",{'resultado':resultados,'id':0,'cambia':True})
                 else:
@@ -1356,3 +1352,10 @@ def imprimir_prontuario(request,prontuario):
     log.accion = "Impresion de prontuario nro %s" % (prontuario.nro)
     log.save()
     return render(request,"impresion.html",{'prontuario':prontuario})
+
+@login_required
+@group_required(["administrador"])
+def log(request):
+    log = ProntuarioLog.objects.all()
+
+    return render(request,"log.html",{'log':log})

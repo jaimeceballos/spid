@@ -51,4 +51,5 @@ urlpatterns = [
     url(r'^preventivos_persona/(?P<persona>[0-9]+)/$',preventivos_persona,name='preventivos_persona'),
     url(r'^imprimir_prontuario/(?P<prontuario>[0-9]+)/$',imprimir_prontuario,name='imprimir_prontuario'),
     url(r'^eliminar_domicilio/(?P<id>[0-9]+)/$',eliminar_domicilio,name='eliminar_domicilio'),
+    url(r'^actividad/$',log,name='log'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

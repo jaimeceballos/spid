@@ -26,7 +26,7 @@
           {{form.ocupacion_especifica}}
         </div>
         <div class="col-md-1" style="vertical-align:middle">
-          <a href="javascript:nuevo('ocupacion')"><i class="glyphicon glyphicon-plus-sign"></i></a>
+          <a href="javascript:nuevo_elemento('ocupacion')"><i class="glyphicon glyphicon-plus-sign"></i></a>
         </div>
       </div>
       <div class="row">
@@ -52,7 +52,7 @@
         </div>
         <div class="col-md-1">
           <div class="col-md-1" style="vertical-align:middle">
-            <a href="javascript:nuevo('contextura')"><i class="glyphicon glyphicon-plus-sign"></i></a>
+            <a href="javascript:nuevo_elemento('contextura')"><i class="glyphicon glyphicon-plus-sign"></i></a>
           </div>
         </div>
       </div>
@@ -224,5 +224,29 @@
         $("#contenido").empty().append(data);
       });
     }
+
+    function nuevo_elemento(tipo){
+    var url = "/prontuario/nuevo_elemento/"+tipo+"/";
+    $.get(url,function(data){
+      $("#dialog-nuevo").html(data);
+      $("#dialog-nuevo").dialog(
+      {
+        width: 'auto',
+        height: 'auto',
+        modal:true,
+        open: function(event, ui)
+        {
+
+        },
+        buttons: {
+          Cerrar: function() {
+            $( this ).dialog( "close" );
+
+          }
+        }
+      });
+    });
+
+  }
   </script>
   

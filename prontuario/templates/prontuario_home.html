@@ -89,7 +89,9 @@
             
           </div-->
           <div class="col-md-12 " id="contenido" style="height:100%;overflow-y:auto;overflow-x:hidden;align-content: center">
+            {% block contenido %}
               {% include './search.html' %}  
+            {% endblock contenido %}
           </div>
         </div>
         <div class="row">
