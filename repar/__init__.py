@@ -60,7 +60,7 @@ def hoyhora():
 #Signals
 #Registro de LOG conforme a Procesos 
 def registro_post_save(sender, instance, created, **kwargs):
-    #print created
+    
     if created==True:
         accion='AGREGAR'
     else:
@@ -84,13 +84,13 @@ def registro_post_save(sender, instance, created, **kwargs):
     log_pk={}
     log_pk['valor']=''
     log_pk['pk']=''
-    #print op.__class__._meta.fields
+    
     for f in op.__class__._meta.fields:
         if 'username' in f.name:
            valor_nuevo=getattr(op,'username')
         else:
            valor_nuevo=getattr(op,f.name)
-        #print valor_nuevo
+        
         #log_reg[f.name]=str(valor_nuevo)
         #valor=str(valor_nuevo)
         #if len(valor)<=48:
@@ -228,7 +228,7 @@ def log_user_activity(sender, **kwargs):
 # Listener Signals
 @receiver([post_save, post_delete], sender=Repardata, weak=False)
 def send_update(sender, **kwargs):
-    #print kwargs.get('user')
+    
     signal = kwargs.get('signal', None)
     user = kwargs.get('instance')
     obj=kwargs['instance']
@@ -238,9 +238,9 @@ def send_update(sender, **kwargs):
     elif signal == post_delete:
         action = "Eliminar/Borrar"
      
-    #print user
+    
     #users=User.objects.get(username=user)
-    #print users
+    
     #log_entry = Registrouser(user=users, action=action, tabla=ntabla,
                      #  link=request.path,  fecha=datetime.now())
     #log_entry.save()
