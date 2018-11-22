@@ -195,6 +195,7 @@ def buscar_persona_spid(parametros):
 def buscar_persona_acei(parametros):
     """ Esta definicion realiza la busqueda de la persona segun los parametros ingresados
     en la base de datos ACEI del sistema Indice"""
+    print("ingresa")
     persona_acei = RecordIdentifications.objects.using('acei').all()
     if not parametros['apellido'] == "":
         persona_acei = persona_acei.filter(surname__icontains = parametros['apellido'])
@@ -207,8 +208,11 @@ def buscar_persona_acei(parametros):
         persona_acei = persona_acei.filter(Q(name_1__icontains = nombre1)|Q(name_2__icontains = nombre2))
     if not parametros['fecha_nacimiento'] == "":
         persona_acei = persona_acei.filter(date_of_birth = datetime.datetime.strptime(parametros['fecha_nacimiento'],'%d/%m/%Y'))
+    print(persona_acei.count())
+    print(parametros['documento'])
     if not parametros['documento'] == "":
         persona_acei = persona_acei.filter(dni = parametros['documento'])
+        print(persona_acei.count())
     if not parametros['pais_nacimiento'] == "":
         nacion = Nationalities.objects.using('acei').get(name__icontains=parametros['pais_nacimiento']).id
         persona_acei = persona_acei.filter(nationality = nacion)
