@@ -38,17 +38,17 @@
   <td>
     {% if detalle.prontuario_spid%}
       <a href="javascript:verDetalle('SPID',{{detalle.id_spid}});"><span class="label label-primary">SPID</span></a>
-    {% else %}
-      {% if detalle.id_spid %}
-        <a href="javascript:verDetalle('SPID',{{detalle.id_spid}});"><span class="label label-primary">SPID</span></a>
-      {% endif %}
-      {% if detalle.id_rrhh%}
-        <a href="javascript:verDetalle('RRHH',{{detalle.id_rrhh}});"><span class="label label-success">Recursos Humanos</span></a>
-      {% endif %}
-      {% if detalle.id_acei %}
-        <a href="javascript:verDetalle('INDICE',{{detalle.id_acei}});"><span class="label label-danger">Indice</span></a>
-      {% endif %}
     {% endif %}
+    {% if detalle.id_spid %}
+       <a href="javascript:verDetalle('SPID',{{detalle.id_spid}});"><span class="label label-primary">SPID</span></a>
+    {% endif %}
+    {% if detalle.id_rrhh%}
+      <a href="javascript:verDetalle('RRHH',{{detalle.id_rrhh}});"><span class="label label-success">Recursos Humanos</span></a>
+    {% endif %}
+    {% if detalle.id_acei %}
+      <a href="javascript:verDetalle('INDICE',{{detalle.id_acei}});"><span class="label label-danger">Indice</span></a>
+    {% endif %}
+    
   </td>
   <td>
     {% if detalle.prontuario_spid %}
