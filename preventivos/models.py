@@ -212,7 +212,7 @@ class Dependencias(models.Model):
 
 
 	def __str__(self):
-		return u'%s' % (self.descripcion)
+		return u'%s - %s' % (self.id, self.descripcion)
 		self.descripcion = self.descripcion.upper()
 
 	def save(self, force_insert=False, force_update= False):

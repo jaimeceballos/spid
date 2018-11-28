@@ -14679,13 +14679,17 @@ def paises_ajax(request):
 def dependencias_ajax(request):
     if request.is_ajax():
         q = request.GET.get('term','')
-        dependencias = Dependencias.objects.filter(descripcion__icontains = q)[:20]
+        dependencias = None
+        if q.isnumeric():
+            dependencias = Dependencias.objects.filter(id= int(q))
+        else:
+            dependencias = Dependencias.objects.filter(descripcion__icontains = q)[:20]
         results = []
         for dependencia in dependencias:
             dependencia_json = {}
             dependencia_json['id'] = dependencia.id
-            dependencia_json['label'] = dependencia.descripcion + ' - ' + dependencia.unidades_regionales.descripcion
-            dependencia_json['value'] = dependencia.descripcion + ' - ' + dependencia.unidades_regionales.descripcion
+            dependencia_json['label'] = str(dependencia.id) +'-' +dependencia.descripcion + ' - ' + dependencia.unidades_regionales.descripcion
+            dependencia_json['value'] = str(dependencia.id) +'-' +dependencia.descripcion + ' - ' + dependencia.unidades_regionales.descripcion
             results.append(dependencia_json)
         data = json.dumps(results)
     else:

@@ -86,12 +86,12 @@
       <label for="">Lugar Residencia</label>
     </div>
     <div class="col-md-3">
-      <div class="col-md-6">
+      <!--div class="col-md-6">
           {{form.pais_res}} <a href="javascript:agregarPais('res');"><i class="glyphicon glyphicon-plus"></i></a>
       </div>
       <div class="col-md-6">
           {{form.ciudad_res}} <a href="javascript:agregarCiudad('res');"><i class="glyphicon glyphicon-plus"></i></a>
-      </div>
+      </div-->
 
     </div>
     <div class="col-md-1">
@@ -109,7 +109,7 @@
     </div>
   <div class="row">
     <div class="form-group">
-      <label for="">Observaciones</label>
+      <label for="">Motivo de la identificaci&oacute;n</label>
       {{prontuarioForm.observaciones}}
     </div>
   </div>
@@ -122,6 +122,7 @@
   </div>
 </div>
 </form>
+
 <script type="text/javascript">
   $("#id_pais_res").removeAttr('onChange');
   $('input[type=text]').addClass('form-control');

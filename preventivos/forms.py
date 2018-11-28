@@ -552,12 +552,12 @@ class RefMotivosHechoForm(forms.ModelForm):
 		fields = ('descripcion',)
 
 class SearchPreveForm(forms.Form):
-	nro=forms.IntegerField(required=False)
-	anio=forms.IntegerField(required=False)
-	fecha_carga=forms.DateTimeField(required=False)
-	caratula=forms.CharField(required=False)
+	nro					=forms.IntegerField(required=False)
+	anio				=forms.IntegerField(required=False)
+	fecha_carga			=forms.DateTimeField(required=False)
+	caratula			=forms.CharField(required=False)
 	unidades_regionales = forms.ModelChoiceField(widget = forms.Select(attrs={'size':'13', 'onchange':'this.form.action=this.form.submit()'}), queryset= UnidadesRegionales.objects.all())
-	dependencias = forms.Select()
+	dependencias 		= forms.Select()
 
 	def __init__(self, *args, **kwargs):
 		super(SearchPreveForm,self).__init__(*args,**kwargs)
