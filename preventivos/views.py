@@ -14636,7 +14636,7 @@ def ciudades_ajax(request):
                 ciudad_json['label'] =  ciudad.descripcion +' - '+ ciudad.provincia.descripcion +' - '+ ciudad.pais.descripcion
             else:
                 ciudad_json['label'] = ciudad.descripcion +' - '+ ciudad.pais.descripcion
-            ciudad_json['value'] = ciudad.descripcion
+            ciudad_json['value'] = "%s (%s %s)" % (ciudad.descripcion, ciudad.provincia.descripcion if ciudad.provincia else "", ciudad.pais.descripcion)
             ciudad_json['pais']  = ciudad.pais.descripcion
             ciudad_json['pais_id']  = ciudad.pais.id
             results.append(ciudad_json)

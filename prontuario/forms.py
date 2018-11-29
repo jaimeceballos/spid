@@ -39,25 +39,25 @@ class RefOcupacionEspecificaForm(forms.ModelForm):
         exclude = []
 
 class Prontuario2Form(forms.Form):
-    nro             = forms.CharField(required=False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg','autocomplete':'off','placeholder':'Nro. Prontuario'})))
-    apellidos       = forms.CharField(required=True, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg','autocomplete':'off','placeholder':'Apellidos'})))
-    nombres         = forms.CharField(required=True, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg','autocomplete':'off','placeholder':'Nombres'})))
-    fecha_nac       = forms.CharField(required = True, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'Fecha de nacimiento','style':'text-align: center;'})))
+    nro             = forms.CharField(required=False, widget=forms.TextInput(attrs=dict({'class':'form-control ','autocomplete':'off','placeholder':'Nro. Prontuario'})))
+    apellidos       = forms.CharField(required=True, widget=forms.TextInput(attrs=dict({'class':'form-control ','autocomplete':'off','placeholder':'Apellidos'})))
+    nombres         = forms.CharField(required=True, widget=forms.TextInput(attrs=dict({'class':'form-control ','autocomplete':'off','placeholder':'Nombres'})))
+    fecha_nac       = forms.CharField(required = True, widget=forms.TextInput(attrs=dict({'class':'form-control  verifca','placeholder':'Fecha de nacimiento','style':'text-align: center;'})))
     tipo_doc        = forms.ModelChoiceField(queryset= RefTipoDocumento.objects.all())
-    nro_doc         = forms.CharField(required=True, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg','autocomplete':'off','placeholder':'Nro. Documento'})))
-    pais_nac        = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'pais','style':'text-align: center;'})))
+    nro_doc         = forms.CharField(required=True, widget=forms.TextInput(attrs=dict({'class':'form-control ','autocomplete':'off','placeholder':'Nro. Documento'})))
+    pais_nac        = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control  verifca','placeholder':'pais','style':'text-align: center;'})))
     pais_nac_id     = forms.CharField(required = False, widget=forms.HiddenInput())
-    ciudad_nac      = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'ciudad','style':'text-align: center;'})))
+    ciudad_nac      = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control  verifca','placeholder':'ciudad','style':'text-align: center;'})))
     ciudad_nac_id   = forms.CharField(required = False, widget=forms.HiddenInput())
     sexo_id         = forms.ModelChoiceField(queryset= RefSexo.objects.all())
     estado_civil    = forms.ModelChoiceField(queryset= RefEstadosciv.objects.all())
-    pais_res        = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'pais','style':'text-align: center;'})))
+    pais_res        = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control  verifca','placeholder':'pais','style':'text-align: center;'})))
     pais_res_id     = forms.CharField(required = False, widget=forms.HiddenInput())
-    ciudad_res      = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg verifca','placeholder':'ciudad','style':'text-align: center;'})))
+    ciudad_res      = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control  verifca','placeholder':'ciudad','style':'text-align: center;'})))
     ciudad_res_id   = forms.CharField(required = False, widget=forms.HiddenInput())
     ocupacion       = forms.ModelChoiceField(queryset= RefOcupacion.objects.all())
-    alias           = forms.CharField(required=False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg','autocomplete':'off','placeholder':'Alias'})))
-    observaciones   = forms.CharField(required=False, widget=forms.TextInput(attrs=dict({'class':'form-control input-lg','autocomplete':'off','placeholder':'Motivo de la identificacion'})))
+    alias           = forms.CharField(required=False, widget=forms.TextInput(attrs=dict({'class':'form-control ','autocomplete':'off','placeholder':'Alias'})))
+    observaciones   = forms.CharField(required=False, widget=forms.TextInput(attrs=dict({'class':'form-control ','autocomplete':'off','placeholder':'Motivo de la identificacion'})))
 
 class ProntuarioForm(forms.ModelForm):
 

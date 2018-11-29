@@ -286,8 +286,8 @@ class RefOcupacion(models.Model):
 	descripcion = models.CharField(max_length=80,unique = True)
 
 	def __str__(self):
-		return u'%s' % (self.descripcion)
-		self.descripcion = self.descripcion.upper()
+		return u'%s' % (self.descripcion.upper())
+		
 
 	def save(self, force_insert=False,force_update=False):
 		self.descripcion = self.descripcion.upper()

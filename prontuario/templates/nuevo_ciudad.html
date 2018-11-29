@@ -1,13 +1,21 @@
 <div class="well">
   <center><h4>Nueva Ciudad</h4></center>
 
-  <form method = 'POST' action="{%url 'nueva_ciudad' tipo pais.id %}" id="nuevo_ciudad">{%csrf_token%}
+  <form method = 'POST' action="{%url 'nueva_ciudad' tipo %}" id="nuevo_ciudad">{%csrf_token%}
     <div class='row'>
       <div class='col-md-3'>
         <label>Pais</label>
       </div>
       <div class="col-md-8">
         {{form.pais}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <label for="">Provincia</label>
+      </div>
+      <div class="col-md-8">
+        {{form.provincia}}
       </div>
     </div>
     <div class="row">
@@ -27,7 +35,8 @@
 
 </div>
 <script type="text/javascript">
-$("#id_pais").prop('disabled',true).addClass("form-control");
+$("#id_pais").prop('disabled',false).addClass("form-control");
+$("#id_provincia").addClass("form-control");
 $("#id_descripcion").addClass("form-control");
 $("#nuevo_ciudad").submit(function(event){
   event.preventDefault();
@@ -43,7 +52,14 @@ $("#nuevo_ciudad").submit(function(event){
       url:form.attr('action'),
       data:form.serialize(),
       success: function(data){
-        var select;
+        if("{{tipo}}" == "res"){
+          $("#id_ciudad_res").val(data[0]["fields"]["descripcion"]).focus();
+          $("#id_ciudad_res_id").val(data[0]["pk"]);
+        }else{
+          $("#id_ciudad_nac").val(data[0]["fields"]["descripcion"]);
+          $("#id_ciudad_nac_id").val(data[0]["pk"]);
+        }
+        /*var select;
         var select2;
         if("{{tipo}}" == "res"){
           select = $("#id_ciudad_res");
@@ -61,14 +77,14 @@ $("#nuevo_ciudad").submit(function(event){
         select.html(options);
         if(select2.val() == ""){
           select2.empty().html(options);
-        }
+        }*/
         $("#btn-save").prop('disabled', false);
         $("#loading").hide();
-        if("{{tipo}}" == "res"){
+        /*if("{{tipo}}" == "res"){
           $("#id_ciudad_res option:contains("+ciudad.toUpperCase()+")").attr('selected','selected');
         }else{
           $("#id_ciudad_nac option:contains("+ciudad.toUpperCase()+")").attr('selected','selected');
-        }
+        }*/
         $("#dialog").dialog( "close" );
       },
       error:function(jqXHR, textStatus, msg){

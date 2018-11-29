@@ -59,10 +59,10 @@ def nuevo(request):
     """
     if request.is_ajax():
         values = {}
-        form            = PersonasForm()
-        prontuarioForm  = ProntuarioForm()
+        form            = Prontuario2Form()
+        #prontuarioForm  = ProntuarioForm()
         values['form'] = form
-        values['prontuarioForm'] = prontuarioForm
+        #values['prontuarioForm'] = prontuarioForm
         return render(request,'./nuevo_prontuario.html',values)
     else:
         return HttpResponseNotFound()
@@ -667,27 +667,27 @@ def nuevo_pais(request,tipo):
 
 @login_required
 @group_required(["prontuario"])
-def nueva_ciudad(request,tipo,pais):
+def nueva_ciudad(request,tipo):
     """definicion que sirve para generar una nueva ciudad"""
 
     if request.is_ajax:
-        pais = RefPaises.objects.get(id = pais)
         if request.method == "POST":
             form = CiudadesForm(request.POST)
             if form.is_valid():
                 ciudad = RefCiudades()
                 ciudad.pais = form.cleaned_data['pais']
+                ciudad.provincia = form.cleaned_data['provincia']
                 ciudad.descripcion = form.cleaned_data['descripcion']
                 try:
                     ciudad.save()
                 except Exception as e:
                     return HttpResponseBadRequest()
-                ciudades = RefCiudades.objects.filter(pais=pais)
+                ciudades = [ciudad,]
                 data = serializers.serialize("json",ciudades)
                 return HttpResponse(data,content_type="application/json")
         else:
-            form = CiudadesForm(initial={'pais':pais})
-            return render(request,"./nuevo_ciudad.html",{'form':form,'tipo':tipo,'pais':pais})
+            form = CiudadesForm()
+            return render(request,"./nuevo_ciudad.html",{'form':form,'tipo':tipo})
     return HttpResponseBadRequest()
 
 @login_required
@@ -803,7 +803,7 @@ def nuevo_existe(request,id_detalle):
                                     )
                 form = IdentificacionForm()
                 return render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':True})
-            form = PersonasForm(
+            form = Prontuario2Form(
                                 initial={
                                     'nombres':persona.nombres,
                                     'apellidos' : persona.apellidos,
@@ -821,17 +821,14 @@ def nuevo_existe(request,id_detalle):
                                     }
                                 )
             if request.user.userprofile.depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
-                prontuarioForm  = ProntuarioForm(initial={'nro':prontuario_nro})
-            else:
-                prontuarioForm = ProntuarioForm()
-            return render(request,'./nuevo_prontuario.html',{'form':form,'prontuarioForm':prontuarioForm,'persona':persona.id})
+                form.fields['nro'].initial = prontuario_nro
+            
+            return render(request,'./nuevo_prontuario.html',{'form':form,'persona':persona.id})
         else:
-            prontuarioForm = ProntuarioForm()
-            if not prontuario_nro == "" and request.user.userprofile.depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
-                prontuarioForm = ProntuarioForm(initial={'nro':prontuario_nro})
+            
             apellido = detalle.apellido_nombre.split(" ")[0]
             nombres = detalle.apellido_nombre.split(" ")[1] if len(detalle.apellido_nombre.split(" ")) == 2 else detalle.apellido_nombre.split(" ")[1]+" "+detalle.apellido_nombre.split(" ")[2]
-            form = PersonasForm(
+            form = Prontuario2Form(
                                 initial={
                                     'nombres':nombres,
                                     'apellidos' : apellido,
@@ -840,7 +837,9 @@ def nuevo_existe(request,id_detalle):
 
                                     }
                                 )
-            return render(request,'./nuevo_prontuario.html',{'form':form,'prontuarioForm':prontuarioForm})
+            if not prontuario_nro == "" and request.user.userprofile.depe.unidades_regionales.descripcion == 'INVESTIGACIONES':
+                form.fields['nro'].initial= prontuario_nro
+            return render(request,'./nuevo_prontuario.html',{'form':form})
     return HttpResponseBadRequest()
 
 @login_required

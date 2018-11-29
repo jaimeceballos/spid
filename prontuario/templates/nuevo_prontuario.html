@@ -13,7 +13,7 @@
       <label for="">Nro. Prontuario</label>
     </div>
     <div class="col-md-3">
-      {{prontuarioForm.nro}}
+      {{form.nro}}
     </div>
     <div class="col-md-2">
       <a href="javascript:verificar();" class="btn btn-xs btn-danger"> <i class="glyphicon glyphicon-search"></i> Verficar N&uacute;mero</a>
@@ -48,10 +48,10 @@
       <label for="">Tipo y Numero Documento</label>
     </div>
     <div class="col-md-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
           {{form.tipo_doc}}
       </div>
-      <div class="col-md-6">
+      <div class="col-md-8">
         {{form.nro_doc}}
       </div>
 
@@ -60,12 +60,9 @@
       <label for="">Lugar Nacimiento</label>
     </div>
     <div class="col-md-3">
-      <div class="col-md-6">
-          {{form.pais_nac}} <a href="javascript:agregarPais('nac');"><i class="glyphicon glyphicon-plus"></i></a>
-      </div>
-      <div class="col-md-6">
-          {{form.ciudad_nac}} <a href="javascript:agregarCiudad('nac');"><i class="glyphicon glyphicon-plus"></i></a>
-      </div>
+         {{form.ciudad_nac}} <a href="javascript:agregarCiudad('nac');"><i class="glyphicon glyphicon-plus"></i></a>
+         {{form.ciudad_nac_id}}
+         {{form.pais_nac_id}}
 
     </div>
     <div class="col-md-1">
@@ -86,12 +83,11 @@
       <label for="">Lugar Residencia</label>
     </div>
     <div class="col-md-3">
-      <!--div class="col-md-6">
-          {{form.pais_res}} <a href="javascript:agregarPais('res');"><i class="glyphicon glyphicon-plus"></i></a>
-      </div>
-      <div class="col-md-6">
+      
           {{form.ciudad_res}} <a href="javascript:agregarCiudad('res');"><i class="glyphicon glyphicon-plus"></i></a>
-      </div-->
+          {{form.ciudad_res_id}}
+          {{form.pais_res_id}}
+      
 
     </div>
     <div class="col-md-1">
@@ -110,7 +106,7 @@
   <div class="row">
     <div class="form-group">
       <label for="">Motivo de la identificaci&oacute;n</label>
-      {{prontuarioForm.observaciones}}
+      {{form.observaciones}}
     </div>
   </div>
 </div>
@@ -209,9 +205,9 @@
     todayHighlight: true
   });
 
-  if("{{persona}}" == ""){
+  /*if("{{persona}}" == ""){
     $("#id_ciudad_nac,#id_ciudad_res").attr('disabled','disabled').html('<option value="">Seleccione Pais</option>');
-  }
+  }*/
 
   $("#id_pais_nac").change(function(event){
     var url = "/preventivos/persona/"+$(this).val()+"/";
@@ -239,6 +235,29 @@
 
     }, "json");
   });
+
+  $("#id_ciudad_res").autocomplete({
+  source: "/preventivos/ciudades_ajax/",
+  minLength: 2,
+  select:function (event,ui) {
+    $("#id_ciudad_res_id").val(ui.item.id);
+    $("#id_pais_res_id").val(ui.item.pais_id);
+      //$("#id_pais_nacimiento").val(ui.item.pais);
+    }
+  
+});
+
+$("#id_ciudad_nac").autocomplete({
+  source: "/preventivos/ciudades_ajax/",
+  minLength: 2,
+  select:function (event,ui) {
+    $("#id_ciudad_nac_id").val(ui.item.id);
+    $("#id_pais_nac_id").val(ui.item.pais_id);
+      //$("#id_pais_nacimiento").val(ui.item.pais);
+    }
+  
+});
+
   function agregarPais(tipo){
     var url = "/prontuario/nuevo_pais/"+tipo+"/";
     $.get(url,function(data){
@@ -258,12 +277,12 @@
   function agregarCiudad(tipo){
     var pais;
     if(tipo == "res"){
-      pais = $("#id_pais_res").val();
+      pais = $("#id_pais_res_id").val();
     }else{
-      pais = $("#id_pais_nac").val();
+      pais = $("#id_pais_nac_id").val();
     }
-    if(pais != ""){
-      var url = "/prontuario/nueva_ciudad/"+tipo+"/"+pais+"/";
+    //if(pais != ""){
+      var url = "/prontuario/nueva_ciudad/"+tipo+"/";
       $.get(url,function(data){
         $("#dialog").html(data);
         $("#dialog").dialog(
@@ -277,7 +296,7 @@
           }
         });
       })
-    }else {
+    /*}else {
       $( "#dialog-confirm" ).dialog({
         resizable: false,
         height: "auto",
@@ -289,7 +308,7 @@
           }
         }
       }).empty().append("<center><p>Debe seleccionar un pais.</p></center>");
-    }
+    }*/
   }
   function verificar(){
     if($("#id_nro").val()!=""){
