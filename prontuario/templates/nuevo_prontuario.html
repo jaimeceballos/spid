@@ -103,12 +103,14 @@
         {{form.alias}}
       </div>
     </div>
+  {% if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES"%}
   <div class="row">
     <div class="form-group">
       <label for="">Motivo de la identificaci&oacute;n</label>
       {{form.observaciones}}
     </div>
   </div>
+  {% endif %}
 </div>
 <div class="well">
   <div class="row">
@@ -132,13 +134,13 @@
     var form = $("#save-form")
     if("{{request.user.userprofile.depe.unidades_regionales.descripcion}}"=="INVESTIGACIONES"){
       validado = ($("#id_nro").val()!="" && $("#id_apellidos").val() !="" && $("#id_nombres").val()!="" && $("#id_fecha_nac").val()!="" &&
-        $("#id_tipo_doc").val()!="" && $("#id_nro_doc").val()!="" && $("#id_ciudad_nac").val() !="" && $("#id_pais_nac").val()!="" &&
-        $("#id_sexo_id").val() !="" && $("#id_estado_civil").val() !="" && $("#id_ciudad_res").val()!="" && $("#id_pais_res").val() !="" &&
+        $("#id_tipo_doc").val()!="" && $("#id_nro_doc").val()!="" && $("#id_ciudad_nac").val() !="" && $("#id_pais_nac_id").val()!="" &&
+        $("#id_sexo_id").val() !="" && $("#id_estado_civil").val() !="" && $("#id_ciudad_res").val()!="" && $("#id_pais_res_id").val() !="" &&
         $("#id_ocupacion").val()!="");
     }else{
       validado = ($("#id_apellidos").val() !="" && $("#id_nombres").val()!="" && $("#id_fecha_nac").val()!="" &&
-        $("#id_tipo_doc").val()!="" && $("#id_nro_doc").val()!="" && $("#id_ciudad_nac").val() !="" && $("#id_pais_nac").val()!="" &&
-        $("#id_sexo_id").val() !="" && $("#id_estado_civil").val() !="" && $("#id_ciudad_res").val()!="" && $("#id_pais_res").val() !="" &&
+        $("#id_tipo_doc").val()!="" && $("#id_nro_doc").val()!="" && $("#id_ciudad_nac").val() !="" && $("#id_pais_nac_id").val()!="" &&
+        $("#id_sexo_id").val() !="" && $("#id_estado_civil").val() !="" && $("#id_ciudad_res").val()!="" && $("#id_pais_res_id").val() !="" &&
         $("#id_ocupacion").val()!="");
     }
 
@@ -154,6 +156,7 @@
           $("#carga").show();
         },
         error: function(jqXHR, textStatus,msg){
+          $("#save").prop("disabled",false);
           $("#btnSearch").prop('disabled', false);
           $("#loading").hide();
           $( "#dialog-confirm" ).dialog({

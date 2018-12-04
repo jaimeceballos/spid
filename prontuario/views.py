@@ -708,12 +708,45 @@ def verificar_prontuario(request,n_p):
 @login_required
 @group_required(["prontuario"])
 def nuevo_save(request):
-    """ definicion que guarda un nuevo prontuario y habilita la cracion de una
+    """ definicion que guarda un nuevo prontuario y habilita la creacion de una
     nueva identificacion"""
 
     if request.is_ajax():
         if request.method == 'POST':
-            validacion = False
+            form = Prontuario2Form(request.POST)
+            if form.is_valid():
+                ciudad_nac = RefCiudades.objects.get(id=form.cleaned_data['ciudad_nac_id'])
+                ciudad_res = RefCiudades.objects.get(id=form.cleaned_data['ciudad_res_id'])
+                persona = Personas()
+                if request.POST['persona_id']:
+                    persona = Personas.objects.get(id = request.POST['persona_id'])
+                prontuario = Prontuario()
+                persona.apellidos       = form.cleaned_data['apellidos']
+                persona.nombres         = form.cleaned_data['nombres']
+                persona.fecha_nac       = datetime.datetime.strptime(form.cleaned_data['fecha_nac'],"%d/%m/%Y").strftime("%Y-%m-%d")
+                persona.tipo_doc        = form.cleaned_data['tipo_doc']
+                persona.nro_doc         = form.cleaned_data['nro_doc']
+                persona.ciudad_nac      = ciudad_nac
+                persona.pais_nac        = ciudad_nac.pais
+                persona.ciudad_res      = ciudad_res
+                persona.sexo_id         = form.cleaned_data['sexo_id']
+                persona.ocupacion       = form.cleaned_data['ocupacion']
+                persona.estado_civil    = form.cleaned_data['estado_civil']
+                persona.alias           = form.cleaned_data['alias']
+                
+                try:
+                    persona.save()
+                    if not form.cleaned_data['nro']=='':
+                        prontuario.nro = form.cleaned_data['nro']
+                        prontuario.persona = persona
+                        prontuario.observaciones = form.cleaned_data['observaciones']
+                        prontuario.save()
+                    return HttpResponseRedirect('/prontuario/ver_prontuario/%s/' % persona.id)
+                except Exception as e:
+                    print(e)
+                    return HttpResponseBadRequest()
+
+            """validacion = False
             id = request.POST['persona_id']
             if id == "":
                 persona = Personas()
@@ -756,7 +789,7 @@ def nuevo_save(request):
                     return HttpResponseRedirect('/prontuario/ver_prontuario/%s/' % persona.id) #render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':existe})
                 except Exception as e:
                     
-                    return HttpResponseBadRequest()
+                    return HttpResponseBadRequest()"""
 
     return HttpResponseBadRequest()
 
@@ -805,17 +838,21 @@ def nuevo_existe(request,id_detalle):
                 return render(request,"./nueva_identificacion.html",{'persona':persona,'prontuario':prontuario,'form':form,'existe':True})
             form = Prontuario2Form(
                                 initial={
-                                    'nombres':persona.nombres,
-                                    'apellidos' : persona.apellidos,
-                                    'fecha_nac' : persona.fecha_nac,
+                                    'nombres':persona.nombres.upper(),
+                                    'apellidos' : persona.apellidos.upper(),
+                                    'fecha_nac' : persona.fecha_nac.strftime("%d/%m/%Y"),
                                     'tipo_doc' : persona.tipo_doc,
                                     'nro_doc' : persona.nro_doc,
                                     'pais_nac' : persona.pais_nac,
-                                    'ciudad_nac' : persona.ciudad_nac,
+                                    'pais_nac_id' : persona.pais_nac.id,
+                                    'ciudad_nac' : "%s (%s %s)" % (persona.ciudad_nac.descripcion, persona.ciudad_nac.provincia.descripcion if persona.ciudad_nac.provincia else "", persona.ciudad_nac.pais),
+                                    'ciudad_nac_id' : persona.ciudad_nac.id,
                                     'sexo_id' : persona.sexo_id,
                                     'estado_civil' : persona.estado_civil,
                                     'ciudad_res' : persona.ciudad_res,
+                                    'ciudad_res_id' : persona.ciudad_res.id,
                                     'pais_res' : persona.ciudad_res.pais,
+                                    'pais_res_id' : persona.ciudad_res.pais.id,
                                     'ocupacion' : persona.ocupacion
 
                                     }
@@ -825,13 +862,13 @@ def nuevo_existe(request,id_detalle):
             
             return render(request,'./nuevo_prontuario.html',{'form':form,'persona':persona.id})
         else:
-            
+            detalle.apellido_nombre = detalle.apellido_nombre.strip()
             apellido = detalle.apellido_nombre.split(" ")[0]
             nombres = detalle.apellido_nombre.split(" ")[1] if len(detalle.apellido_nombre.split(" ")) == 2 else detalle.apellido_nombre.split(" ")[1]+" "+detalle.apellido_nombre.split(" ")[2]
             form = Prontuario2Form(
                                 initial={
-                                    'nombres':nombres,
-                                    'apellidos' : apellido,
+                                    'nombres':nombres.upper(),
+                                    'apellidos' : apellido.upper(),
                                     'fecha_nac' : detalle.fecha_nacimiento,
                                     'nro_doc'   : detalle.documento,
 
@@ -880,9 +917,11 @@ def identificacion_save(request):
                         verificar.fecha = datetime.datetime.now()
                         verificar.save()
                         prontuario = Prontuario()
+                    return HttpResponseRedirect("/prontuario/resumen_persona/%s/" % identificacion.persona.id) #render(request,"./nueva_identificacion.html",{'persona':identificacion.persona,'prontuario':prontuario,'identificacion':identificacion,'existe':True})
                 except Exception as e:
+                    print(e)
                     return HttpResponseBadRequest()
-                return HttpResponseRedirect("/prontuario/resumen_persona/%s/" % identificacion.persona.id) #render(request,"./nueva_identificacion.html",{'persona':identificacion.persona,'prontuario':prontuario,'identificacion':identificacion,'existe':True})
+                
     return HttpResponseBadRequest()
 
 @login_required
