@@ -116,11 +116,8 @@
     return $("#id_apellido").val() != "" || $("#id_nombre").val() != "" || $("#id_documento").val() != "";
   }
 
-  function utilizarProntuario(id,prontuario){
-    var nombre = $("#id_nombre").val() == "" ? "Nombre" : $("#id_nombre").val();
-    var apellido = $("#id_apellido").val() == "" ? "Apellido" : $("#id_apellido").val();
-    var documento = $("#id_documento").val() == "" ? 0 : $("#id_documento").val();
-    var url ="/prontuario/cargar_nuevo_procesales/"+prontuario+"/"+apellido+"/"+nombre+"/"+documento+"/";
+  function utilizarProntuario(id){
+    var url ="/prontuario/cargar_nuevo_procesales/"+id+"/";
     $.get(url,function(data){
       $("#dialog").dialog("close");
       $("#contenido").hide().empty().append(data).show();

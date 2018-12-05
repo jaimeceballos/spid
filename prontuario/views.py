@@ -69,20 +69,21 @@ def nuevo(request):
 
 @login_required
 @group_required(["prontuario"])
-def nuevo_procesales(request,prontuario,apellido,nombre,dni):
+def nuevo_procesales(request,id):
     """
     Definicion que devuelve el formulario de carga de un nuevo prontuario
     """
     if request.is_ajax():
         values = {}
-        form            = PersonasForm()
-        prontuarioForm  = ProntuarioForm()
-        prontuarioForm.fields['nro'].initial = prontuario
-        form.fields['apellidos'].initial = apellido
-        form.fields['nombres'].initial = nombre
-        form.fields['nro_doc'].initial = dni
+        prontuario = Indice.objects.using("prontuario").get(id=id)
+        form            = Prontuario2Form()
+        #prontuarioForm  = ProntuarioForm()
+        form.fields['nro'].initial = prontuario.n_p
+        form.fields['apellidos'].initial = prontuario.n_c.split(" ")[0]
+        form.fields['nombres'].initial = prontuario.n_c.lstrip(prontuario.n_c.split(" ")[0]).strip()
+        form.fields['nro_doc'].initial = prontuario.dni
         values['form'] = form
-        values['prontuarioForm'] = prontuarioForm
+        #values['prontuarioForm'] = prontuarioForm
         return render(request,'./nuevo_prontuario.html',values)
     else:
         return HttpResponseNotFound()

@@ -20,16 +20,16 @@
           {% for elemento in resultado %}
           <tr>
             <td>
-              {{elemento.dni}}
+              <p >{{elemento.dni}}</p>
             </td>
             <td>
-              {{elemento.n_c}}
+              <p>{{elemento.n_c}}</p>
             </td>
             <td>
-              {{elemento.n_p}} {{elemento.tipo_p}}
+              <p>{{elemento.n_p}} {{elemento.tipo_p}}</p>
             </td>
             <td>
-              <a href="javascript:utilizarProntuario({{id}},{{elemento.n_p}})" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-copy"></i> {% if not cambia %} Copiar Numero Prontuario {% else %} Usar registro {% endif %}</a>
+              <a href="javascript:utilizarProntuario({{elemento.id}})" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-copy"></i> {% if not cambia %} Copiar Numero Prontuario {% else %} Usar registro {% endif %}</a>
             </td>
           </tr>
           {% endfor %}
