@@ -9,6 +9,7 @@ import random,datetime,time
 from django.core.validators import MinValueValidator,MaxValueValidator
 from preventivos.models import *
 from preventivos.models import RefCiudades,RefPaises
+from django.utils.translation import ugettext as _
 # Create your models here.
 
 def upload_name(instance, filename):
@@ -86,6 +87,9 @@ class Prontuario(models.Model):
     class Meta:
         db_table = 'prontuario'
 
+        permissions = (
+            ('can_change_prontuario_nro', _('Can change prontuario nro')),
+        )
 
 class CivilStatuses(models.Model):
     id = models.IntegerField(primary_key=True)

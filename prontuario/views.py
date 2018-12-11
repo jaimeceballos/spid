@@ -679,8 +679,15 @@ def nueva_ciudad(request,tipo):
                 ciudad.pais = form.cleaned_data['pais']
                 ciudad.provincia = form.cleaned_data['provincia']
                 ciudad.descripcion = form.cleaned_data['descripcion']
+                if not ciudad.provincia:
+                    if RefCiudades.objects.filter(descripcion = ciudad.descripcion, pais = ciudad.pais).len() > 0:
+                        HttpResponseBadRequest()
                 try:
                     ciudad.save()
+                    log = ProntuarioLog()
+                    log.usuario = request.user
+                    log.accion = "Crea Ciudad %s" % (ciudad.descripcion)
+                    log.save()
                 except Exception as e:
                     return HttpResponseBadRequest()
                 ciudades = [ciudad,]
@@ -737,6 +744,7 @@ def nuevo_save(request):
                 
                 try:
                     persona.save()
+                    
                     if not form.cleaned_data['nro']=='':
                         prontuario.nro = form.cleaned_data['nro']
                         prontuario.persona = persona
@@ -1402,3 +1410,26 @@ def log(request):
     log = ProntuarioLog.objects.all()
 
     return render(request,"log.html",{'log':log})
+
+@login_required
+@group_required(["prontuario"])
+@permission_required("prontuario.can_change_prontuario_nro")
+def modificar_numero_prontuario(request,id):
+    if request.is_ajax():
+        prontuario = Prontuario.objects.get(id=id)
+        if request.method == "POST":
+            form = ProntuarioForm(request.POST,instance=prontuario)
+            if form.is_valid():
+                prontuario.nro = form.cleaned_data['nro']
+                try:
+                    prontuario.save()
+                    return HttpResponse("ok")
+                except Exception as e:
+                    print(e)
+            else:
+                if form['nro'].errors:
+                    return render(request,"modificar_nro_prontuario.html",{'form':form,'prontuario':prontuario})
+        else:
+            form = ProntuarioForm(instance=prontuario)
+            return render(request,"modificar_nro_prontuario.html",{'form':form,'prontuario':prontuario})
+    return HttpResponseBadRequest()

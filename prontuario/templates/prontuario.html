@@ -3,7 +3,7 @@
   <div class="col-md-4 col-md-offset-4">
     <center>
     {% if prontuario %}
-      <h1>Prontuario N° {{prontuario.nro}} </h1>
+      <h1>Prontuario N° <label id="lbl-nro">{{prontuario.nro}}</label> {% if perms.prontuario.can_change_prontuario_nro %} <a href="javascript:modificar_nro({{prontuario.id}})" class="btn btn-default btn-xs"> <i class="glyphicon glyphicon-edit"></i> Cambiar</a>{% endif %} </h1>
     {% elif identificacion %}
       <h1>Prontuario N° {{identificacion.prontuario_local}} </h1>
     {% endif %}
@@ -241,4 +241,28 @@
         });
       });
     }
+    
+    function modificar_nro(id){
+      var url = "/prontuario/modificar_nro_prontuario/"+id+"/";
+      $.get(url,function(data){
+        $("#dialog").html(data);
+        $("#dialog").dialog(
+        {
+          width: 'auto',
+          height: 'auto',
+          modal:true,
+          open: function(event, ui)
+          {
+  
+          },
+          buttons: {
+            Cerrar: function() {
+              $( this ).dialog( "close" );
+  
+            }
+          }
+        });
+      })
+    }
+    
 </script>

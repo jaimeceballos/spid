@@ -11,6 +11,7 @@ from django.contrib.auth.views import password_reset, password_reset_complete, p
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
+from django.contrib import admin
 
 handler404 = 'preventivos.views.page_not_found'
 handler500 = 'preventivos.views.server_error'
@@ -32,7 +33,7 @@ urlpatterns = [
     url(r'^spid/help/$', help_view),
     url(r'^spid/ayudaonline/$', help_view),
     url(r'^spid/salir/$', nologin),
-    #url(r'^admin/config/', include(admin.site.urls)),
+    url(r'^admin/config/', admin.site.urls),
     url(r'^preventivos/', include('preventivos.urls')),
     #url(r'^NIF/',include('NIF.urls')),
     url(r'^prontuario/',include('prontuario.urls')),

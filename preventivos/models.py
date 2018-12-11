@@ -126,7 +126,7 @@ class RefCiudades(models.Model):
 		super(RefCiudades, self).save(force_insert, force_update)
 
 	class Meta:
-		unique_together = ('pais','provincia','departamento','descripcion',)
+		unique_together = ('pais','provincia','descripcion',)
 		ordering = ["descripcion"]
 		db_table = 'ref_ciudades'
 		app_label = 'preventivos'

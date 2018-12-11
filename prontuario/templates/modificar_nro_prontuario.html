@@ -1,0 +1,45 @@
+<form method="POST" action="{% url 'modificar_nro_prontuario' prontuario.id %}" id="modificar_nro_prontuario">{% csrf_token %}
+    {% if form.errors %}
+      <div class="alert alert-danger">
+            {{form.nro.errors}}
+      </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-2">
+            <label for="">Nro:</label>
+        </div>
+        <div class="col-md-10">
+            {{ form.nro }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-xs btn-success pull-right">Guardar</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $("#modificar_nro_prontuario").submit(function(event){
+        event.preventDefault();
+
+        var form = $("#modificar_nro_prontuario");
+        $.ajax({
+            type:form.attr('method'),
+            url:form.attr('action'),
+            data:form.serialize(),
+            success: function(data){
+                if(data=='ok'){
+                    var nro = $("#id_nro").val();
+                    $("#lbl-nro").empty().append(nro);
+                    $("#dialog").dialog("close");
+                }else{
+                    $("#dialog").html(data);
+                }
+            },
+            error:function(jqXHR, textStatus, msg){
+                $("#dialog").html("Verifique que el n&uacute;mero sea el correcto y vuelva a intentarlo.");
+            },
+        });
+    });
+</script>
