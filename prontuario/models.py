@@ -298,9 +298,11 @@ class PreventivosPersona(models.Model):
         db_table = 'preventivos_persona'
 
 class ProntuarioLog(models.Model):
-    usuario = models.ForeignKey(User,on_delete=models.DO_NOTHING)
-    fecha = models.DateTimeField(auto_now_add=True)
-    accion = models.CharField(max_length=300)
+    usuario     = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    fecha       = models.DateTimeField(auto_now_add=True)
+    accion      = models.CharField(max_length=300)
+    entidad     = models.CharField(max_length=100, default="",blank=True, null=True)
+    entidad_id  = models.IntegerField(default=None,blank=True, null=True)
 
     class Meta:
         db_table = 'prontuario_log'

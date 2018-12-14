@@ -35,6 +35,7 @@
 
 </div>
 <script type="text/javascript">
+
 $("#id_pais").prop('disabled',false).addClass("form-control");
 $("#id_provincia").addClass("form-control");
 $("#id_descripcion").addClass("form-control");
@@ -55,9 +56,11 @@ $("#nuevo_ciudad").submit(function(event){
         if("{{tipo}}" == "res"){
           $("#id_ciudad_res").val(data[0]["fields"]["descripcion"]).focus();
           $("#id_ciudad_res_id").val(data[0]["pk"]);
+          
         }else{
           $("#id_ciudad_nac").val(data[0]["fields"]["descripcion"]);
           $("#id_ciudad_nac_id").val(data[0]["pk"]);
+          $("#id_pais_nac").val(data[0]["pais"]);
         }
         /*var select;
         var select2;
