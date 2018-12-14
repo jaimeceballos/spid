@@ -1417,9 +1417,10 @@ def preventivos_persona(request,persona):
 
 @login_required
 def imprimir_prontuario(request,prontuario):
-    prontuario = get_object_or_404(Prontuario,id=prontuario)
+    id_prontuario = prontuario
+    prontuario = get_object_or_404(Prontuario,id=id_prontuario)
     accion = "Impresion de prontuario nro %s" % (prontuario.nro)
-    save_log(request.user,accion,prontuario._meta.db_model,prontuario.id)
+    save_log(request.user,accion,"prontuario",id_prontuario)
     return render(request,"impresion.html",{'prontuario':prontuario})
 
 @login_required
