@@ -686,7 +686,7 @@ def nueva_ciudad(request,tipo):
                 ciudad.provincia = form.cleaned_data['provincia']
                 ciudad.descripcion = form.cleaned_data['descripcion']
                 if not ciudad.provincia:
-                    if RefCiudades.objects.filter(descripcion = ciudad.descripcion, pais = ciudad.pais).len() > 0:
+                    if len(RefCiudades.objects.filter(descripcion = ciudad.descripcion, pais = ciudad.pais)) > 0:
                         HttpResponseBadRequest()
                 try:
                     ciudad.save()
