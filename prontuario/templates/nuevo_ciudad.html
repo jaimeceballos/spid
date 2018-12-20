@@ -53,6 +53,7 @@ $("#nuevo_ciudad").submit(function(event){
       url:form.attr('action'),
       data:form.serialize(),
       success: function(data){
+        alert(data[0]["fields"])
         if("{{tipo}}" == "res"){
           $("#id_ciudad_res").val(data[0]["fields"]["descripcion"]).focus();
           $("#id_ciudad_res_id").val(data[0]["pk"]);
@@ -60,7 +61,7 @@ $("#nuevo_ciudad").submit(function(event){
         }else{
           $("#id_ciudad_nac").val(data[0]["fields"]["descripcion"]);
           $("#id_ciudad_nac_id").val(data[0]["pk"]);
-          $("#id_pais_nac").val(data[0]["pais"]);
+          $("#id_pais_nac_id").val(data[0]["fields"]["pais"]);
         }
         /*var select;
         var select2;
