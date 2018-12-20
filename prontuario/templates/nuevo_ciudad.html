@@ -39,6 +39,9 @@
 $("#id_pais").prop('disabled',false).addClass("form-control");
 $("#id_provincia").addClass("form-control");
 $("#id_descripcion").addClass("form-control");
+$("#id_pais").change(function(event){
+  $("#id_pais option:selected").text() == "ARGENTINA" ? $("#id_provincia").prop('disabled',false) : $("#id_provincia").prop('disabled',true);
+});
 $("#nuevo_ciudad").submit(function(event){
   event.preventDefault();
   $("#btn-save").prop('disabled', true);
@@ -53,13 +56,12 @@ $("#nuevo_ciudad").submit(function(event){
       url:form.attr('action'),
       data:form.serialize(),
       success: function(data){
-        alert(data[0]["fields"])
         if("{{tipo}}" == "res"){
           $("#id_ciudad_res").val(data[0]["fields"]["descripcion"]).focus();
           $("#id_ciudad_res_id").val(data[0]["pk"]);
           
         }else{
-          $("#id_ciudad_nac").val(data[0]["fields"]["descripcion"]);
+          $("#id_ciudad_nac").val(data[0]["fields"]["descripcion"]+"("+ ($("#id_provincia option:selected").val() !="" ? $("#id_provincia option:selected").text() : ' ') +" "+$("#id_pais option:selected").text() +")" );
           $("#id_ciudad_nac_id").val(data[0]["pk"]);
           $("#id_pais_nac_id").val(data[0]["fields"]["pais"]);
         }
