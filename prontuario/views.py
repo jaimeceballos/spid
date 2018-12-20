@@ -1233,8 +1233,13 @@ def ver_prontuario(request,id):
     if request.is_ajax():
         values = {}
         persona = Personas.objects.get(id=id)
-        accion = "Visualiza prontuario %s" % (persona.prontuario.nro)
-        save_log(request.user,accion,persona.prontuario._meta.db_table,persona.prontuario.id)
+        try: 
+            persona.prontuario
+            accion = "Visualiza prontuario %s" % (persona.prontuario.nro)
+            save_log(request.user,accion,persona.prontuario._meta.db_table,persona.prontuario.id)
+        except Exception as e:
+            accion = "Visualiza Persona %s %s " % (persona.apellidos, persona.nombres)
+            save_log(request.user,accion,persona._meta.db_table,persona.id)
         try:
             values['prontuario'] = persona.prontuario
         except Exception as e:
