@@ -117,6 +117,22 @@
                   </div>
                 </div>
               </div>
+              <hr>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="alert alert-info">
+                    <p>Aqui puede cargar las fechas estimadas en caso de que este registrando domicilios anteriores. <br><b><u>Si el domicilio es el actual no es necesario cargar las fechas, en caso de tenerla puede cargar solo el campo "Desde".</u></b></p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <label for="">Desde</label>
+                  {{form.fecha_desde}}
+                </div>
+                <div class="col-md-3">
+                  <label for="">Hasta</label>
+                  {{form.fecha_hasta}}
+                </div>
+              </div>
               <div class="row">
                 <div class="col-md-12">
                   <br>
@@ -174,6 +190,7 @@ $("#chkNoProvincia").change(function(event){
       $("#noProvincia").hide();
     }
 });
+
 $("#chkInterseccion").change(function(event){
   if($("#chkInterseccion:checked").val()=="on"){
     $("#interseccion").show();
@@ -270,4 +287,22 @@ $("#id_pais").change(function(event){
     select.removeAttr('disabled');
   }, "json");
 });
+$("#id_fecha_desde").datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 0,
+    todayBtn: "linked",
+    language: "es",
+    daysOfWeekHighlighted: "0",
+    autoclose: true,
+    todayHighlight: true
+  });
+  $("#id_fecha_hasta").datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 0,
+    todayBtn: "linked",
+    language: "es",
+    daysOfWeekHighlighted: "0",
+    autoclose: true,
+    todayHighlight: true
+  });
 </script>

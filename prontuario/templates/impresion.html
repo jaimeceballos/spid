@@ -116,7 +116,7 @@
                     {% if persona.padre.all %}
                         {% with padres=persona.padre.latest %}
                             <td align="right"><b><i>Padre:</i></b></td>
-                            <td >{% if padres.padre_nombres %} {{padres.padre_nombres}} {% else %} No registrado {% endif %}</td>
+                            <td >{% if padres.padre_nombres %} {{padres.padre_nombres}} {{padres.padre_apellidos}} {% else %} No registrado {% endif %}</td>
                         </tr>
                         <tr>
                             <td style="border-bottom:1pt solid black;" align="right"><b><i>Madre:</i></b></td>

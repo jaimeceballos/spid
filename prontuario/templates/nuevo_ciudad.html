@@ -65,32 +65,10 @@ $("#nuevo_ciudad").submit(function(event){
           $("#id_ciudad_nac_id").val(data[0]["pk"]);
           $("#id_pais_nac_id").val(data[0]["fields"]["pais"]);
         }
-        /*var select;
-        var select2;
-        if("{{tipo}}" == "res"){
-          select = $("#id_ciudad_res");
-          select2 = $("#id_ciudad_nac");
-        }else{
-          select = $("#id_ciudad_nac");
-          select2 = $("#id_ciudad_res");
-        }
-
-        select.empty();
-        var options = '<option value=""></option>';
-        for (var i = 0; i < data.length; i++) {
-          options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["descripcion"] +'</option>'
-        }
-        select.html(options);
-        if(select2.val() == ""){
-          select2.empty().html(options);
-        }*/
+        
         $("#btn-save").prop('disabled', false);
         $("#loading").hide();
-        /*if("{{tipo}}" == "res"){
-          $("#id_ciudad_res option:contains("+ciudad.toUpperCase()+")").attr('selected','selected');
-        }else{
-          $("#id_ciudad_nac option:contains("+ciudad.toUpperCase()+")").attr('selected','selected');
-        }*/
+        
         $("#dialog").dialog( "close" );
       },
       error:function(jqXHR, textStatus, msg){

@@ -1014,19 +1014,30 @@ def cargar_domicilios(request,id):
         persona = Personas.objects.get(id=id)
         if request.method =="POST":
             form = DomicilioProntuarioForm(request.POST)
-            domicilio_vigente = Domicilios.objects.filter(personas=persona,fecha_hasta__isnull= True)
-            if domicilio_vigente.count() > 0:
-                for domicilio in domicilio_vigente:
-                    domicilio.fecha_hasta = domicilio.fecha_actualizacion = datetime.datetime.now()
-                    domicilio.save()
+            
             if form.is_valid():
+                domicilio_vigente = Domicilios.objects.filter(personas=persona,fecha_hasta__isnull= True)
+                if domicilio_vigente.count() > 0:
+                    for vigente in domicilio_vigente:
+                        if form.cleaned_data['fecha_desde']:
+                            vigente.fecha_hasta = form.cleaned_data['fecha_desde']
+                        else:
+                            vigente.fecha_hasta = datetime.datetime.now()
+                        vigente.fecha_actualizacion = datetime.datetime.now()
+                        vigente.save()
                 domicilio = Domicilios()
                 domicilio.ref_ciudades                                  = form.cleaned_data['ref_ciudades']
                 domicilio.barrio_codigo                                 = form.cleaned_data['barrio_codigo']
                 domicilio.calle                                         = form.cleaned_data['calle']
                 domicilio.altura                                        = form.cleaned_data['altura']
                 domicilio.entre                                         = form.cleaned_data['entre']
-                domicilio.fecha_desde = domicilio.fecha_actualizacion   = datetime.datetime.now()
+                if(form.cleaned_data['fecha_desde']):
+                    domicilio.fecha_desde                               = form.cleaned_data['fecha_desde']
+                else:
+                    domicilio.fecha_desde                               = datetime.datetime.now()
+                if(form.cleaned_data['fecha_hasta']):
+                    domicilio.fecha_hasta                               = form.cleaned_data['fecha_hasta']
+                domicilio.fecha_actualizacion                           = datetime.datetime.now()
                 domicilio.tipos_domicilio                               = form.cleaned_data['tipos_domicilio']
                 domicilio.ref_zona                                      = form.cleaned_data['ref_zona']
                 domicilio.departamento                                  = form.cleaned_data['departamento']
