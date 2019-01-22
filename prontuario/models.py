@@ -303,6 +303,7 @@ class ProntuarioLog(models.Model):
     accion      = models.CharField(max_length=300)
     entidad     = models.CharField(max_length=100, default="",blank=True, null=True)
     entidad_id  = models.IntegerField(default=None,blank=True, null=True)
+    accion_tipo = models.CharField(max_length = 3,default = None, blank = True, null = True)
 
     class Meta:
         db_table = 'prontuario_log'

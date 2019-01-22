@@ -1,0 +1,51 @@
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Fecha y Hora</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in log %}
+                <tr>
+                    <td>
+                        {{registro.usuario.username}}
+                    </td>
+                    <td>
+                        {{registro.usuario.last_name}} {{registro.usuario.first_name}}
+                    </td>
+                    <td>
+                        {{registro.fecha|date:"Y/m/d"}}
+                    </td>
+                    <td>
+                        {{registro.accion}}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(".table").dataTable({
+    "responsive":true,
+    "language": {
+            "lengthMenu": "Mostrar _MENU_ filas por pagina",
+            "zeroRecords": "No hay resultados",
+            "info": "Pagina _PAGE_ de _PAGES_",
+            "infoEmpty": "No hay resultados",
+            "infoFiltered": "(filtered from _MAX_ total records)",
+            "paginate": {
+                "previous": "Anterior",
+                "next":"Siguiente"
+            }
+
+        },
+    "bFilter": true
+    });
+</script>

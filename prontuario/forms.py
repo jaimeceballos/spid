@@ -133,3 +133,22 @@ class OcupacionEspecificaForm(forms.ModelForm):
     class Meta:
         model = RefOcupacionEspecifica
         exclude = []
+
+
+ACCION_TIPO_CHOICES = {
+    ('c','Carga'),
+    ('r','Lectura'),
+    ('u','Modificacion'),
+    ('d','Borrado'),
+    ('s','Busqueda'),
+    ('a','Todas')
+}
+class LogForm(forms.ModelForm):
+    usuario         = forms.ModelChoiceField(required=False,widget=forms.Select(attrs={'class':'form-control'}), queryset= User.objects.all() , empty_label="Seleccione un usuario" )
+    fecha_desde     = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control ','placeholder':'Fecha desde','style':'text-align: center;'})))
+    fecha_hasta     = forms.CharField(required = False, widget=forms.TextInput(attrs=dict({'class':'form-control ','placeholder':'Fecha hasta','style':'text-align: center;'})))
+    accion_tipo     =  forms.ChoiceField(required=False,choices=ACCION_TIPO_CHOICES,widget=forms.Select(attrs={'class':'form-control'}))
+
+    class Meta:
+        model = ProntuarioLog
+        exclude = ['fecha','accion','accion_tipo','entidad','entidad_id']

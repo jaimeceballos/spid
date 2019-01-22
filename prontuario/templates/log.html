@@ -7,55 +7,76 @@
                 <hr>
             </div>
         </div>
+        <form class="form" id="log-search-form" method="POST" action="{% url 'buscar_log' %}">{% csrf_token %}
         <div class="row">
-            <div class="col-md-12">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Nombre</th>
-                            <th>Fecha y Hora</th>
-                            <th>Accion</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for registro in log %}
-                        <tr>
-                            <td>
-                                {{registro.usuario.username}}
-                            </td>
-                            <td>
-                                {{registro.usuario.last_name}} {{registro.usuario.first_name}}
-                            </td>
-                            <td>
-                                {{registro.fecha|date:"SHORT_DATE_FORMAT"}}
-                            </td>
-                            <td>
-                                {{registro.accion}}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="col-md-3">
+                <label>Seleccione un usuario:</label>
+                {{form.usuario}}
             </div>
+            <div class="col-md-3">
+                <label for="">Accion</label>
+                {{form.accion_tipo}}
+            </div>
+            <div class="col-md-2">
+                <label for="">Desde</label>
+                {{form.fecha_desde}}
+            </div>
+            <div class="col-md-2">
+                <label for="">Hasta</label>
+                {{form.fecha_hasta}}
+            </div>
+            <div class="col-md-2">
+                <br>
+                <button type="submit" id="btn-search" class="btn btn-danger"> <i class="glyphicon glyphicon-search"></i> Buscar</button>
+            </div>
+        </div>
+        </form>
+        <hr>
+        <div id="cargando" style="display:none">
+            <img width="30px" src="/static/imagenes/preventivos/loading.gif" style="display:block;margin-left:auto; margin-right:auto">
+            <p style="text-align: center" >Cargando...</p>
+        </div>
+        <div id="data">
+
         </div>
     </div>
 <script>
-    $(".table").dataTable({
-    "responsive":true,
-    "language": {
-            "lengthMenu": "Mostrar _MENU_ filas por pagina",
-            "zeroRecords": "No hay resultados",
-            "info": "Pagina _PAGE_ de _PAGES_",
-            "infoEmpty": "No hay resultados",
-            "infoFiltered": "(filtered from _MAX_ total records)",
-            "paginate": {
-              "previous": "Anterior",
-              "next":"Siguiente"
-            }
-
+$("#log-search-form").submit(function(event){
+    event.preventDefault();
+    var form = $("#log-search-form");
+    $("#btn-search").attr("disabled","disabled");
+    $("#cargando").show();
+    $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize(),
+        success: function(data){
+            $("#cargando").hide();
+            $("#data").empty().append(data);
+            $("#btn-search").removeAttr("disabled");
         },
-    "bFilter": true
+        always: function(){
+            $("#btn-search").removeAttr("disabled");
+        },
+    });
+});
+$("#id_fecha_desde").datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 0,
+    todayBtn: "linked",
+    language: "es",
+    daysOfWeekHighlighted: "0",
+    autoclose: true,
+    todayHighlight: true
+  });
+  $("#id_fecha_hasta").datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 0,
+    todayBtn: "linked",
+    language: "es",
+    daysOfWeekHighlighted: "0",
+    autoclose: true,
+    todayHighlight: true
   });
 </script>
 {% endblock contenido %}

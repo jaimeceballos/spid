@@ -52,5 +52,6 @@ urlpatterns = [
     url(r'^imprimir_prontuario/(?P<prontuario>[0-9]+)/$',imprimir_prontuario,name='imprimir_prontuario'),
     url(r'^eliminar_domicilio/(?P<id>[0-9]+)/$',eliminar_domicilio,name='eliminar_domicilio'),
     url(r'^actividad/$',log,name='log'),
+    url(r'^buscar_log/$',buscar_log, name='buscar_log'),
     url(r'^modificar_nro_prontuario/(?P<id>[0-9]+)/$',modificar_numero_prontuario,name='modificar_nro_prontuario'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -16,7 +16,7 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib import auth
 from datetime import date,timedelta
 import datetime
-from time import strptime
+from time import strptime, strftime
 from decorators.auth import group_required
 from django.contrib.auth.decorators import login_required,permission_required
 from django.db import transaction,IntegrityError,connection,connections
@@ -25,7 +25,7 @@ from prontuario.models import *
 from prontuario.forms import *
 import json
 
-def save_log(usuario,accion,entidad=None,id_entidad=None):
+def save_log(usuario,accion,accion_tipo,entidad=None,id_entidad=None):
     log = ProntuarioLog(usuario=usuario,accion=accion,entidad=entidad,entidad_id=id_entidad)
     log.save()
 
@@ -120,7 +120,7 @@ def search_persona(request):
             strParametros = str(parametros)
             
             accion = "Realiza busqueda: %s" % (parametros)
-            save_log(request.user,accion)
+            save_log(request.user,accion,"s")
             try:
                 resultados = SearchResults.objects.filter(id_busqueda=SearchHistory.objects.get(busqueda = strParametros).id)
             except Exception as e:
@@ -660,7 +660,7 @@ def nuevo_pais(request,tipo):
                 try:
                     pais.save()
                     accion = "Alta de pais %s " % (pais.descripcion)
-                    save_log(request.user,accion,pais._meta.db_table,pais.id)
+                    save_log(request.user,accion,"c",pais._meta.db_table,pais.id)
                 except Exception as e:
                     save_error(request.user,e)
                     return HttpResponseBadRequest()
@@ -691,7 +691,7 @@ def nueva_ciudad(request,tipo):
                 try:
                     ciudad.save()
                     accion = "Crea Ciudad %s" % (ciudad.descripcion)
-                    save_log(request.user,accion,ciudad._meta.db_table,ciudad.id)
+                    save_log(request.user,accion,"c",ciudad._meta.db_table,ciudad.id)
                 except Exception as e:
                     save_error(request.user,e)
                     return HttpResponseBadRequest()
@@ -750,14 +750,14 @@ def nuevo_save(request):
                 try:
                     persona.save()
                     accion = "Crea persona %s %s" %(persona.apellidos, persona.nombres)
-                    save_log(request.user,accion,persona._meta.db_table,persona.id)
+                    save_log(request.user,accion,"c",persona._meta.db_table,persona.id)
                     if not form.cleaned_data['nro']=='':
                         prontuario.nro = form.cleaned_data['nro']
                         prontuario.persona = persona
                         prontuario.observaciones = form.cleaned_data['observaciones']
                         prontuario.save()
                         accion = "Crea Prontuario %s " % (prontuario.nro)
-                        save_log(request.user,accion,prontuario._meta.db_table,prontuario.id)
+                        save_log(request.user,accion,"c",prontuario._meta.db_table,prontuario.id)
                     return HttpResponseRedirect('/prontuario/ver_prontuario/%s/' % persona.id)
                 except Exception as e:
                     save_error(request.user,e)
@@ -838,7 +838,7 @@ def nuevo_existe(request,id_detalle):
     if request.is_ajax:
         detalle = SearchResults.objects.get(id = id_detalle)
         accion = "Selecciona %s  DNI: %s" % (detalle.apellido_nombre, detalle.documento)
-        save_log(request.user, accion)
+        save_log(request.user, accion,"r")
         prontuario_nro = detalle.prontuario_acei if detalle.prontuario_acei else detalle.prontuario_spid if detalle.prontuario_spid else ""
         if detalle.id_spid:
             persona = Personas.objects.get(id = detalle.id_spid)
@@ -920,7 +920,7 @@ def identificacion_save(request):
                 try:
                     identificacion.save()
                     accion = "Carga identificacion de %s %s" % (identificacion.persona.apellidos,identificacion.persona.nombres)
-                    save_log(request.user,accion,identificacion._meta.db_table,identificacion.id)
+                    save_log(request.user,accion,"c",identificacion._meta.db_table,identificacion.id)
                     if request.user.userprofile.depe.unidades_regionales.descripcion == "INVESTIGACIONES":
                         prontuario = Prontuario.objects.get(id=request.POST['prontuario'])
                         prontuario.identificaciones.add(identificacion)
@@ -991,7 +991,7 @@ def cargar_padres(request,id):
                 try:
                     padres.save()
                     accion = "Carga padres de %s %s " % (persona.nombres, persona.apellidos)
-                    save_log(request.user,accion,padres._meta.db_table,padres.id)
+                    save_log(request.user,accion,"c",padres._meta.db_table,padres.id)
                 except Exception as e:
                     save_error(request.user,e)
                     return HttpResponseBadRequest()
@@ -1050,7 +1050,7 @@ def cargar_domicilios(request,id):
                 try:
                     domicilio.save()
                     accion = "Carga Domicilio de %s %s " % (persona.apellidos, persona.nombres)
-                    save_log(request.user,accion,domicilio._meta.db_table,domicilio.id)
+                    save_log(request.user,accion,"c",domicilio._meta.db_table,domicilio.id)
                     return HttpResponseRedirect("/prontuario/resumen_persona/%s/" % persona.id)
                 except Exception as e:
                     save_error(request.user,e)
@@ -1076,7 +1076,7 @@ def cargar_fotos(request,id):
                 try:
                     foto.save()
                     accion = "Carga foto de %s %s " % (persona.apellidos, persona.nombres)
-                    save_log(request.user, accion, foto._meta.db_table,foto.id)
+                    save_log(request.user, accion, "c", foto._meta.db_table,foto.id)
                     try:
                         prontuario = Prontuario.objects.get(persona = persona)
                         prontuario.fotos.add(foto)
@@ -1247,10 +1247,10 @@ def ver_prontuario(request,id):
         try: 
             persona.prontuario
             accion = "Visualiza prontuario %s" % (persona.prontuario.nro)
-            save_log(request.user,accion,persona.prontuario._meta.db_table,persona.prontuario.id)
+            save_log(request.user,accion,"r",persona.prontuario._meta.db_table,persona.prontuario.id)
         except Exception as e:
             accion = "Visualiza Persona %s %s " % (persona.apellidos, persona.nombres)
-            save_log(request.user,accion,persona._meta.db_table,persona.id)
+            save_log(request.user,accion,"r",persona._meta.db_table,persona.id)
         try:
             values['prontuario'] = persona.prontuario
         except Exception as e:
@@ -1299,7 +1299,7 @@ def persona_save(request,id):
                 persona.pais_nac    = form.cleaned_data['pais_nac']
                 persona.save()
                 accion = "Modifica datos de %s %s" % (persona.apellidos,persona.nombres)
-                save_log(request.user,accion,persona._meta.db_table,persona.id)
+                save_log(request.user,accion,"u",persona._meta.db_table,persona.id)
                 return render(request,"datos_personales.html",{'persona':persona})
     return HttpResponseBadRequest()
 
@@ -1420,7 +1420,7 @@ def eliminar_domicilio(request,id):
             entidad = domicilio._meta.db_table
             id_entidad = domicilio.id
             domicilio.delete()
-            save_log(request.user,accion,entidad,id_entidad)
+            save_log(request.user,accion,"d",entidad,id_entidad)
             return HttpResponse("Accion realizada con exito.")
         except Exception as e:
             save_error(e)
@@ -1436,15 +1436,16 @@ def imprimir_prontuario(request,prontuario):
     id_prontuario = prontuario
     prontuario = get_object_or_404(Prontuario,id=id_prontuario)
     accion = "Impresion de prontuario nro %s" % (prontuario.nro)
-    save_log(request.user,accion,"prontuario",id_prontuario)
+    save_log(request.user,accion,"r","prontuario",id_prontuario)
     return render(request,"impresion.html",{'prontuario':prontuario})
 
 @login_required
 @group_required(["administrador"])
 def log(request):
-    log = ProntuarioLog.objects.all()
+    #log = ProntuarioLog.objects.all()
+    form = LogForm()
 
-    return render(request,"log.html",{'log':log})
+    return render(request,"log.html",{'form':form})
 
 @login_required
 @group_required(["prontuario"])
@@ -1460,7 +1461,7 @@ def modificar_numero_prontuario(request,id):
                 prontuario.nro = form.cleaned_data['nro']
                 try:
                     prontuario.save()
-                    save_log(request.user,accion,prontuario._meta.db_table,prontuario.id)
+                    save_log(request.user,accion,"u",prontuario._meta.db_table,prontuario.id)
                     return HttpResponse("ok")
                 except Exception as e:
                     save_error=(request.user,e)
@@ -1472,3 +1473,27 @@ def modificar_numero_prontuario(request,id):
             form = ProntuarioForm(instance=prontuario)
             return render(request,"modificar_nro_prontuario.html",{'form':form,'prontuario':prontuario})
     return HttpResponseBadRequest()
+
+@login_required
+@group_required(['administrador'])
+def buscar_log(request):
+    
+    form = LogForm(request.POST)
+    if form.is_valid():
+        usuario     = form.cleaned_data['usuario']
+        accion_tipo = form.cleaned_data['accion_tipo']
+        fecha_desde = form.cleaned_data['fecha_desde']
+        fecha_hasta = form.cleaned_data['fecha_hasta']
+        logs = ProntuarioLog.objects.all()
+        if not usuario == None:
+            logs = logs.filter(usuario=usuario)
+        if not accion_tipo == 'a':
+            logs = logs.filter(accion_tipo=accion_tipo)
+        if not fecha_desde == '' and not fecha_hasta == '':
+            logs = logs.filter(fecha__range=(strftime("%Y-%m-%d",strptime(fecha_desde,"%m/%d/%Y")),strftime("%Y-%m-%d",strptime(fecha_hasta,"%m/%d/%Y"))))
+        
+        return render(request,"log_data.html",{'log':logs})
+        
+        
+
+    return HttpResponse("ok")
