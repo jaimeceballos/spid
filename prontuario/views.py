@@ -231,12 +231,13 @@ def buscar_persona_indice(parametros,persona_spid = None, persona_acei = None, p
     en la base de datos chubut del sistema Comunicaciones Procesales"""
     persona_indice = Indice.objects.using('prontuario').all().exclude(dni__exact='',n_c__exact='').exclude(dni__exact='0',n_p__exact='').exclude(n_p__exact='0')
     n_c = ""
+    
     if not parametros['nombre'] == "":
         n_c = n_c +parametros['nombre']
     if not parametros['apellido'] == "":
         n_c = parametros['apellido'] + " " + n_c
     if not parametros['nombre'] == "" or not parametros['apellido'] == "":
-        persona_indice = persona_indice.filter(n_c__icontains = n_c)
+        persona_indice = persona_indice.filter(n_c__icontains = n_c.strip())
     if not parametros['documento'] == "":
         persona_indice = persona_indice.filter(dni = parametros['documento'])
     documento = []
@@ -252,7 +253,7 @@ def buscar_persona_indice(parametros,persona_spid = None, persona_acei = None, p
             if registro['dni'] not in documento:
                 documento.append(registro['dni'])
     persona_indice = persona_indice.exclude(dni__in=documento)
-    
+    print(persona_indice)
     return persona_indice
 
 
@@ -1397,11 +1398,11 @@ def buscar_procesales(request):
                 dni = form.cleaned_data['documento']
                 resultados = Indice.objects.using('prontuario').all()
                 if not n_c == "" and dni =="":
-                    resultados = resultados.filter(n_c__icontains = n_c)
+                    resultados = resultados.filter(n_c__icontains = n_c.strip())
                 if not dni == "" and n_c == "":
                     resultados = resultados.filter(dni=dni)
                 if not dni == "" and not n_c == "" :
-                    resultados = resultados.filter(dni=dni,n_c__icontains=n_c)
+                    resultados = resultados.filter(dni=dni,n_c__icontains=n_c.strip())
                 
                 if resultados.count() > 0:
                     return render(request,"./listado_procesales.html",{'resultado':resultados,'id':0,'cambia':True})
