@@ -1478,23 +1478,21 @@ def modificar_numero_prontuario(request,id):
 @login_required
 @group_required(['administrador'])
 def buscar_log(request):
-    
-    form = LogForm(request.POST)
-    if form.is_valid():
-        usuario     = form.cleaned_data['usuario']
-        accion_tipo = form.cleaned_data['accion_tipo']
-        fecha_desde = form.cleaned_data['fecha_desde']
-        fecha_hasta = form.cleaned_data['fecha_hasta']
-        logs = ProntuarioLog.objects.all()
-        if not usuario == None:
-            logs = logs.filter(usuario=usuario)
-        if not accion_tipo == 'a':
-            logs = logs.filter(accion_tipo=accion_tipo)
-        if not fecha_desde == '' and not fecha_hasta == '':
-            logs = logs.filter(fecha__range=(strftime("%Y-%m-%d",strptime(fecha_desde,"%m/%d/%Y")),strftime("%Y-%m-%d",strptime(fecha_hasta,"%m/%d/%Y"))))
-        
-        return render(request,"log_data.html",{'log':logs})
-        
-        
-
-    return HttpResponse("ok")
+    if request.is_ajax():
+        form = LogForm(request.POST)
+        if form.is_valid():
+            usuario     = form.cleaned_data['usuario']
+            accion_tipo = form.cleaned_data['accion_tipo']
+            fecha_desde = form.cleaned_data['fecha_desde']
+            fecha_hasta = form.cleaned_data['fecha_hasta']
+            logs = ProntuarioLog.objects.all()
+            if not usuario == None:
+                logs = logs.filter(usuario=usuario)
+            if not accion_tipo == 'a':
+                logs = logs.filter(accion_tipo=accion_tipo)
+            if not fecha_desde == '' and not fecha_hasta == '':
+                logs = logs.filter(fecha__range=(strftime("%Y-%m-%d",strptime(fecha_desde,"%m/%d/%Y")),strftime("%Y-%m-%d",strptime(fecha_hasta,"%m/%d/%Y"))))
+            
+            return render(request,"log_data.html",{'log':logs})
+            
+    return HttpResponseBadRequest()

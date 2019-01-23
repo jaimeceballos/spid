@@ -78,7 +78,7 @@ class Identificacion(models.Model):
 
 
 class Prontuario(models.Model):
-    nro                 = models.CharField(max_length=7,unique=True)
+    nro                 = models.CharField(max_length=10,unique=True)
     persona             = models.OneToOneField(Personas,on_delete=models.DO_NOTHING)
     identificaciones    = models.ManyToManyField(Identificacion)
     fotos               = models.ManyToManyField('FotosPersona',related_name='fotos',blank=True)
