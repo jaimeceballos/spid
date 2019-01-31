@@ -1015,15 +1015,15 @@ def cargar_domicilios(request,id):
         persona = Personas.objects.get(id=id)
         if request.method =="POST":
             form = DomicilioProntuarioForm(request.POST)
-            
             if form.is_valid():
                 domicilio_vigente = Domicilios.objects.filter(personas=persona,fecha_hasta__isnull= True)
                 if domicilio_vigente.count() > 0:
                     for vigente in domicilio_vigente:
                         if form.cleaned_data['fecha_desde']:
-                            vigente.fecha_hasta = form.cleaned_data['fecha_desde']
+                            if form.cleaned_data['fecha_desde'] > vigente.fecha_desde:
+                                vigente.fecha_hasta = form.cleaned_data['fecha_desde']
                         else:
-                            vigente.fecha_hasta = datetime.datetime.now()
+                            vigente.fecha_hasta = datetime.datetime.now().year
                         vigente.fecha_actualizacion = datetime.datetime.now()
                         vigente.save()
                 domicilio = Domicilios()
@@ -1035,7 +1035,7 @@ def cargar_domicilios(request,id):
                 if(form.cleaned_data['fecha_desde']):
                     domicilio.fecha_desde                               = form.cleaned_data['fecha_desde']
                 else:
-                    domicilio.fecha_desde                               = datetime.datetime.now()
+                    domicilio.fecha_desde                               = datetime.datetime.now().year
                 if(form.cleaned_data['fecha_hasta']):
                     domicilio.fecha_hasta                               = form.cleaned_data['fecha_hasta']
                 domicilio.fecha_actualizacion                           = datetime.datetime.now()
@@ -1055,6 +1055,7 @@ def cargar_domicilios(request,id):
                     return HttpResponseRedirect("/prontuario/resumen_persona/%s/" % persona.id)
                 except Exception as e:
                     save_error(request.user,e)
+                    print(e)
                     return HttpResponseBadRequest()
         domicilios = Domicilios.objects.filter(personas=persona)
         paises = RefPaises.objects.all()
@@ -1496,3 +1497,14 @@ def buscar_log(request):
             return render(request,"log_data.html",{'log':logs})
             
     return HttpResponseBadRequest()
+
+def modificar_fechas_domicilios(request):
+    domicilios = Domicilios.objects.all()
+    for domicilio in domicilios:
+        if domicilio.fecha_desde is not None:
+            domicilio.fecha_desde_temp = domicilio.fecha_desde.year
+        if domicilio.fecha_hasta is not None:
+            domicilio.fecha_hasta_temp = domicilio.fecha_hasta.year
+        
+        domicilio.save()
+    return HttpResponse("Ok")

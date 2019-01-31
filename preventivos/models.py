@@ -891,8 +891,6 @@ class Domicilios(models.Model):
 	calle = models.ForeignKey(RefCalles,related_name = 'domicilio',blank = True, null = True,on_delete=models.DO_NOTHING)
 	altura = models.CharField(max_length=4,default="0",blank = True)
 	entre = models.ForeignKey(RefCalles,related_name = 'interseccion', blank = True, null = True,on_delete=models.DO_NOTHING)
-	fecha_desde = models.DateField(blank = True, null = True)
-	fecha_hasta = models.DateField(blank = True, null = True)
 	fecha_actualizacion = models.DateField(blank = True, null = True)
 	tipos_domicilio = models.ForeignKey(RefHogares,blank = True, null = True,on_delete=models.DO_NOTHING)
 	ref_zona = models.ForeignKey(RefComunidades,blank = True, null = True,on_delete=models.DO_NOTHING)
@@ -902,7 +900,9 @@ class Domicilios(models.Model):
 	sector = models.CharField(max_length = 10,blank = True, null = True,default="")
 	manzana = models.CharField(max_length=4,default="0",blank = True)
 	calle2 = models.CharField(max_length=80,blank= True, null=True)
-	
+	fecha_desde = models.IntegerField(default=None,null=True,blank=True)
+	fecha_hasta = models.IntegerField(default=None,null=True,blank=True)
+
 	def __str__(self):
 		
 		str_domicilio = "" 
@@ -929,7 +929,7 @@ class Domicilios(models.Model):
 		
 
 	class Meta:
-		unique_together=('personas','ref_ciudades','barrio_codigo','fecha_desde','calle','altura')
+		unique_together=('personas','ref_ciudades','barrio_codigo','fecha_desde', 'calle','altura')
 		ordering = ['-fecha_desde']
 		db_table = 'domicilios'
 		app_label = 'preventivos'

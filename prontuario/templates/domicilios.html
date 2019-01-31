@@ -180,6 +180,7 @@
   }
 
 $('input[type=text]').addClass('form-control');
+$('input[type=number]').addClass('form-control');
 $('select').addClass('form-control');
 $("#chkNoProvincia").change(function(event){
     if($("#chkNoProvincia:checked").val()=="on"){
@@ -287,22 +288,5 @@ $("#id_pais").change(function(event){
     select.removeAttr('disabled');
   }, "json");
 });
-$("#id_fecha_desde").datepicker({
-    format: "dd/mm/yyyy",
-    weekStart: 0,
-    todayBtn: "linked",
-    language: "es",
-    daysOfWeekHighlighted: "0",
-    autoclose: true,
-    todayHighlight: true
-  });
-  $("#id_fecha_hasta").datepicker({
-    format: "dd/mm/yyyy",
-    weekStart: 0,
-    todayBtn: "linked",
-    language: "es",
-    daysOfWeekHighlighted: "0",
-    autoclose: true,
-    todayHighlight: true
-  });
+
 </script>
