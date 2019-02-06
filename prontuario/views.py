@@ -1500,20 +1500,3 @@ def buscar_log(request):
             return render(request,"log_data.html",{'log':logs})
             
     return HttpResponseBadRequest()
-
-def modificar_fechas_domicilios(request):
-    domicilios = Domicilios.objects.all()
-    for domicilio in domicilios:
-        if domicilio.fecha_desde is not None:
-            desde_year = domicilio.fecha_desde.year
-            print(type(desde_year))
-            domicilio.fecha_desde_temp = desde_year
-        if domicilio.fecha_hasta is not None:
-            hasta_year = domicilio.fecha_hasta.year
-            pritn(type(hasta_year))
-            domicilio.fecha_hasta_temp = hasta_year
-        try:
-            domicilio.save()
-        except Exception as e:
-            print(e)
-    return HttpResponse("Ok")
