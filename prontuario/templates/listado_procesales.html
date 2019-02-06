@@ -33,6 +33,22 @@
             </td>
           </tr>
           {% endfor %}
+          {% for elemento in prontuarios_indice %}
+          <tr>
+            <td>
+              <p >{{elemento.dni}}</p>
+            </td>
+            <td>
+              <p>{{elemento.surname}} {{elemento.name_1}} {{elemento.name_2}}</p> 
+            </td>
+            <td>
+              <p>{{elemento.criminal_record_nro}}</p>
+            </td>
+            <td>
+              <a href="javascript:utilizarProntuario({{elemento.id}})" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-copy"></i> {% if not cambia %} Copiar Numero Prontuario {% else %} Usar registro {% endif %}</a>
+            </td>
+          </tr>
+          {% endfor %}
       </tbody>
     </table>
   </div>

@@ -712,8 +712,11 @@ def verificar_prontuario(request,n_p):
 
     if request.is_ajax():
         prontuarios = Indice.objects.using('prontuario').filter(n_p = n_p)
-        if prontuarios.count() > 0:
-            return render(request,"./listado_procesales.html",{'resultado':prontuarios,'id':0})
+        prontuarios_indice = RecordIdentifications.objects.using('acei').filter(criminal_record_nro=n_p)
+        print(prontuarios_indice)
+                
+        if prontuarios.count() > 0 or prontuarios_indice.count() > 0:
+            return render(request,"./listado_procesales.html",{'resultado':prontuarios,'id':0,'prontuarios_indice':prontuarios_indice})
         else:
             return HttpResponseNotFound()
     else:
