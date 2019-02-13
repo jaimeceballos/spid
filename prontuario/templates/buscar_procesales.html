@@ -124,4 +124,13 @@
     });
 
   }
+  function depuracion(id){
+    if(confirm("Desea marcar este registro para eliminar?")){
+      var url = "/prontuario/depuracion_solicita/"+id+"/"; 
+      $.get(url,function(data){
+
+      });
+    }
+    utilizarProntuario(id);
+  }
 </script>

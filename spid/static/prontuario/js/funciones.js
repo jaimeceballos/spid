@@ -57,3 +57,4 @@ function eliminarHistorial(){
     $("#dialog").html(data);
   });
 }
+

@@ -170,22 +170,28 @@ class TypeDnis(models.Model):
         db_table = 'type_dnis'
 
 class Indice(models.Model):
-    id = models.IntegerField(primary_key=True)
-    dni = models.CharField(max_length=20)
-    n_c = models.CharField(max_length=100, blank=True)
-    fechan = models.CharField(max_length=100)
-    tipo_p = models.CharField(max_length=25)
-    n_p = models.CharField(max_length=100)
-    estado = models.CharField(max_length=100)
-    fechase = models.CharField(max_length=100)
-    ob = models.CharField(max_length=500)
-    fechac = models.CharField(max_length=20)
-    tipo = models.CharField(max_length=150, blank=True)
-    nombre_archivo = models.CharField(max_length=255, blank=True)
-    identificado = models.CharField(max_length=100)
-    user = models.CharField(max_length=20)
+    id              = models.IntegerField(primary_key=True)
+    dni             = models.CharField(max_length=20)
+    n_c             = models.CharField(max_length=100, blank=True)
+    fechan          = models.CharField(max_length=100)
+    tipo_p          = models.CharField(max_length=25)
+    n_p             = models.CharField(max_length=100)
+    estado          = models.CharField(max_length=100)
+    fechase         = models.CharField(max_length=100)
+    ob              = models.CharField(max_length=500)
+    fechac          = models.CharField(max_length=20)
+    tipo            = models.CharField(max_length=150, blank=True)
+    nombre_archivo  = models.CharField(max_length=255, blank=True)
+    identificado    = models.CharField(max_length=100)
+    user            = models.CharField(max_length=20)
+    borrado         = models.BooleanField(default=False)
+
     class Meta:
         db_table = 'indice'
+
+        permissions = (
+            ('can_set_deletable_prontuario', _('Can set deletable prontuario')),
+        )
 
 class RefCiudadesRh(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -307,3 +313,16 @@ class ProntuarioLog(models.Model):
 
     class Meta:
         db_table = 'prontuario_log'
+
+class DepuracionProcesales(models.Model):
+    usuario_solicita    = models.ForeignKey(User,on_delete=models.DO_NOTHING,related_name='usuario_solicita')
+    fecha_solicita      = models.DateField(auto_now_add=True)
+    id_registro         = models.IntegerField()
+    fecha_baja          = models.DateField(blank=True,null=True)
+    usuario_baja        = models.ForeignKey(User, on_delete=models.DO_NOTHING,related_name='usuario_baja',blank=True,null=True)
+    causa_baja          = models.CharField(max_length=100,null=True, blank=True)
+    numero_prontuario   = models.CharField(max_length=10)
+    nombre              = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = 'depuracion_procesales'

@@ -29,7 +29,7 @@
               <p>{{elemento.n_p}} {{elemento.tipo_p}}</p>
             </td>
             <td>
-              <a href="javascript:utilizarProntuario({{elemento.id}})" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-copy"></i> {% if not cambia %} Copiar Numero Prontuario {% else %} Usar registro {% endif %}</a>
+              <a href="javascript:depuracion({{elemento.id}})" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-copy"></i> {% if not cambia %} Copiar Numero Prontuario {% else %} Usar registro {% endif %}</a>
             </td>
           </tr>
           {% endfor %}

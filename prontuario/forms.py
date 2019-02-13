@@ -152,3 +152,11 @@ class LogForm(forms.ModelForm):
     class Meta:
         model = ProntuarioLog
         exclude = ['fecha','accion','accion_tipo','entidad','entidad_id']
+
+class DepuracionProcesalesForm(forms.ModelForm):
+    
+    causa_baja     = forms.CharField(required = True, widget=forms.Textarea(attrs=dict({'class':'form-control ','placeholder':'Indique el motivo de la baja.'})))
+
+    class Meta:
+        model = DepuracionProcesales
+        fields = ['causa_baja']

@@ -1,0 +1,51 @@
+<div class="row">
+    <div class="col-md-12">
+        <h3>Baja de prontuario sistema Comunicaciones Procesales</h3>
+        <hr>
+    </div>
+</div>
+<div class="well">
+<div class="row">
+    <div class="col-md-12">
+        <p>Prontuario Nro. {{solicitud.numero_prontuario}} - Nombre: {{solicitud.nombre}}</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p>Solicitado por: {{solicitud.usuario_solicita.last_name}} {{solicitud.usuario_solicita.first_name}} - Fecha: {{solicitud.fecha_solicita}}</p>
+    </div>
+</div>
+</div>
+<form method="POST" action="{% url 'marcar_prontuario' solicitud.id %}" id="baja-form">{% csrf_token %}
+<div class="row">
+    <div class="col-md-12">
+        <label>Motivo de la baja</label>
+        {{form.causa_baja}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn btn-danger">Aceptar</button>
+    </div>
+</div>
+</form>
+
+<script>
+    $("#baja-form").submit(function(event){
+        event.preventDefault();
+
+        var form = $("#baja-form");
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: form.serialize(),
+            success: function(data){
+                $("#dialog").html("<p>Operacion realizada con exito.</p>")
+                $("#{{solicitud.id}}").hide();
+            },
+            error: function(jqXHR,textStatus,msg){
+                $("#dialog").html("<p>No se pudo realizar la operacion solicitada.</p>")
+            }
+        })
+    });
+</script>

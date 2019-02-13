@@ -54,4 +54,7 @@ urlpatterns = [
     url(r'^actividad/$',log,name='log'),
     url(r'^buscar_log/$',buscar_log, name='buscar_log'),
     url(r'^modificar_nro_prontuario/(?P<id>[0-9]+)/$',modificar_numero_prontuario,name='modificar_nro_prontuario'),
+    url(r'^depuracion_solicita/(?P<id>[0-9]+)/$',depuracion_solicita,name='depuracion_solicita'),
+    url(r'^depuracion/$',depuracion,name='depuracion'),
+    url(r'^marcar_prontuario/(?P<id>[0-9]+)/$',marcar_prontuario,name='marcar_prontuario'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

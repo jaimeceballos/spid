@@ -1,0 +1,84 @@
+{% extends 'prontuario_home.html' %}
+{% block contenido%}
+<div class="row fluid">
+    <div class="col-md-6 col-md-offset-3">
+        <h1>Listado de prontuarios a eliminar</h1>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Prontuario
+                    </th>
+                    <th>
+                        Nombre
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in depuracion %}
+                    <tr id="{{registro.id}}">
+                        <td>
+                            {{registro.numero_prontuario}}
+                        </td>
+                        <td>
+                            {{registro.nombre}}
+                        </td>
+                        <td>
+                            <a href="javascript:marcar_prontuario({{registro.id}})" class="btn btn-xs btn-danger"><i class="glyphicon glyphicon-trash"> Eliminar</i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<script>
+    function marcar_prontuario(id){
+        
+        $("#dialog-confirm").attr("title","Realmente quiere eliminar este prontuario?");
+        $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+            "Si": function() {
+                eliminar(id);
+                $( this ).dialog( "close" );    
+            },
+            Cancelar: function() {
+            $( this ).dialog( "close" );
+            }
+        }
+        });
+    }
+    function eliminar(id){
+        var url = "/prontuario/marcar_prontuario/"+id+"/";
+
+        $.get(url,function(data){
+            $("#dialog").html(data);
+            $("#dialog").dialog(
+            {
+            width: 'auto',
+            height: 'auto',
+            modal:true,
+            open: function(event, ui)
+            {
+    
+            },
+            buttons: {
+                Cerrar: function() {
+                $( this ).dialog( "close" );
+    
+                }
+            }
+            });
+        })
+    }
+</script>
+{% endblock contenido%}

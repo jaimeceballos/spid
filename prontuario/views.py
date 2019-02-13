@@ -1400,7 +1400,7 @@ def buscar_procesales(request):
             if form.is_valid():
                 n_c = "%s %s"  % (form.cleaned_data['apellido'],form.cleaned_data['nombre'])
                 dni = form.cleaned_data['documento']
-                resultados = Indice.objects.using('prontuario').all()
+                resultados = Indice.objects.using('prontuario').filter(borrado=False)
                 if not n_c == "" and dni =="":
                     resultados = resultados.filter(n_c__icontains = n_c.strip())
                 if not dni == "" and n_c == "":
@@ -1499,4 +1499,54 @@ def buscar_log(request):
             
             return render(request,"log_data.html",{'log':logs})
             
+    return HttpResponseBadRequest()
+
+@login_required
+def depuracion_solicita(request,id):
+    if request.is_ajax():
+        depuracion = DepuracionProcesales()
+        depuracion.usuario_solicita = request.user
+        depuracion.id_registro = id
+        depuracion.numero_prontuario = Indice.objects.using('prontuario').get(id=id).n_p
+        depuracion.nombre = Indice.objects.using('prontuario').get(id=id).n_c
+        depuracion.save()
+        
+        return HttpResponse("ok")
+    
+    return HttpResponseBadRequest()
+
+@login_required
+@permission_required("prontuario.can_set_deletable_prontuario")
+def depuracion(request):
+    
+    depuracion = DepuracionProcesales.objects.filter(fecha_baja__isnull = True)
+
+    return render(request,"depuracion.html",{"depuracion":depuracion})
+    
+@login_required
+@permission_required("prontuario.can_set_deletable_prontuario")
+def marcar_prontuario(request,id):
+    if request.is_ajax():
+        solicitud   = DepuracionProcesales.objects.get(id=id)
+        form        = DepuracionProcesalesForm(instance=solicitud)
+        if request.method == "GET":
+            return render(request, "marcar_prontuario.html",{'solicitud':solicitud, 'form':form})
+        if request.method == "POST":
+            form = DepuracionProcesalesForm(request.POST, instance=solicitud)
+            prontuario = Indice.objects.using("prontuario").get(id = solicitud.id_registro)
+            if form.is_valid():
+                solicitud.causa_baja    = form.cleaned_data['causa_baja']
+                solicitud.usuario_baja  = request.user
+                solicitud.fecha_baja    = datetime.datetime.now()
+
+                prontuario.borrado      = True
+                try:
+                    solicitud.save()
+                    prontuario.save()
+                    return HttpResponse("ok")
+                except Exception as e:
+                    print(e)
+
+
+    
     return HttpResponseBadRequest()
