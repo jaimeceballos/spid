@@ -265,7 +265,7 @@ class SearchResults(models.Model):
     fecha_nacimiento        = models.CharField(max_length=12,null=True, blank=True)
     alias                   = models.CharField(max_length = 50, null=True, blank=True)
     prontuario_acei         = models.CharField(max_length = 30, null=True,blank=True)
-    prontuario_spid       = models.CharField(max_length = 30, null=True,blank=True)
+    prontuario_spid         = models.CharField(max_length = 30, null=True,blank=True)
     usuario                 = models.ForeignKey(User,on_delete=models.DO_NOTHING)
     fecha_hora_creado       = models.DateTimeField(auto_now_add = True)
 
@@ -317,7 +317,7 @@ class ProntuarioLog(models.Model):
 class DepuracionProcesales(models.Model):
     usuario_solicita    = models.ForeignKey(User,on_delete=models.DO_NOTHING,related_name='usuario_solicita')
     fecha_solicita      = models.DateField(auto_now_add=True)
-    id_registro         = models.IntegerField()
+    id_registro         = models.IntegerField(unique= True)
     fecha_baja          = models.DateField(blank=True,null=True)
     usuario_baja        = models.ForeignKey(User, on_delete=models.DO_NOTHING,related_name='usuario_baja',blank=True,null=True)
     causa_baja          = models.CharField(max_length=100,null=True, blank=True)

@@ -57,4 +57,5 @@ urlpatterns = [
     url(r'^depuracion_solicita/(?P<id>[0-9]+)/$',depuracion_solicita,name='depuracion_solicita'),
     url(r'^depuracion/$',depuracion,name='depuracion'),
     url(r'^marcar_prontuario/(?P<id>[0-9]+)/$',marcar_prontuario,name='marcar_prontuario'),
+    url(r'^deshacer_eliminar/(?P<id>[0-9]+)/$',deshacer_eliminar,name='deshacer_eliminar'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

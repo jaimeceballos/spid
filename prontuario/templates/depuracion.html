@@ -29,6 +29,8 @@
                         </td>
                         <td>
                             <a href="javascript:marcar_prontuario({{registro.id}})" class="btn btn-xs btn-danger"><i class="glyphicon glyphicon-trash"> Eliminar</i></a>
+                            <a href="javascript:deshacer({{registro.id}})" class="btn btn-xs btn-success"><i class="fas fa-undo"> Deshacer</i></a>
+
                         </td>
                     </tr>
                 {% endfor %}
@@ -79,6 +81,18 @@
             }
             });
         })
+    }
+    function deshacer(id){
+
+        
+        var url = "/prontuario/deshacer_eliminar/"+id+"/";
+
+        $.get(url,function(data){
+            $("#"+id).fadeOut();
+        })
+        .fail(function(jqXHR, textStatus, error){
+            alert(jqXHR.responseText);
+        });
     }
 </script>
 {% endblock contenido%}

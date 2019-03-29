@@ -128,9 +128,13 @@
     if(confirm("Desea marcar este registro para eliminar?")){
       var url = "/prontuario/depuracion_solicita/"+id+"/"; 
       $.get(url,function(data){
-
+        
+      })
+      .fail(function(jqXHR, textStatus, error){
+        alert(jqXHR.responseText);
       });
+      utilizarProntuario(id);
     }
-    utilizarProntuario(id);
+    
   }
 </script>

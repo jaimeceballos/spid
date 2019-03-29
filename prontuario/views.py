@@ -26,10 +26,12 @@ from prontuario.forms import *
 import json
 
 def save_log(usuario,accion,accion_tipo,entidad=None,id_entidad=None):
+    """ guarda los registros de actividad de los usuarios """
     log = ProntuarioLog(usuario=usuario,accion=accion,entidad=entidad,entidad_id=id_entidad)
     log.save()
 
 def save_error(usuario,descripcion):
+    """ guarda los errores porducidos durante las acciones de los usuarios """
     error = Errores(usuario=usuario,descripcion=descripcion)
     error.save()
 
@@ -151,19 +153,21 @@ def search_persona(request):
             procesales_result = None
             persona_indice = buscar_persona_indice(parametros)
             if persona_indice and persona_indice.count() > 0:
-                persona_indice = persona_indice.exclude(dni__exact='').exclude(n_c__exact='').exclude(n_p__exact='').exclude(n_p__exact='0').values_list('dni','n_c','n_p','id').distinct()
+                persona_indice = persona_indice.exclude(dni__exact='').exclude(borrado=True).exclude(n_c__exact='').exclude(n_p__exact='').exclude(n_p__exact='0').values_list('dni','n_c','n_p','id').distinct()
                 
 
         elif persona_indice and persona_indice.count() > 0:
             procesales_result = None
             if persona_indice and persona_indice.count() > 0:
-                persona_indice = persona_indice.exclude(dni__exact='').exclude(n_c__exact='').exclude(n_p__exact='').exclude(n_p__exact='0').values_list('dni','n_c','n_p','id').distinct()
+                persona_indice = persona_indice.exclude(dni__exact='').exclude(borrado=True).exclude(n_c__exact='').exclude(n_p__exact='').exclude(n_p__exact='0').values_list('dni','n_c','n_p','id').distinct()
                 
             
         else:
             return HttpResponseNotFound("No hay Resultados para su busqueda.")
         
-        return render(request,"./resultados_busqueda.html",{'resultados':resultados,'ver_procesales':persona_indice.count(),'procesales_result':persona_indice})
+        print(persona_indice.count())
+        print(persona_indice.exclude(borrado=True).count())
+        return render(request,"./resultados_busqueda.html",{'resultados':resultados,'ver_procesales':persona_indice.exclude(borrado=True).count(),'procesales_result':persona_indice})
     else:
         return HttpResponseNotFound()
 
@@ -229,7 +233,7 @@ def buscar_persona_acei(parametros):
 def buscar_persona_indice(parametros,persona_spid = None, persona_acei = None, persona_rrhh = None):
     """ Esta definicion realiza la busqueda de la persona segun los parametros ingresados
     en la base de datos chubut del sistema Comunicaciones Procesales"""
-    persona_indice = Indice.objects.using('prontuario').all().exclude(dni__exact='',n_c__exact='').exclude(dni__exact='0',n_p__exact='').exclude(n_p__exact='0')
+    persona_indice = Indice.objects.using('prontuario').all().exclude(borrado=True).exclude(dni__exact='',n_c__exact='').exclude(dni__exact='0',n_p__exact='').exclude(n_p__exact='0')
     n_c = ""
     
     if not parametros['nombre'] == "":
@@ -253,7 +257,7 @@ def buscar_persona_indice(parametros,persona_spid = None, persona_acei = None, p
             if registro['dni'] not in documento:
                 documento.append(registro['dni'])
     persona_indice = persona_indice.exclude(dni__in=documento)
-    print(persona_indice)
+    
     return persona_indice
 
 
@@ -623,7 +627,7 @@ def search_procesales(request,id,dni):
     """Esta definicion busca una persona por dni en la base de datos del sistema
     de comunicaciones Procesales"""
     if request.is_ajax():
-        resultado = Indice.objects.using('prontuario').filter(dni = dni)
+        resultado = Indice.objects.using('prontuario').filter(dni = dni).exclude(borrado=True)
         if resultado.count() > 0:
             return render(request,"./listado_procesales.html",{'resultado':resultado,'id':id})
         else:
@@ -711,9 +715,8 @@ def verificar_prontuario(request,n_p):
     base de datos de comunicaciones procesales"""
 
     if request.is_ajax():
-        prontuarios = Indice.objects.using('prontuario').filter(n_p = n_p)
+        prontuarios = Indice.objects.using('prontuario').filter(n_p = n_p).exclude(borrado=True)
         prontuarios_indice = RecordIdentifications.objects.using('acei').filter(criminal_record_nro=n_p)
-        print(prontuarios_indice)
                 
         if prontuarios.count() > 0 or prontuarios_indice.count() > 0:
             return render(request,"./listado_procesales.html",{'resultado':prontuarios,'id':0,'prontuarios_indice':prontuarios_indice})
@@ -1107,7 +1110,7 @@ def verificar_existe(request,id):
             prontuario = RecordIdentifications.objects.using('acei').get(dni = documento).criminal_record_nro
         except Exception as e:
             try:
-                prontuario = Indice.objects.using('prontuario').get(dni = documento).n_p
+                prontuario = Indice.objects.using('prontuario').exclude(borrado=True).get(dni = documento).n_p
             except Exception as e:
                 return HttpResponseNotFound()
 
@@ -1400,7 +1403,7 @@ def buscar_procesales(request):
             if form.is_valid():
                 n_c = "%s %s"  % (form.cleaned_data['apellido'],form.cleaned_data['nombre'])
                 dni = form.cleaned_data['documento']
-                resultados = Indice.objects.using('prontuario').filter(borrado=False)
+                resultados = Indice.objects.using('prontuario').all().exclude(borrado=True)
                 if not n_c == "" and dni =="":
                     resultados = resultados.filter(n_c__icontains = n_c.strip())
                 if not dni == "" and n_c == "":
@@ -1509,7 +1512,11 @@ def depuracion_solicita(request,id):
         depuracion.id_registro = id
         depuracion.numero_prontuario = Indice.objects.using('prontuario').get(id=id).n_p
         depuracion.nombre = Indice.objects.using('prontuario').get(id=id).n_c
-        depuracion.save()
+        try:
+            depuracion.save()
+        except IntegrityError as e:
+            if "Duplicate entry" in e.args[1]:
+                return HttpResponseBadRequest("Ya se solicito la eliminacion de este registro.")
         
         return HttpResponse("ok")
     
@@ -1549,4 +1556,17 @@ def marcar_prontuario(request,id):
 
 
     
+    return HttpResponseBadRequest()
+
+@login_required
+@permission_required("prontuario.can_set_deletable_prontuario")
+def deshacer_eliminar(request,id):
+    if request.is_ajax():
+        registro = DepuracionProcesales.objects.get(id=id)
+        
+        try:
+            registro.delete()
+            return HttpResponse("ok")
+        except Exception as e:
+            return HttpResponseBadRequest("No se pudo deshacer. Posiblemente este registro ya no exista en la base de datos.")
     return HttpResponseBadRequest()
